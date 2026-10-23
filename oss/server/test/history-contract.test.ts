@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import fixture from './fixtures/kis039_daily_rows_synthetic.json' with {type:'json'};
+import {parseKis039DailyChartResponse} from '../src/r01-kis-field-parsers.js';
+import {buildHistoryResult,HistoryInputSchema,HistoryResultSchema} from '../src/history-contract.js';
+const input={symbol:'000660',board:'J',start_date:'2026-10-20',end_date:'2026-10-21',interval:'1d',adjustment_code:'0'};
+const rows=()=>parseKis039DailyChartResponse(fixture.response,{symbol:'000660',board:'J',startDate:'20261020',endDate:'20261021',periodCode:'D',adjustmentCode:'0',receivedAt:'2026-10-22T01:00:00Z',origin:'synthetic_fixture'});
+test('history emits ordered typed bars but never promotes unresolved raw prices or volume',()=>{const r=buildHistoryResult(input,rows());assert.equal(r.origin,'synthetic');assert.equal(r.source_as_of,null);assert.equal(r.bars[0]?.close,null);assert.equal(r.bars[0]?.adjusted,null);assert.equal(r.bars[0]?.mapping_status,'blocked');assert.ok(r.bars[0]!.date<r.bars[1]!.date);});
+test('history validates real dates, ranges, fixed daily interval and no URL injection',()=>{for(const bad of [{...input,start_date:'2026-02-30'},{...input,end_date:'2026-10-19'},{...input,interval:'5m'},{...input,url:'https://example.com'}]) assert.equal(HistoryInputSchema.safeParse(bad).success,false);});
+test('history rejects mismatched symbols and synthetic/actual mixing',()=>{let r=rows();r[0]!.symbol_from_request='005930';assert.throws(()=>buildHistoryResult(input,r),/history_context_mismatch/);r=rows();r[0]!.observed_payload_origin='provider_payload';assert.throws(()=>buildHistoryResult(input,r),/history_context_mismatch/);});
+test('history refuses blocked values, duplicate dates and fake timestamps',()=>{const r=buildHistoryResult(input,rows());r.bars[0]!.close='123';assert.equal(HistoryResultSchema.safeParse(r).success,false);const d=buildHistoryResult(input,rows());d.bars[1]!.date=d.bars[0]!.date;assert.equal(HistoryResultSchema.safeParse(d).success,false);});

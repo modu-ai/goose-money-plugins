@@ -1,0 +1,52 @@
+{
+  "contract": "moai.stock.index-futures-quote.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "source_time_status": "not_returned_by_reviewed_quote_contract",
+  "rights_status": "pending",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "canonical_projection_status": "blocked",
+  "mapping_blockers": [
+    "returned_contract_code_missing",
+    "authoritative_contract_master_and_underlying_binding_missing",
+    "currency_units_and_contract_multiplier_not_reconciled",
+    "last_trading_date_not_verified_for_requested_contract"
+  ],
+  "warnings": [
+    "The F market selector and contract code are caller inputs; the returned name alone does not verify identity.",
+    "A caller-supplied name expectation is only a mismatch guard, never authoritative evidence.",
+    "Final trading date is preserved as raw text and is not relabeled as expiry or used to construct a source timestamp.",
+    "No index-point, KRW, contracts, multiplier, settlement or live-data interpretation is inferred."
+  ],
+  "symbol_from_request": "101W09",
+  "market_code_from_request": "F",
+  "expected_name_from_request": null,
+  "identity_status": "no_returned_contract_code",
+  "raw": {
+    "output1": {
+      "hts_kor_isnm": "SYNTHETIC INDEX FUTURE",
+      "futs_prpr": "350.25"
+    },
+    "output2": {},
+    "output3": {}
+  },
+  "canonical": {
+    "instrument_id": null,
+    "underlying_id": null,
+    "currency": null,
+    "last_price": null,
+    "previous_close": null,
+    "change": null,
+    "change_percent": null,
+    "volume": null,
+    "turnover": null,
+    "open_interest": null,
+    "expiry_date": null,
+    "last_trading_date": null,
+    "price_unit": null,
+    "volume_unit": null,
+    "contract_multiplier": null
+  }
+}

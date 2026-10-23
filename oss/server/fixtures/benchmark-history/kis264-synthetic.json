@@ -1,0 +1,261 @@
+{
+  "synthetic_only": true,
+  "note": "Deterministic local fixture, not a provider capture or live verification.",
+  "input": {
+    "request": {
+      "market_code": "N",
+      "instrument_code": "SYNTH",
+      "start_date": "2026-10-01",
+      "end_date": "2026-10-20",
+      "period_code": "D"
+    },
+    "capture": {
+      "origin": "synthetic",
+      "received_at": "2026-10-21T00:00:00.123456789012345678Z",
+      "expected_body_sha256": "ded6fb756eb3c7f616b1b7986a76f5f94637302dd2465e736861b42791fbcb97",
+      "http_status": 200,
+      "tr_cont": "M"
+    },
+    "cutoff": "2026-10-21T00:00:00.123456789012345679Z"
+  },
+  "original_body_text": "{\"rt_cd\":\"0\",\"output1\":{\"ovrs_nmix_prdy_clpr\":\"+00012.3400\",\"prdy_ctrt\":\"-0.20\",\"hts_kor_isnm\":\"합성 지수\"},\"output2\":[{\"stck_bsop_date\":\"20261020\",\"ovrs_nmix_prpr\":\"-000123.4500\",\"acml_vol\":\"000\",\"mod_yn\":\"N\"},{\"stck_bsop_date\":\"20261019\",\"ovrs_nmix_prpr\":\"\"},{\"stck_bsop_date\":\"20261020\"}]}",
+  "expected": {
+    "contract": "moai.kis.benchmark-history-raw-evidence.v1",
+    "provider": "KIS",
+    "operation_id": "KIS-264",
+    "endpoint": "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+    "tr_id": "FHKST03030100",
+    "request": {
+      "instrument_code": "SYNTH",
+      "start_date": "2026-10-01",
+      "end_date": "2026-10-20",
+      "period_code": "D",
+      "market_code": "N"
+    },
+    "capture": {
+      "origin": "synthetic",
+      "received_at": "2026-10-21T00:00:00.123456789012345678Z",
+      "body_sha256": "ded6fb756eb3c7f616b1b7986a76f5f94637302dd2465e736861b42791fbcb97",
+      "body_byte_length": 296,
+      "http_status": 200,
+      "tr_cont": "M",
+      "hash_scope": "original_decoded_response_text_utf8",
+      "provenance_status": "caller_supplied_capture_metadata",
+      "source_authentication": "not_established"
+    },
+    "cutoff": "2026-10-21T00:00:00.123456789012345679Z",
+    "receipt_cutoff_status": "receipt_not_after_cutoff_no_publication_inference",
+    "provider_success_status": "0",
+    "source_as_of": null,
+    "publication_at": null,
+    "identity_status": "request_context_only_not_response_verified",
+    "source_time_status": "date_only_no_time_or_timezone",
+    "rights_status": "pending",
+    "canonical_projection_status": "blocked",
+    "output1_state": "present",
+    "header_raw_fields": {
+      "ovrs_nmix_prdy_clpr": {
+        "state": "present",
+        "value": "+00012.3400"
+      },
+      "prdy_ctrt": {
+        "state": "present",
+        "value": "-0.20"
+      },
+      "hts_kor_isnm": {
+        "state": "present",
+        "value": "합성 지수"
+      }
+    },
+    "output2_state": "rows_present",
+    "row_count": 3,
+    "row_order": "captured_output2_array_order",
+    "row_index_basis": "zero_based_output2_index",
+    "rows": [
+      {
+        "source_row_index": 0,
+        "provider_business_date": "2026-10-20",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20261020"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "present",
+            "value": "-000123.4500"
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "present",
+            "value": "000"
+          },
+          "mod_yn": {
+            "state": "present",
+            "value": "N"
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null
+        }
+      },
+      {
+        "source_row_index": 1,
+        "provider_business_date": "2026-10-19",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20261019"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "blank",
+            "value": ""
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null
+        }
+      },
+      {
+        "source_row_index": 2,
+        "provider_business_date": "2026-10-20",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20261020"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null
+        }
+      }
+    ],
+    "row_limit": 500,
+    "row_limit_basis": "local_safety_budget_not_provider_cap",
+    "request_profile_status": "initial_page_only_execution_not_attested",
+    "page_origin_status": "not_independently_established",
+    "response_range_completeness": "unknown_continuation_conflict",
+    "continuation_action": "none",
+    "source_review": "provided_2026_10_21_snapshot_not_new_live_verification",
+    "blockers": [
+      "canonical_identity_units_currency_session_unverified",
+      "date_only_no_provider_publication_instant",
+      "continuation_portal_sample_conflict",
+      "rights_and_source_authentication_not_established",
+      "weekly_monthly_yearly_not_implemented"
+    ],
+    "warnings": [
+      "Raw field presence and SHA-256 do not establish source authenticity, rights, canonical semantics or completeness.",
+      "Request codes are caller context only, not verified asset classes or response identity.",
+      "Receipt and cutoff are caller supplied; receipt ordering does not establish provider publication or as-of time.",
+      "Snapshot header values are separate from historical rows and never fill missing row fields.",
+      "Only D rows are preserved in source order. The request profile permits initial-page input only; supplied page origin and execution are not attested.",
+      "Raw bounded provider strings are preserved without numerical conversion; numeric formatting does not establish units."
+    ]
+  }
+}

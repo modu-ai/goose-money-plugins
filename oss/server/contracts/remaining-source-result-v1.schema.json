@@ -1,0 +1,3515 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "type": "string",
+          "const": "moai.kis.remaining-source-inputs.v1"
+        },
+        "provider": {
+          "type": "string",
+          "const": "KIS"
+        },
+        "operation_ref": {
+          "type": "string",
+          "const": "KIS-113"
+        },
+        "catalog_id": {
+          "type": "string",
+          "const": "kis.catalog.commit2077773a.row.145"
+        },
+        "endpoint": {
+          "type": "string",
+          "const": "/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market"
+        },
+        "tr_id": {
+          "type": "string",
+          "const": "FHPTJ04040000"
+        },
+        "request": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-113"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "FID_COND_MRKT_DIV_CODE": {
+                      "type": "string",
+                      "const": "U"
+                    },
+                    "FID_INPUT_ISCD": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 12,
+                      "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+                    },
+                    "FID_INPUT_DATE_1": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "FID_INPUT_DATE_2": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "FID_INPUT_ISCD_1": {
+                      "type": "string",
+                      "enum": [
+                        "KSP",
+                        "KSQ"
+                      ]
+                    },
+                    "FID_INPUT_ISCD_2": {
+                      "type": "string",
+                      "maxLength": 12,
+                      "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+                    }
+                  },
+                  "required": [
+                    "FID_COND_MRKT_DIV_CODE",
+                    "FID_INPUT_ISCD",
+                    "FID_INPUT_DATE_1",
+                    "FID_INPUT_DATE_2",
+                    "FID_INPUT_ISCD_1",
+                    "FID_INPUT_ISCD_2"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-109"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "SHT_CD": {
+                      "type": "string",
+                      "pattern": "^(?:\\d{2}|\\d{6})(?![\\s\\S])"
+                    }
+                  },
+                  "required": [
+                    "SHT_CD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-280"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "NCOD": {
+                      "type": "string",
+                      "enum": [
+                        "CN",
+                        "HK",
+                        "US",
+                        "JP",
+                        "VN"
+                      ]
+                    },
+                    "SYMB": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20,
+                      "pattern": "^[A-Z0-9][A-Z0-9.-]*(?![\\s\\S])"
+                    },
+                    "ST_YMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "ED_YMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    }
+                  },
+                  "required": [
+                    "NCOD",
+                    "SYMB",
+                    "ST_YMD",
+                    "ED_YMD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "capture": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "body_sha256": {
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64,
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "body_byte_length": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 262144
+            },
+            "hash_scope": {
+              "type": "string",
+              "const": "decoded_response_text_utf8"
+            },
+            "hash_algorithm": {
+              "type": "string",
+              "const": "sha256"
+            },
+            "provenance_status": {
+              "type": "string",
+              "const": "caller_supplied_unverified"
+            },
+            "source_authentication": {
+              "type": "string",
+              "const": "not_established"
+            }
+          },
+          "required": [
+            "origin",
+            "received_at",
+            "body_sha256",
+            "body_byte_length",
+            "hash_scope",
+            "hash_algorithm",
+            "provenance_status",
+            "source_authentication"
+          ],
+          "additionalProperties": false
+        },
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "scope": {
+          "type": "string",
+          "const": "market_industry_one_day_aggregate_not_stock_flow"
+        },
+        "provider_success_status": {
+          "type": "string",
+          "const": "0"
+        },
+        "request_execution_status": {
+          "type": "string",
+          "const": "not_asserted"
+        },
+        "first_page_origin": {
+          "type": "string",
+          "const": "not_verified"
+        },
+        "identity_status": {
+          "type": "string",
+          "const": "request_context_only_not_response_verified"
+        },
+        "source_as_of": {
+          "type": "null"
+        },
+        "publication_at": {
+          "type": "null"
+        },
+        "receipt_policy": {
+          "type": "string",
+          "const": "receipt_not_after_cutoff_no_publication_inference"
+        },
+        "groups": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "properties": {
+                "source_root": {
+                  "type": "string",
+                  "const": "output"
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "rows": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_row_index": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 99
+                      },
+                      "raw_fields": {
+                        "type": "object",
+                        "properties": {
+                          "stck_bsop_date": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "frgn_ntby_qty": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 12,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "prsn_ntby_qty": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 12,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "orgn_ntby_qty": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 18,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "frgn_ntby_tr_pbmn": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 18,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "prsn_ntby_tr_pbmn": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 18,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "orgn_ntby_tr_pbmn": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 18,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "bstp_nmix_prpr": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 112,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "bstp_nmix_prdy_ctrt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 82,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "stck_bsop_date",
+                          "frgn_ntby_qty",
+                          "prsn_ntby_qty",
+                          "orgn_ntby_qty",
+                          "frgn_ntby_tr_pbmn",
+                          "prsn_ntby_tr_pbmn",
+                          "orgn_ntby_tr_pbmn",
+                          "bstp_nmix_prpr",
+                          "bstp_nmix_prdy_ctrt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "canonical": {
+                        "type": "object",
+                        "properties": {
+                          "instrument_id": {
+                            "type": "null"
+                          },
+                          "market_id": {
+                            "type": "null"
+                          },
+                          "value": {
+                            "type": "null"
+                          },
+                          "unit": {
+                            "type": "null"
+                          },
+                          "currency": {
+                            "type": "null"
+                          },
+                          "period": {
+                            "type": "null"
+                          },
+                          "metric": {
+                            "type": "null"
+                          },
+                          "event_type": {
+                            "type": "null"
+                          },
+                          "date": {
+                            "type": "null"
+                          },
+                          "source_as_of": {
+                            "type": "null"
+                          },
+                          "publication_at": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "instrument_id",
+                          "market_id",
+                          "value",
+                          "unit",
+                          "currency",
+                          "period",
+                          "metric",
+                          "event_type",
+                          "date",
+                          "source_as_of",
+                          "publication_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "source_row_index",
+                      "raw_fields",
+                      "canonical"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "source_root",
+                "row_count",
+                "rows"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "row_order": {
+          "type": "string",
+          "const": "captured_array_order_zero_based_indices"
+        },
+        "response_completeness": {
+          "type": "string",
+          "const": "not_established"
+        },
+        "rights_status": {
+          "type": "string",
+          "const": "pending"
+        },
+        "canonical_projection_status": {
+          "type": "string",
+          "const": "blocked"
+        },
+        "metric_ready": {
+          "type": "boolean",
+          "const": false
+        },
+        "ambiguities": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "currency_scale_quantity_unit_unknown_do_not_borrow_KIS_115"
+            },
+            {
+              "type": "string",
+              "const": "subgroup_code_semantics_not_verified"
+            },
+            {
+              "type": "string",
+              "const": "industry_and_market_identity_request_context_only"
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "blockers": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "response_identity_not_independently_verified"
+            },
+            {
+              "type": "string",
+              "const": "publication_time_not_available"
+            },
+            {
+              "type": "string",
+              "const": "source_authenticity_not_established"
+            },
+            {
+              "type": "string",
+              "const": "rights_and_host_egress_not_approved"
+            },
+            {
+              "type": "string",
+              "const": "canonical_values_not_promoted"
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "warnings": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity."
+            },
+            {
+              "type": "string",
+              "const": "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified."
+            },
+            {
+              "type": "string",
+              "const": "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text."
+            },
+            {
+              "type": "string",
+              "const": "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data."
+            },
+            {
+              "type": "string",
+              "const": "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "contract",
+        "provider",
+        "operation_ref",
+        "catalog_id",
+        "endpoint",
+        "tr_id",
+        "request",
+        "capture",
+        "cutoff",
+        "scope",
+        "provider_success_status",
+        "request_execution_status",
+        "first_page_origin",
+        "identity_status",
+        "source_as_of",
+        "publication_at",
+        "receipt_policy",
+        "groups",
+        "row_order",
+        "response_completeness",
+        "rights_status",
+        "canonical_projection_status",
+        "metric_ready",
+        "ambiguities",
+        "blockers",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "type": "string",
+          "const": "moai.kis.remaining-source-inputs.v1"
+        },
+        "provider": {
+          "type": "string",
+          "const": "KIS"
+        },
+        "operation_ref": {
+          "type": "string",
+          "const": "KIS-109"
+        },
+        "catalog_id": {
+          "type": "string",
+          "const": "kis.catalog.commit2077773a.row.141"
+        },
+        "endpoint": {
+          "type": "string",
+          "const": "/uapi/domestic-stock/v1/quotations/estimate-perform"
+        },
+        "tr_id": {
+          "type": "string",
+          "const": "HHKST668300C0"
+        },
+        "request": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-113"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "FID_COND_MRKT_DIV_CODE": {
+                      "type": "string",
+                      "const": "U"
+                    },
+                    "FID_INPUT_ISCD": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 12,
+                      "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+                    },
+                    "FID_INPUT_DATE_1": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "FID_INPUT_DATE_2": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "FID_INPUT_ISCD_1": {
+                      "type": "string",
+                      "enum": [
+                        "KSP",
+                        "KSQ"
+                      ]
+                    },
+                    "FID_INPUT_ISCD_2": {
+                      "type": "string",
+                      "maxLength": 12,
+                      "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+                    }
+                  },
+                  "required": [
+                    "FID_COND_MRKT_DIV_CODE",
+                    "FID_INPUT_ISCD",
+                    "FID_INPUT_DATE_1",
+                    "FID_INPUT_DATE_2",
+                    "FID_INPUT_ISCD_1",
+                    "FID_INPUT_ISCD_2"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-109"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "SHT_CD": {
+                      "type": "string",
+                      "pattern": "^(?:\\d{2}|\\d{6})(?![\\s\\S])"
+                    }
+                  },
+                  "required": [
+                    "SHT_CD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-280"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "NCOD": {
+                      "type": "string",
+                      "enum": [
+                        "CN",
+                        "HK",
+                        "US",
+                        "JP",
+                        "VN"
+                      ]
+                    },
+                    "SYMB": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20,
+                      "pattern": "^[A-Z0-9][A-Z0-9.-]*(?![\\s\\S])"
+                    },
+                    "ST_YMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "ED_YMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    }
+                  },
+                  "required": [
+                    "NCOD",
+                    "SYMB",
+                    "ST_YMD",
+                    "ED_YMD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "capture": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "body_sha256": {
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64,
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "body_byte_length": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 262144
+            },
+            "hash_scope": {
+              "type": "string",
+              "const": "decoded_response_text_utf8"
+            },
+            "hash_algorithm": {
+              "type": "string",
+              "const": "sha256"
+            },
+            "provenance_status": {
+              "type": "string",
+              "const": "caller_supplied_unverified"
+            },
+            "source_authentication": {
+              "type": "string",
+              "const": "not_established"
+            }
+          },
+          "required": [
+            "origin",
+            "received_at",
+            "body_sha256",
+            "body_byte_length",
+            "hash_scope",
+            "hash_algorithm",
+            "provenance_status",
+            "source_authentication"
+          ],
+          "additionalProperties": false
+        },
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "scope": {
+          "type": "string",
+          "const": "positional_KIS_house_estimates_not_cross_broker_consensus"
+        },
+        "provider_success_status": {
+          "type": "string",
+          "const": "0"
+        },
+        "request_execution_status": {
+          "type": "string",
+          "const": "not_asserted"
+        },
+        "first_page_origin": {
+          "type": "string",
+          "const": "not_verified"
+        },
+        "identity_status": {
+          "type": "string",
+          "const": "request_context_only_not_response_verified"
+        },
+        "source_as_of": {
+          "type": "null"
+        },
+        "publication_at": {
+          "type": "null"
+        },
+        "receipt_policy": {
+          "type": "string",
+          "const": "receipt_not_after_cutoff_no_publication_inference"
+        },
+        "groups": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "properties": {
+                "source_root": {
+                  "type": "string",
+                  "const": "output2"
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "rows": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_row_index": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 99
+                      },
+                      "raw_fields": {
+                        "type": "object",
+                        "properties": {
+                          "data1": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "data2": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "data3": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "data4": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "data5": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "data1",
+                          "data2",
+                          "data3",
+                          "data4",
+                          "data5"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "canonical": {
+                        "type": "object",
+                        "properties": {
+                          "instrument_id": {
+                            "type": "null"
+                          },
+                          "market_id": {
+                            "type": "null"
+                          },
+                          "value": {
+                            "type": "null"
+                          },
+                          "unit": {
+                            "type": "null"
+                          },
+                          "currency": {
+                            "type": "null"
+                          },
+                          "period": {
+                            "type": "null"
+                          },
+                          "metric": {
+                            "type": "null"
+                          },
+                          "event_type": {
+                            "type": "null"
+                          },
+                          "date": {
+                            "type": "null"
+                          },
+                          "source_as_of": {
+                            "type": "null"
+                          },
+                          "publication_at": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "instrument_id",
+                          "market_id",
+                          "value",
+                          "unit",
+                          "currency",
+                          "period",
+                          "metric",
+                          "event_type",
+                          "date",
+                          "source_as_of",
+                          "publication_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "source_row_index",
+                      "raw_fields",
+                      "canonical"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "source_root",
+                "row_count",
+                "rows"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "source_root": {
+                  "type": "string",
+                  "const": "output3"
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "rows": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_row_index": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 99
+                      },
+                      "raw_fields": {
+                        "type": "object",
+                        "properties": {
+                          "data1": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "data2": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "data5": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 15,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "data1",
+                          "data2",
+                          "data5"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "canonical": {
+                        "type": "object",
+                        "properties": {
+                          "instrument_id": {
+                            "type": "null"
+                          },
+                          "market_id": {
+                            "type": "null"
+                          },
+                          "value": {
+                            "type": "null"
+                          },
+                          "unit": {
+                            "type": "null"
+                          },
+                          "currency": {
+                            "type": "null"
+                          },
+                          "period": {
+                            "type": "null"
+                          },
+                          "metric": {
+                            "type": "null"
+                          },
+                          "event_type": {
+                            "type": "null"
+                          },
+                          "date": {
+                            "type": "null"
+                          },
+                          "source_as_of": {
+                            "type": "null"
+                          },
+                          "publication_at": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "instrument_id",
+                          "market_id",
+                          "value",
+                          "unit",
+                          "currency",
+                          "period",
+                          "metric",
+                          "event_type",
+                          "date",
+                          "source_as_of",
+                          "publication_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "source_row_index",
+                      "raw_fields",
+                      "canonical"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "source_root",
+                "row_count",
+                "rows"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "source_root": {
+                  "type": "string",
+                  "const": "output4"
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "rows": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_row_index": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 99
+                      },
+                      "raw_fields": {
+                        "type": "object",
+                        "properties": {
+                          "dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "dt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "canonical": {
+                        "type": "object",
+                        "properties": {
+                          "instrument_id": {
+                            "type": "null"
+                          },
+                          "market_id": {
+                            "type": "null"
+                          },
+                          "value": {
+                            "type": "null"
+                          },
+                          "unit": {
+                            "type": "null"
+                          },
+                          "currency": {
+                            "type": "null"
+                          },
+                          "period": {
+                            "type": "null"
+                          },
+                          "metric": {
+                            "type": "null"
+                          },
+                          "event_type": {
+                            "type": "null"
+                          },
+                          "date": {
+                            "type": "null"
+                          },
+                          "source_as_of": {
+                            "type": "null"
+                          },
+                          "publication_at": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "instrument_id",
+                          "market_id",
+                          "value",
+                          "unit",
+                          "currency",
+                          "period",
+                          "metric",
+                          "event_type",
+                          "date",
+                          "source_as_of",
+                          "publication_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "source_row_index",
+                      "raw_fields",
+                      "canonical"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "source_root",
+                "row_count",
+                "rows"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "row_order": {
+          "type": "string",
+          "const": "captured_array_order_zero_based_indices"
+        },
+        "response_completeness": {
+          "type": "string",
+          "const": "not_established"
+        },
+        "rights_status": {
+          "type": "string",
+          "const": "pending"
+        },
+        "canonical_projection_status": {
+          "type": "string",
+          "const": "blocked"
+        },
+        "metric_ready": {
+          "type": "boolean",
+          "const": false
+        },
+        "ambiguities": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "SHT_CD_portal_length_2_vs_six_digit_sample_actual_dispatch_blocked"
+            },
+            {
+              "type": "string",
+              "const": "output1_ELW_label_conflict_excluded"
+            },
+            {
+              "type": "string",
+              "const": "output3_data3_data4_not_documented_individually_excluded"
+            },
+            {
+              "type": "string",
+              "const": "metric_row_and_output4_period_alignment_unresolved"
+            },
+            {
+              "type": "string",
+              "const": "metric_specific_unit_notes_not_assigned"
+            },
+            {
+              "type": "string",
+              "const": "pagination_portal_vs_sample_conflict_no_paging"
+            }
+          ],
+          "items": false,
+          "minItems": 6,
+          "maxItems": 6
+        },
+        "blockers": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "response_identity_not_independently_verified"
+            },
+            {
+              "type": "string",
+              "const": "publication_time_not_available"
+            },
+            {
+              "type": "string",
+              "const": "source_authenticity_not_established"
+            },
+            {
+              "type": "string",
+              "const": "rights_and_host_egress_not_approved"
+            },
+            {
+              "type": "string",
+              "const": "canonical_values_not_promoted"
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "warnings": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity."
+            },
+            {
+              "type": "string",
+              "const": "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified."
+            },
+            {
+              "type": "string",
+              "const": "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text."
+            },
+            {
+              "type": "string",
+              "const": "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data."
+            },
+            {
+              "type": "string",
+              "const": "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "contract",
+        "provider",
+        "operation_ref",
+        "catalog_id",
+        "endpoint",
+        "tr_id",
+        "request",
+        "capture",
+        "cutoff",
+        "scope",
+        "provider_success_status",
+        "request_execution_status",
+        "first_page_origin",
+        "identity_status",
+        "source_as_of",
+        "publication_at",
+        "receipt_policy",
+        "groups",
+        "row_order",
+        "response_completeness",
+        "rights_status",
+        "canonical_projection_status",
+        "metric_ready",
+        "ambiguities",
+        "blockers",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "type": "string",
+          "const": "moai.kis.remaining-source-inputs.v1"
+        },
+        "provider": {
+          "type": "string",
+          "const": "KIS"
+        },
+        "operation_ref": {
+          "type": "string",
+          "const": "KIS-280"
+        },
+        "catalog_id": {
+          "type": "string",
+          "const": "kis.catalog.commit2077773a.row.328"
+        },
+        "endpoint": {
+          "type": "string",
+          "const": "/uapi/overseas-price/v1/quotations/rights-by-ice"
+        },
+        "tr_id": {
+          "type": "string",
+          "const": "HHDFS78330900"
+        },
+        "request": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-113"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "FID_COND_MRKT_DIV_CODE": {
+                      "type": "string",
+                      "const": "U"
+                    },
+                    "FID_INPUT_ISCD": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 12,
+                      "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+                    },
+                    "FID_INPUT_DATE_1": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "FID_INPUT_DATE_2": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "FID_INPUT_ISCD_1": {
+                      "type": "string",
+                      "enum": [
+                        "KSP",
+                        "KSQ"
+                      ]
+                    },
+                    "FID_INPUT_ISCD_2": {
+                      "type": "string",
+                      "maxLength": 12,
+                      "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+                    }
+                  },
+                  "required": [
+                    "FID_COND_MRKT_DIV_CODE",
+                    "FID_INPUT_ISCD",
+                    "FID_INPUT_DATE_1",
+                    "FID_INPUT_DATE_2",
+                    "FID_INPUT_ISCD_1",
+                    "FID_INPUT_ISCD_2"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-109"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "SHT_CD": {
+                      "type": "string",
+                      "pattern": "^(?:\\d{2}|\\d{6})(?![\\s\\S])"
+                    }
+                  },
+                  "required": [
+                    "SHT_CD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "operation_ref": {
+                  "type": "string",
+                  "const": "KIS-280"
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "NCOD": {
+                      "type": "string",
+                      "enum": [
+                        "CN",
+                        "HK",
+                        "US",
+                        "JP",
+                        "VN"
+                      ]
+                    },
+                    "SYMB": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20,
+                      "pattern": "^[A-Z0-9][A-Z0-9.-]*(?![\\s\\S])"
+                    },
+                    "ST_YMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    },
+                    "ED_YMD": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 8
+                    }
+                  },
+                  "required": [
+                    "NCOD",
+                    "SYMB",
+                    "ST_YMD",
+                    "ED_YMD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation_ref",
+                "query"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "capture": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "body_sha256": {
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64,
+              "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+            },
+            "body_byte_length": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 262144
+            },
+            "hash_scope": {
+              "type": "string",
+              "const": "decoded_response_text_utf8"
+            },
+            "hash_algorithm": {
+              "type": "string",
+              "const": "sha256"
+            },
+            "provenance_status": {
+              "type": "string",
+              "const": "caller_supplied_unverified"
+            },
+            "source_authentication": {
+              "type": "string",
+              "const": "not_established"
+            }
+          },
+          "required": [
+            "origin",
+            "received_at",
+            "body_sha256",
+            "body_byte_length",
+            "hash_scope",
+            "hash_algorithm",
+            "provenance_status",
+            "source_authentication"
+          ],
+          "additionalProperties": false
+        },
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "scope": {
+          "type": "string",
+          "const": "overseas_ICE_A4_A5_not_domestic_KSD"
+        },
+        "provider_success_status": {
+          "type": "string",
+          "const": "0"
+        },
+        "request_execution_status": {
+          "type": "string",
+          "const": "not_asserted"
+        },
+        "first_page_origin": {
+          "type": "string",
+          "const": "not_verified"
+        },
+        "identity_status": {
+          "type": "string",
+          "const": "request_context_only_not_response_verified"
+        },
+        "source_as_of": {
+          "type": "null"
+        },
+        "publication_at": {
+          "type": "null"
+        },
+        "receipt_policy": {
+          "type": "string",
+          "const": "receipt_not_after_cutoff_no_publication_inference"
+        },
+        "groups": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "object",
+              "properties": {
+                "source_root": {
+                  "type": "string",
+                  "const": "output1"
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "rows": {
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_row_index": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 99
+                      },
+                      "raw_fields": {
+                        "type": "object",
+                        "properties": {
+                          "anno_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "ca_title": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 12,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "div_lock_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "pay_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "record_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "validity_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "local_end_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "lock_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "delist_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "redempt_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "early_redempt_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "effective_dt": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "present"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 8,
+                                    "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "blank"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "const": ""
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "type": "string",
+                                    "const": "missing"
+                                  },
+                                  "value": {
+                                    "type": "null"
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "anno_dt",
+                          "ca_title",
+                          "div_lock_dt",
+                          "pay_dt",
+                          "record_dt",
+                          "validity_dt",
+                          "local_end_dt",
+                          "lock_dt",
+                          "delist_dt",
+                          "redempt_dt",
+                          "early_redempt_dt",
+                          "effective_dt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "canonical": {
+                        "type": "object",
+                        "properties": {
+                          "instrument_id": {
+                            "type": "null"
+                          },
+                          "market_id": {
+                            "type": "null"
+                          },
+                          "value": {
+                            "type": "null"
+                          },
+                          "unit": {
+                            "type": "null"
+                          },
+                          "currency": {
+                            "type": "null"
+                          },
+                          "period": {
+                            "type": "null"
+                          },
+                          "metric": {
+                            "type": "null"
+                          },
+                          "event_type": {
+                            "type": "null"
+                          },
+                          "date": {
+                            "type": "null"
+                          },
+                          "source_as_of": {
+                            "type": "null"
+                          },
+                          "publication_at": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "instrument_id",
+                          "market_id",
+                          "value",
+                          "unit",
+                          "currency",
+                          "period",
+                          "metric",
+                          "event_type",
+                          "date",
+                          "source_as_of",
+                          "publication_at"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "source_row_index",
+                      "raw_fields",
+                      "canonical"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "source_root",
+                "row_count",
+                "rows"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "items": false,
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "row_order": {
+          "type": "string",
+          "const": "captured_array_order_zero_based_indices"
+        },
+        "response_completeness": {
+          "type": "string",
+          "const": "not_established"
+        },
+        "rights_status": {
+          "type": "string",
+          "const": "pending"
+        },
+        "canonical_projection_status": {
+          "type": "string",
+          "const": "blocked"
+        },
+        "metric_ready": {
+          "type": "boolean",
+          "const": false
+        },
+        "ambiguities": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "ca_title_taxonomy_incomplete_no_event_type_mapping"
+            },
+            {
+              "type": "string",
+              "const": "request_date_basis_varies_by_event_no_announcement_date_range_filter"
+            },
+            {
+              "type": "string",
+              "const": "future_payment_or_effective_dates_allowed"
+            },
+            {
+              "type": "string",
+              "const": "country_and_symbol_identity_request_context_only"
+            }
+          ],
+          "items": false,
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "blockers": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "response_identity_not_independently_verified"
+            },
+            {
+              "type": "string",
+              "const": "publication_time_not_available"
+            },
+            {
+              "type": "string",
+              "const": "source_authenticity_not_established"
+            },
+            {
+              "type": "string",
+              "const": "rights_and_host_egress_not_approved"
+            },
+            {
+              "type": "string",
+              "const": "canonical_values_not_promoted"
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "warnings": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "string",
+              "const": "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity."
+            },
+            {
+              "type": "string",
+              "const": "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified."
+            },
+            {
+              "type": "string",
+              "const": "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text."
+            },
+            {
+              "type": "string",
+              "const": "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data."
+            },
+            {
+              "type": "string",
+              "const": "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+            }
+          ],
+          "items": false,
+          "minItems": 5,
+          "maxItems": 5
+        }
+      },
+      "required": [
+        "contract",
+        "provider",
+        "operation_ref",
+        "catalog_id",
+        "endpoint",
+        "tr_id",
+        "request",
+        "capture",
+        "cutoff",
+        "scope",
+        "provider_success_status",
+        "request_execution_status",
+        "first_page_origin",
+        "identity_status",
+        "source_as_of",
+        "publication_at",
+        "receipt_policy",
+        "groups",
+        "row_order",
+        "response_completeness",
+        "rights_status",
+        "canonical_projection_status",
+        "metric_ready",
+        "ambiguities",
+        "blockers",
+        "warnings"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$id": "https://moai.invalid/contracts/remaining-source-result-v1.schema.json",
+  "title": "MoAI KIS remaining source result v1 (structural only)",
+  "description": "Structural validation is not semantic or provenance verification. Reconstruct using independent request/context and original response text."
+}

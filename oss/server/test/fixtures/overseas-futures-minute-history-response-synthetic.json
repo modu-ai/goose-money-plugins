@@ -1,0 +1,50 @@
+{
+  "fixture_kind": "synthetic_only",
+  "not_market_observations": true,
+  "request_input": {
+    "symbol": "BONU25",
+    "exchange": "EUREX",
+    "end_date": "20250702",
+    "count": "120",
+    "interval_minutes": "5"
+  },
+  "response": {
+    "status": 200,
+    "tr_cont": "",
+    "body": {
+      "rt_cd": "0",
+      "msg_cd": "SYNTHETIC_RC6",
+      "msg1": "SYNTHETIC ONLY, NOT MARKET OBSERVATIONS",
+      "output1": {
+        "ret_cnt": "0002",
+        "last_n_cnt": "0000",
+        "index_key": ""
+      },
+      "output2": [
+        {
+          "data_date": "20250702",
+          "data_time": "235959",
+          "open_price": "-38.0000",
+          "high_price": "-35.0000",
+          "low_price": "-40.0000",
+          "last_price": "-37.630000",
+          "last_qntt": "0000001",
+          "vol": "00000234",
+          "prev_diff_flag": "5",
+          "prev_diff_price": "-001.00",
+          "prev_diff_rate": "-000.5"
+        },
+        {
+          "data_date": "20250702",
+          "data_time": "000000",
+          "open_price": "-000.0000",
+          "high_price": "",
+          "low_price": "",
+          "last_price": "0.0000",
+          "last_qntt": "",
+          "vol": ""
+        }
+      ]
+    }
+  }
+}

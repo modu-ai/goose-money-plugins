@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "operation_ref": {
+          "type": "string",
+          "const": "KIS-113"
+        },
+        "query": {
+          "type": "object",
+          "properties": {
+            "FID_COND_MRKT_DIV_CODE": {
+              "type": "string",
+              "const": "U"
+            },
+            "FID_INPUT_ISCD": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 12,
+              "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+            },
+            "FID_INPUT_DATE_1": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 8
+            },
+            "FID_INPUT_DATE_2": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 8
+            },
+            "FID_INPUT_ISCD_1": {
+              "type": "string",
+              "enum": [
+                "KSP",
+                "KSQ"
+              ]
+            },
+            "FID_INPUT_ISCD_2": {
+              "type": "string",
+              "maxLength": 12,
+              "pattern": "^[A-Za-z0-9]*(?![\\s\\S])"
+            }
+          },
+          "required": [
+            "FID_COND_MRKT_DIV_CODE",
+            "FID_INPUT_ISCD",
+            "FID_INPUT_DATE_1",
+            "FID_INPUT_DATE_2",
+            "FID_INPUT_ISCD_1",
+            "FID_INPUT_ISCD_2"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "operation_ref",
+        "query"
+      ],
+      "additionalProperties": false
+    },
+    "cutoff": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    }
+  },
+  "required": [
+    "request",
+    "cutoff"
+  ],
+  "additionalProperties": false
+}

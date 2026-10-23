@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "type": "string",
+      "const": "kis.market_orderbook"
+    },
+    "method": {
+      "type": "string",
+      "const": "GET"
+    },
+    "path": {
+      "type": "string",
+      "const": "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn"
+    },
+    "tr_id": {
+      "type": "string",
+      "const": "FHKST01010200"
+    },
+    "tr_cont": {
+      "type": "string",
+      "const": ""
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "FID_COND_MRKT_DIV_CODE": {
+          "type": "string",
+          "enum": [
+            "J",
+            "NX",
+            "UN"
+          ]
+        },
+        "FID_INPUT_ISCD": {
+          "type": "string",
+          "pattern": "^\\d{6}$"
+        }
+      },
+      "required": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "operation",
+    "method",
+    "path",
+    "tr_id",
+    "tr_cont",
+    "query"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/market-reference/orderbook-request-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime entrypoints additionally enforce inert bounded plain JSON, conservative private-data marker rejection, exact instants, echo and request consistency, source DTO reconstruction where available, deterministic full-candidate replay and integrity links. Shape validity is not source authentication, economic validity, rights clearance or metric readiness. The .invalid namespace is an identifier, not a hosted resource."
+}

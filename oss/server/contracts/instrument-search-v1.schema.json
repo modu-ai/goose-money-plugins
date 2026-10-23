@@ -1,0 +1,261 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.instrument.search.v1"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "market": {
+          "type": "string",
+          "enum": [
+            "KR",
+            "US"
+          ]
+        },
+        "asset_class": {
+          "type": "string",
+          "enum": [
+            "equity",
+            "etf",
+            "future"
+          ]
+        },
+        "limit": {
+          "default": 10,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        }
+      },
+      "required": [
+        "query",
+        "limit"
+      ],
+      "additionalProperties": false
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_received_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "anyOf": [
+        {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "coverage": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "resolution_status": {
+      "type": "string",
+      "enum": [
+        "no_match_in_supplied_directory",
+        "single_candidate_not_confirmed",
+        "ambiguous"
+      ]
+    },
+    "match_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "truncated": {
+      "type": "boolean"
+    },
+    "candidates": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "instrument_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "pattern": "^[A-Za-z0-9._:-]+$"
+          },
+          "symbol": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40,
+            "pattern": "^[A-Za-z0-9._:-]+$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "market": {
+            "type": "string",
+            "enum": [
+              "KR",
+              "US",
+              "unknown"
+            ]
+          },
+          "asset_class": {
+            "type": "string",
+            "enum": [
+              "equity",
+              "etf",
+              "future",
+              "unknown"
+            ]
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cik": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{10}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "corp_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "aliases": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "match_basis": {
+            "type": "string",
+            "enum": [
+              "exact_identifier",
+              "exact_name",
+              "name_substring"
+            ]
+          },
+          "identity_status": {
+            "type": "string",
+            "const": "directory_candidate_not_confirmed"
+          }
+        },
+        "required": [
+          "instrument_ref",
+          "symbol",
+          "name",
+          "market",
+          "asset_class",
+          "exchange",
+          "currency",
+          "cik",
+          "corp_code",
+          "aliases",
+          "source_ref",
+          "match_basis",
+          "identity_status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "request",
+    "origin",
+    "received_at",
+    "source_received_at",
+    "source_as_of",
+    "source_url",
+    "coverage",
+    "rights_status",
+    "resolution_status",
+    "match_count",
+    "truncated",
+    "candidates",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

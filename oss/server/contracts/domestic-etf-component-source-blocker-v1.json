@@ -1,0 +1,8 @@
+{
+  "code": "etf_component_source_contract_conflict",
+  "path": "/uapi/etfetn/v1/quotations/inquire-component-stock-price",
+  "tr_id": "FHKST121600C0",
+  "reason": "Official component check script contradicts price/NAV field labels and does not establish output1/output2 field partition.",
+  "source_url": "https://github.com/koreainvestment/open-trading-api/blob/main/examples_llm/etfetn/inquire_component_stock_price/chk_inquire_component_stock_price.py",
+  "required_evidence": "Reconciled official per-object response schema and units; separate identity, as-of, completeness and rights evidence before holdings interpretation."
+}

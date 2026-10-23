@@ -1,0 +1,114 @@
+{
+  "contract": "moai.stock.kr-futures-daily-history.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "received_at": "2026-10-22T03:00:00.123456789123Z",
+  "available_at": "2026-10-22T03:00:00.123456789123Z",
+  "source_as_of": null,
+  "event_time": null,
+  "published_at": null,
+  "source_timezone": null,
+  "source_time_status": "provider_bar_labels_not_verified_instants",
+  "rights_status": "pending",
+  "session": "unknown",
+  "delay_state": "unknown",
+  "finality": "unknown",
+  "freshness": "unknown",
+  "completeness": "unknown",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "adjustment_status": "not_verified_no_roll_or_adjustment_inferred",
+  "pagination": {
+    "pages_fetched": 1,
+    "tr_cont": "",
+    "provider_cursor": null,
+    "status": "not_signaled_completeness_unknown",
+    "automatic_continuation": false,
+    "completeness": "unknown"
+  },
+  "bars_returned": 2,
+  "coverage_status": "single_page_not_complete_history",
+  "row_order_status": "provider_order_preserved_no_sort_dedup_or_resample",
+  "duplicate_label_status": "none_observed",
+  "canonical_projection_status": "blocked",
+  "canonical": {
+    "instrument_id": null,
+    "underlying_id": null,
+    "exchange": null,
+    "country": null,
+    "currency": null,
+    "adjusted": null,
+    "contract_multiplier": null,
+    "expiry_date": null,
+    "last_trading_date": null,
+    "tick_size": null,
+    "tick_value": null,
+    "price_unit": null,
+    "volume_unit": null,
+    "turnover_unit": null,
+    "bars": null
+  },
+  "mapping_blockers": [
+    "authoritative_contract_exchange_and_underlying_binding_missing",
+    "currency_multiplier_and_price_quantity_units_not_reconciled",
+    "timezone_business_date_and_bar_finality_not_reconciled",
+    "expiry_roll_adjustment_and_continuous_series_basis_not_verified",
+    "market_data_rights_pending"
+  ],
+  "unimplemented_derivations": [
+    "automatic_pagination",
+    "canonical_ohlcv",
+    "continuous_futures_rolls",
+    "back_adjustment",
+    "resampling",
+    "source_timestamp_attribution"
+  ],
+  "warnings": [
+    "Exactly one bounded provider page is preserved in its original row order, including duplicate labels. It is not complete history.",
+    "Signed price strings, leading zeros, decimal precision, blanks and date/time labels are preserved. No rounding, scaling or negative-price rejection occurs.",
+    "Provider date/time labels are not verified event or publication instants. Receipt time is sampled after transport completes, never attributed to market events.",
+    "Contract identity, listing, timezone, multiplier, currency, units, adjustment, finality and market-data rights remain unverified."
+  ],
+  "requested": {
+    "symbol": "101W09",
+    "start_date": "20250301",
+    "end_date": "20250331",
+    "period": "D"
+  },
+  "interval": "1d",
+  "identity_status": "returned_short_code_matched_not_master_verified",
+  "geographical_scope_status": "domestic_index_futures_request_not_master_verified",
+  "raw": {
+    "rt_cd": "0",
+    "msg_cd": "SYNTHETIC_RC6",
+    "msg1": "SYNTHETIC ONLY, NOT MARKET OBSERVATIONS",
+    "output1": {
+      "futs_shrn_iscd": "101W09",
+      "hts_kor_isnm": "SYNTHETIC INDEX FUTURE",
+      "futs_prpr": "-000.7500",
+      "basis": "-00.10",
+      "otst_stpl_qty_icdc": "-00002"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20250328",
+        "futs_prpr": "-000.7500",
+        "futs_oprc": "-001.2500",
+        "futs_hgpr": "000.0000",
+        "futs_lwpr": "-002.0000",
+        "acml_vol": "000000020",
+        "acml_tr_pbmn": "-00012.5000",
+        "mod_yn": "N"
+      },
+      {
+        "stck_bsop_date": "20250326",
+        "futs_prpr": "",
+        "futs_oprc": "-000.0000",
+        "futs_hgpr": "001.0000",
+        "futs_lwpr": "-001.0000",
+        "acml_vol": "",
+        "mod_yn": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "fixture_kind": "synthetic_only",
+  "not_market_observations": true,
+  "request_input": {
+    "symbol": "101W09",
+    "start_date": "20250301",
+    "end_date": "20250331",
+    "period": "D"
+  },
+  "response": {
+    "status": 200,
+    "tr_cont": "",
+    "body": {
+      "rt_cd": "0",
+      "msg_cd": "SYNTHETIC_RC6",
+      "msg1": "SYNTHETIC ONLY, NOT MARKET OBSERVATIONS",
+      "output1": {
+        "futs_shrn_iscd": "101W09",
+        "hts_kor_isnm": "SYNTHETIC INDEX FUTURE",
+        "futs_prpr": "-000.7500",
+        "basis": "-00.10",
+        "otst_stpl_qty_icdc": "-00002"
+      },
+      "output2": [
+        {
+          "stck_bsop_date": "20250328",
+          "futs_prpr": "-000.7500",
+          "futs_oprc": "-001.2500",
+          "futs_hgpr": "000.0000",
+          "futs_lwpr": "-002.0000",
+          "acml_vol": "000000020",
+          "acml_tr_pbmn": "-00012.5000",
+          "mod_yn": "N"
+        },
+        {
+          "stck_bsop_date": "20250326",
+          "futs_prpr": "",
+          "futs_oprc": "-000.0000",
+          "futs_hgpr": "001.0000",
+          "futs_lwpr": "-001.0000",
+          "acml_vol": "",
+          "mod_yn": ""
+        }
+      ]
+    }
+  }
+}

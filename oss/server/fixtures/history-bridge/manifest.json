@@ -1,0 +1,17 @@
+{
+  "notice": "SYNTHETIC TEST ONLY. Invented evidence assertions and callback echo do not establish actual-source authentication.",
+  "actual_source_authenticated": false,
+  "verified_live_provider_bindings": 0,
+  "actual_provider_calls": 0,
+  "first_verified_at": "2026-10-22T01:00:00.000000001Z",
+  "reverified_at": "2026-10-22T01:00:00.000000002Z",
+  "files": {
+    "SYNTHETIC-source-body.json": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+    "SYNTHETIC-source.json": "4cab615ec2f64bcaee54c1e6a95fe6ec92a7db566fdc908b8f304e6bf017c790",
+    "SYNTHETIC-binding.json": "6b13067f9f29fb120a72730b9f7aa75ccb69f9bfc5666f14fcf6197e9dfe394b",
+    "SYNTHETIC-handoff.json": "1b7dec5a6e5d40931236621293d428bf02146829551c4c2af9dfd73753a5d429",
+    "SYNTHETIC-reverified-handoff.json": "06fb6293c33500229f8e60664c405040bbf5031b10825f363414b8c862cd33b9",
+    "SYNTHETIC-report-input.json": "843ba74ddaf119ec6466a4918e7b25827256c0004d2defd4a6f381c2ae1777d9",
+    "SYNTHETIC-report-result.json": "add53cc591eb33db90df9e86ff73edac03e1a9fc5b5cb76fa9b9034163adf3c3"
+  }
+}

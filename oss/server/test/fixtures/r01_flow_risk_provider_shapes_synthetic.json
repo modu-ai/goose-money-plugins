@@ -1,0 +1,62 @@
+{
+  "fixture_metadata": {
+    "not_a_kis_response": true,
+    "synthetic_only": true,
+    "purpose": "Parser shape and status tests only; values do not describe any security or market observation."
+  },
+  "kis134_response": {
+    "rt_cd": "0",
+    "output1": {
+      "stck_bsop_date": "20990102",
+      "ssts_cntg_qty": "123",
+      "ssts_vol_rlim": "1.25",
+      "synthetic_root_marker": "object"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20990102",
+        "ssts_tr_pbmn": "456000",
+        "ssts_tr_pbmn_rlim": "2.50",
+        "synthetic_root_marker": "array"
+      }
+    ]
+  },
+  "kis110_response": {
+    "rt_cd": "0",
+    "output": [
+      {
+        "deal_date": "20990102",
+        "stlm_date": "20990105",
+        "whol_loan_new_stcn": "10",
+        "whol_loan_rdmp_stcn": "2",
+        "whol_loan_rmnd_stcn": "100",
+        "whol_loan_new_amt": "123456",
+        "whol_loan_rdmp_amt": "23456",
+        "whol_loan_rmnd_amt": "900000",
+        "whol_loan_rmnd_rate": "0.03",
+        "whol_loan_gvrt": "0.01",
+        "whol_stln_new_stcn": "3",
+        "whol_stln_rdmp_stcn": "1",
+        "whol_stln_rmnd_stcn": "50",
+        "whol_stln_new_amt": "12300",
+        "whol_stln_rdmp_amt": "4500",
+        "whol_stln_rmnd_amt": "600000",
+        "whol_stln_rmnd_rate": "0.02",
+        "whol_stln_gvrt": "0.01"
+      }
+    ]
+  },
+  "kis135_response": {
+    "rt_cd": "0",
+    "output1": [
+      {
+        "bsop_date": "20990102",
+        "new_stcn": "11",
+        "rdmp_stcn": "4",
+        "prdy_rmnd_vrss": "7",
+        "rmnd_stcn": "80",
+        "rmnd_amt": "750000"
+      }
+    ]
+  }
+}

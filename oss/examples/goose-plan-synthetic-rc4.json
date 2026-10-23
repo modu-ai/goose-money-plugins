@@ -1,0 +1,19 @@
+{
+  "run_id": "synthetic-rc4",
+  "requested_scope": "Offline fixture only, not actual financial research",
+  "roles": [
+    "company-analysis",
+    "disclosure-event"
+  ],
+  "cutoff_at": "2026-10-22T00:00:00Z",
+  "evidence": [
+    {
+      "evidence_ref": "synthetic-fixture",
+      "origin": "synthetic",
+      "received_at": "2026-10-22T00:00:00Z",
+      "source_as_of": null
+    }
+  ],
+  "execution_preference": "sequential",
+  "timeout_ms": 30000
+}

@@ -1,0 +1,389 @@
+{
+  "contract_id": "moai.stock.r01.chart-interval-provider-support.v1",
+  "version": "0.1.1-design",
+  "generated_on": "2026-10-22",
+  "status": "official KIS sample method, input and row-limit review only; no runtime interval adapter, no live response, no rights clearance",
+  "ownership": {
+    "writer": "MCP/data-contract owner",
+    "report_html_gallery_diagrams_modified": false,
+    "consumer_contract_modified": false
+  },
+  "source_basis": {
+    "official_repository": "https://github.com/koreainvestment/open-trading-api",
+    "pinned_commit": "2077773a69a428daf63e148182511f068cc45de3",
+    "sample_urls": [
+      "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+      "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/chk_inquire_daily_itemchartprice.py",
+      "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_time_itemchartprice/inquire_time_itemchartprice.py",
+      "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_time_itemchartprice/chk_inquire_time_itemchartprice.py",
+      "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_time_dailychartprice/inquire_time_dailychartprice.py",
+      "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_time_dailychartprice/chk_inquire_time_dailychartprice.py"
+    ],
+    "official_portal_catalog": "https://apiportal.koreainvestment.com/apiservice-category",
+    "reviewed_on": "2026-10-21"
+  },
+  "user_requested_intervals": [
+    {
+      "id": "5m",
+      "label": "5분봉"
+    },
+    {
+      "id": "1h",
+      "label": "1시간봉"
+    },
+    {
+      "id": "1d",
+      "label": "일봉"
+    },
+    {
+      "id": "1w",
+      "label": "주봉"
+    },
+    {
+      "id": "1mo",
+      "label": "월봉"
+    }
+  ],
+  "provider_operations": [
+    {
+      "operation_ref": "KIS-039",
+      "api_name": "국내주식기간별시세(일/주/월/년)",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "tr_id": "FHKST03010100",
+      "provider_interval_codes": {
+        "1d": "D",
+        "1w": "W",
+        "1mo": "M",
+        "1y": "Y"
+      },
+      "max_rows_per_call": 100,
+      "request_fields": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_DATE_2",
+        "FID_PERIOD_DIV_CODE",
+        "FID_ORG_ADJ_PRC"
+      ],
+      "response_roots": [
+        "output1 object",
+        "output2 array"
+      ],
+      "sample_evidence": "Official helper requires start/end dates, a period code and adjusted/original-price selector; it documents up to 100 rows per call and maps OHLC, volume and accumulated trade amount fields.",
+      "canonical_support": "provider_interval_and_sample_mapping_confirmed; unit/scale, pagination, rights, actual response and runtime are still pending",
+      "price_adjustment": "The adjusted-versus-original-price request flag is explicit. Preserve the selected basis in the chart series and do not combine series with different bases."
+    },
+    {
+      "operation_ref": "KIS-022",
+      "api_name": "주식당일분봉조회",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice",
+      "tr_id": "FHKST03010200",
+      "max_rows_per_call": 30,
+      "history_scope": "current day only; previous-day minute bars are not provided by this operation",
+      "request_fields": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_HOUR_1",
+        "FID_PW_DATA_INCU_YN",
+        "FID_ETC_CLS_CODE"
+      ],
+      "venue_codes": {
+        "J": "KRX",
+        "NX": "NXT",
+        "UN": "integrated"
+      },
+      "sample_response_roots": [
+        "output1 object",
+        "output2 array"
+      ],
+      "sample_field_labels": [
+        "stck_bsop_date business date",
+        "stck_cntg_hour execution time",
+        "stck_oprc open",
+        "stck_hgpr high",
+        "stck_lwpr low",
+        "stck_prpr current price",
+        "cntg_vol execution volume",
+        "acml_tr_pbmn accumulated trade amount"
+      ],
+      "partial_bar_caveat": "Official helper warns that the first output2 row's volume may show the previous minute's value until the first trade for the current minute arrives; mark active bars incomplete and do not silently treat them as final.",
+      "interval_semantics": "The helper calls this a minute-bar API but does not state the exact minute interval in the reviewed sample; a 1-minute base interval remains pending.",
+      "canonical_support": "minute-series candidate; exact interval, field root mapping, units/timezone, rights, actual response and runtime pending"
+    },
+    {
+      "operation_ref": "KIS-213",
+      "api_name": "주식일별분봉조회",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice",
+      "tr_id": "FHKST03010230",
+      "max_rows_per_call": 120,
+      "history_scope": "helper says stored historical minute bars can be queried for up to one year; each response is bounded to 120 rows",
+      "request_fields": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_HOUR_1",
+        "FID_INPUT_DATE_1",
+        "FID_PW_DATA_INCU_YN",
+        "FID_FAKE_TICK_INCU_YN"
+      ],
+      "sample_response_roots": [
+        "output1 object",
+        "output2 array"
+      ],
+      "sample_field_labels": [
+        "stck_bsop_date business date",
+        "stck_cntg_hour execution time",
+        "stck_oprc open",
+        "stck_hgpr high",
+        "stck_lwpr low",
+        "stck_prpr current price",
+        "cntg_vol execution volume",
+        "acml_tr_pbmn accumulated trade amount"
+      ],
+      "paging": "The helper exposes date/time cursor inputs but does not implement a page loop; caller must use an explicit bounded cursor walk and validate overlap, duplicates and gaps.",
+      "interval_semantics": "The helper calls this a minute-bar API but does not state the exact minute interval in the reviewed sample; a 1-minute base interval remains pending.",
+      "canonical_support": "historical minute-series candidate; exact interval, field root mapping, units/timezone, rights, actual response and runtime pending"
+    }
+  ],
+  "interval_readiness": [
+    {
+      "interval_id": "1d",
+      "availability": "provider_candidate",
+      "source_operation_refs": [
+        "KIS-039"
+      ],
+      "activation_blockers": [
+        "exact response schema/runtime adapter",
+        "field unit and price-scale verification",
+        "rights and refresh policy",
+        "calendar/partial-finality policy",
+        "live result still unverified"
+      ]
+    },
+    {
+      "interval_id": "1w",
+      "availability": "provider_candidate",
+      "source_operation_refs": [
+        "KIS-039"
+      ],
+      "activation_blockers": [
+        "same blockers as 1d",
+        "period label and week boundary/calendar rules must be tested"
+      ]
+    },
+    {
+      "interval_id": "1mo",
+      "availability": "provider_candidate",
+      "source_operation_refs": [
+        "KIS-039"
+      ],
+      "activation_blockers": [
+        "same blockers as 1d",
+        "period label and month boundary/calendar rules must be tested"
+      ]
+    },
+    {
+      "interval_id": "5m",
+      "availability": "derived_candidate_not_implemented",
+      "source_operation_refs": [
+        "KIS-022",
+        "KIS-213"
+      ],
+      "derivation": "Aggregate verified consecutive base minute OHLCV observations into non-overlapping 5-minute session windows. Do not derive from daily bars.",
+      "activation_blockers": [
+        "base interval must be confirmed exactly",
+        "continuous coverage and KRX/NXT/unified session boundaries",
+        "provider timestamp timezone and interval start/end convention",
+        "volume and turnover semantics",
+        "missing-minute, holiday, halt and partial-bar rules",
+        "rights and runtime implementation"
+      ]
+    },
+    {
+      "interval_id": "1h",
+      "availability": "derived_candidate_not_implemented",
+      "source_operation_refs": [
+        "KIS-022",
+        "KIS-213"
+      ],
+      "derivation": "Aggregate verified consecutive base minute OHLCV observations into non-overlapping one-hour windows using the selected venue's trading calendar. Do not derive from daily bars.",
+      "activation_blockers": [
+        "base interval must be confirmed exactly",
+        "continuous coverage and session/calendar boundaries",
+        "provider timestamp timezone and interval start/end convention",
+        "volume and turnover semantics",
+        "missing-minute, holiday, halt and partial-bar rules",
+        "rights and runtime implementation"
+      ]
+    }
+  ],
+  "bar_contract": {
+    "raw_ohlc_candidates": [
+      "stck_oprc",
+      "stck_hgpr",
+      "stck_lwpr",
+      "stck_prpr"
+    ],
+    "raw_volume_candidates": [
+      "cntg_vol",
+      "acml_vol"
+    ],
+    "raw_turnover_candidates": [
+      "acml_tr_pbmn"
+    ],
+    "raw_date_time_candidates": [
+      "stck_bsop_date",
+      "stck_cntg_hour"
+    ],
+    "unit_and_currency": "Korean labels identify price/volume/amount concepts, but this sample does not define all scales, currency units or exact field root/type; do not cast or display normalized units until the portal response schema is bound.",
+    "provider_time": "Keep raw date and time as provider-local fields. Do not invent seconds, UTC offset or provider_as_of; record local received_at separately.",
+    "aggregation": {
+      "open": "first valid source open in the window",
+      "high": "maximum valid source high in the window",
+      "low": "minimum valid source low in the window",
+      "close": "last valid source close in the window",
+      "volume": "sum interval volumes only after base-bar semantics are verified; cumulative snapshots are not interval volumes",
+      "turnover": "Only aggregate verified interval trade amounts. If the provider supplies a cumulative amount such as acml_tr_pbmn, difference consecutive complete observations within the same session; block on gaps, resets, or uncertain snapshots. Never sum cumulative rows or substitute close × volume."
+    },
+    "gaps_and_finality": [
+      "Do not synthesize missing minutes or interpolate OHLC, volume or turnover.",
+      "Do not merge across venue/session boundaries, halts, holidays or trading-day transitions without a verified calendar rule.",
+      "Mark the active candle incomplete. If the source returns stale volume for an untraded bar, show the provider caveat and do not treat it as zero or final.",
+      "If the requested interval lacks complete data, disable that chart toggle and show the missing-range reason."
+    ]
+  },
+  "moving_average_contract": {
+    "calculation": "deterministic SMA over the selected price basis and selected interval; preserve source rows, window, warm-up and lineage",
+    "overlay_controls": "toggle, visible legend, period and price-basis labels",
+    "default_periods": {
+      "values_proposed_only": [
+        5,
+        20,
+        60,
+        120
+      ],
+      "user_confirmed": false
+    },
+    "warmup": "Do not display an SMA until a full valid observation window is available; do not fill missing bars.",
+    "interval_alignment": "Each SMA uses bars from the currently selected interval and price-adjustment basis only; do not mix intervals or adjusted and original prices.",
+    "legend": "Legend names the SMA window, selected interval, price basis, and value status."
+  },
+  "offline_and_refresh_behavior": {
+    "embedded_html": "Chart controls may switch only among series embedded in that HTML.",
+    "unavailable_interval": "Disable the control and state the missing coverage/verification reason.",
+    "additional_fetch": "A user-selected range may trigger an explicit bounded read after entitlement/rights gates; interval-toggle interaction alone must not imply a new live fetch.",
+    "cache": "no product TTL chosen; current prototype cache disabled",
+    "runtime_status": "no KIS request, parser, or chart gallery changes made in this extension"
+  },
+  "rights_and_security": {
+    "KIS_market_data_rights": "pending, separate for local personal display, model-host egress, storage, student ZIP and redistribution",
+    "credentials": "stay in the user-local adapter; never pass in MCP tool arguments or HTML",
+    "orders_transfers_auto_trading": false,
+    "public_data_reuse": "not approved by code license or API sample availability"
+  },
+  "tests_required_before_enablement": [
+    "Parse official raw schemas and confirm exact fields, type, unit, adjustment basis, time zone, root, row order and pagination.",
+    "Fixture tests for each period code and minute endpoint; label fixtures synthetic and keep separate from live runs.",
+    "Aggregation tests for open/high/low/close, volume/turnover, empty intervals, missing bars, duplicates, session breaks, holidays, halts and incomplete current bars.",
+    "SMA tests for full warm-up, overlay toggle and lineage over each interval and price basis.",
+    "Mobile chart-toggle and offline embedded-series render tests are report-owner work and are not done in this provider task.",
+    "No real-data HTML sample until a separately authorized request, access and rights review, then one bounded read with no retry."
+  ],
+  "chart_view_contract": {
+    "interval_controls": [
+      "5m",
+      "1h",
+      "1d",
+      "1w",
+      "1mo"
+    ],
+    "embedded_html_behavior": "Interval selection switches only among validated series embedded in the HTML; it does not silently initiate network requests.",
+    "volume_and_turnover": "Show trading volume and transaction amount as separate series/units and do not conflate shares/contracts with currency amount. For daily-period API, distinguish daily volume from cumulative/intraday amount fields.",
+    "moving_averages": "SMA overlay toggle and visible legend; labels include window, interval and adjusted/original price basis. Recompute from that interval only after its bars are validated.",
+    "proposed_defaults_only": {
+      "sma_windows": [
+        5,
+        20,
+        60,
+        120
+      ],
+      "user_confirmed": false
+    },
+    "unavailable_range": "Disable the interval toggle when complete source coverage is unavailable and show the specific reason; do not synthesize a bar or backfill from a coarser interval."
+  },
+  "consumer_v13_reconciliation": {
+    "reviewed_on": "2026-10-22",
+    "consumer_owner_files_read_only": true,
+    "report_html_modified": false,
+    "source": {
+      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
+      "sha256": "cfc73f39eb2cb22a357e71216d573b5bc56cbe43cbd553e3f8c84f99d4f5f7d4",
+      "contract_id": "goose.R01.OHLCV-consumer/0.1-v13"
+    },
+    "consumer_timeframes": {
+      "m5": "maps to supplier interval 5m; V13 data is a separate synthetic 5-minute series, not evidence of a KIS 5-minute endpoint.",
+      "h1": "maps to supplier interval 1h; V13 synthetic H1 aggregates 12 five-minute bars in one synthetic session. KIS minute endpoint cadence remains unconfirmed, so no provider H1 projection.",
+      "day": "maps to supplier interval 1d; consumer references KIS-039 candidate rows, but provider normalization remains blocked by adjustment, scale/unit, rights, calendar and live checks.",
+      "week": "maps to supplier interval 1w; V13 synthetic aggregation groups ISO Mondays. Production grouping needs verified exchange calendar, holidays and session rules.",
+      "month": "maps to supplier interval 1mo; V13 synthetic aggregation uses calendar months. Production grouping needs verified exchange calendar and finality rules."
+    },
+    "volume_turnover_reconciliation": {
+      "consumer_fixture_volume_unit": "shares (synthetic fixture only)",
+      "consumer_fixture_turnover_unit": "million KRW (synthetic fixture only)",
+      "consumer_fixture_turnover_formula": "close multiplied by volume, only to construct synthetic examples",
+      "provider_rule": "Never use close×volume as a substitute for provider turnover; KIS amount unit/scale must be verified. Keep volume and turnover as separate series and units."
+    },
+    "moving_average_reconciliation": {
+      "consumer_existing_default": [
+        20
+      ],
+      "consumer_proposed_periods": [
+        5,
+        20,
+        60,
+        120
+      ],
+      "provider_user_confirmation": false,
+      "rule": "SMA inputs must be valid, consecutive bars of the selected interval and same verified adjusted/original price basis; current provider contract has no chart runtime adapter."
+    },
+    "live_projection": "false; offline synthetic examples only",
+    "sources": [
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
+        "sha256": "cfc73f39eb2cb22a357e71216d573b5bc56cbe43cbd553e3f8c84f99d4f5f7d4",
+        "contract_id": "goose.R01.OHLCV-consumer/0.1-v13"
+      },
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/Goose_R01_가격캔들거래량_통합검증_v13.html",
+        "sha256": "d0761539bc6b32abd52f25b8237d9b6f5011d01c49082d79f99d8328523233ce",
+        "read_only_markers_found": [
+          "m5",
+          "h1",
+          "week",
+          "month"
+        ],
+        "data_status": "synthetic per V13 README"
+      },
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/Goose_차트_실행갤러리_v13.html",
+        "sha256": "49927cfc063a3247449ed5d0717a1475ccf48d9889b8ba831d18d5a392263f32",
+        "read_only_markers_found": [
+          "m5",
+          "h1",
+          "week",
+          "month"
+        ],
+        "data_status": "synthetic per V13 README"
+      }
+    ],
+    "gaps": [
+      "V13 m5 series and its H1 aggregation are synthetic; KIS-022 current-day and KIS-213 historical minute APIs do not establish the exact base interval or live continuity.",
+      "V13 H1 equals 12 synthetic five-minute bars in one synthetic session. This is not evidence that the provider emits 5m bars or that live 1h aggregation is valid.",
+      "V13 week/month series are grouped locally from synthetic daily rows by ISO Monday/calendar month. KIS-039 also has W/M provider candidates; direct-versus-local equivalence, exchange calendar and finality are not verified.",
+      "V13 close×volume turnover is fixture construction only. KIS acml_tr_pbmn amount unit/scale and minute cumulative-versus-interval semantics remain unresolved.",
+      "Report-owner rendering, responsive controls and actual browser behavior are owner evidence; this supplier task did not modify or rerun their HTML QA."
+    ]
+  }
+}

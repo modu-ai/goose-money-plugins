@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.financial.report-fact-handoff.v1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "synthetic_fact_ready",
+        "fact_ready_under_external_trusted_verifier"
+      ]
+    },
+    "fact": {},
+    "verification": {
+      "type": "object",
+      "properties": {
+        "input_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "adapter_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "pattern": "^[A-Za-z0-9_.:-]+$"
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "synthetic_test_only",
+            "external_trusted_verification"
+          ]
+        },
+        "verified_at": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "assurance": {
+          "type": "string",
+          "const": "trusted_adapter_attestation_not_independent_host_authentication"
+        },
+        "confirmed": {
+          "type": "object",
+          "properties": {
+            "source_authenticity": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "rights": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "identity": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "semantic_role": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "unit_scale_currency": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "period": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "accounting_basis": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "publication_availability": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "coverage_finality": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            },
+            "revision_split": {
+              "minItems": 1,
+              "maxItems": 32,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              }
+            }
+          },
+          "required": [
+            "source_authenticity",
+            "rights",
+            "identity",
+            "semantic_role",
+            "unit_scale_currency",
+            "period",
+            "accounting_basis",
+            "publication_availability",
+            "coverage_finality",
+            "revision_split"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "input_sha256",
+        "adapter_id",
+        "mode",
+        "verified_at",
+        "assurance",
+        "confirmed"
+      ],
+      "additionalProperties": false
+    },
+    "lineage": {},
+    "rights": {},
+    "inputs": {
+      "type": "object",
+      "properties": {
+        "candidate": {},
+        "binding": {}
+      },
+      "required": [
+        "candidate",
+        "binding"
+      ],
+      "additionalProperties": false
+    },
+    "report_runtime": {},
+    "warnings": {}
+  },
+  "required": [
+    "contract",
+    "status",
+    "fact",
+    "verification",
+    "lineage",
+    "rights",
+    "inputs",
+    "report_runtime",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

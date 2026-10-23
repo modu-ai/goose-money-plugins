@@ -1,0 +1,508 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.financial.fact-binding.v1"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "reported.revenue",
+        "reported.operating_profit",
+        "reported.net_income_total",
+        "reported.net_income_common",
+        "reported.cfo",
+        "reported.capex",
+        "reported.debt",
+        "reported.cash",
+        "reported.equity",
+        "reported.liabilities",
+        "reported.equity_common_open",
+        "reported.equity_common_close",
+        "reported.shares_weighted"
+      ]
+    },
+    "provider_issuer_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "issuer_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "security_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "share_class": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "venue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "population": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "required": [
+        "issuer_id",
+        "security_id",
+        "share_class",
+        "venue",
+        "population"
+      ],
+      "additionalProperties": false
+    },
+    "unit": {
+      "type": "object",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^(?:[A-Z]{3}|not_applicable)$"
+        },
+        "scale": {
+          "type": "string",
+          "maxLength": 26,
+          "pattern": "^(?:10{0,12}|0\\.0{0,11}1)$"
+        },
+        "source_currency_interpretation": {
+          "type": "string",
+          "enum": [
+            "quantity_currency",
+            "statement_currency_not_quantity_unit"
+          ]
+        }
+      },
+      "required": [
+        "currency",
+        "scale",
+        "source_currency_interpretation"
+      ],
+      "additionalProperties": false
+    },
+    "basis": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "string",
+          "enum": [
+            "consolidated",
+            "standalone"
+          ]
+        },
+        "standard": {
+          "type": "string",
+          "enum": [
+            "US-GAAP",
+            "IFRS",
+            "K-IFRS",
+            "K-GAAP"
+          ]
+        },
+        "revision_basis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "split_basis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "methodology_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "cash_sign": {
+          "type": "string",
+          "const": "positive_outflow"
+        },
+        "lease_cash_payments": {
+          "type": "string",
+          "enum": [
+            "included",
+            "excluded"
+          ]
+        },
+        "acquisition_cash_payments": {
+          "type": "string",
+          "enum": [
+            "included",
+            "excluded"
+          ]
+        },
+        "lease_liabilities": {
+          "type": "string",
+          "enum": [
+            "included",
+            "excluded"
+          ]
+        }
+      },
+      "required": [
+        "scope",
+        "standard",
+        "revision_basis",
+        "split_basis",
+        "methodology_id"
+      ],
+      "additionalProperties": false
+    },
+    "period": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "FY",
+            "TTM",
+            "quarter",
+            "YTD",
+            "instant"
+          ]
+        },
+        "start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        }
+      },
+      "required": [
+        "kind",
+        "start",
+        "end",
+        "label"
+      ],
+      "additionalProperties": false
+    },
+    "date_timezone": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "published_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "available_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "publication_basis": {
+      "type": "string",
+      "const": "explicit_publication_evidence_not_receipt_or_acceptance_substitution"
+    },
+    "finality": {
+      "type": "string",
+      "const": "final"
+    },
+    "coverage": {
+      "type": "string",
+      "const": "complete_selected_fact_not_complete_api_collection"
+    },
+    "document_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "revision_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "value_source_artifact_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "rights": {
+      "type": "object",
+      "properties": {
+        "purpose": {
+          "type": "string",
+          "const": "private_owner_research_report"
+        },
+        "valid_from": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "valid_until": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "purpose",
+        "valid_from",
+        "valid_until"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "source_authenticity": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "rights": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "identity": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "semantic_role": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "unit_scale_currency": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "period": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "accounting_basis": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "publication_availability": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "coverage_finality": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        },
+        "revision_split": {
+          "minItems": 1,
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          }
+        }
+      },
+      "required": [
+        "source_authenticity",
+        "rights",
+        "identity",
+        "semantic_role",
+        "unit_scale_currency",
+        "period",
+        "accounting_basis",
+        "publication_availability",
+        "coverage_finality",
+        "revision_split"
+      ],
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "minItems": 2,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "data_kind": {
+            "type": "string",
+            "enum": [
+              "actual",
+              "synthetic"
+            ]
+          },
+          "digest_kind": {
+            "type": "string",
+            "enum": [
+              "original_bytes",
+              "review_record",
+              "synthetic_fixture"
+            ]
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "snapshot": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "enum": [
+                      "financial",
+                      "filings"
+                    ]
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "received_at": {
+                    "type": "string",
+                    "maxLength": 80,
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  }
+                },
+                "required": [
+                  "name",
+                  "sha256",
+                  "received_at"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "data_kind",
+          "digest_kind",
+          "sha256",
+          "locator",
+          "snapshot"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "role",
+    "provider_issuer_id",
+    "identity",
+    "unit",
+    "basis",
+    "period",
+    "date_timezone",
+    "published_at",
+    "available_at",
+    "publication_basis",
+    "finality",
+    "coverage",
+    "document_id",
+    "revision_id",
+    "value_source_artifact_id",
+    "rights",
+    "evidence",
+    "artifacts"
+  ],
+  "additionalProperties": false
+}

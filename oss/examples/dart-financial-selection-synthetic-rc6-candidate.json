@@ -1,0 +1,295 @@
+{
+  "contract": "moai.financial.selected-evidence-candidate.v1",
+  "status": "selected_evidence_candidate_only",
+  "origin": "synthetic",
+  "cutoff": "2026-10-22T00:00:00.123456789Z",
+  "calendar_guard": {
+    "timezone": "UTC",
+    "cutoff_local_date": "2026-10-22",
+    "status": "caller_selected_timezone_not_source_verified"
+  },
+  "requested_role": "reported.revenue",
+  "role_association_status": "unverified_caller_request",
+  "semantic_binding_verified": false,
+  "canonical_fact": null,
+  "published_at": null,
+  "available_at": null,
+  "rights_status": "pending",
+  "unit_scale": null,
+  "accounting_basis": null,
+  "finality": "unknown",
+  "coverage_complete": false,
+  "selection_policy": "exact_caller_selector_no_latest_or_restatement_inference",
+  "constituent_receipt_latest": "2026-10-22T00:00:00.123456789Z",
+  "receipt_status": "constituent_dto_receipts_checked_not_publication_times",
+  "mapping_blockers": [
+    "source_authenticity_not_independently_verified",
+    "security_identity_not_verified",
+    "semantic_role_binding_not_verified",
+    "unit_scale_currency_and_accounting_basis_not_verified",
+    "publication_availability_not_verified",
+    "complete_coverage_finality_and_revision_choice_not_verified",
+    "rights_pending"
+  ],
+  "warnings": [
+    "This is selected provider evidence, not a canonical fact or authenticated source.",
+    "Requested reported.* role association is unverified. No computation, conversion, scaling, aggregation, semantic binding or rights clearance occurs.",
+    "Snapshot SHA256 identifies a validated DTO serialized with sorted object keys, not an original HTTP response, signature or authenticated provenance.",
+    "Caller calendar choice is explicit but unverified. Date labels and SEC acceptance timestamps do not establish public availability.",
+    "Exact uniqueness is local to supplied bounded snapshots, never proof of complete filing history or latest/restated selection.",
+    "Downstream canonical-engine validation is not source authentication or independent verification of rights, identity, units or semantic binding."
+  ],
+  "provider": "opendart",
+  "selector": {
+    "corp_code": "00000001",
+    "bsns_year": "2025",
+    "reprt_code": "11012",
+    "fs_div": "CFS",
+    "rcept_no": "20250814000001",
+    "sj_div": "IS",
+    "account_id": "ifrs-full_Revenue",
+    "account_nm": "Synthetic revenue",
+    "account_detail": "",
+    "ord": "1",
+    "currency": "USD",
+    "amount_kind": "current",
+    "period_label": "Synthetic current label",
+    "filing": {
+      "rcept_dt": "20250814",
+      "report_nm": "Synthetic half-year statement",
+      "corp_cls": "K",
+      "stock_code": "000001"
+    }
+  },
+  "issuer": {
+    "corp_code": "00000001",
+    "status": "supplied_dto_corp_code_join_only_not_security_identity"
+  },
+  "selected": {
+    "row": {
+      "raw": {
+        "rcept_no": "20250814000001",
+        "reprt_code": "11012",
+        "bsns_year": "2025",
+        "corp_code": "00000001",
+        "sj_div": "IS",
+        "sj_nm": "Synthetic income statement",
+        "account_id": "ifrs-full_Revenue",
+        "account_nm": "Synthetic revenue",
+        "account_detail": "",
+        "thstrm_nm": "Synthetic current label",
+        "thstrm_amount": "+9,007,199,254,740,993.2500",
+        "thstrm_add_amount": "18,000,000,000,000,000.50",
+        "frmtrm_amount": "  ",
+        "frmtrm_q_nm": "Synthetic comparable label",
+        "frmtrm_q_amount": "-100.750",
+        "frmtrm_add_amount": "0.00",
+        "ord": "1",
+        "currency": "USD"
+      },
+      "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001",
+      "fs_div": "CFS",
+      "current_period_kind": "three_months",
+      "amounts": {
+        "current": {
+          "state": "value",
+          "raw": "+9,007,199,254,740,993.2500",
+          "decimal": "+9007199254740993.2500"
+        },
+        "current_cumulative": {
+          "state": "value",
+          "raw": "18,000,000,000,000,000.50",
+          "decimal": "18000000000000000.50"
+        },
+        "prior": {
+          "state": "blank",
+          "raw": "  "
+        },
+        "prior_comparable": {
+          "state": "value",
+          "raw": "-100.750",
+          "decimal": "-100.750"
+        },
+        "prior_cumulative": {
+          "state": "value",
+          "raw": "0.00",
+          "decimal": "0.00"
+        },
+        "two_years_prior": {
+          "state": "missing"
+        }
+      }
+    },
+    "filing": {
+      "raw": {
+        "corp_cls": "K",
+        "corp_name": "SYNTHETIC ONLY",
+        "corp_code": "00000001",
+        "stock_code": "000001",
+        "report_nm": "Synthetic half-year statement",
+        "rcept_no": "20250814000001",
+        "flr_nm": "Synthetic filer",
+        "rcept_dt": "20250814",
+        "rm": ""
+      },
+      "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001"
+    },
+    "amount_kind": "current",
+    "amount_field": "thstrm_amount",
+    "amount": {
+      "state": "value",
+      "raw": "+9,007,199,254,740,993.2500",
+      "decimal": "+9007199254740993.2500"
+    },
+    "period_label_field": "thstrm_nm",
+    "period_label": "Synthetic current label",
+    "period_start": null,
+    "period_end": null,
+    "period_status": "provider_label_only_no_calendar_endpoints_inferred",
+    "provider_current_period_kind": "three_months",
+    "current_period_kind_applies_to": "current_amount_only_not_cumulative"
+  },
+  "coverage": {
+    "statement_rows_supplied": 1,
+    "statement_completeness": "not_established",
+    "page_no": 1,
+    "page_count": 1,
+    "total_count": 2,
+    "total_page": 2,
+    "has_more": true,
+    "next_page_no": 2,
+    "last_reprt_at": "N",
+    "previous_pages_status": "not_supplied_or_verified",
+    "complete": false
+  },
+  "snapshots": {
+    "financial": {
+      "sha256": "533160c199a05607088b5a57d98075fa926255cdb3d527b4dca915f1a912ff29",
+      "hash_scope": "validated_provider_dto_snapshot",
+      "hash_algorithm": "sha256",
+      "serialization": "sorted_object_keys_json_utf8_v1",
+      "original_http_body_hash": null,
+      "received_at": "2026-10-22T00:00:00.123456789Z",
+      "value": {
+        "status": "ok",
+        "provider_status": "000",
+        "request": {
+          "corp_code": "00000001",
+          "bsns_year": "2025",
+          "reprt_code": "11012",
+          "fs_div": "CFS"
+        },
+        "provenance": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T00:00:00.123456789Z"
+        },
+        "source": "opendart",
+        "documentation": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS003&apiId=2019020",
+        "rows": [
+          {
+            "raw": {
+              "rcept_no": "20250814000001",
+              "reprt_code": "11012",
+              "bsns_year": "2025",
+              "corp_code": "00000001",
+              "sj_div": "IS",
+              "sj_nm": "Synthetic income statement",
+              "account_id": "ifrs-full_Revenue",
+              "account_nm": "Synthetic revenue",
+              "account_detail": "",
+              "thstrm_nm": "Synthetic current label",
+              "thstrm_amount": "+9,007,199,254,740,993.2500",
+              "thstrm_add_amount": "18,000,000,000,000,000.50",
+              "frmtrm_amount": "  ",
+              "frmtrm_q_nm": "Synthetic comparable label",
+              "frmtrm_q_amount": "-100.750",
+              "frmtrm_add_amount": "0.00",
+              "ord": "1",
+              "currency": "USD"
+            },
+            "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001",
+            "fs_div": "CFS",
+            "current_period_kind": "three_months",
+            "amounts": {
+              "current": {
+                "state": "value",
+                "raw": "+9,007,199,254,740,993.2500",
+                "decimal": "+9007199254740993.2500"
+              },
+              "current_cumulative": {
+                "state": "value",
+                "raw": "18,000,000,000,000,000.50",
+                "decimal": "18000000000000000.50"
+              },
+              "prior": {
+                "state": "blank",
+                "raw": "  "
+              },
+              "prior_comparable": {
+                "state": "value",
+                "raw": "-100.750",
+                "decimal": "-100.750"
+              },
+              "prior_cumulative": {
+                "state": "value",
+                "raw": "0.00",
+                "decimal": "0.00"
+              },
+              "two_years_prior": {
+                "state": "missing"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "filings": {
+      "sha256": "976a7a90045955b1bdc4912a79637d325b12b6de450dbb2143dea0738eedc9d4",
+      "hash_scope": "validated_provider_dto_snapshot",
+      "hash_algorithm": "sha256",
+      "serialization": "sorted_object_keys_json_utf8_v1",
+      "original_http_body_hash": null,
+      "received_at": "2026-10-22T00:00:00.123456789Z",
+      "value": {
+        "source": "opendart",
+        "documentation": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001",
+        "status": "ok",
+        "provider_status": "000",
+        "request": {
+          "corp_code": "00000001",
+          "bgn_de": "20250101",
+          "end_de": "20261231",
+          "last_reprt_at": "N",
+          "sort": "date",
+          "sort_mth": "desc",
+          "page_no": 1,
+          "page_count": 1
+        },
+        "provenance": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T00:00:00.123456789Z"
+        },
+        "total_count": 2,
+        "total_page": 2,
+        "next_page_no": 2,
+        "has_more": true,
+        "rows": [
+          {
+            "raw": {
+              "corp_cls": "K",
+              "corp_name": "SYNTHETIC ONLY",
+              "corp_code": "00000001",
+              "stock_code": "000001",
+              "report_nm": "Synthetic half-year statement",
+              "rcept_no": "20250814000001",
+              "flr_nm": "Synthetic filer",
+              "rcept_dt": "20250814",
+              "rm": ""
+            },
+            "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001"
+          }
+        ]
+      }
+    }
+  }
+}

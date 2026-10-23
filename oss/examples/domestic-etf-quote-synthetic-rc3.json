@@ -1,0 +1,48 @@
+{
+  "contract": "moai.stock.domestic-etf-quote.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "source_time_status": "not_returned_by_reviewed_quote_contract",
+  "rights_status": "pending",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "canonical_projection_status": "blocked",
+  "mapping_blockers": [
+    "returned_instrument_code_missing",
+    "etf_versus_etn_classification_not_verified",
+    "price_nav_net_assets_currency_and_units_not_reconciled",
+    "nav_and_tracking_metric_methodology_not_verified"
+  ],
+  "warnings": [
+    "This is the dedicated ETF/ETN price and NAV endpoint, not a verified ETF holdings or composition feed.",
+    "The requested symbol and response classification strings are not an authoritative ETF identity binding.",
+    "crcd is preserved as a raw provider code; it is not assumed to denominate every price, NAV or asset-total field.",
+    "No live, delayed, session, timezone or freshness claim is inferred."
+  ],
+  "symbol_from_request": "069500",
+  "board_from_request": "J",
+  "identity_status": "no_returned_instrument_code",
+  "coverage": "dedicated_etf_etn_price_nav_not_holdings",
+  "raw": {
+    "stck_prpr": "100",
+    "nav": "101.23"
+  },
+  "canonical": {
+    "instrument_id": null,
+    "asset_class": null,
+    "currency": null,
+    "last_price": null,
+    "nav": null,
+    "previous_nav": null,
+    "nav_change": null,
+    "nav_change_percent": null,
+    "tracking_error": null,
+    "premium_discount": null,
+    "net_assets": null,
+    "volume": null,
+    "price_unit": null,
+    "nav_unit": null,
+    "net_assets_unit": null
+  }
+}

@@ -1,0 +1,775 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.us-daily-history.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "available_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "event_time": {
+      "type": "null"
+    },
+    "published_at": {
+      "type": "null"
+    },
+    "source_timezone": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "provider_bar_labels_not_verified_instants"
+    },
+    "rights_status": {
+      "type": "string",
+      "enum": [
+        "pending"
+      ]
+    },
+    "session": {
+      "type": "string",
+      "enum": [
+        "unknown"
+      ]
+    },
+    "delay_state": {
+      "type": "string",
+      "enum": [
+        "unknown"
+      ]
+    },
+    "finality": {
+      "type": "string",
+      "enum": [
+        "unknown"
+      ]
+    },
+    "freshness": {
+      "type": "string",
+      "enum": [
+        "unknown"
+      ]
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "completeness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "pages_fetched": {
+          "type": "number",
+          "const": 1
+        },
+        "tr_cont": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "",
+                "D",
+                "E",
+                "M",
+                "F"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "more_signaled_not_fetched",
+            "not_signaled_completeness_unknown"
+          ]
+        },
+        "automatic_continuation": {
+          "type": "boolean",
+          "const": false
+        },
+        "completeness": {
+          "type": "string",
+          "const": "unknown"
+        }
+      },
+      "required": [
+        "pages_fetched",
+        "tr_cont",
+        "status",
+        "automatic_continuation",
+        "completeness"
+      ],
+      "additionalProperties": false
+    },
+    "bars_returned": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "coverage_status": {
+      "type": "string",
+      "enum": [
+        "empty_page_not_proof_of_absence",
+        "single_page_not_complete_history"
+      ]
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "asset_class": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "adjusted": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "volume_unit": {
+          "type": "null"
+        },
+        "turnover_unit": {
+          "type": "null"
+        },
+        "bars": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "asset_class",
+        "currency",
+        "adjusted",
+        "price_unit",
+        "volume_unit",
+        "turnover_unit",
+        "bars"
+      ],
+      "additionalProperties": false
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "unimplemented_derivations": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "warnings": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "requested": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "maxLength": 16,
+          "pattern": "^[A-Z][A-Z0-9]*(?:[.-][A-Z0-9]+)*$"
+        },
+        "exchange": {
+          "type": "string",
+          "enum": [
+            "NAS",
+            "NYS",
+            "AMS"
+          ]
+        },
+        "basis_date": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "adjustment_code": {
+          "type": "string",
+          "enum": [
+            "0",
+            "1"
+          ]
+        },
+        "asset_class": {
+          "type": "string",
+          "enum": [
+            "stock",
+            "etf"
+          ]
+        }
+      },
+      "required": [
+        "symbol",
+        "exchange",
+        "basis_date",
+        "adjustment_code"
+      ],
+      "additionalProperties": false
+    },
+    "interval": {
+      "type": "string",
+      "const": "1d"
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "conservative_rsym_guard_matched_not_master_verified"
+    },
+    "adjustment_status": {
+      "type": "string",
+      "const": "request_flag_preserved_returned_basis_unverified"
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "output1": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rsym": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 24,
+                  "pattern": "^[A-Z0-9.-]+$"
+                },
+                "zdiv": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^\\d{1,2}$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "nrec": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "rsym"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "rsym": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24,
+                      "pattern": "^[A-Z0-9.-]+$"
+                    },
+                    "zdiv": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "pattern": "^\\d{1,2}$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "nrec": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 40,
+                          "pattern": "^\\d+(?:\\.\\d+)?$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "rsym"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "items": false,
+              "minItems": 1,
+              "maxItems": 1
+            }
+          ]
+        },
+        "output2": {
+          "anyOf": [
+            {
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "xymd": {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  "clos": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "open": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "high": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "low": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "tvol": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 30,
+                        "pattern": "^\\d+$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "tamt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "sign": {
+                    "type": "string",
+                    "maxLength": 4
+                  },
+                  "diff": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "rate": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "pbid": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "vbid": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 30,
+                        "pattern": "^\\d+$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "pask": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "vask": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 30,
+                        "pattern": "^\\d+$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "xymd",
+                  "clos",
+                  "open",
+                  "high",
+                  "low",
+                  "tvol"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "xymd": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                "clos": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "open": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "high": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "low": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "tvol": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "tamt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "sign": {
+                  "type": "string",
+                  "maxLength": 4
+                },
+                "diff": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "rate": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "pbid": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "vbid": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "pask": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "vask": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "xymd",
+                "clos",
+                "open",
+                "high",
+                "low",
+                "tvol"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "output1",
+        "output2"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "available_at",
+    "source_as_of",
+    "event_time",
+    "published_at",
+    "source_timezone",
+    "source_time_status",
+    "rights_status",
+    "session",
+    "delay_state",
+    "finality",
+    "freshness",
+    "validation_status",
+    "completeness",
+    "pagination",
+    "bars_returned",
+    "coverage_status",
+    "canonical_projection_status",
+    "canonical",
+    "mapping_blockers",
+    "unimplemented_derivations",
+    "warnings",
+    "requested",
+    "interval",
+    "identity_status",
+    "adjustment_status",
+    "raw"
+  ],
+  "additionalProperties": false
+}

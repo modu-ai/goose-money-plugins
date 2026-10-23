@@ -1,0 +1,912 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moai.example/schemas/kis-api-mapping-v1.schema.json",
+  "title": "MoAI Stock KIS provider mapping contract",
+  "description": "Schema for MCP-owned KIS/OpenDART mapping and R01 chart provider binding. Draft; not a runtime tool schema.",
+  "type": "object",
+  "required": [
+    "catalog_id",
+    "catalog_commit",
+    "catalog_scope",
+    "counts",
+    "auth_hosts",
+    "authentication",
+    "operations",
+    "not_exposed",
+    "rate_limits",
+    "source_urls",
+    "mapping_version",
+    "r01_provider_field_review",
+    "r01_chart_provider_binding"
+  ],
+  "properties": {
+    "catalog_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "catalog_commit": {
+      "const": "2077773a69a428daf63e148182511f068cc45de3"
+    },
+    "catalog_scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "counts": {
+      "type": "object"
+    },
+    "auth_hosts": {
+      "type": "object"
+    },
+    "authentication": {
+      "type": "object"
+    },
+    "operations": {
+      "type": "array"
+    },
+    "not_exposed": {
+      "type": "object"
+    },
+    "rate_limits": {
+      "type": "object"
+    },
+    "source_urls": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    },
+    "mapping_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "r01_provider_field_review": {
+      "type": "object",
+      "required": [
+        "review_id",
+        "version",
+        "reviewed_on",
+        "source_consumer_registry",
+        "scope",
+        "review_classes",
+        "provider_profiles",
+        "evidence_sources",
+        "field_mappings",
+        "test_status"
+      ],
+      "properties": {
+        "review_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "source_consumer_registry": {
+          "type": "object"
+        },
+        "scope": {
+          "type": "object"
+        },
+        "review_classes": {
+          "type": "object"
+        },
+        "provider_profiles": {
+          "type": "array"
+        },
+        "evidence_sources": {
+          "type": "array"
+        },
+        "field_mappings": {
+          "type": "array"
+        },
+        "test_status": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "r01_chart_provider_binding": {
+      "type": "object",
+      "required": [
+        "binding_id",
+        "version",
+        "reviewed_on",
+        "status",
+        "consumer_sources",
+        "supplier_registry_binding",
+        "catalog_scope",
+        "scope",
+        "counts",
+        "scope_and_nonclaims",
+        "provider_policy",
+        "provider_operation_crosswalk",
+        "opendart_operation_crosswalk",
+        "domestic_ksd_action_candidates",
+        "requirements",
+        "field_bindings",
+        "test_evidence",
+        "source_refs"
+      ],
+      "properties": {
+        "binding_id": {
+          "const": "R01-chart-provider-binding-v1"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewed_on": {
+          "type": "string",
+          "format": "date"
+        },
+        "status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consumer_sources": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "sha256",
+              "contract_id",
+              "version",
+              "modified_by_provider_owner"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "contract_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "modified_by_provider_owner": {
+                "const": false
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "supplier_registry_binding": {
+          "type": "object",
+          "required": [
+            "path",
+            "registry_id",
+            "version",
+            "sha256",
+            "modified_by_provider_owner"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "registry_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "version": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "modified_by_provider_owner": {
+              "type": "boolean",
+              "description": "True when this MCP owner has updated its own supplier registry in the current provider-mapping revision; consumer_sources remain immutable and are constrained false."
+            }
+          },
+          "additionalProperties": true
+        },
+        "catalog_scope": {
+          "type": "object"
+        },
+        "scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consumer_global_contract_counts": {
+          "type": "object"
+        },
+        "counts": {
+          "type": "object",
+          "required": [
+            "standard_requirements",
+            "supplemental_requirements",
+            "total_requirements",
+            "unique_chart_input_fields",
+            "unique_required_fields",
+            "unique_expanded_dependencies",
+            "input_contract_rows_with_repeats",
+            "candidate_source_refs_with_repeats",
+            "fields_with_any_candidate_source_ref",
+            "fields_with_no_exact_provider_binding"
+          ],
+          "properties": {
+            "standard_requirements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "supplemental_requirements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "total_requirements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unique_chart_input_fields": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unique_required_fields": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unique_expanded_dependencies": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "input_contract_rows_with_repeats": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "candidate_source_refs_with_repeats": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fields_with_any_candidate_source_ref": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fields_with_no_exact_provider_binding": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": true
+        },
+        "scope_and_nonclaims": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "provider_policy": {
+          "type": "object"
+        },
+        "provider_operation_crosswalk": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "operation_ref",
+              "provider",
+              "catalog_id",
+              "catalog_commit",
+              "method",
+              "endpoint",
+              "tr_id",
+              "asset_scope",
+              "request_fields",
+              "sample_output_shape",
+              "sample_field_names_enumerated",
+              "provider_evidence_state",
+              "evidence_url",
+              "authentication",
+              "rate_limit",
+              "cache_refresh",
+              "errors",
+              "test_status"
+            ],
+            "properties": {
+              "operation_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider": {
+                "const": "KIS"
+              },
+              "catalog_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "catalog_commit": {
+                "const": "2077773a69a428daf63e148182511f068cc45de3"
+              },
+              "method": {
+                "const": "GET"
+              },
+              "endpoint": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tr_id": {
+                "type": "object",
+                "required": [
+                  "real",
+                  "paper"
+                ],
+                "properties": {
+                  "real": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "paper": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              "asset_scope": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "request_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "sample_output_shape": {
+                "type": "object"
+              },
+              "sample_field_names_enumerated": {
+                "type": "boolean"
+              },
+              "provider_evidence_state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "evidence_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "authentication": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rate_limit": {
+                "type": "object"
+              },
+              "cache_refresh": {
+                "type": "object"
+              },
+              "errors": {
+                "type": "object"
+              },
+              "test_status": {
+                "type": "object"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "opendart_operation_crosswalk": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "operation_ref",
+              "provider",
+              "method",
+              "endpoint",
+              "request_fields",
+              "guide_url",
+              "provider_evidence_state",
+              "limitations"
+            ],
+            "properties": {
+              "operation_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider": {
+                "const": "OpenDART"
+              },
+              "method": {
+                "const": "GET"
+              },
+              "endpoint": {
+                "type": "string",
+                "minLength": 1
+              },
+              "request_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "guide_url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "provider_evidence_state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "domestic_ksd_action_candidates": {
+          "type": "object",
+          "required": [
+            "applicable_scope",
+            "candidate_endpoints",
+            "binding_state",
+            "restriction"
+          ],
+          "properties": {
+            "applicable_scope": {
+              "type": "string",
+              "minLength": 1
+            },
+            "candidate_endpoints": {
+              "type": "array",
+              "minItems": 1
+            },
+            "binding_state": {
+              "type": "string",
+              "minLength": 1
+            },
+            "restriction": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": true
+        },
+        "requirements": {
+          "type": "array",
+          "minItems": 9,
+          "items": {
+            "type": "object",
+            "required": [
+              "chart_requirement_id",
+              "report_family",
+              "supplier_section_id",
+              "consumer_section_id",
+              "section_title",
+              "contract_state",
+              "slot_class",
+              "panels",
+              "required_field_ids",
+              "expanded_field_dependencies",
+              "input_contracts",
+              "source_policy",
+              "provider_binding_status",
+              "actual_data_rows",
+              "executed_render_validation"
+            ],
+            "properties": {
+              "chart_requirement_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "report_family": {
+                "type": "string",
+                "minLength": 1
+              },
+              "supplier_section_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "consumer_section_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "section_title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contract_state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "slot_class": {
+                "enum": [
+                  "standard",
+                  "supplemental"
+                ]
+              },
+              "panels": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "template_id",
+                    "chart_type"
+                  ],
+                  "properties": {
+                    "template_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "chart_type": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required_field_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "expanded_field_dependencies": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "input_contracts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "field_id",
+                    "type",
+                    "status"
+                  ],
+                  "properties": {
+                    "field_id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "type": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "supplier_registry_names": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "source_operation_refs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "operation_id",
+                          "assets",
+                          "raw_field",
+                          "response_path",
+                          "binding_status"
+                        ],
+                        "properties": {
+                          "operation_id": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "assets": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "raw_field": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "response_path": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "binding_status": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "source_requirement": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "mapping_status": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "source_policy": {
+                "type": "object"
+              },
+              "provider_binding_status": {
+                "type": "string",
+                "minLength": 1
+              },
+              "actual_data_rows": {},
+              "executed_render_validation": {}
+            },
+            "additionalProperties": true
+          }
+        },
+        "field_bindings": {
+          "type": "array",
+          "minItems": 48,
+          "items": {
+            "type": "object",
+            "required": [
+              "field_id",
+              "consumer_status_unchanged",
+              "requirements",
+              "required_in_any_chart",
+              "provider_classification",
+              "provider_resolution",
+              "source_operation_bindings",
+              "provider_review_matches",
+              "unresolved_notes"
+            ],
+            "properties": {
+              "field_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "consumer_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "consumer_unit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "consumer_status_unchanged": {
+                "type": "string",
+                "minLength": 1
+              },
+              "consumer_supplier_registry_names": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "requirements": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required_in_any_chart": {
+                "type": "boolean"
+              },
+              "consumer_source_requirement": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "consumer_mapping_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "provider_classification": {
+                "type": "string",
+                "minLength": 1
+              },
+              "provider_resolution": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_operation_bindings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "candidate_source_ref",
+                    "mapped_operation",
+                    "provider",
+                    "provider_key_path_verified"
+                  ],
+                  "properties": {
+                    "candidate_source_ref": {
+                      "type": "object",
+                      "required": [
+                        "operation_id",
+                        "assets",
+                        "raw_field",
+                        "response_path",
+                        "binding_status"
+                      ],
+                      "properties": {
+                        "operation_id": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "assets": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "raw_field": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "response_path": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "binding_status": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "mapped_operation": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "provider": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "provider_key_path_verified": {
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "provider_review_matches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "field_name",
+                    "review_class",
+                    "review_finding"
+                  ],
+                  "properties": {
+                    "field_name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "review_class": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "review_finding": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "next_evidence_or_gate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "unresolved_notes": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "test_evidence": {
+          "type": "object"
+        },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "url",
+              "accessed_on"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "accessed_on": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

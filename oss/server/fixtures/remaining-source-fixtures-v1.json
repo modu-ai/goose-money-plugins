@@ -1,0 +1,56 @@
+{
+  "contract": "moai.remaining-source.synthetic-fixtures.v1",
+  "synthetic_only": true,
+  "network_requests": 0,
+  "provider_validation": false,
+  "cases": [
+    {
+      "name": "market",
+      "operation_ref": "KIS-113",
+      "original": "fixtures/remaining-source-market.synthetic.original.json",
+      "input": "fixtures/remaining-source-market.synthetic.input.json",
+      "result": "fixtures/remaining-source-market.synthetic.result.json",
+      "original_sha256": "4572f69a1e18a9d1c02ca893a97143a0025f1cc16a5d2e1631a683803d184c24"
+    },
+    {
+      "name": "estimates",
+      "operation_ref": "KIS-109",
+      "original": "fixtures/remaining-source-estimates.synthetic.original.json",
+      "input": "fixtures/remaining-source-estimates.synthetic.input.json",
+      "result": "fixtures/remaining-source-estimates.synthetic.result.json",
+      "original_sha256": "c7c843bfa8a179c8fc5af7749b033e74dabd3fcc87c2288e62880f432db73a7c"
+    },
+    {
+      "name": "ice",
+      "operation_ref": "KIS-280",
+      "original": "fixtures/remaining-source-ice.synthetic.original.json",
+      "input": "fixtures/remaining-source-ice.synthetic.input.json",
+      "result": "fixtures/remaining-source-ice.synthetic.result.json",
+      "original_sha256": "b5b3ea3c0bbc12ec87aa699f763986fe5b1ef9bfd2aae7e3c7b71507d0e50e2d"
+    },
+    {
+      "name": "market-empty",
+      "operation_ref": "KIS-113",
+      "original": "fixtures/remaining-source-market-empty.synthetic.original.json",
+      "input": "fixtures/remaining-source-market-empty.synthetic.input.json",
+      "result": "fixtures/remaining-source-market-empty.synthetic.result.json",
+      "original_sha256": "d3af231aae84cd066be924e45b9978ec288128627e4acf79e0e88717c24714d9"
+    },
+    {
+      "name": "estimates-empty",
+      "operation_ref": "KIS-109",
+      "original": "fixtures/remaining-source-estimates-empty.synthetic.original.json",
+      "input": "fixtures/remaining-source-estimates-empty.synthetic.input.json",
+      "result": "fixtures/remaining-source-estimates-empty.synthetic.result.json",
+      "original_sha256": "b5a51c17303c1d9f66548230450f55775c0a5aa18969268fa6a036cda1d98998"
+    },
+    {
+      "name": "ice-empty",
+      "operation_ref": "KIS-280",
+      "original": "fixtures/remaining-source-ice-empty.synthetic.original.json",
+      "input": "fixtures/remaining-source-ice-empty.synthetic.input.json",
+      "result": "fixtures/remaining-source-ice-empty.synthetic.result.json",
+      "original_sha256": "f638a7109366994298ecda38b6b41ba124268717d5c35ff0773be19b2f95cb5e"
+    }
+  ]
+}

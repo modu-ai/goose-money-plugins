@@ -1,0 +1,19 @@
+{
+  "request": {
+    "operation_ref": "KIS-113",
+    "query": {
+      "FID_COND_MRKT_DIV_CODE": "U",
+      "FID_INPUT_ISCD": "0001",
+      "FID_INPUT_DATE_1": "20261021",
+      "FID_INPUT_DATE_2": "20261021",
+      "FID_INPUT_ISCD_1": "KSP",
+      "FID_INPUT_ISCD_2": ""
+    }
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T08:00:00.123456789Z",
+    "expected_body_sha256": "d3af231aae84cd066be924e45b9978ec288128627e4acf79e0e88717c24714d9"
+  },
+  "cutoff": "2026-10-22T08:00:00.123456789Z"
+}

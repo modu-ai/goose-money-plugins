@@ -1,0 +1,63 @@
+{
+  "contract": "moai.source-input-mcp-registration.v1",
+  "total_registered_names": 34,
+  "default_policy": "deny",
+  "tool_result_payload_max_utf8_bytes": 300000,
+  "size_scope": "complete_serialized_tool_result_excluding_outer_JSON_RPC_envelope",
+  "oversize_action": "reject_without_truncation",
+  "canonical_promotion": false,
+  "account_or_portfolio_roles": false,
+  "tools": [
+    {
+      "name": "get_domestic_index_history",
+      "operation_ref": "KIS-072",
+      "input_schema": "contracts/mcp-get-domestic-index-history.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "status": "hard_blocked_request_contract_conflict",
+      "role_grants": []
+    },
+    {
+      "name": "get_global_index_history",
+      "operation_ref": "KIS-264",
+      "input_schema": "contracts/mcp-get-global-index-history.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "status": "injected_raw_only",
+      "role_grants": [
+        "market-behavior"
+      ]
+    },
+    {
+      "name": "get_market_industry_investor_aggregates",
+      "operation_ref": "KIS-113",
+      "input_schema": "contracts/mcp-get-market-industry-investor-aggregates.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "status": "injected_raw_only",
+      "role_grants": [
+        "market-behavior"
+      ]
+    },
+    {
+      "name": "get_kis_house_estimates",
+      "operation_ref": "KIS-109",
+      "input_schema": "contracts/mcp-get-kis-house-estimates.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "status": "hard_blocked_request_contract_conflict",
+      "role_grants": []
+    },
+    {
+      "name": "get_overseas_ice_actions",
+      "operation_ref": "KIS-280",
+      "input_schema": "contracts/mcp-get-overseas-ice-actions.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "status": "injected_raw_only",
+      "role_grants": [
+        "disclosure-event"
+      ]
+    }
+  ]
+}

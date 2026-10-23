@@ -1,0 +1,27 @@
+{
+  "name": "@moai-atp/server",
+  "version": "0.1.0-dev.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.22.1"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node scripts/test-desktop.mjs",
+    "test:stdio": "npm run build && node --test dist/test/stdio.integration.test.js",
+    "start": "node dist/src/main.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.0",
+    "typescript": "5.9.3"
+  },
+  "license": "UNLICENSED",
+  "bin": {
+    "moai-atp": "dist/src/cli.js"
+  }
+}

@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { readFileSync, readdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
+import { z } from 'zod';
+import * as b from '../src/market-orderbook.js';
+import * as e from '../src/market-reference-evidence.js';
+const base = new URL('../../', import.meta.url);
+const load = (path: string) => JSON.parse(readFileSync(new URL(path, base), 'utf8'));
+const schemas = [ ['orderbook-input', b.MarketOrderbookInputSchema], ['orderbook-request', b.MarketOrderbookRequestSchema],
+  ['orderbook-output1', b.MarketOrderbookOutput1Schema], ['orderbook-output2', b.MarketOrderbookOutput2Schema],
+  ['orderbook-raw', b.MarketOrderbookRawSchema], ['orderbook-result', b.MarketOrderbookResultSchema],
+  ['reference-evidence-input', e.MarketReferenceEvidenceInputSchema], ['reference-evidence-candidate', e.MarketReferenceEvidenceCandidateSchema] ] as const;
+test('market reference generated schema projections match runtime shapes exactly', () => {
+  for (const [name, schema] of schemas) { const generated = load(`contracts/market-reference/${name}-v1.schema.json`); assert.match(generated.$comment, /Runtime entrypoints/); delete generated.$id; delete generated.$comment; assert.deepEqual(generated, z.toJSONSchema(schema)); }
+});
+for (const name of ['sample', 'output2-object', 'missing-and-blank', 'unsupported-and-crossed', 'unsupported-lexeme']) test(`synthetic ${name} transport/result/candidates replay unchanged`, async () => {
+  const response = load(`fixtures/market-reference/orderbook-${name}-response-synthetic.json`);
+  const result = load(`fixtures/market-reference/orderbook-${name}-result-synthetic.json`);
+  assert.equal(response.fixture_kind, 'synthetic_only'); assert.equal(response.not_market_observations, true);
+  assert.deepEqual(await b.requestMarketOrderbook(response.request_input, { origin: 'synthetic', async send() { return response.response; } }, () => result.received_at), result);
+  for (const policy of ['kr_orderbook_best_bid', 'kr_orderbook_best_ask']) { const candidate = load(`fixtures/market-reference/${name}-${policy}-candidate-synthetic.json`); assert.deepEqual(e.validateMarketReferenceEvidenceCandidate(candidate), candidate); assert.deepEqual(candidate.snapshot.value, result); }
+});
+for (const policy of ['us_quote_previous_close', 'kr_intraday_previous_close']) test(`synthetic ${policy} existing DTO selection and persisted replay`, () => {
+  const input = load(`fixtures/market-reference/${policy}-input-synthetic.json`); const candidate = load(`fixtures/market-reference/${policy}-candidate-synthetic.json`);
+  assert.deepEqual(e.selectMarketReferenceEvidence(input), candidate); assert.deepEqual(e.validateMarketReferenceEvidenceCandidate(candidate), candidate);
+});
+test('market reference generator is byte deterministic and makes no live calls', () => {
+  function hashes() { return Object.fromEntries(['contracts/market-reference', 'fixtures/market-reference'].flatMap(dir => readdirSync(new URL(dir, base)).sort().map(name => [`${dir}/${name}`, createHash('sha256').update(readFileSync(new URL(`${dir}/${name}`, base))).digest('hex')]))); }
+  const before = hashes(); const run = spawnSync(process.execPath, [new URL('scripts/generate-market-reference-artifacts.mjs', base).pathname], { encoding: 'utf8' }); assert.equal(run.status, 0, run.stderr); assert.deepEqual(hashes(), before);
+  const provenance = load('fixtures/market-reference/provenance.json'); assert.equal(provenance.live_financial_api_calls, 0); assert.equal(provenance.source_authentication, false); assert.equal(provenance.observed_market_data, false);
+});
+test('compact evidence stays portable and excludes vendor source/code or internal research paths', () => {
+  const evidence = load('fixtures/source-contracts/rc11-market-reference-source-evidence.json'); assert.equal(evidence.source_commit, b.MARKET_REFERENCE_SOURCE_COMMIT);
+  assert.equal(evidence.reviewed_contract_sha256, 'a16003e25728007923d4854de9612330eac2825f6906e8e2472746994f056800');
+  assert.equal(evidence.market_data_receipts_observed, 0); assert.equal(evidence.existing_report_authority.metric_formulas_copied, false);
+  assert.doesNotMatch(JSON.stringify(evidence), /\/workspace\/|\/home\/agent\/|market-reference-research|source_text|import pandas/);
+  for (const item of evidence.evidence) { assert.match(item.github_url, new RegExp(b.MARKET_REFERENCE_SOURCE_COMMIT)); assert.match(item.source_sha256, /^[0-9a-f]{64}$/); assert.match(item.line_range_bytes_sha256, /^[0-9a-f]{64}$/); }
+});

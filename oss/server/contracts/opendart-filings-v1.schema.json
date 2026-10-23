@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "const": "opendart"
+    },
+    "documentation": {
+      "type": "string",
+      "const": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "no_data",
+        "rate_limited",
+        "error"
+      ]
+    },
+    "provider_status": {
+      "type": "string",
+      "pattern": "^\\d{3}$"
+    },
+    "error_code": {
+      "type": "string",
+      "const": "provider_error"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "corp_code": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "bgn_de": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "end_de": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "last_reprt_at": {
+          "default": "N",
+          "type": "string",
+          "enum": [
+            "Y",
+            "N"
+          ]
+        },
+        "pblntf_ty": {
+          "type": "string",
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J"
+          ]
+        },
+        "corp_cls": {
+          "type": "string",
+          "enum": [
+            "Y",
+            "K",
+            "N",
+            "E"
+          ]
+        },
+        "sort": {
+          "default": "date",
+          "type": "string",
+          "enum": [
+            "date",
+            "crp",
+            "rpt"
+          ]
+        },
+        "sort_mth": {
+          "default": "desc",
+          "type": "string",
+          "enum": [
+            "asc",
+            "desc"
+          ]
+        },
+        "page_no": {
+          "default": 1,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 99999
+        },
+        "page_count": {
+          "default": 100,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "corp_code",
+        "bgn_de",
+        "end_de",
+        "last_reprt_at",
+        "sort",
+        "sort_mth",
+        "page_no",
+        "page_count"
+      ],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "received_at": {
+          "type": "string",
+          "maxLength": 40,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "origin",
+        "received_at"
+      ],
+      "additionalProperties": false
+    },
+    "total_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99999999
+    },
+    "total_page": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 99999999
+    },
+    "next_page_no": {
+      "anyOf": [
+        {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 99999
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "has_more": {
+      "type": "boolean"
+    },
+    "rows": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "raw": {
+            "type": "object",
+            "properties": {
+              "corp_cls": {
+                "type": "string",
+                "enum": [
+                  "Y",
+                  "K",
+                  "N",
+                  "E"
+                ]
+              },
+              "corp_name": {
+                "type": "string",
+                "maxLength": 1024
+              },
+              "corp_code": {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+              },
+              "stock_code": {
+                "type": "string",
+                "pattern": "^(?:\\d{6})?$"
+              },
+              "report_nm": {
+                "type": "string",
+                "maxLength": 2048
+              },
+              "rcept_no": {
+                "type": "string",
+                "pattern": "^\\d{14}$"
+              },
+              "flr_nm": {
+                "type": "string",
+                "maxLength": 1024
+              },
+              "rcept_dt": {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+              },
+              "rm": {
+                "type": "string",
+                "maxLength": 128
+              }
+            },
+            "required": [
+              "corp_cls",
+              "corp_name",
+              "corp_code",
+              "stock_code",
+              "report_nm",
+              "rcept_no",
+              "flr_nm",
+              "rcept_dt",
+              "rm"
+            ],
+            "additionalProperties": false
+          },
+          "filing_url": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "raw",
+          "filing_url"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "source",
+    "documentation",
+    "status",
+    "provider_status",
+    "request",
+    "provenance",
+    "next_page_no",
+    "has_more",
+    "rows"
+  ],
+  "additionalProperties": false
+}

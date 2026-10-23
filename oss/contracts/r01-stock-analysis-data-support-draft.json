@@ -1,0 +1,867 @@
+{
+  "contract_id": "moai.stock.report.r01.data-support.v0",
+  "version": "0.2.0-draft",
+  "status": "review-draft; reconciled to R01 consumer 0.2; partial quote only",
+  "review_basis": {
+    "source_path_read_only": "/Users/goos/Documents/Codex/2026-10-21/task-6/review/Goose_리서치설계_독립심층검토_2026-10-21.html",
+    "reviewed_on": "2026-10-21",
+    "findings": {
+      "p0_required": 22,
+      "p1": [
+        "F15 counter-evidence quality",
+        "F16 implied-expectations/choice-cost analysis feature candidate"
+      ],
+      "new_independent_reports_recommended": 0,
+      "p0_ids": [
+        "F01",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "F10",
+        "F11",
+        "F12",
+        "F13",
+        "F14",
+        "F17",
+        "F18",
+        "F19",
+        "F20",
+        "F21",
+        "F22",
+        "F23",
+        "F24"
+      ],
+      "p1_details": {
+        "F15": {
+          "title": "counter-evidence quality",
+          "treatment": "strengthen existing counter-evidence; not a new independent report or automatic feature"
+        },
+        "F16": {
+          "title": "implied expectations and choice cost",
+          "treatment": "optional feature; not auto-added"
+        }
+      },
+      "independent_review_conclusion": {
+        "new_independent_reports_recommended": 0,
+        "U03": "internal report QA, not a user-facing report"
+      }
+    },
+    "scope_rule": "P0 are acceptance gates for applicable features/conclusions/releases, not a mandate to build all features at once. Do not auto-add F16.",
+    "scope_revision": {
+      "asset_categories_retained": [
+        "Korean equities",
+        "US equities",
+        "Korean ETFs",
+        "US ETFs",
+        "Korean futures",
+        "US futures"
+      ],
+      "beginner_and_frequent_questions": "reorganize entry screens around common individual-investor tasks",
+      "futures_ui": "optional selection within staged portfolio/risk analysis",
+      "final_report_count": "not finalized; do not infer from prior 14+3 baseline"
+    }
+  },
+  "report_identity": {
+    "family": "R01 심층 (earlier review family label; exact current product scope pending user-centered reorganization)",
+    "product_manifest_id": null,
+    "mapping_status": "family label from read-only review only; no final product report count, exact installed manifest identity, or new ID inferred",
+    "writer": "report master-plan owner is sole writer of report body and canonical manifest",
+    "this_contract_scope": "one data-adapter and factual input contract; no report composition or investment recommendation"
+  },
+  "product_boundary": {
+    "free": {
+      "sources": [
+        "web search",
+        "optional OpenDART"
+      ],
+      "kis_auth": false,
+      "account_read": false
+    },
+    "pro": {
+      "includes_free_capabilities": true,
+      "kis_account_data": "separate local consented tools, not implemented here"
+    },
+    "kis_quote_tool": {
+      "tier": "Pro candidate only",
+      "customer_account_required": false,
+      "credential_local_only": true,
+      "financial_data_to_moai": false
+    },
+    "asset_scope": {
+      "retained_categories": [
+        "Korean equities",
+        "US equities",
+        "Korean ETFs",
+        "US ETFs",
+        "Korean futures",
+        "US futures"
+      ],
+      "futures_entry": "optional user-selected staged portfolio/risk path; not a trading path",
+      "current_code_slice": "Korean listed common-equity REST quote snapshot only",
+      "reported_assets_not_in_current_code": [
+        "US equities",
+        "ETFs",
+        "futures"
+      ]
+    }
+  },
+  "support_matrix": [
+    {
+      "fact_family": "Korean listed common-equity market quote snapshot",
+      "asset": "KR listed common equity; six-digit KIS symbol; board J|NX|UN",
+      "provider": "KIS",
+      "operation_id": "kis.kr.quote.snapshot.v1",
+      "typed_tool": "get_market_snapshot",
+      "source_contract": {
+        "method": "GET",
+        "path": "/uapi/domestic-stock/v1/quotations/inquire-price",
+        "tr_id": {
+          "real": "FHKST01010100",
+          "paper": "FHKST01010100"
+        },
+        "input_fields": [
+          "symbol",
+          "board"
+        ],
+        "provider_fields": [
+          "stck_prpr",
+          "stck_oprc",
+          "stck_hgpr",
+          "stck_lwpr",
+          "prdy_vrss",
+          "prdy_vrss_sign",
+          "prdy_ctrt",
+          "acml_vol",
+          "stck_bsop_date"
+        ]
+      },
+      "normalized_fields": {
+        "last": "KRW/share decimal string",
+        "open": "KRW/share decimal string",
+        "high": "KRW/share decimal string",
+        "low": "KRW/share decimal string",
+        "change": "KRW/share decimal string; signed by prdy_vrss_sign",
+        "change_percent": "percent decimal string",
+        "volume": "shares decimal string",
+        "source_as_of": "Korean business date only; no time-of-day inferred"
+      },
+      "frequency": "one explicit REST snapshot call; no subscription/stream; intraday freshness interval unknown",
+      "time_basis": "source business date from stck_bsop_date if supplied; received_at/available_at observed locally in UTC; event_time and published_at absent",
+      "rights_gate": "KIS public personal-use guidance supports an individual account holder using quote data for own-asset investment and forbids third-party provision. rights_pending is the prototype conservative default, not a finding that this narrow use is prohibited. The quote path stays local-view only; ChatGPT Work result egress, local persistence, derived-use scope, and multi-user product distribution remain unresolved; external share stays blocked.",
+      "fixture": "tests/fixtures/kr_quote_synthetic.json; synthetic only",
+      "verification": {
+        "pinned_sample": "mapped at commit 2077773a69a428daf63e148182511f068cc45de3",
+        "normalization": "synthetic tested",
+        "http": "mocked only",
+        "current_portal_schema": "not independently verified",
+        "live_kis": "not called",
+        "customer_rate_limit": "unknown"
+      },
+      "status": "one typed MCP tool is implemented; not a report implementation and not proof of data rights",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "required_fields": [
+        "last",
+        "open",
+        "high",
+        "low",
+        "change",
+        "change_percent",
+        "volume",
+        "source_as_of"
+      ],
+      "source_evidence": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_price/inquire_price.py; sample mapping only"
+    },
+    {
+      "fact_family": "Korean daily price history and adjusted-price status",
+      "asset": "KR listed common equity; not transferable to ETF/futures without separate mapping",
+      "provider": "KIS pinned Code Assistant sample; current portal contract pending",
+      "operation_id": "candidate only; not exposed",
+      "typed_tool": "get_price_history (candidate; not registered)",
+      "source_contract": {
+        "method": "GET",
+        "path": "/uapi/domestic-stock/v1/quotations/inquire-daily-price",
+        "tr_id": "FHKST01010400 (sample mapping)",
+        "candidate_fields": [
+          "stck_bsop_date",
+          "stck_oprc",
+          "stck_hgpr",
+          "stck_lwpr",
+          "stck_clpr",
+          "acml_vol"
+        ],
+        "candidate_parameters": [
+          "period",
+          "adjustment flag"
+        ]
+      },
+      "normalized_fields": [
+        "trade_date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "currency",
+        "adjusted",
+        "field_lineage"
+      ],
+      "frequency": "bounded daily bars; period/page maximum and update calendar not fixed",
+      "time_basis": "date-keyed bars; source availability and cutoff must be retained for point-in-time use",
+      "rights_gate": "individual own-asset use is within KIS stated personal-use category, but historical storage/derived-use and ChatGPT Work result routing are not settled by this review; prototype default remains deny until the local purpose/data path is configured; third-party provision remains blocked",
+      "fixture": "tests/fixtures/kr_daily_history_synthetic.json; synthetic normalization only",
+      "verification": {
+        "normalizer": "tested in isolation",
+        "MCP_tool": "not exposed",
+        "adjustment_semantics": "not portal-verified",
+        "corporate_action_reconciliation": "not done"
+      },
+      "status": "candidate mapping and helper only; cannot claim complete history or point-in-time adjusted series",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "required_fields": [
+        "trade_date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume",
+        "currency",
+        "adjusted",
+        "field_lineage"
+      ],
+      "source_evidence": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_price/inquire_daily_price.py; sample mapping only"
+    },
+    {
+      "fact_family": "Issuer/security identity and identifier history",
+      "asset": "KR company/equity; cross-listed and ticker changes require explicit mapping",
+      "provider": "OpenDART and KIS/security-master source; source priority not finalized",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "corp_code",
+        "stock_code",
+        "exchange/security identifier",
+        "valid_from",
+        "valid_to",
+        "name history",
+        "mapping source",
+        "observed_at"
+      ],
+      "frequency": "versioned lookup plus issuer/event updates; refresh interval pending",
+      "time_basis": "valid-time interval plus publication/availability time; never overwrite prior issuer/security identity silently",
+      "rights_gate": "OpenDART terms and any security master rights require source-specific review",
+      "fixture": null,
+      "verification": {
+        "source_design": "existing OpenDART/plugin design to reuse",
+        "endpoint_field_map": "not implemented in this slice",
+        "identity_history": "not tested"
+      },
+      "status": "required for downstream R01 joins; no MCP tool",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "OpenDART official API site plus existing plugin design; specific endpoint contract not revalidated here"
+    },
+    {
+      "fact_family": "Corporate actions and adjustment lineage",
+      "asset": "equities and ETFs; futures roll is a distinct contract event",
+      "provider": "OpenDART/KRX/KIS candidates; authoritative source per event type not selected",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "event_type",
+        "announcement_id",
+        "published_at",
+        "available_at",
+        "effective_date",
+        "ratio_or_amount",
+        "currency",
+        "source_revision",
+        "supersedes",
+        "adjustment_method"
+      ],
+      "frequency": "event-driven with correction/revision retention",
+      "time_basis": "announcement and ex/effective time separate; point-in-time cutoff; adjusted/unadjusted series lineage",
+      "rights_gate": "source display/storage and derivation rights pending",
+      "fixture": null,
+      "verification": {
+        "source_field_map": "not implemented",
+        "split/dividend/rights cases": "not tested",
+        "price-history reconciliation": "not tested"
+      },
+      "status": "F08 acceptance gate before adjusted prices, per-share metrics, or issuer history conclusions",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "OpenDART official API site plus existing plugin design; specific endpoint contract not revalidated here"
+    },
+    {
+      "fact_family": "Regulatory filings and filing revisions",
+      "asset": "KR issuers; US issuer disclosures require separate SEC mapping",
+      "provider": "OpenDART for KR filing family; SEC for US family (not implemented in this slice)",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "corp_code or cik",
+        "rcept_no or accession_no",
+        "form/type",
+        "period_start",
+        "period_end",
+        "published_at",
+        "available_at",
+        "revision_id",
+        "supersedes",
+        "document locator",
+        "rights_status"
+      ],
+      "frequency": "filing/event retrieval with amendments and corrections",
+      "time_basis": "report period is not publication/availability time; later amendment cannot erase prior as-known version",
+      "rights_gate": "provider/API and document display/retention terms pending",
+      "fixture": null,
+      "verification": {
+        "OpenDART_design": "existing design to reuse",
+        "R01 adapter": "not implemented",
+        "US SEC mapping": "not implemented"
+      },
+      "status": "filing lineage contract required; no MCP tool",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "OpenDART official API site plus existing plugin design; specific endpoint contract not revalidated here"
+    },
+    {
+      "fact_family": "Financial statements and reported metrics",
+      "asset": "KR issuer (K-IFRS); US issuer (US-GAAP/SEC) requires separate context and unit mapping",
+      "provider": "OpenDART XBRL for KR candidate; SEC company facts for US candidate",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "concept/tag",
+        "value",
+        "unit",
+        "currency",
+        "period_start",
+        "period_end",
+        "instant/duration",
+        "consolidated/standalone or filing scope",
+        "accounting_basis",
+        "source_document",
+        "revision_id",
+        "published_at",
+        "available_at",
+        "estimate_kind"
+      ],
+      "frequency": "filing period and amendment based; consensus is a separate estimate source",
+      "time_basis": "period end, filing publication and first-available timestamps separate; no restatement look-ahead",
+      "rights_gate": "provider and derived-use terms pending; no rights inferred from API accessibility",
+      "fixture": null,
+      "verification": {
+        "field_contract": "not implemented",
+        "units/context": "not tested",
+        "revision behavior": "not tested"
+      },
+      "status": "F09 gate; no MCP tool and no fabricated values",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "OpenDART official API site plus existing plugin design; specific endpoint contract not revalidated here"
+    },
+    {
+      "fact_family": "Management guidance and analyst consensus estimates",
+      "asset": "issuer/market; KR and US estimates are source-specific",
+      "provider": "not selected; issuer guidance, public filings and licensed vendor must remain separate types",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "estimate_kind",
+        "source/provider",
+        "analyst_or_source_group",
+        "period",
+        "unit",
+        "published_at",
+        "available_at",
+        "revision_id",
+        "coverage_count",
+        "rights_status"
+      ],
+      "frequency": "event/revision based; snapshot the input set at each report cutoff",
+      "time_basis": "do not treat consensus as reported actual or overwrite historical snapshots with current estimate",
+      "rights_gate": "commercial redistribution and display terms unresolved",
+      "fixture": null,
+      "verification": {
+        "source": "not selected",
+        "adapter": "not implemented",
+        "historical point-in-time coverage": "not tested"
+      },
+      "status": "unsupported until provider, rights and point-in-time history are proven",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "source/contract not selected or verified for this fact family"
+    },
+    {
+      "fact_family": "Investor flows, ownership and market breadth",
+      "asset": "KR and US category systems are not assumed equivalent",
+      "provider": "KIS investor inquiry sample for KR; US source not selected",
+      "operation_id": null,
+      "typed_tool": "get_market_flows (candidate; not registered)",
+      "required_fields": [
+        "date/time",
+        "investor category as provider-defined",
+        "net shares/value",
+        "unit",
+        "market/session",
+        "source field",
+        "revision",
+        "available_at"
+      ],
+      "frequency": "daily/endpoint-specific; per-customer quota and history depth unknown",
+      "time_basis": "source date plus local received/available time; intraday not implied",
+      "rights_gate": "KIS/exchange rights pending; cannot publish derivative flow summary until permitted",
+      "fixture": null,
+      "verification": {
+        "pinned_sample": "static candidate mapping",
+        "portal units": "not validated",
+        "MCP tool": "not exposed",
+        "live": "not called"
+      },
+      "status": "candidate only; no KR↔US equivalence inference",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "KIS title/search API samples and user-authorized web sources; no article-body collection assumed"
+    },
+    {
+      "fact_family": "News and source evidence",
+      "asset": "company, industry and market; source-specific",
+      "provider": "KIS headline metadata candidate and user-authorized web research",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "title/claim",
+        "source URL",
+        "publisher",
+        "source_group",
+        "published_at",
+        "retrieved_at",
+        "available_at",
+        "text range or headline-only marker",
+        "rights_status"
+      ],
+      "frequency": "event-driven; query and collection bounds pending",
+      "time_basis": "publish time distinct from retrieval; post-cutoff news excluded from historical explanation",
+      "rights_gate": "headline/body are separate; no body collection or redistribution without rights",
+      "fixture": null,
+      "verification": {
+        "headline_body": "design explicitly distinguishes title-only from article body",
+        "MCP tool": "not exposed"
+      },
+      "status": "no news body scraping assumption; no MCP tool",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "source/contract not selected or verified for this fact family"
+    },
+    {
+      "fact_family": "Deterministic R01 calculations and claim evidence",
+      "asset": "only assets with supported inputs; current code supports no valuation calculation",
+      "provider": "local versioned calculation module consuming verified normalized facts",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "calculation_id",
+        "input_hash",
+        "cutoff",
+        "formula/version",
+        "units",
+        "currency",
+        "source_fact_ids",
+        "validation_result",
+        "output_hash",
+        "claim_id"
+      ],
+      "frequency": "per report run; immutable calculation manifest for each output",
+      "time_basis": "all inputs available by report cutoff; current values cannot leak into historical claims",
+      "rights_gate": "inputs need rights clearance and purpose-specific view/save/export/share policy",
+      "fixture": null,
+      "verification": {
+        "calculation_module": "not implemented",
+        "independent reconciliation": "not done",
+        "narrative claim links": "not implemented"
+      },
+      "status": "F04/F05 gate; LLM may explain verified result but must not silently compute or change it",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "source/contract not selected or verified for this fact family"
+    },
+    {
+      "fact_family": "Portfolio/account position facts",
+      "asset": "Pro only; user-owned local, consented account scope; current MCP slice has no account tool",
+      "provider": "KIS account API candidate; required fields not validated against current portal",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "opaque local account_ref",
+        "instrument_ref",
+        "quantity",
+        "cost basis",
+        "market value",
+        "currency",
+        "observed_at",
+        "consent scope",
+        "source lineage"
+      ],
+      "frequency": "explicit user request; no background polling is configured",
+      "time_basis": "broker observed_at and local received_at separate; balances are not archival ledger truth",
+      "rights_gate": "account consent, field mapping, privacy, retention and KIS permission all pending",
+      "fixture": null,
+      "verification": {
+        "prior user-provided OAuth HTTP 200": "authentication only, not account access",
+        "balance call": "not verified",
+        "MCP tool": "not exposed"
+      },
+      "status": "F10 gate; no account data accepted or queried here",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "source/contract not selected or verified for this fact family"
+    },
+    {
+      "fact_family": "ETF structure, fees, distributions and NAV premium/discount",
+      "asset": "Korean and US ETFs; separate instrument family from common shares",
+      "provider": "KIS/issuer/exchange or SEC/public source candidates; per-field source not selected",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "underlying/exposure",
+        "expense ratio",
+        "distribution amount/date",
+        "NAV/time",
+        "market price/time",
+        "premium_discount",
+        "split/creation unit",
+        "currency",
+        "source rights"
+      ],
+      "frequency": "factsheet/filing and quote cadence differ; interval pending",
+      "time_basis": "NAV, market price, distribution and adjusted return periods aligned before comparison",
+      "rights_gate": "exchange data and source-document rights pending",
+      "fixture": null,
+      "verification": {
+        "data contract": "not implemented",
+        "double-count regression": "planned under F11"
+      },
+      "status": "ETF retained in product scope; not covered by current code",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "SEC official API documentation candidate; not implemented in this slice"
+    },
+    {
+      "fact_family": "Futures contract, roll, currency and margin risk inputs",
+      "asset": "Korean/US futures; optional user-selected portfolio/risk path with staged screen",
+      "provider": "exchange contract specification and authorized broker/provider market data; exact source per contract pending",
+      "operation_id": null,
+      "typed_tool": null,
+      "required_fields": [
+        "contract_code",
+        "underlying",
+        "expiry",
+        "multiplier",
+        "tick_size",
+        "tick_value",
+        "quote_currency",
+        "settlement_type",
+        "last_trade_date",
+        "roll_rule",
+        "margin_type/amount/source/as_of",
+        "price/volume lineage"
+      ],
+      "frequency": "contract-spec version plus market snapshot/history; exchange calendar and expiry schedule required",
+      "time_basis": "contract validity period, expiry/roll dates, timezone/session and margin observation time tracked separately",
+      "rights_gate": "exchange display/storage/derived-use rights and broker access terms pending",
+      "fixture": null,
+      "verification": {
+        "contract schema": "not implemented",
+        "formula tests": "planned before futures conclusions",
+        "trading": "not exposed"
+      },
+      "status": "F12 acceptance gate before futures portfolio/risk output; no futures API or order tool in this slice",
+      "report_family_reference": "R01 심층 label from earlier read-only review; current final report catalog pending",
+      "source_evidence": "source/contract not selected or verified for this fact family"
+    }
+  ],
+  "data_status_axes": {
+    "origin": [
+      "actual",
+      "synthetic"
+    ],
+    "estimate_kind": [
+      "reported",
+      "guidance",
+      "internal",
+      "consensus",
+      "not_applicable"
+    ],
+    "finality": [
+      "preliminary",
+      "final",
+      "unknown"
+    ],
+    "revision_id": "provider revision identity or null; never inferred",
+    "freshness": [
+      "fresh",
+      "stale",
+      "unknown"
+    ],
+    "availability": [
+      "available",
+      "partial",
+      "unavailable"
+    ],
+    "validation": [
+      "provider_shape_checked",
+      "synthetic_fixture",
+      "independently_reconciled",
+      "unverified"
+    ],
+    "rights": [
+      "approved",
+      "pending",
+      "blocked"
+    ],
+    "null_reason": [
+      "provider_field_missing",
+      "provider_value_blank",
+      "provider_numeric_parse_failed",
+      "provider_change_or_sign_missing",
+      "provider_sign_unmapped",
+      "not_supported",
+      "not_requested",
+      "upstream_error"
+    ],
+    "rights_semantics": "approved requires an explicit purpose-specific evidence reference; a technical allow or KIS HTTP success is not approval. The current quote adapter emits pending because the rights basis is not encoded in its response."
+  },
+  "time_ledger": {
+    "required_fields": [
+      "period_start",
+      "period_end",
+      "event_time",
+      "published_at",
+      "received_at",
+      "available_at",
+      "effective_from",
+      "effective_to",
+      "supersedes",
+      "report_cutoff",
+      "source_timezone",
+      "clock_basis"
+    ],
+    "quote_mapping": {
+      "source_as_of": "stck_bsop_date business date only",
+      "received_at": "local response observation in UTC",
+      "available_at": "local runtime observation in UTC",
+      "event_time": null,
+      "published_at": null,
+      "effective_from": null,
+      "effective_to": null,
+      "supersedes": null,
+      "report_cutoff": null,
+      "source_timezone": "Asia/Seoul",
+      "clock_basis": "local post-response; source timestamp not supplied by reviewed sample"
+    },
+    "rule": "Use only data available at the report cutoff. Later correction/final version does not silently replace the earlier available version; keep revision lineage."
+  },
+  "field_contract_required_columns": [
+    "provider",
+    "provider_api_version",
+    "endpoint",
+    "tool",
+    "parameter_schema",
+    "provider_field",
+    "raw_path",
+    "raw_unit",
+    "raw_sign",
+    "transform",
+    "null_reason",
+    "pagination",
+    "entitlement",
+    "fixture_id",
+    "verification_status"
+  ],
+  "calculation_boundary": {
+    "MCP_role": "fetch and normalize source facts only; no valuation/score/recommendation calculation in this tool",
+    "deterministic_calculation": "separate versioned calculation module; LLM only describes a verified calculation result ID",
+    "manifest_required": [
+      "input_hash",
+      "calculation_version",
+      "model_version",
+      "prompt_version",
+      "skill_version",
+      "validation_result",
+      "artifact_hash"
+    ],
+    "not_implemented": [
+      "R01 valuation model",
+      "earnings bridge",
+      "price-implied expectations",
+      "investment advice classification"
+    ]
+  },
+  "purpose_and_propagation_gates": {
+    "read_tool_default": "conservative technical deny-by-default, not a finding that KIS prohibits one account-holding individual own-asset local use. KIS public guidance supports personal own-asset investment use and prohibits third-party provision. Enable only a documented per-user local scope after establishing user-owned credentials and the active ChatGPT Work data path; keep external share disabled. Storage, derived use, model-host egress and multi-user distribution remain unresolved.",
+    "local_view": "only approved local read scope; provenance/status shown next to values",
+    "local_save": "not performed by this tool; any product storage needs explicit retention period and local destination policy",
+    "export_share": "blocked until rights/security/share review passes",
+    "historical": "must identify as-of/revision and is not current quote",
+    "current_action": "not allowed; no order/transfer tools",
+    "partial_propagation": "missing/invalid/rights-blocked data cannot flow into current value, ranking, conclusion or advice as zero or certainty"
+  },
+  "collection_controls": {
+    "local_limiter": "one outbound HTTP request per second per process; no retry",
+    "singleflight": "same process, same quote symbol+board only while request is in flight; no durable quote result cache",
+    "token_refresh_lock": "one internal OAuth refresh at a time per client process",
+    "cache_ttl": null,
+    "freshness_budget": null,
+    "cancellation": "FastMCP timeout exists, but synchronous urllib request is not reliably aborted mid-flight; cooperative async provider work is required before multipage reports",
+    "request_budget": "unique instruments × required fields × pages × cutoffs, less in-flight dedupe; current quote operation is one snapshot + internal token as needed",
+    "provider_quota": "Library inventory memo reports real REST 18/s, paper REST 1/s; not independently revalidated here and per-customer limits remain unknown"
+  },
+  "local_privacy_and_license": {
+    "MoAI_server_allowlist": [
+      "OAuth membership/course entitlement",
+      "registered device/license metadata",
+      "non-financial lease identifiers"
+    ],
+    "prohibited_server_payload": [
+      "KIS key/secret/token",
+      "account identifiers/holdings",
+      "market data",
+      "analysis values",
+      "report body"
+    ],
+    "host_and_model_egress": "MoAI non-collection does not establish that the user model host/provider receives no prompt or output",
+    "free_license": "AGPLv3 direction; compatibility still requires dependency and derivative-work review",
+    "market_data_rights": "separate from source-code license and unresolved; no KIS data activation or redistribution assumption"
+  },
+  "tests": {
+    "implemented_current_slice": [
+      "typed schema",
+      "synthetic quote provenance and null-reasons",
+      "mock KIS requests",
+      "default-deny before network",
+      "local stdio process",
+      "in-flight identical quote singleflight",
+      "one token refresh lock",
+      "timeout/429 no retry",
+      "no mutation/account/arbitrary API surface"
+    ],
+    "planned_12_regression_groups": [
+      "API normalization and pagination/error contract",
+      "instrument identity and corporate actions",
+      "filing/financial lineage and estimates",
+      "as-of/macro/flow look-ahead",
+      "ETF expenses/distributions/NAV coverage",
+      "futures contract/tick/margin",
+      "FX/tax/performance ledger",
+      "backtest look-ahead and experiment registry",
+      "narrative claims/evidence",
+      "runtime/device/job/offline recovery",
+      "security/rights/RIS rollback",
+      "render/accessibility/print"
+    ],
+    "status": "planned for product-wide behavior; narrow current slice only is implemented and tested",
+    "current_16_test_suite_scope": {
+      "runtime": "Python 3.13.11",
+      "evidence": "synthetic fixtures, mocked KIS HTTP and actual local stdio subprocess only",
+      "live_KIS": "not called",
+      "ChatGPT_Work_host": "not verified",
+      "account_access": "not verified",
+      "report_body_integration": "not performed"
+    }
+  },
+  "release_gates": [
+    "Confirm the user-centered basic-task reorganization and report-owner canonical function list; preserve prior 23-route IDs and prior 14+3 review baseline as historical. Exact product manifest ID is verified from package, never inferred from family label.",
+    "For each enabled fact family and asset, complete the support matrix (source, fields, cadence, time/cutoff, rights, fixture, verification status). An unsupported source or field blocks the dependent conclusion.",
+    "Validate every KIS field, unit, sign, page, error and customer limit against the current official endpoint contract; catalog samples do not prove current live schema.",
+    "Apply the KIS personal-use notice to an individual own-account local-view path without adding a generic written-clearance gate. Separately resolve model-host egress, retention/storage, derived-use and multi-user distribution before enabling those purposes; keep third-party export/share blocked.",
+    "Before account-based conclusions, implement local account resolver, explicit scope consent, data minimization, no MoAI financial-data boundary, retention/backup policy, and field mapping.",
+    "Before futures risk conclusions, validate contract identity, multiplier, tick size/value, currency, expiry/last-trade time, roll rule, settlement and margin source/as-of; no trade execution tools.",
+    "Deterministic calculations must have versioned formulas, exact input/cutoff and calculation hashes, and independent reconciliation before an LLM narrative may present them.",
+    "Purpose-specific view/save/export/share/historical/current-action gates, freshness budget, null/partial propagation and failure/offline behavior must pass fixtures.",
+    "No financial payload may cross the MoAI license/authentication boundary in an approved egress test; model-host data flow is a separate disclosure and verification.",
+    "ChatGPT Work runtime, local stdio invocation, consent UX, package compatibility, and final screen/accessibility evidence must be tested separately before claiming host installation."
+  ],
+  "scope_revision": {
+    "prior_reviewed_baseline": "The 14-standard + 3-auxiliary plan was the earlier master-plan baseline, not a final product count.",
+    "current_user_direction": "Reorganize around common beginner and frequent individual-investor tasks while retaining Korea/US equities, ETFs, and futures across the six asset categories.",
+    "screen_flow": "Begin with common questions and basic evidence views; expose futures through an optional user-selected portfolio/risk-analysis path with staged detail.",
+    "futures_scope": "Retained across KR/US futures categories; use a user-selected staged portfolio/risk path. Validate contract specification, multiplier, tick, expiry, roll, currency, settlement, margin and exposure lineage before conclusions.",
+    "trade_actions": "orders, amendments, cancellation, transfers and auto-trading remain excluded",
+    "report_count_and_ids": "not finalized; preserve the historical 23-route list and prior review baseline; report owner remains canonical writer"
+  },
+  "review_gate_mapping": {
+    "p0_total": 22,
+    "p1_total": 2,
+    "principle": "Acceptance condition only for the relevant feature, conclusion or release; no mandate to implement every gate at once.",
+    "r01_data_slice_gates": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09"
+    ],
+    "cross_cutting_when_used": [
+      "F17",
+      "F18",
+      "F20",
+      "F22",
+      "F24"
+    ],
+    "future_feature_gates": {
+      "F10": "account/performance ledger before account conclusions",
+      "F11": "ETF cost/distribution/premium and futures-roll de-duplication when those features are enabled",
+      "F12": "separate futures contract calculation and margin model before futures risk output",
+      "F13": "versioned FX/tax rules before cross-currency or tax/performance conclusions",
+      "F14": "R14 template and validation engine as distinct artifacts if that report/function is retained",
+      "F19": "device/job/grace enforcement at licensing release",
+      "F21": "AGPL public/private ZIP boundary before distribution",
+      "F23": "RIS skill-improvement pipeline before automated application"
+    },
+    "p1": {
+      "F15": "improve existing counter-evidence quality when applicable",
+      "F16": "optional price-implied expectations/choice-cost analysis; do not auto-add"
+    },
+    "scope": "Keep all six asset categories; futures are optional in the staged portfolio/risk path. Trade execution remains out of scope."
+  },
+  "source_references": [
+    {
+      "source": "KIS Code Assistant sample inventory",
+      "url": "https://github.com/koreainvestment/open-trading-api/tree/2077773a69a428daf63e148182511f068cc45de3",
+      "scope": "334 sample rows only; official portal/partner completeness and live validity not established"
+    },
+    {
+      "source": "KIS domestic quote pinned example",
+      "url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_price/inquire_price.py",
+      "scope": "static field and request mapping only"
+    },
+    {
+      "source": "KIS API Portal",
+      "url": "https://apiportal.koreainvestment.com/tools-trading",
+      "scope": "official portal referenced; customer-specific quotas/permissions/live contract were not tested in this task"
+    },
+    {
+      "source": "KIS provider/data-use guidance",
+      "url": "https://apiportal.koreainvestment.com/provider",
+      "scope": "third-party service partnership and market-data usage conditions need separate confirmation"
+    },
+    {
+      "source": "OpenDART",
+      "url": "https://opendart.fss.or.kr/",
+      "scope": "source candidate; this task did not revalidate endpoint or fields"
+    },
+    {
+      "source": "SEC company data",
+      "url": "https://www.sec.gov/edgar/sec-api-documentation",
+      "scope": "US source candidate; not implemented or revalidated in this task"
+    }
+  ],
+  "rights_interpretation": {
+    "checked_on": "2026-10-21",
+    "official_sources": [
+      "https://apiportal.koreainvestment.com/about-open-api",
+      "https://apiportal.koreainvestment.com/provider"
+    ],
+    "conclusion": "rights_pending is a conservative prototype default for this code path; reviewed KIS public guidance does not establish a prohibition on the narrow individual own-account personal investment use case.",
+    "limits": "The KIS public pages do not resolve local retention, derived output, ChatGPT Work/model-host egress or a student distributed local plugin using per-user keys. No public redistribution is allowed by the personal-use notice."
+  }
+}

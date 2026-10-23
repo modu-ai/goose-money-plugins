@@ -1,0 +1,769 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.overseas-futures-minute-history.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "source_commit": {
+      "type": "string",
+      "const": "2077773a69a428daf63e148182511f068cc45de3"
+    },
+    "received_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "available_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "event_time": {
+      "type": "null"
+    },
+    "published_at": {
+      "type": "null"
+    },
+    "source_timezone": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "provider_bar_labels_not_verified_instants"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "session": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "delay_state": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "finality": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "freshness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "completeness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "adjustment_status": {
+      "type": "string",
+      "const": "not_verified_no_roll_or_adjustment_inferred"
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "pages_fetched": {
+          "type": "number",
+          "const": 1
+        },
+        "tr_cont": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "",
+                "D",
+                "E",
+                "M",
+                "F"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provider_cursor": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 200
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "more_signaled_not_fetched",
+            "not_signaled_completeness_unknown"
+          ]
+        },
+        "automatic_continuation": {
+          "type": "boolean",
+          "const": false
+        },
+        "completeness": {
+          "type": "string",
+          "const": "unknown"
+        }
+      },
+      "required": [
+        "pages_fetched",
+        "tr_cont",
+        "provider_cursor",
+        "status",
+        "automatic_continuation",
+        "completeness"
+      ],
+      "additionalProperties": false
+    },
+    "bars_returned": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "coverage_status": {
+      "type": "string",
+      "enum": [
+        "empty_page_not_proof_of_absence",
+        "single_page_not_complete_history"
+      ]
+    },
+    "row_order_status": {
+      "type": "string",
+      "const": "provider_order_preserved_no_sort_dedup_or_resample"
+    },
+    "duplicate_label_status": {
+      "type": "string",
+      "enum": [
+        "duplicate_labels_retained",
+        "none_observed"
+      ]
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "underlying_id": {
+          "type": "null"
+        },
+        "exchange": {
+          "type": "null"
+        },
+        "country": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "adjusted": {
+          "type": "null"
+        },
+        "contract_multiplier": {
+          "type": "null"
+        },
+        "expiry_date": {
+          "type": "null"
+        },
+        "last_trading_date": {
+          "type": "null"
+        },
+        "tick_size": {
+          "type": "null"
+        },
+        "tick_value": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "volume_unit": {
+          "type": "null"
+        },
+        "turnover_unit": {
+          "type": "null"
+        },
+        "bars": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "underlying_id",
+        "exchange",
+        "country",
+        "currency",
+        "adjusted",
+        "contract_multiplier",
+        "expiry_date",
+        "last_trading_date",
+        "tick_size",
+        "tick_value",
+        "price_unit",
+        "volume_unit",
+        "turnover_unit",
+        "bars"
+      ],
+      "additionalProperties": false
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "unimplemented_derivations": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "warnings": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "requested": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "maxLength": 13,
+          "pattern": "^[A-Z0-9]{1,10}[FGHJKMNQUVXZ]\\d{2}$"
+        },
+        "exchange": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8,
+          "pattern": "^[A-Z0-9]+$"
+        },
+        "end_date": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "count": {
+          "type": "string",
+          "const": "120"
+        },
+        "interval_minutes": {
+          "type": "string",
+          "enum": [
+            "1",
+            "5",
+            "10",
+            "15",
+            "30",
+            "60"
+          ]
+        }
+      },
+      "required": [
+        "symbol",
+        "exchange",
+        "end_date",
+        "count",
+        "interval_minutes"
+      ],
+      "additionalProperties": false
+    },
+    "interval": {
+      "type": "string",
+      "const": "provider_minute_bars"
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "no_returned_contract_or_exchange_code"
+    },
+    "geographical_scope_status": {
+      "type": "string",
+      "const": "overseas_contract_us_listing_not_verified"
+    },
+    "continuation_contract_status": {
+      "type": "string",
+      "const": "blocked_official_index_key_location_conflict"
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "rt_cd": {
+          "type": "string",
+          "const": "0"
+        },
+        "msg_cd": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "msg1": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "output1": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "ret_cnt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "last_n_cnt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "index_key": {
+                  "type": "string",
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "index_key"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "ret_cnt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 30,
+                          "pattern": "^\\d+$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "last_n_cnt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 30,
+                          "pattern": "^\\d+$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "index_key": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "required": [
+                    "index_key"
+                  ],
+                  "additionalProperties": false
+                }
+              ],
+              "items": false,
+              "minItems": 1,
+              "maxItems": 1
+            }
+          ]
+        },
+        "output2": {
+          "anyOf": [
+            {
+              "maxItems": 120,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "data_date": {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  "data_time": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "open_price": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "high_price": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "low_price": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "last_price": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "last_qntt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 30,
+                        "pattern": "^\\d+$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "vol": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 30,
+                        "pattern": "^\\d+$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "prev_diff_flag": {
+                    "type": "string",
+                    "maxLength": 8
+                  },
+                  "prev_diff_price": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  },
+                  "prev_diff_rate": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40,
+                        "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                      },
+                      {
+                        "type": "string",
+                        "const": ""
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "data_date",
+                  "data_time",
+                  "open_price",
+                  "high_price",
+                  "low_price",
+                  "last_price",
+                  "vol"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "data_date": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                "data_time": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "open_price": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "high_price": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "low_price": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "last_price": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "last_qntt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "vol": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "prev_diff_flag": {
+                  "type": "string",
+                  "maxLength": 8
+                },
+                "prev_diff_price": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "prev_diff_rate": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "data_date",
+                "data_time",
+                "open_price",
+                "high_price",
+                "low_price",
+                "last_price",
+                "vol"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "rt_cd",
+        "output1",
+        "output2"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "source_commit",
+    "received_at",
+    "available_at",
+    "source_as_of",
+    "event_time",
+    "published_at",
+    "source_timezone",
+    "source_time_status",
+    "rights_status",
+    "session",
+    "delay_state",
+    "finality",
+    "freshness",
+    "completeness",
+    "validation_status",
+    "adjustment_status",
+    "pagination",
+    "bars_returned",
+    "coverage_status",
+    "row_order_status",
+    "duplicate_label_status",
+    "canonical_projection_status",
+    "canonical",
+    "mapping_blockers",
+    "unimplemented_derivations",
+    "warnings",
+    "requested",
+    "interval",
+    "identity_status",
+    "geographical_scope_status",
+    "continuation_contract_status",
+    "raw"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/overseas-futures-minute-history-result-v1.schema.json",
+  "$comment": "Offline JSON Schema projection. Runtime Zod schema additionally enforces actual calendar dates, exact receipt equality, row count/coverage/cursor provenance, identity and date-range guards. The .invalid namespace is an identifier, not a hosted resource."
+}

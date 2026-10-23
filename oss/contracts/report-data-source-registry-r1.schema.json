@@ -1,0 +1,705 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://moai.local/schemas/report-data-source-registry-r1.schema.json",
+  "title": "MoAI Stock Report Data Source Registry R1",
+  "description": "Schema for a draft mapping registry sourced from the report consumer contract; schema validation does not establish provider rights or live data correctness.",
+  "type": "object",
+  "required": [
+    "registry_id",
+    "version",
+    "generated_on",
+    "status",
+    "source_basis",
+    "scope",
+    "status_semantics",
+    "field_count_semantics",
+    "common_contract_fields",
+    "field_groups",
+    "field_registry",
+    "source_catalog",
+    "reports",
+    "utilities",
+    "internal_qa",
+    "provenance_and_runtime_contract",
+    "coverage_summary",
+    "unmapped_domains",
+    "implementation_sequence",
+    "limitations",
+    "candidate_catalog_contract",
+    "official_kis_report_candidates",
+    "official_catalog_coverage",
+    "field_candidate_association_rules"
+  ],
+  "properties": {
+    "registry_id": {
+      "const": "moai.stock.report-data-source-registry"
+    },
+    "version": {
+      "type": "string"
+    },
+    "generated_on": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string"
+    },
+    "source_basis": {
+      "type": "object"
+    },
+    "scope": {
+      "type": "object"
+    },
+    "status_semantics": {
+      "type": "object"
+    },
+    "field_count_semantics": {
+      "type": "string"
+    },
+    "common_contract_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "field_groups": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "uniqueItems": true
+      }
+    },
+    "field_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field_name",
+          "groups",
+          "status",
+          "origin",
+          "rationale",
+          "bindings",
+          "candidate_operations_without_exact_field_binding"
+        ],
+        "properties": {
+          "field_name": {
+            "type": "string"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "$ref": "#/$defs/mappingStatus"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "canonical_type_status": {
+            "type": "string"
+          },
+          "unit_status": {
+            "type": "string"
+          },
+          "currency_status": {
+            "type": "string"
+          },
+          "scope_note": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "bindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/binding"
+            }
+          },
+          "candidate_operations_without_exact_field_binding": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "official_catalog_candidate_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "catalog_candidate_association_status": {
+            "type": "string"
+          },
+          "catalog_candidate_note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "source_catalog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "provider",
+          "kind",
+          "method",
+          "endpoint",
+          "request",
+          "response",
+          "source_ref",
+          "mapping_status",
+          "authorization",
+          "cache_refresh"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "method": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "endpoint": {
+            "type": "string"
+          },
+          "tr_id": {},
+          "request": {
+            "type": "object"
+          },
+          "response": {
+            "type": "object"
+          },
+          "report_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_ref": {
+            "type": "string"
+          },
+          "mapping_status": {
+            "type": "string"
+          },
+          "authorization": {
+            "type": "object"
+          },
+          "limits": {
+            "type": "object"
+          },
+          "cache_refresh": {
+            "type": "object"
+          },
+          "pagination": {
+            "type": "object"
+          },
+          "errors": {
+            "type": "array"
+          },
+          "rights": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "reports": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "items": {
+        "$ref": "#/$defs/report"
+      }
+    },
+    "utilities": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "internal_qa": {
+      "type": "object"
+    },
+    "provenance_and_runtime_contract": {
+      "type": "object"
+    },
+    "coverage_summary": {
+      "type": "object"
+    },
+    "unmapped_domains": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "implementation_sequence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "candidate_catalog_contract": {
+      "type": "object",
+      "required": [
+        "status",
+        "selection_method",
+        "count",
+        "field_group_associations",
+        "input_names",
+        "response_mapping",
+        "runtime"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "selection_method": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "field_group_associations": {
+          "type": "string"
+        },
+        "input_names": {
+          "type": "string"
+        },
+        "response_mapping": {
+          "type": "string"
+        },
+        "asset_gaps": {
+          "type": "string"
+        },
+        "account_scope": {
+          "type": "string"
+        },
+        "runtime": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "official_kis_report_candidates": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/officialKisCandidate"
+      }
+    },
+    "official_catalog_coverage": {
+      "type": "object",
+      "required": [
+        "source",
+        "source_commit",
+        "source_read",
+        "reported_inventory_totals",
+        "selected_rest_get_read_candidates",
+        "selected_candidates_by_category",
+        "selected_candidate_count_by_report",
+        "not_claimed"
+      ],
+      "additionalProperties": true
+    },
+    "field_candidate_association_rules": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "mappingStatus": {
+      "type": "string",
+      "enum": [
+        "supported",
+        "derived",
+        "not_available",
+        "verification_pending"
+      ]
+    },
+    "binding": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "raw_path",
+        "provider_field",
+        "verification"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string"
+        },
+        "raw_path": {
+          "type": [
+            "string",
+            "array",
+            "null"
+          ]
+        },
+        "provider_field": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "canonical_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "transform": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_ref": {
+          "type": "string"
+        },
+        "verification": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "section": {
+      "type": "object",
+      "required": [
+        "section_id",
+        "title",
+        "field_groups",
+        "canonical_fields",
+        "chart_requirements"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "field_groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "canonical_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "candidate_source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "field_status_counts": {
+          "type": "object"
+        },
+        "chart_requirements": {
+          "type": "object",
+          "required": [
+            "status",
+            "fields"
+          ],
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "non_contract_group_candidates": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "report": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "required_groups",
+        "common_envelope_fields",
+        "sections",
+        "requirements_beyond_canonical_fields",
+        "chart_requirements",
+        "field_counts",
+        "candidate_sources"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^R[0-9]{2}$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "identity_note": {
+          "type": "string"
+        },
+        "required_groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "common_envelope_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/section"
+          }
+        },
+        "requirements_beyond_canonical_fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "requirement_id",
+              "text",
+              "status",
+              "note"
+            ],
+            "properties": {
+              "requirement_id": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              },
+              "status": {
+                "$ref": "#/$defs/mappingStatus"
+              },
+              "note": {
+                "type": "string"
+              },
+              "candidate_sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "chart_requirements": {
+          "type": "object"
+        },
+        "field_counts": {
+          "type": "object",
+          "required": [
+            "required_canonical_field_count",
+            "supported_count",
+            "derived_count",
+            "not_available_count",
+            "verification_pending_count",
+            "mapping_complete_count",
+            "mapping_missing_count"
+          ]
+        },
+        "candidate_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "field_status_by_name": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/mappingStatus"
+          }
+        },
+        "asset_coverage": {
+          "type": "string"
+        },
+        "prose_requirement_count": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "officialKisCandidate": {
+      "type": "object",
+      "required": [
+        "id",
+        "row",
+        "category",
+        "api_name",
+        "function_name",
+        "scope",
+        "method",
+        "endpoint",
+        "tr_id",
+        "sample_argument_names",
+        "source_url",
+        "report_ids",
+        "candidate_field_groups",
+        "response_schema_status",
+        "raw_field_names",
+        "raw_json_paths",
+        "access_gate",
+        "mcp_exposure_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "row": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "category": {
+          "type": "string"
+        },
+        "api_name": {
+          "type": "string"
+        },
+        "function_name": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "method": {
+          "type": "array",
+          "items": {
+            "const": "GET"
+          }
+        },
+        "endpoint": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tr_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sample_argument_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sample_output_documentation": {
+          "type": "string"
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "report_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^R(0[1-9]|1[0-4])$"
+          }
+        },
+        "candidate_field_groups": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "response_schema_status": {
+          "const": "verification_pending"
+        },
+        "raw_field_names": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "raw_json_paths": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "access_gate": {
+          "type": "string"
+        },
+        "mcp_exposure_status": {
+          "type": "string"
+        },
+        "local_source_matches": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "asset_scope_status": {
+          "type": "string"
+        },
+        "binding_scope_note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,329 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.goose.execution.v1"
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": [
+        "single_role",
+        "sequential",
+        "host_native_parallel",
+        "synthetic_parallel_test",
+        "native_dispatch_unverified"
+      ]
+    },
+    "host_execution_verified": {
+      "type": "boolean",
+      "const": false
+    },
+    "host_execution_attested": {
+      "type": "boolean"
+    },
+    "single_writer": {
+      "type": "string",
+      "const": "goose"
+    },
+    "report_rendered": {
+      "type": "boolean",
+      "const": false
+    },
+    "factual_accuracy_verified": {
+      "type": "boolean",
+      "const": false
+    },
+    "records": {
+      "minItems": 1,
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role_id": {
+            "type": "string",
+            "enum": [
+              "company-analysis",
+              "disclosure-event",
+              "market-behavior",
+              "valuation",
+              "fact-check-report-qa"
+            ]
+          },
+          "skill": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string",
+            "const": "analysis"
+          },
+          "requested_scope": {
+            "type": "string"
+          },
+          "input_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "output_path": {
+            "type": "null"
+          },
+          "data_class": {
+            "type": "string",
+            "enum": [
+              "public_actual",
+              "synthetic",
+              "mixed_or_empty"
+            ]
+          },
+          "tool_operation_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cutoff_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "started_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "completed_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "observed_child_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "validation_state": {
+            "type": "string",
+            "enum": [
+              "schema_validated",
+              "failed",
+              "timed_out"
+            ]
+          },
+          "failure": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "role_failed",
+                  "role_result_invalid",
+                  "role_timeout"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "completion_status": {
+            "type": "string",
+            "enum": [
+              "response_observed",
+              "execution_unconfirmed"
+            ]
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "run_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "^[A-Za-z0-9_.:-]+$"
+                  },
+                  "role_id": {
+                    "type": "string",
+                    "enum": [
+                      "company-analysis",
+                      "disclosure-event",
+                      "market-behavior",
+                      "valuation",
+                      "fact-check-report-qa"
+                    ]
+                  },
+                  "findings": {
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "claim_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 100,
+                          "pattern": "^[A-Za-z0-9_.:-]+$"
+                        },
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "fact",
+                            "calculation",
+                            "assumption",
+                            "estimate"
+                          ]
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2000
+                        },
+                        "source_refs": {
+                          "maxItems": 20,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 100,
+                            "pattern": "^[A-Za-z0-9_.:-]+$"
+                          }
+                        },
+                        "formula_id": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 100,
+                              "pattern": "^[A-Za-z0-9_.:-]+$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "claim_id",
+                        "kind",
+                        "text",
+                        "source_refs",
+                        "formula_id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "tool_operation_ids": {
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 80
+                    }
+                  },
+                  "counterevidence": {
+                    "maxItems": 20,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 2000
+                    }
+                  },
+                  "unresolved": {
+                    "maxItems": 30,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 2000
+                    }
+                  }
+                },
+                "required": [
+                  "run_id",
+                  "role_id",
+                  "findings",
+                  "tool_operation_ids",
+                  "counterevidence",
+                  "unresolved"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "role_id",
+          "skill",
+          "phase",
+          "requested_scope",
+          "input_refs",
+          "output_path",
+          "data_class",
+          "tool_operation_ids",
+          "cutoff_at",
+          "started_at",
+          "completed_at",
+          "observed_child_id",
+          "validation_state",
+          "failure",
+          "completion_status",
+          "result",
+          "warnings"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "run_id",
+    "execution_mode",
+    "host_execution_verified",
+    "host_execution_attested",
+    "single_writer",
+    "report_rendered",
+    "factual_accuracy_verified",
+    "records",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

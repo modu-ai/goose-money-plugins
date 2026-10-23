@@ -1,0 +1,13 @@
+{
+  "contract": "canonical-history/1.0",
+  "runtime_version": "canonical-history-semantics/rc5.1",
+  "authority": "moai-atp-report/vm-history-semantics-rc5",
+  "files": {
+    "canonical-history.schema.json": "ac755724fc93442a50f38f3da4ff1749cafdb84221cc6b36efa448b562f55b4f",
+    "history_semantics.py": "55b7c1a0ab05b643d27bb27e072f00846b92d7f8bf749c479dcfedc8479318de",
+    "numeric_core.py": "02e3c646714eec8dca3ceffc9c9b9746f6d0670634a31b81fdb937f9f3656f37",
+    "README.md": "51155af56cd93dd3a405e0ebb26f7a8b4e849ba9443aa38206c6370129fe62ee",
+    "compatible-timezones.json": "2509c71686593efbc5f591b7938f48896bb94d9daf65586cdf9d1d15dc4b3c14"
+  },
+  "source_authentication_performed": false
+}

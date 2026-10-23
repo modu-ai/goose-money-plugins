@@ -1,0 +1,42 @@
+{
+  "contract": "moai.sec.submissions.v1",
+  "provider": "SEC",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "rights": "pending",
+  "identity_status": "cik_matched",
+  "source_url": "https://data.sec.gov/submissions/CIK0000320193.json",
+  "warnings": [
+    "No historical files or linked primary documents fetched. Filing metadata is not article/report text.",
+    "CIK identifies reporting entity; ticker/exchange lists are not proven one-to-one or current security mappings.",
+    "Acceptance timestamps retained only with explicit timezone; filing/report dates are not publication instants.",
+    "User-agent/fair-access transport integration and data use review remain host responsibilities."
+  ],
+  "request": {
+    "cik": "0000320193",
+    "max_filings": 50
+  },
+  "entity_name": "Synthetic Company",
+  "tickers": [
+    "SYN"
+  ],
+  "exchanges": [
+    "Nasdaq"
+  ],
+  "filings": [
+    {
+      "accession_number": "0000320193-26-000001",
+      "filing_date": "2026-10-20",
+      "report_date": "2026-09-30",
+      "acceptance_datetime": "2026-10-20T16:00:00Z",
+      "form": "10-K",
+      "primary_document": "synthetic.htm",
+      "primary_doc_description": "Synthetic annual report"
+    }
+  ],
+  "recent_filing_count": 1,
+  "omitted_recent_count": 0,
+  "historical_file_count": 1,
+  "completeness": "recent_subset_historical_files_not_fetched"
+}

@@ -1,0 +1,73 @@
+{
+  "contract": "moai.stock.overseas-futures-quote.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "source_time_status": "blocked_timezone_and_processing_semantics_not_reconciled",
+  "rights_status": "pending",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "symbol_from_request": "ESZ26",
+  "expected_exchange_from_request": null,
+  "expected_currency_from_request": null,
+  "identity_status": "no_returned_contract_code",
+  "expectation_status": "not_requested",
+  "geographical_scope_status": "overseas_contract_us_listing_not_verified",
+  "provider_output_shape": "object",
+  "processing_time": {
+    "provider_date": "20261022",
+    "provider_time": "090000",
+    "timezone": null,
+    "semantic": "provider_final_processing_not_verified_trade_time",
+    "status": "date_time_present_timezone_unverified"
+  },
+  "raw": {
+    "proc_date": "20261022",
+    "proc_time": "090000",
+    "last_price": "-1.25",
+    "exch_cd": "CME",
+    "crc_cd": "USD",
+    "expr_date": "20261218"
+  },
+  "canonical_projection_status": "blocked",
+  "canonical": {
+    "instrument_id": null,
+    "underlying_id": null,
+    "exchange": null,
+    "country": null,
+    "currency": null,
+    "last_price": null,
+    "previous_close": null,
+    "open_price": null,
+    "high_price": null,
+    "low_price": null,
+    "bid_price": null,
+    "ask_price": null,
+    "change": null,
+    "change_percent": null,
+    "volume": null,
+    "settlement_price": null,
+    "tick_size": null,
+    "tick_value": null,
+    "price_unit": null,
+    "volume_unit": null,
+    "contract_multiplier": null,
+    "expiry_date": null,
+    "last_trading_date": null
+  },
+  "mapping_blockers": [
+    "returned_contract_code_missing",
+    "authoritative_contract_and_us_exchange_binding_missing",
+    "price_display_basis_currency_and_quantity_units_not_reconciled",
+    "contract_multiplier_not_returned",
+    "expiry_and_final_trading_date_not_bound_to_verified_contract",
+    "provider_processing_time_timezone_and_trade_time_semantics_not_reconciled"
+  ],
+  "warnings": [
+    "This overseas-futures endpoint does not by itself verify a US-listed contract or the requested series identity.",
+    "Exchange/currency expectations are caller mismatch guards, not authoritative evidence.",
+    "Raw processing, business, expiry and final-trading dates stay separate. No timezone, source instant or freshness is invented.",
+    "Tick size is not tick value or a contract multiplier. Raw prices can be negative and are never rounded, scaled or converted.",
+    "Entitlements and redistribution rights are pending; no market-data subscription or live provider reconciliation was performed."
+  ]
+}

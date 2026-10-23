@@ -1,0 +1,685 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.overseas-futures-quote.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "blocked_timezone_and_processing_semantics_not_reconciled"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "symbol_from_request": {
+      "type": "string",
+      "maxLength": 13,
+      "pattern": "^[A-Z0-9]{1,10}[FGHJKMNQUVXZ]\\d{2}$"
+    },
+    "expected_exchange_from_request": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8,
+          "pattern": "^[A-Z0-9]+$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "expected_currency_from_request": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "no_returned_contract_code"
+    },
+    "expectation_status": {
+      "type": "string",
+      "enum": [
+        "not_requested",
+        "caller_metadata_expectations_matched_not_verified"
+      ]
+    },
+    "geographical_scope_status": {
+      "type": "string",
+      "const": "overseas_contract_us_listing_not_verified"
+    },
+    "provider_output_shape": {
+      "type": "string",
+      "enum": [
+        "object",
+        "singleton_array"
+      ]
+    },
+    "processing_time": {
+      "type": "object",
+      "properties": {
+        "provider_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "provider_time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timezone": {
+          "type": "null"
+        },
+        "semantic": {
+          "type": "string",
+          "const": "provider_final_processing_not_verified_trade_time"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "date_time_present_timezone_unverified",
+            "date_or_time_missing"
+          ]
+        }
+      },
+      "required": [
+        "provider_date",
+        "provider_time",
+        "timezone",
+        "semantic",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "proc_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "high_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "proc_time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "open_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "trst_mgn": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "low_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "last_price": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+        },
+        "vol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prev_diff_flag": {
+          "type": "string",
+          "maxLength": 8
+        },
+        "prev_diff_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prev_diff_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "bid_qntt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "bid_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "ask_qntt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "ask_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prev_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "exch_cd": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8,
+              "pattern": "^[A-Z0-9]+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "crc_cd": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Z]{3}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "trd_fr_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "expr_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "trd_to_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "remn_cnt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^-?\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "last_qntt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "tot_ask_qntt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "tot_bid_qntt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "tick_size": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "open_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "open_time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "close_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "close_time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "sbsnsdate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "sttl_price": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        }
+      },
+      "required": [
+        "last_price"
+      ],
+      "additionalProperties": false
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "underlying_id": {
+          "type": "null"
+        },
+        "exchange": {
+          "type": "null"
+        },
+        "country": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "last_price": {
+          "type": "null"
+        },
+        "previous_close": {
+          "type": "null"
+        },
+        "open_price": {
+          "type": "null"
+        },
+        "high_price": {
+          "type": "null"
+        },
+        "low_price": {
+          "type": "null"
+        },
+        "bid_price": {
+          "type": "null"
+        },
+        "ask_price": {
+          "type": "null"
+        },
+        "change": {
+          "type": "null"
+        },
+        "change_percent": {
+          "type": "null"
+        },
+        "volume": {
+          "type": "null"
+        },
+        "settlement_price": {
+          "type": "null"
+        },
+        "tick_size": {
+          "type": "null"
+        },
+        "tick_value": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "volume_unit": {
+          "type": "null"
+        },
+        "contract_multiplier": {
+          "type": "null"
+        },
+        "expiry_date": {
+          "type": "null"
+        },
+        "last_trading_date": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "underlying_id",
+        "exchange",
+        "country",
+        "currency",
+        "last_price",
+        "previous_close",
+        "open_price",
+        "high_price",
+        "low_price",
+        "bid_price",
+        "ask_price",
+        "change",
+        "change_percent",
+        "volume",
+        "settlement_price",
+        "tick_size",
+        "tick_value",
+        "price_unit",
+        "volume_unit",
+        "contract_multiplier",
+        "expiry_date",
+        "last_trading_date"
+      ],
+      "additionalProperties": false
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "warnings": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "source_time_status",
+    "rights_status",
+    "validation_status",
+    "symbol_from_request",
+    "expected_exchange_from_request",
+    "expected_currency_from_request",
+    "identity_status",
+    "expectation_status",
+    "geographical_scope_status",
+    "provider_output_shape",
+    "processing_time",
+    "raw",
+    "canonical_projection_status",
+    "canonical",
+    "mapping_blockers",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

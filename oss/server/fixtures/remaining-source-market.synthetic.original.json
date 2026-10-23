@@ -1,0 +1,16 @@
+{
+  "rt_cd": "0",
+  "msg1": "PRIVATE_SYNTHETIC_MESSAGE",
+  "output": [
+    {
+      "stck_bsop_date": "20261021",
+      "frgn_ntby_qty": "000012",
+      "prsn_ntby_qty": "",
+      "orgn_ntby_tr_pbmn": "-00001.500"
+    },
+    {
+      "stck_bsop_date": "20261021",
+      "frgn_ntby_qty": "000012"
+    }
+  ]
+}

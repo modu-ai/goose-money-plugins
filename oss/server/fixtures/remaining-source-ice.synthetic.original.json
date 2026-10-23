@@ -1,0 +1,18 @@
+{
+  "rt_cd": "0",
+  "output1": [
+    {
+      "anno_dt": "20250101",
+      "ca_title": "TickerChange",
+      "effective_dt": "20261010",
+      "pay_dt": "20280101",
+      "div_lock_dt": ""
+    },
+    {
+      "ca_title": "UNKNOWN"
+    },
+    {
+      "ca_title": "UNKNOWN"
+    }
+  ]
+}

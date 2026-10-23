@@ -1,0 +1,468 @@
+{
+  "contract": "moai.financial.report-fact-handoff.v1",
+  "status": "synthetic_fact_ready",
+  "fact": {
+    "fact_id": "moai:financial:860837cb495912aeb240ac7017cab2fe69f442e575ae0e2c69dac56c20119a11",
+    "concept": "reported.revenue",
+    "state": "available",
+    "value": "9007199254740993.2500",
+    "unit": "money",
+    "scale": "1",
+    "currency": "USD",
+    "issuer_id": "synthetic:issuer:1",
+    "security_id": "synthetic:security:1",
+    "share_class": "ordinary-common",
+    "venue": "SYNTHETIC",
+    "population": "same-issuer-common-shares",
+    "data_kind": "synthetic",
+    "basis": {
+      "scope": "consolidated",
+      "standard": "US-GAAP",
+      "revision_basis": "synthetic-original",
+      "split_basis": "synthetic-unadjusted",
+      "methodology_id": "synthetic-policy-1",
+      "attribution": "total",
+      "definition": "revenue"
+    },
+    "period": {
+      "kind": "FY",
+      "start": "2025-01-01",
+      "end": "2025-12-31",
+      "label": "SYNTHETIC FY2025"
+    },
+    "published_at": "2026-02-10T15:30:01.000000001Z",
+    "available_at": "2026-02-10T15:30:02Z",
+    "finality": "final",
+    "coverage_complete": true,
+    "date_timezone": "UTC",
+    "provenance": {
+      "source_id": "SEC",
+      "document_id": "0000000001-26-000001",
+      "locator": "synthetic://fixture/financial",
+      "revision_id": "synthetic-revision-1",
+      "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "selector_id": "sha256:b641a9102362a06a8453b99b950b5b3f0590de19635d04819619de152939aedb",
+      "semantic_binding_verified": true,
+      "data_kind": "synthetic"
+    }
+  },
+  "verification": {
+    "input_sha256": "860837cb495912aeb240ac7017cab2fe69f442e575ae0e2c69dac56c20119a11",
+    "adapter_id": "synthetic-test-verifier",
+    "mode": "synthetic_test_only",
+    "verified_at": "2026-10-22T01:00:00.000000001Z",
+    "assurance": "trusted_adapter_attestation_not_independent_host_authentication",
+    "confirmed": {
+      "source_authenticity": [
+        "financial-source",
+        "filing-source"
+      ],
+      "rights": [
+        "synthetic-review"
+      ],
+      "identity": [
+        "synthetic-review"
+      ],
+      "semantic_role": [
+        "synthetic-review"
+      ],
+      "unit_scale_currency": [
+        "synthetic-review"
+      ],
+      "period": [
+        "synthetic-review"
+      ],
+      "accounting_basis": [
+        "synthetic-review"
+      ],
+      "publication_availability": [
+        "synthetic-review"
+      ],
+      "coverage_finality": [
+        "synthetic-review"
+      ],
+      "revision_split": [
+        "synthetic-review"
+      ]
+    }
+  },
+  "lineage": {
+    "numeric_lexeme": "9007199254740993.2500",
+    "raw_value": "9007199254740993.2500",
+    "candidate_sha256": "fd14f6efc86f34a5b04291e28922cff163bcf215d284d27a52d669a14b4828ea",
+    "financial_snapshot_sha256": "cbb518f264b91055360e766863b23dd4be840449aaafe834140fa01b358398ef",
+    "filings_snapshot_sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+    "artifacts": [
+      {
+        "id": "financial-source",
+        "data_kind": "synthetic",
+        "digest_kind": "synthetic_fixture",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "locator": "synthetic://fixture/financial",
+        "snapshot": {
+          "name": "financial",
+          "sha256": "cbb518f264b91055360e766863b23dd4be840449aaafe834140fa01b358398ef",
+          "received_at": "2026-10-22T00:00:00.123456789Z"
+        }
+      },
+      {
+        "id": "filing-source",
+        "data_kind": "synthetic",
+        "digest_kind": "synthetic_fixture",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "locator": "synthetic://fixture/filings",
+        "snapshot": {
+          "name": "filings",
+          "sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+          "received_at": "2026-10-22T00:00:00.123456789Z"
+        }
+      },
+      {
+        "id": "synthetic-review",
+        "data_kind": "synthetic",
+        "digest_kind": "synthetic_fixture",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "locator": "synthetic://fixture/review",
+        "snapshot": null
+      }
+    ]
+  },
+  "rights": {
+    "purpose": "private_owner_research_report",
+    "valid_from": "2026-10-22T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "inputs": {
+    "candidate": {
+      "contract": "moai.financial.selected-evidence-candidate.v1",
+      "status": "selected_evidence_candidate_only",
+      "origin": "synthetic",
+      "cutoff": "2026-10-22T00:00:00.123456789Z",
+      "calendar_guard": {
+        "timezone": "UTC",
+        "cutoff_local_date": "2026-10-22",
+        "status": "caller_selected_timezone_not_source_verified"
+      },
+      "requested_role": "reported.revenue",
+      "role_association_status": "unverified_caller_request",
+      "semantic_binding_verified": false,
+      "canonical_fact": null,
+      "published_at": null,
+      "available_at": null,
+      "rights_status": "pending",
+      "unit_scale": null,
+      "accounting_basis": null,
+      "finality": "unknown",
+      "coverage_complete": false,
+      "selection_policy": "exact_caller_selector_no_latest_or_restatement_inference",
+      "constituent_receipt_latest": "2026-10-22T00:00:00.123456789Z",
+      "receipt_status": "constituent_dto_receipts_checked_not_publication_times",
+      "mapping_blockers": [
+        "source_authenticity_not_independently_verified",
+        "security_identity_not_verified",
+        "semantic_role_binding_not_verified",
+        "unit_scale_currency_and_accounting_basis_not_verified",
+        "publication_availability_not_verified",
+        "complete_coverage_finality_and_revision_choice_not_verified",
+        "rights_pending"
+      ],
+      "warnings": [
+        "This is selected provider evidence, not a canonical fact or authenticated source.",
+        "Requested reported.* role association is unverified. No computation, conversion, scaling, aggregation, semantic binding or rights clearance occurs.",
+        "Snapshot SHA256 identifies a validated DTO serialized with sorted object keys, not an original HTTP response, signature or authenticated provenance.",
+        "Caller calendar choice is explicit but unverified. Date labels and SEC acceptance timestamps do not establish public availability.",
+        "Exact uniqueness is local to supplied bounded snapshots, never proof of complete filing history or latest/restated selection.",
+        "Downstream canonical-engine validation is not source authentication or independent verification of rights, identity, units or semantic binding."
+      ],
+      "provider": "SEC",
+      "selector": {
+        "cik": "0000000001",
+        "taxonomy": "us-gaap",
+        "concept": "Revenues",
+        "unit_raw": "USD",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "period_kind": "duration",
+        "accession_number": "0000000001-26-000001",
+        "filed": "2026-02-10",
+        "fiscal_year": 2025,
+        "fiscal_period": "FY",
+        "form": "10-K",
+        "frame": "CY2025",
+        "filing": {
+          "filing_date": "2026-02-10",
+          "report_date": "2025-12-31",
+          "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+          "primary_document": "synthetic.htm"
+        }
+      },
+      "issuer": {
+        "cik": "0000000001",
+        "status": "supplied_dto_cik_join_only_not_security_identity"
+      },
+      "selected": {
+        "row": {
+          "unit_raw": "USD",
+          "numeric_lexeme": "9007199254740993.2500",
+          "start": "2025-01-01",
+          "end": "2025-12-31",
+          "accession_number": "0000000001-26-000001",
+          "filed": "2026-02-10",
+          "fiscal_year": 2025,
+          "fiscal_period": "FY",
+          "form": "10-K",
+          "frame": "CY2025",
+          "period_kind": "duration",
+          "accounting_basis": null,
+          "canonical_metric": null
+        },
+        "filing": {
+          "accession_number": "0000000001-26-000001",
+          "filing_date": "2026-02-10",
+          "report_date": "2025-12-31",
+          "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+          "form": "10-K",
+          "primary_document": "synthetic.htm",
+          "primary_doc_description": "Synthetic fixture"
+        },
+        "numeric_lexeme": "9007199254740993.2500",
+        "unit_raw": "USD",
+        "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+        "acceptance_status": "source_acceptance_metadata_not_publication_availability"
+      },
+      "coverage": {
+        "concept_total_fact_count": 1,
+        "concept_truncated": false,
+        "concept_selection": "provider_unit_and_row_order_first_n",
+        "filings_recent_count": 1,
+        "filings_omitted_recent_count": 0,
+        "historical_file_count": 1,
+        "filings_completeness": "recent_subset_historical_files_not_fetched",
+        "complete": false
+      },
+      "snapshots": {
+        "financial": {
+          "sha256": "cbb518f264b91055360e766863b23dd4be840449aaafe834140fa01b358398ef",
+          "hash_scope": "validated_provider_dto_snapshot",
+          "hash_algorithm": "sha256",
+          "serialization": "sorted_object_keys_json_utf8_v1",
+          "original_http_body_hash": null,
+          "received_at": "2026-10-22T00:00:00.123456789Z",
+          "value": {
+            "contract": "moai.sec.company-concept.v1",
+            "provider": "SEC",
+            "origin": "synthetic",
+            "received_at": "2026-10-22T00:00:00.123456789Z",
+            "source_as_of": null,
+            "rights": "pending",
+            "identity_status": "cik_matched",
+            "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/Revenues.json",
+            "warnings": [
+              "Original JSON numeric lexemes retained exactly; raw transport must never reserialize previously parsed numeric data.",
+              "Units are source XBRL units, not an implicit currency conversion or inferred reporting scale.",
+              "All reported versions retained in provider order, not latest/restatement selection. No quarterly/cumulative or accounting-basis inference.",
+              "No complete company financial model, recommendation, rights clearance or live verification is implied."
+            ],
+            "request": {
+              "cik": "0000000001",
+              "taxonomy": "us-gaap",
+              "concept": "Revenues",
+              "max_facts": 10
+            },
+            "entity_name": "SYNTHETIC ONLY",
+            "taxonomy": "us-gaap",
+            "concept": "Revenues",
+            "label": "Synthetic revenue",
+            "facts": [
+              {
+                "unit_raw": "USD",
+                "numeric_lexeme": "9007199254740993.2500",
+                "start": "2025-01-01",
+                "end": "2025-12-31",
+                "accession_number": "0000000001-26-000001",
+                "filed": "2026-02-10",
+                "fiscal_year": 2025,
+                "fiscal_period": "FY",
+                "form": "10-K",
+                "frame": "CY2025",
+                "period_kind": "duration",
+                "accounting_basis": null,
+                "canonical_metric": null
+              }
+            ],
+            "total_fact_count": 1,
+            "truncated": false,
+            "selection": "provider_unit_and_row_order_first_n"
+          }
+        },
+        "filings": {
+          "sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+          "hash_scope": "validated_provider_dto_snapshot",
+          "hash_algorithm": "sha256",
+          "serialization": "sorted_object_keys_json_utf8_v1",
+          "original_http_body_hash": null,
+          "received_at": "2026-10-22T00:00:00.123456789Z",
+          "value": {
+            "contract": "moai.sec.submissions.v1",
+            "provider": "SEC",
+            "origin": "synthetic",
+            "received_at": "2026-10-22T00:00:00.123456789Z",
+            "source_as_of": null,
+            "rights": "pending",
+            "identity_status": "cik_matched",
+            "source_url": "https://data.sec.gov/submissions/CIK0000000001.json",
+            "warnings": [
+              "No historical files or linked primary documents fetched. Filing metadata is not article/report text.",
+              "CIK identifies reporting entity; ticker/exchange lists are not proven one-to-one or current security mappings.",
+              "Acceptance timestamps retained only with explicit timezone; filing/report dates are not publication instants.",
+              "User-agent/fair-access transport integration and data use review remain host responsibilities."
+            ],
+            "request": {
+              "cik": "0000000001",
+              "max_filings": 10
+            },
+            "entity_name": "SYNTHETIC ONLY",
+            "tickers": [],
+            "exchanges": [],
+            "filings": [
+              {
+                "accession_number": "0000000001-26-000001",
+                "filing_date": "2026-02-10",
+                "report_date": "2025-12-31",
+                "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+                "form": "10-K",
+                "primary_document": "synthetic.htm",
+                "primary_doc_description": "Synthetic fixture"
+              }
+            ],
+            "recent_filing_count": 1,
+            "omitted_recent_count": 0,
+            "historical_file_count": 1,
+            "completeness": "recent_subset_historical_files_not_fetched"
+          }
+        }
+      }
+    },
+    "binding": {
+      "contract": "moai.financial.fact-binding.v1",
+      "role": "reported.revenue",
+      "provider_issuer_id": "0000000001",
+      "identity": {
+        "issuer_id": "synthetic:issuer:1",
+        "security_id": "synthetic:security:1",
+        "share_class": "ordinary-common",
+        "venue": "SYNTHETIC",
+        "population": "same-issuer-common-shares"
+      },
+      "unit": {
+        "currency": "USD",
+        "scale": "1",
+        "source_currency_interpretation": "quantity_currency"
+      },
+      "basis": {
+        "scope": "consolidated",
+        "standard": "US-GAAP",
+        "revision_basis": "synthetic-original",
+        "split_basis": "synthetic-unadjusted",
+        "methodology_id": "synthetic-policy-1"
+      },
+      "period": {
+        "kind": "FY",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "label": "SYNTHETIC FY2025"
+      },
+      "date_timezone": "UTC",
+      "published_at": "2026-02-10T15:30:01.000000001Z",
+      "available_at": "2026-02-10T15:30:02Z",
+      "publication_basis": "explicit_publication_evidence_not_receipt_or_acceptance_substitution",
+      "finality": "final",
+      "coverage": "complete_selected_fact_not_complete_api_collection",
+      "document_id": "0000000001-26-000001",
+      "revision_id": "synthetic-revision-1",
+      "value_source_artifact_id": "financial-source",
+      "rights": {
+        "purpose": "private_owner_research_report",
+        "valid_from": "2026-10-22T00:00:00Z",
+        "valid_until": "2026-10-23T00:00:00Z"
+      },
+      "evidence": {
+        "source_authenticity": [
+          "financial-source",
+          "filing-source"
+        ],
+        "rights": [
+          "synthetic-review"
+        ],
+        "identity": [
+          "synthetic-review"
+        ],
+        "semantic_role": [
+          "synthetic-review"
+        ],
+        "unit_scale_currency": [
+          "synthetic-review"
+        ],
+        "period": [
+          "synthetic-review"
+        ],
+        "accounting_basis": [
+          "synthetic-review"
+        ],
+        "publication_availability": [
+          "synthetic-review"
+        ],
+        "coverage_finality": [
+          "synthetic-review"
+        ],
+        "revision_split": [
+          "synthetic-review"
+        ]
+      },
+      "artifacts": [
+        {
+          "id": "financial-source",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "locator": "synthetic://fixture/financial",
+          "snapshot": {
+            "name": "financial",
+            "sha256": "cbb518f264b91055360e766863b23dd4be840449aaafe834140fa01b358398ef",
+            "received_at": "2026-10-22T00:00:00.123456789Z"
+          }
+        },
+        {
+          "id": "filing-source",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "locator": "synthetic://fixture/filings",
+          "snapshot": {
+            "name": "filings",
+            "sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+            "received_at": "2026-10-22T00:00:00.123456789Z"
+          }
+        },
+        {
+          "id": "synthetic-review",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture",
+          "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "locator": "synthetic://fixture/review",
+          "snapshot": null
+        }
+      ]
+    }
+  },
+  "report_runtime": {
+    "version": "r01-semantics/1.0.1-exact-time",
+    "sha256": "02f307a1f159efc80a64542dd324b6c5fcc33a7169655328a65ff8d6b25aa180"
+  },
+  "warnings": [
+    "No verifier is configured by this library; host trust must be established separately.",
+    "Candidate/DTO hashes alone do not authenticate sources or grant rights.",
+    "The consumer must apply the pinned report runtime and cross-fact metric guards.",
+    "No rescaling, sign reversal, component aggregation, latest selection or actual API call occurs."
+  ]
+}

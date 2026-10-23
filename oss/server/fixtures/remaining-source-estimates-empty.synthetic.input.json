@@ -1,0 +1,14 @@
+{
+  "request": {
+    "operation_ref": "KIS-109",
+    "query": {
+      "SHT_CD": "005930"
+    }
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T08:00:00.123456789Z",
+    "expected_body_sha256": "b5a51c17303c1d9f66548230450f55775c0a5aa18969268fa6a036cda1d98998"
+  },
+  "cutoff": "2026-10-22T08:00:00.123456789Z"
+}

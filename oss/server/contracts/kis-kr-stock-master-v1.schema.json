@@ -1,0 +1,1292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "enum": [
+            "nas",
+            "nys",
+            "ams",
+            "kospi",
+            "kosdaq",
+            "kr_index_derivatives"
+          ]
+        },
+        "format_status": {
+          "type": "string",
+          "const": "official_layout_checked_not_live_master_reconciled"
+        },
+        "source_authenticity": {
+          "type": "string",
+          "const": "unverified_injected_content"
+        },
+        "archive_ingestion": {
+          "type": "string",
+          "const": "not_implemented"
+        },
+        "encoding_status": {
+          "type": "string",
+          "enum": [
+            "cp949_bytes_decoded",
+            "caller_supplied_unicode"
+          ]
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rights_status": {
+          "type": "string",
+          "const": "pending"
+        },
+        "header_mode": {
+          "type": "string",
+          "enum": [
+            "none",
+            "documented_columns"
+          ]
+        },
+        "row_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20000
+        },
+        "warnings": {
+          "minItems": 1,
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
+      "required": [
+        "profile",
+        "format_status",
+        "source_authenticity",
+        "archive_ingestion",
+        "encoding_status",
+        "payload_sha256",
+        "rights_status",
+        "header_mode",
+        "row_count",
+        "warnings"
+      ],
+      "additionalProperties": false
+    },
+    "directory": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "source_received_at": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "source_as_of": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "entries": {
+          "maxItems": 20000,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "instrument_ref": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "pattern": "^[A-Za-z0-9._:-]+$"
+              },
+              "symbol": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40,
+                "pattern": "^[A-Za-z0-9._:-]+$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "market": {
+                "type": "string",
+                "enum": [
+                  "KR",
+                  "US",
+                  "unknown"
+                ]
+              },
+              "asset_class": {
+                "type": "string",
+                "enum": [
+                  "equity",
+                  "etf",
+                  "future",
+                  "unknown"
+                ]
+              },
+              "exchange": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "currency": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[A-Z]{3}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "cik": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{10}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "corp_code": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "aliases": {
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 300
+                }
+              },
+              "source_ref": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "required": [
+              "instrument_ref",
+              "symbol",
+              "name",
+              "market",
+              "asset_class",
+              "exchange",
+              "currency",
+              "cik",
+              "corp_code",
+              "aliases",
+              "source_ref"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "coverage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "required": [
+        "origin",
+        "source_received_at",
+        "source_as_of",
+        "source_url",
+        "entries",
+        "coverage"
+      ],
+      "additionalProperties": false
+    },
+    "records": {
+      "minItems": 1,
+      "maxItems": 20000,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_line": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "raw": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "board": {
+                    "type": "string",
+                    "const": "kospi"
+                  },
+                  "mksc_shrn_iscd": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9]{6,9}$"
+                  },
+                  "stnd_iscd": {
+                    "type": "string",
+                    "pattern": "^KR[A-Z0-9]{10}$"
+                  },
+                  "hts_kor_isnm": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "tail": {
+                    "type": "object",
+                    "properties": {
+                      "scrt_grp_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "avls_scal_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bstp_larg_div_code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bstp_medm_div_code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bstp_smal_div_code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mnin_cls_code_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "low_current_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "sprn_strr_nmix_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "kospi200_apnt_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "kospi100_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "kospi50_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "etp_prod_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "elw_pblc_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx100_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_car_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_smcn_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_bio_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_bank_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "etpr_undt_objt_co_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_enrg_chms_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_stel_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "short_over_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_medi_cmnc_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_cnst_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_fnnc_svc_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_scrt_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_ship_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_insu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_trnp_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "sri_nmix_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stck_sdpr": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "frml_mrkt_deal_qty_unit": {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "ovtm_mrkt_deal_qty_unit": {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "trht_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "sltr_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mang_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mrkt_alrm_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mrkt_alrm_risk_adnt_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "insn_pbnt_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "byps_lstn_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "flng_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "fcam_mod_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "icic_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "marg_rate": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "crdt_able": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "crdt_days": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "prdy_vol": {
+                        "type": "string",
+                        "minLength": 12,
+                        "maxLength": 12,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stck_fcam": {
+                        "type": "string",
+                        "minLength": 12,
+                        "maxLength": 12,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stck_lstn_date": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 8,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "lstn_stcn": {
+                        "type": "string",
+                        "minLength": 15,
+                        "maxLength": 15,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "cpfn": {
+                        "type": "string",
+                        "minLength": 21,
+                        "maxLength": 21,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stac_month": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "po_prc": {
+                        "type": "string",
+                        "minLength": 7,
+                        "maxLength": 7,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "prst_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "ssts_hot_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stange_runup_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx300_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "kospi_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "sale_account": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bsop_prfi": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "op_prfi": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "thtr_ntin": {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "roe": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "base_date": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 8,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "prdy_avls_scal": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "grp_code": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "co_crdt_limt_over_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "secu_lend_able_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stln_able_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      }
+                    },
+                    "required": [
+                      "scrt_grp_cls_code",
+                      "avls_scal_cls_code",
+                      "bstp_larg_div_code",
+                      "bstp_medm_div_code",
+                      "bstp_smal_div_code",
+                      "mnin_cls_code_yn",
+                      "low_current_yn",
+                      "sprn_strr_nmix_issu_yn",
+                      "kospi200_apnt_cls_code",
+                      "kospi100_issu_yn",
+                      "kospi50_issu_yn",
+                      "krx_issu_yn",
+                      "etp_prod_cls_code",
+                      "elw_pblc_yn",
+                      "krx100_issu_yn",
+                      "krx_car_yn",
+                      "krx_smcn_yn",
+                      "krx_bio_yn",
+                      "krx_bank_yn",
+                      "etpr_undt_objt_co_yn",
+                      "krx_enrg_chms_yn",
+                      "krx_stel_yn",
+                      "short_over_cls_code",
+                      "krx_medi_cmnc_yn",
+                      "krx_cnst_yn",
+                      "krx_fnnc_svc_yn",
+                      "krx_scrt_yn",
+                      "krx_ship_yn",
+                      "krx_insu_yn",
+                      "krx_trnp_yn",
+                      "sri_nmix_yn",
+                      "stck_sdpr",
+                      "frml_mrkt_deal_qty_unit",
+                      "ovtm_mrkt_deal_qty_unit",
+                      "trht_yn",
+                      "sltr_yn",
+                      "mang_issu_yn",
+                      "mrkt_alrm_cls_code",
+                      "mrkt_alrm_risk_adnt_yn",
+                      "insn_pbnt_yn",
+                      "byps_lstn_yn",
+                      "flng_cls_code",
+                      "fcam_mod_cls_code",
+                      "icic_cls_code",
+                      "marg_rate",
+                      "crdt_able",
+                      "crdt_days",
+                      "prdy_vol",
+                      "stck_fcam",
+                      "stck_lstn_date",
+                      "lstn_stcn",
+                      "cpfn",
+                      "stac_month",
+                      "po_prc",
+                      "prst_cls_code",
+                      "ssts_hot_yn",
+                      "stange_runup_yn",
+                      "krx300_issu_yn",
+                      "kospi_issu_yn",
+                      "sale_account",
+                      "bsop_prfi",
+                      "op_prfi",
+                      "thtr_ntin",
+                      "roe",
+                      "base_date",
+                      "prdy_avls_scal",
+                      "grp_code",
+                      "co_crdt_limt_over_yn",
+                      "secu_lend_able_yn",
+                      "stln_able_yn"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "board",
+                  "mksc_shrn_iscd",
+                  "stnd_iscd",
+                  "hts_kor_isnm",
+                  "tail"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "board": {
+                    "type": "string",
+                    "const": "kosdaq"
+                  },
+                  "mksc_shrn_iscd": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9]{6,9}$"
+                  },
+                  "stnd_iscd": {
+                    "type": "string",
+                    "pattern": "^KR[A-Z0-9]{10}$"
+                  },
+                  "hts_kor_isnm": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "tail": {
+                    "type": "object",
+                    "properties": {
+                      "scrt_grp_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "avls_scal_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bstp_larg_div_code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bstp_medm_div_code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bstp_smal_div_code": {
+                        "type": "string",
+                        "minLength": 4,
+                        "maxLength": 4,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "vntr_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "low_current_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "etp_prod_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx100_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_car_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_smcn_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_bio_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_bank_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "etpr_undt_objt_co_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_enrg_chms_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_stel_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "short_over_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_medi_cmnc_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_cnst_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "invt_alrm_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_scrt_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_ship_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_insu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx_trnp_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "ksq150_nmix_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stck_sdpr": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "frml_mrkt_deal_qty_unit": {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "ovtm_mrkt_deal_qty_unit": {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "trht_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "sltr_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mang_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mrkt_alrm_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "mrkt_alrm_risk_adnt_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "insn_pbnt_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "byps_lstn_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "flng_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "fcam_mod_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "icic_cls_code": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "marg_rate": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "crdt_able": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "crdt_days": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "prdy_vol": {
+                        "type": "string",
+                        "minLength": 12,
+                        "maxLength": 12,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stck_fcam": {
+                        "type": "string",
+                        "minLength": 12,
+                        "maxLength": 12,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stck_lstn_date": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 8,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "lstn_stcn": {
+                        "type": "string",
+                        "minLength": 15,
+                        "maxLength": 15,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "cpfn": {
+                        "type": "string",
+                        "minLength": 21,
+                        "maxLength": 21,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stac_month": {
+                        "type": "string",
+                        "minLength": 2,
+                        "maxLength": 2,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "po_prc": {
+                        "type": "string",
+                        "minLength": 7,
+                        "maxLength": 7,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "prst_cls_code": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "ssts_hot_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stange_runup_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "krx300_issu_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "sale_account": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "bsop_prfi": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "op_prfi": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "thtr_ntin": {
+                        "type": "string",
+                        "minLength": 5,
+                        "maxLength": 5,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "roe": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "base_date": {
+                        "type": "string",
+                        "minLength": 8,
+                        "maxLength": 8,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "prdy_avls_scal": {
+                        "type": "string",
+                        "minLength": 9,
+                        "maxLength": 9,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "grp_code": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "co_crdt_limt_over_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "secu_lend_able_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      },
+                      "stln_able_yn": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 1,
+                        "pattern": "^[ -~]*$"
+                      }
+                    },
+                    "required": [
+                      "scrt_grp_cls_code",
+                      "avls_scal_cls_code",
+                      "bstp_larg_div_code",
+                      "bstp_medm_div_code",
+                      "bstp_smal_div_code",
+                      "vntr_issu_yn",
+                      "low_current_yn",
+                      "krx_issu_yn",
+                      "etp_prod_cls_code",
+                      "krx100_issu_yn",
+                      "krx_car_yn",
+                      "krx_smcn_yn",
+                      "krx_bio_yn",
+                      "krx_bank_yn",
+                      "etpr_undt_objt_co_yn",
+                      "krx_enrg_chms_yn",
+                      "krx_stel_yn",
+                      "short_over_cls_code",
+                      "krx_medi_cmnc_yn",
+                      "krx_cnst_yn",
+                      "invt_alrm_yn",
+                      "krx_scrt_yn",
+                      "krx_ship_yn",
+                      "krx_insu_yn",
+                      "krx_trnp_yn",
+                      "ksq150_nmix_yn",
+                      "stck_sdpr",
+                      "frml_mrkt_deal_qty_unit",
+                      "ovtm_mrkt_deal_qty_unit",
+                      "trht_yn",
+                      "sltr_yn",
+                      "mang_issu_yn",
+                      "mrkt_alrm_cls_code",
+                      "mrkt_alrm_risk_adnt_yn",
+                      "insn_pbnt_yn",
+                      "byps_lstn_yn",
+                      "flng_cls_code",
+                      "fcam_mod_cls_code",
+                      "icic_cls_code",
+                      "marg_rate",
+                      "crdt_able",
+                      "crdt_days",
+                      "prdy_vol",
+                      "stck_fcam",
+                      "stck_lstn_date",
+                      "lstn_stcn",
+                      "cpfn",
+                      "stac_month",
+                      "po_prc",
+                      "prst_cls_code",
+                      "ssts_hot_yn",
+                      "stange_runup_yn",
+                      "krx300_issu_yn",
+                      "sale_account",
+                      "bsop_prfi",
+                      "op_prfi",
+                      "thtr_ntin",
+                      "roe",
+                      "base_date",
+                      "prdy_avls_scal",
+                      "grp_code",
+                      "co_crdt_limt_over_yn",
+                      "secu_lend_able_yn",
+                      "stln_able_yn"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "board",
+                  "mksc_shrn_iscd",
+                  "stnd_iscd",
+                  "hts_kor_isnm",
+                  "tail"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "source_line",
+          "raw"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "metadata",
+    "directory",
+    "records"
+  ],
+  "additionalProperties": false
+}

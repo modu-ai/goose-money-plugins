@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "maxLength": 13,
+      "pattern": "^[A-Z0-9]{1,10}[FGHJKMNQUVXZ]\\d{2}$"
+    },
+    "exchange": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8,
+      "pattern": "^[A-Z0-9]+$"
+    },
+    "end_date": {
+      "type": "string",
+      "pattern": "^\\d{8}$"
+    },
+    "count": {
+      "type": "string",
+      "const": "120"
+    },
+    "interval_minutes": {
+      "type": "string",
+      "enum": [
+        "1",
+        "5",
+        "10",
+        "15",
+        "30",
+        "60"
+      ]
+    }
+  },
+  "required": [
+    "symbol",
+    "exchange",
+    "end_date",
+    "count",
+    "interval_minutes"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/overseas-futures-minute-history-input-v1.schema.json",
+  "$comment": "Offline JSON Schema projection. Runtime Zod schema additionally enforces actual calendar dates, exact receipt equality, row count/coverage/cursor provenance, identity and date-range guards. The .invalid namespace is an identifier, not a hosted resource."
+}

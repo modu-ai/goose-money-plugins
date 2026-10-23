@@ -1,0 +1,175 @@
+{
+  "contract": "moai.market.selected-reference-evidence.v1",
+  "status": "selected_raw_evidence_candidate_only",
+  "policy": "kr_intraday_previous_close",
+  "cutoff": "2026-10-22T03:00:00.123456789124Z",
+  "requested_role": "market.previous_close",
+  "role_association_status": "requested_destination_label_not_semantic_binding",
+  "provider": "kis",
+  "origin": "synthetic",
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "source_request": {
+    "operation": "kis.kr_intraday_history",
+    "method": "GET",
+    "path": "/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice",
+    "tr_id": "FHKST03010200",
+    "tr_cont": "",
+    "query": {
+      "FID_COND_MRKT_DIV_CODE": "NX",
+      "FID_INPUT_ISCD": "005930",
+      "FID_INPUT_HOUR_1": "150000",
+      "FID_PW_DATA_INCU_YN": "N",
+      "FID_ETC_CLS_CODE": ""
+    }
+  },
+  "request_evidence_status": "reconstructed_from_existing_dto_not_original_http_receipt",
+  "selected": {
+    "dto_selector": "$.raw.output1.stck_prdy_clpr",
+    "provider_selector": "$.output1.stck_prdy_clpr",
+    "raw_lexeme": "99",
+    "raw_state": "decimal_text_candidate",
+    "lexical_profile": "ascii_unsigned_decimal_max_40_chars_no_whitespace_sign_exponent_or_grouping",
+    "lexical_status_note": "syntax_only_not_economic_validity_units_or_canonical_value"
+  },
+  "received_at": "2026-10-22T03:00:00.123456789123Z",
+  "receipt_status": "local_receipt_not_source_or_publication_time",
+  "source_at": null,
+  "published_at": null,
+  "available_at": null,
+  "session": null,
+  "previous_session_id": null,
+  "previous_session_close_at": null,
+  "currency": null,
+  "price_unit": null,
+  "split_basis": null,
+  "source_authenticated": false,
+  "identity_verified": false,
+  "semantic_binding_verified": false,
+  "simultaneous_quotes_verified": false,
+  "quote_firmness": "unverified",
+  "rights_status": "pending",
+  "canonical_observation": null,
+  "metric_ready": false,
+  "snapshot": {
+    "value": {
+      "contract": "moai.stock.kr-intraday-history.v1",
+      "provider": "kis",
+      "origin": "synthetic",
+      "received_at": "2026-10-22T03:00:00.123456789123Z",
+      "available_at": "2026-10-22T03:00:00.123456789123Z",
+      "source_as_of": null,
+      "event_time": null,
+      "published_at": null,
+      "source_timezone": null,
+      "source_time_status": "provider_bar_labels_not_verified_instants",
+      "rights_status": "pending",
+      "session": "unknown",
+      "delay_state": "unknown",
+      "finality": "unknown",
+      "freshness": "unknown",
+      "validation_status": "provider_shape_checked_not_live_reconciled",
+      "completeness": "unknown",
+      "pagination": {
+        "pages_fetched": 1,
+        "tr_cont": "M",
+        "status": "more_signaled_not_fetched",
+        "automatic_continuation": false,
+        "completeness": "unknown"
+      },
+      "bars_returned": 1,
+      "coverage_status": "single_page_not_complete_history",
+      "canonical_projection_status": "blocked",
+      "canonical": {
+        "instrument_id": null,
+        "asset_class": null,
+        "currency": null,
+        "adjusted": null,
+        "price_unit": null,
+        "volume_unit": null,
+        "turnover_unit": null,
+        "bars": null
+      },
+      "mapping_blockers": [
+        "returned_instrument_code_missing",
+        "currency_price_volume_turnover_units_not_reconciled",
+        "intraday_adjustment_and_bar_finality_unverified",
+        "market_data_rights_pending"
+      ],
+      "unimplemented_derivations": [
+        "historical_intraday",
+        "automatic_pagination",
+        "canonical_ohlcv",
+        "five_minute_aggregation",
+        "hourly_aggregation",
+        "source_timestamp_attribution"
+      ],
+      "warnings": [
+        "This current-day endpoint returns at most 30 rows per request, not complete historical intraday coverage.",
+        "The first output2 row may retain the previous bar volume until its first trade. No volume repair, deduplication or finality is inferred.",
+        "A future requested time can be populated with the current price; provider date/time labels are not verified trade or publication instants.",
+        "include_past_data does not authorize or imply previous-day coverage. The optional expected business date is a local guard, not a transmitted date filter.",
+        "acml_tr_pbmn is retained unchanged and is not relabeled as per-bar turnover. No timezone, exchange session or bar alignment is inferred."
+      ],
+      "requested": {
+        "symbol": "005930",
+        "board": "NX",
+        "anchor_time": "150000",
+        "include_past_data": "N",
+        "expected_business_date": "20261021"
+      },
+      "interval": "provider_minute_bars",
+      "scope": "current_day_endpoint_not_historical_intraday",
+      "identity_status": "no_returned_instrument_code",
+      "adjustment_status": "not_specified_by_reviewed_intraday_contract",
+      "first_row_volume_status": "may_belong_to_previous_bar_until_first_trade",
+      "raw": {
+        "output1": {
+          "stck_prpr": "101",
+          "prdy_vrss": "2",
+          "prdy_ctrt": "2.02",
+          "stck_prdy_clpr": "99"
+        },
+        "output2": [
+          {
+            "stck_bsop_date": "20261021",
+            "stck_cntg_hour": "150000",
+            "stck_prpr": "101",
+            "stck_oprc": "100",
+            "stck_hgpr": "102",
+            "stck_lwpr": "99",
+            "cntg_vol": "7"
+          }
+        ]
+      }
+    },
+    "sha256": "1082a3eaa7d3f9c8ca41d5df093a8ae55cd6c6aad2b64c9b94933f270ea357b1",
+    "hash_algorithm": "sha256",
+    "serialization": "sorted_object_keys_json_utf8_v1",
+    "hash_scope": "whole_validated_provider_dto_snapshot",
+    "original_http_body_hash": null,
+    "source_authentication": false
+  },
+  "mapping_blockers": [
+    "source_authenticity_and_current_rights_unverified",
+    "security_class_venue_and_split_basis_unverified",
+    "currency_scale_and_one_share_price_unit_unverified",
+    "exact_source_publication_and_availability_instants_unverified",
+    "official_previous_session_reference_unverified",
+    "firm_regular_session_and_same_instant_book_unverified"
+  ],
+  "warnings": [
+    "Finite raw field selection only. Existing market.* names are requested destination labels, not verified report inputs.",
+    "Whole DTO and candidate SHA256 are deterministic integrity links, not original HTTP-body hashes, signatures or source authentication.",
+    "No last-minus-change, stck_sdpr substitution, output2 indicative promotion, zdiv scaling or currency inference occurs.",
+    "Receipt time and intraday bar dates/times never date an orderbook clock or an output1 prior-close header.",
+    "A decimal-text syntax candidate may be zero, stale, crossed or economically invalid. No canonical value or metric is computed.",
+    "This selector does not authorize acquisition, persistence, model-host egress, derived use, export or redistribution."
+  ],
+  "integrity": {
+    "sha256": "4056a9bbc27ffa9eb52cf6e0072d4d2e72ebf37d20cd6ea5094e0564e4e57c8a",
+    "hash_algorithm": "sha256",
+    "serialization": "sorted_object_keys_json_utf8_v1",
+    "scope": "candidate_except_integrity",
+    "source_authentication": false
+  }
+}

@@ -1,0 +1,945 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.kis.benchmark-period-raw-evidence.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "KIS"
+    },
+    "operation_id": {
+      "type": "string",
+      "const": "KIS-072"
+    },
+    "endpoint": {
+      "type": "string",
+      "const": "/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice"
+    },
+    "tr_id": {
+      "type": "string",
+      "const": "FHKUP03500100"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "instrument_code": {
+          "type": "string"
+        },
+        "start_date": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "string"
+        },
+        "period_code": {
+          "type": "string",
+          "enum": [
+            "W",
+            "M",
+            "Y"
+          ]
+        },
+        "market_code": {
+          "type": "string",
+          "const": "U"
+        }
+      },
+      "required": [
+        "instrument_code",
+        "start_date",
+        "end_date",
+        "period_code",
+        "market_code"
+      ],
+      "additionalProperties": false
+    },
+    "requested_interval": {
+      "type": "string",
+      "enum": [
+        "weekly",
+        "monthly",
+        "yearly"
+      ]
+    },
+    "actual_interval_status": {
+      "type": "string",
+      "const": "not_verified"
+    },
+    "actual_period_coverage": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "period_boundary_status": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "period_completeness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "return_basis": {
+      "type": "string",
+      "const": "unknown_not_total_return_evidence"
+    },
+    "metric_ready": {
+      "type": "boolean",
+      "const": false
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "received_at": {
+          "type": "string"
+        },
+        "body_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "body_byte_length": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 262144
+        },
+        "http_status": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 299
+        },
+        "tr_cont": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hash_scope": {
+          "type": "string",
+          "const": "original_decoded_response_text_utf8"
+        },
+        "provenance_status": {
+          "type": "string",
+          "const": "caller_supplied_capture_metadata"
+        },
+        "source_authentication": {
+          "type": "string",
+          "const": "not_established"
+        }
+      },
+      "required": [
+        "origin",
+        "received_at",
+        "body_sha256",
+        "body_byte_length",
+        "http_status",
+        "tr_cont",
+        "hash_scope",
+        "provenance_status",
+        "source_authentication"
+      ],
+      "additionalProperties": false
+    },
+    "cutoff": {
+      "type": "string"
+    },
+    "receipt_cutoff_status": {
+      "type": "string",
+      "const": "receipt_not_after_cutoff_no_publication_inference"
+    },
+    "provider_success_status": {
+      "type": "string",
+      "const": "0"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "publication_at": {
+      "type": "null"
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "request_context_only_not_response_verified"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "date_only_no_time_or_timezone"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "output1_state": {
+      "type": "string",
+      "enum": [
+        "missing",
+        "present"
+      ]
+    },
+    "header_raw_fields": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "output2_state": {
+      "type": "string",
+      "enum": [
+        "missing",
+        "empty",
+        "rows_present"
+      ]
+    },
+    "row_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 50
+    },
+    "row_order": {
+      "type": "string",
+      "const": "captured_output2_array_order"
+    },
+    "row_index_basis": {
+      "type": "string",
+      "const": "zero_based_output2_index"
+    },
+    "rows": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_row_index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 49
+          },
+          "provider_business_date_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "label_relation_to_request": {
+            "type": "string",
+            "enum": [
+              "within_requested_range",
+              "outside_requested_range",
+              "unavailable"
+            ]
+          },
+          "raw_fields": {
+            "type": "object",
+            "properties": {
+              "stck_bsop_date": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "bstp_nmix_prpr": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "bstp_nmix_oprc": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "bstp_nmix_hgpr": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "bstp_nmix_lwpr": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "acml_vol": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "acml_tr_pbmn": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "mod_yn": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "stck_bsop_date",
+              "bstp_nmix_prpr",
+              "bstp_nmix_oprc",
+              "bstp_nmix_hgpr",
+              "bstp_nmix_lwpr",
+              "acml_vol",
+              "acml_tr_pbmn",
+              "mod_yn"
+            ],
+            "additionalProperties": false
+          },
+          "canonical": {
+            "type": "object",
+            "properties": {
+              "instrument_id": {
+                "type": "null"
+              },
+              "asset_class": {
+                "type": "null"
+              },
+              "date": {
+                "type": "null"
+              },
+              "open": {
+                "type": "null"
+              },
+              "high": {
+                "type": "null"
+              },
+              "low": {
+                "type": "null"
+              },
+              "close": {
+                "type": "null"
+              },
+              "volume": {
+                "type": "null"
+              },
+              "turnover": {
+                "type": "null"
+              },
+              "currency": {
+                "type": "null"
+              },
+              "value_unit": {
+                "type": "null"
+              },
+              "volume_unit": {
+                "type": "null"
+              },
+              "turnover_unit": {
+                "type": "null"
+              },
+              "session": {
+                "type": "null"
+              },
+              "timezone": {
+                "type": "null"
+              },
+              "adjusted": {
+                "type": "null"
+              },
+              "source_as_of": {
+                "type": "null"
+              },
+              "publication_at": {
+                "type": "null"
+              },
+              "period_start": {
+                "type": "null"
+              },
+              "period_end": {
+                "type": "null"
+              },
+              "total_return": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "instrument_id",
+              "asset_class",
+              "date",
+              "open",
+              "high",
+              "low",
+              "close",
+              "volume",
+              "turnover",
+              "currency",
+              "value_unit",
+              "volume_unit",
+              "turnover_unit",
+              "session",
+              "timezone",
+              "adjusted",
+              "source_as_of",
+              "publication_at",
+              "period_start",
+              "period_end",
+              "total_return"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "source_row_index",
+          "provider_business_date_label",
+          "label_relation_to_request",
+          "raw_fields",
+          "canonical"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "row_limit": {
+      "type": "number",
+      "const": 50
+    },
+    "row_limit_basis": {
+      "type": "string",
+      "const": "documented_max_rows_per_request"
+    },
+    "request_profile_status": {
+      "type": "string",
+      "const": "blocked_code_length_contract_conflict"
+    },
+    "page_origin_status": {
+      "type": "string",
+      "const": "not_independently_established"
+    },
+    "response_range_completeness": {
+      "type": "string",
+      "const": "unknown_continuation_conflict"
+    },
+    "continuation_action": {
+      "type": "string",
+      "const": "none"
+    },
+    "source_review": {
+      "type": "string",
+      "const": "provided_2026_10_21_snapshot_not_new_live_verification"
+    },
+    "blockers": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "canonical_identity_units_currency_session_unverified"
+        },
+        {
+          "type": "string",
+          "const": "date_only_no_provider_publication_instant"
+        },
+        {
+          "type": "string",
+          "const": "continuation_portal_sample_conflict"
+        },
+        {
+          "type": "string",
+          "const": "rights_and_source_authentication_not_established"
+        },
+        {
+          "type": "string",
+          "const": "actual_period_coverage_alignment_finality_and_return_basis_unverified"
+        }
+      ],
+      "items": false,
+      "minItems": 5,
+      "maxItems": 5
+    },
+    "warnings": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "Raw field presence and SHA-256 do not establish source authenticity, rights, canonical semantics or completeness."
+        },
+        {
+          "type": "string",
+          "const": "Request codes are caller context only, not verified asset classes or response identity."
+        },
+        {
+          "type": "string",
+          "const": "Receipt and cutoff are caller supplied; receipt ordering does not establish provider publication or as-of time."
+        },
+        {
+          "type": "string",
+          "const": "Snapshot header values are separate from historical rows and never fill missing row fields."
+        },
+        {
+          "type": "string",
+          "const": "Native W/M/Y response rows are preserved in source order without resampling or daily-bar reconstruction. The request profile permits initial-page input only; supplied page origin and execution are not attested."
+        },
+        {
+          "type": "string",
+          "const": "Raw bounded provider strings are preserved without numerical conversion; numeric formatting does not establish units."
+        },
+        {
+          "type": "string",
+          "const": "Requested W/M/Y is caller context, not verified actual interval, period boundaries, completeness, finality, calendar or total-return evidence."
+        }
+      ],
+      "items": false,
+      "minItems": 7,
+      "maxItems": 7
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "operation_id",
+    "endpoint",
+    "tr_id",
+    "request",
+    "requested_interval",
+    "actual_interval_status",
+    "actual_period_coverage",
+    "period_boundary_status",
+    "period_completeness",
+    "return_basis",
+    "metric_ready",
+    "capture",
+    "cutoff",
+    "receipt_cutoff_status",
+    "provider_success_status",
+    "source_as_of",
+    "publication_at",
+    "identity_status",
+    "source_time_status",
+    "rights_status",
+    "canonical_projection_status",
+    "output1_state",
+    "header_raw_fields",
+    "output2_state",
+    "row_count",
+    "row_order",
+    "row_index_basis",
+    "rows",
+    "row_limit",
+    "row_limit_basis",
+    "request_profile_status",
+    "page_origin_status",
+    "response_range_completeness",
+    "continuation_action",
+    "source_review",
+    "blockers",
+    "warnings"
+  ],
+  "additionalProperties": false,
+  "$id": "https://moai.local/contracts/kis072-period-result-v1.schema.json",
+  "$comment": "Shape only; runtime defensive ingress and independent reconstruction required. Requested native W/M/Y never establishes actual coverage, period boundaries, finality, complete periods, units, identity or total return. Not canonical daily history."
+}

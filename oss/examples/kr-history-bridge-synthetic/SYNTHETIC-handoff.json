@@ -1,0 +1,903 @@
+{
+  "contract": "moai.kr-daily.synthetic-only-history-handoff.v1",
+  "status": "synthetic_fixture_demonstration_ready",
+  "actual_origin_supported": false,
+  "actual_source_authenticated": false,
+  "verified_live_provider_bindings": 0,
+  "canonical_actual_bindings": 0,
+  "actual_provider_calls": 0,
+  "cutoff": "2026-10-22T00:00:00.123456789012345678903Z",
+  "request": {
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21"
+  },
+  "history": {
+    "contract": "canonical-history/1.0",
+    "history_id": "SYNTHETIC-KR-DAILY",
+    "data_kind": "synthetic",
+    "context": {
+      "identity": {
+        "instrument_id": "SYNTHETIC-KR-COMMON",
+        "issuer_id": "SYNTHETIC-KR-ISSUER",
+        "venue": "SYNTHETIC-KR-VENUE",
+        "asset_class": "equity",
+        "share_class": "common",
+        "contract_id": "not_applicable"
+      },
+      "units": {
+        "price_unit": "money_per_share",
+        "currency": "KRW",
+        "price_scale": "1",
+        "volume_unit": "shares",
+        "volume_scale": "1"
+      },
+      "session": {
+        "calendar_id": "SYNTHETIC-EXPLICIT-NOT-EXCHANGE-CALENDAR",
+        "timezone": "Asia/Seoul",
+        "session_id": "SYNTHETIC-REGULAR",
+        "interval": "daily",
+        "date_basis": "trade_date",
+        "calendar_verified": true,
+        "calendar_evidence_ref": "synthetic:session_calendar",
+        "coverage_start": "2026-10-16",
+        "coverage_end": "2026-10-22",
+        "coverage_complete": true,
+        "expected_sessions": [
+          "2026-10-16",
+          "2026-10-19",
+          "2026-10-20",
+          "2026-10-21"
+        ]
+      },
+      "basis": {
+        "price_kind": "price_level",
+        "return_policy": "price_return",
+        "adjustment": "unadjusted",
+        "adjustment_id": "SYNTHETIC-NO-ACTION-BASIS",
+        "adjustment_asof": "2026-10-21T09:00:00Z",
+        "actions_coverage_verified": true,
+        "actions_evidence_ref": "synthetic:no_actions",
+        "volume_adjustment": "unadjusted",
+        "revision_policy": "final_current_at_cutoff",
+        "price_definition": "official_close",
+        "allow_negative_prices": false,
+        "roll_policy": "not_applicable"
+      }
+    },
+    "points": [
+      {
+        "fact_id": "moai:kr-synthetic:a73675412322191f7dd260db82bc663f5a9307109f87947b75e2e2d093b182ce",
+        "trade_date": "2026-10-16",
+        "context_sha256": "ec1b0061520c72ceb27a71d580f11f9c279496cbf28a86e4245373ec1da1938f",
+        "point_kind": "date",
+        "observed_at": null,
+        "session_close_at": "2026-10-16T15:30:00+09:00",
+        "published_at": "2026-10-16T15:31:00+09:00",
+        "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+        "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+        "finality": "final",
+        "revision": {
+          "status": "original",
+          "revision_id": "r1",
+          "evidence_ref": "synthetic:finality_revision",
+          "current_at_cutoff_verified": true
+        },
+        "provenance": {
+          "source_id": "KIS-SYNTHETIC-FIXTURE",
+          "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+          "locator": "output2[2]:2026-10-16",
+          "revision_id": "r1",
+          "source_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+          "selector_id": "kis.kr-daily.synthetic.named-ohlcv/1",
+          "data_kind": "synthetic",
+          "semantic_binding_verified": true,
+          "semantic_evidence_ref": "synthetic:field_semantics",
+          "identity_verified": true,
+          "identity_evidence_ref": "synthetic:identity",
+          "unit_verified": true,
+          "unit_evidence_ref": "synthetic:units",
+          "currency_verified": true,
+          "currency_evidence_ref": "synthetic:currency",
+          "scale_verified": true,
+          "scale_evidence_ref": "synthetic:scales",
+          "time_verified": true,
+          "time_evidence_ref": "synthetic:publication_availability"
+        },
+        "rights": {
+          "state": "allowed",
+          "use": "local_report",
+          "evidence_ref": "synthetic:rights",
+          "expires_at": "2026-10-23T00:00:00Z"
+        },
+        "values": {
+          "open": {
+            "state": "available",
+            "value": "100",
+            "missing_reason": null
+          },
+          "high": {
+            "state": "available",
+            "value": "102",
+            "missing_reason": null
+          },
+          "low": {
+            "state": "available",
+            "value": "98",
+            "missing_reason": null
+          },
+          "close": {
+            "state": "available",
+            "value": "100.125",
+            "missing_reason": null
+          },
+          "volume": {
+            "state": "available",
+            "value": "1000",
+            "missing_reason": null
+          }
+        }
+      },
+      {
+        "fact_id": "moai:kr-synthetic:64e25b762b08a0575275c60e233eeed22ed505f8e5afcfd91ae7a5e3e3af3d75",
+        "trade_date": "2026-10-19",
+        "context_sha256": "ec1b0061520c72ceb27a71d580f11f9c279496cbf28a86e4245373ec1da1938f",
+        "point_kind": "date",
+        "observed_at": null,
+        "session_close_at": "2026-10-19T15:30:00+09:00",
+        "published_at": "2026-10-19T15:31:00+09:00",
+        "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+        "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+        "finality": "final",
+        "revision": {
+          "status": "original",
+          "revision_id": "r1",
+          "evidence_ref": "synthetic:finality_revision",
+          "current_at_cutoff_verified": true
+        },
+        "provenance": {
+          "source_id": "KIS-SYNTHETIC-FIXTURE",
+          "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+          "locator": "output2[1]:2026-10-19",
+          "revision_id": "r1",
+          "source_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+          "selector_id": "kis.kr-daily.synthetic.named-ohlcv/1",
+          "data_kind": "synthetic",
+          "semantic_binding_verified": true,
+          "semantic_evidence_ref": "synthetic:field_semantics",
+          "identity_verified": true,
+          "identity_evidence_ref": "synthetic:identity",
+          "unit_verified": true,
+          "unit_evidence_ref": "synthetic:units",
+          "currency_verified": true,
+          "currency_evidence_ref": "synthetic:currency",
+          "scale_verified": true,
+          "scale_evidence_ref": "synthetic:scales",
+          "time_verified": true,
+          "time_evidence_ref": "synthetic:publication_availability"
+        },
+        "rights": {
+          "state": "allowed",
+          "use": "local_report",
+          "evidence_ref": "synthetic:rights",
+          "expires_at": "2026-10-23T00:00:00Z"
+        },
+        "values": {
+          "open": {
+            "state": "unavailable",
+            "value": null,
+            "missing_reason": "provider_blank"
+          },
+          "high": {
+            "state": "available",
+            "value": "103",
+            "missing_reason": null
+          },
+          "low": {
+            "state": "available",
+            "value": "99",
+            "missing_reason": null
+          },
+          "close": {
+            "state": "available",
+            "value": "101.125",
+            "missing_reason": null
+          },
+          "volume": {
+            "state": "available",
+            "value": "2000",
+            "missing_reason": null
+          }
+        }
+      },
+      {
+        "fact_id": "moai:kr-synthetic:c3ae2bf8326b75fa28ec3c0408e9163a87236b8368ce217d5cb8f7413849a927",
+        "trade_date": "2026-10-21",
+        "context_sha256": "ec1b0061520c72ceb27a71d580f11f9c279496cbf28a86e4245373ec1da1938f",
+        "point_kind": "date",
+        "observed_at": null,
+        "session_close_at": "2026-10-21T15:30:00+09:00",
+        "published_at": "2026-10-21T15:31:00+09:00",
+        "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+        "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+        "finality": "final",
+        "revision": {
+          "status": "original",
+          "revision_id": "r1",
+          "evidence_ref": "synthetic:finality_revision",
+          "current_at_cutoff_verified": true
+        },
+        "provenance": {
+          "source_id": "KIS-SYNTHETIC-FIXTURE",
+          "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+          "locator": "output2[0]:2026-10-21",
+          "revision_id": "r1",
+          "source_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+          "selector_id": "kis.kr-daily.synthetic.named-ohlcv/1",
+          "data_kind": "synthetic",
+          "semantic_binding_verified": true,
+          "semantic_evidence_ref": "synthetic:field_semantics",
+          "identity_verified": true,
+          "identity_evidence_ref": "synthetic:identity",
+          "unit_verified": true,
+          "unit_evidence_ref": "synthetic:units",
+          "currency_verified": true,
+          "currency_evidence_ref": "synthetic:currency",
+          "scale_verified": true,
+          "scale_evidence_ref": "synthetic:scales",
+          "time_verified": true,
+          "time_evidence_ref": "synthetic:publication_availability"
+        },
+        "rights": {
+          "state": "allowed",
+          "use": "local_report",
+          "evidence_ref": "synthetic:rights",
+          "expires_at": "2026-10-23T00:00:00Z"
+        },
+        "values": {
+          "open": {
+            "state": "available",
+            "value": "102",
+            "missing_reason": null
+          },
+          "high": {
+            "state": "available",
+            "value": "105",
+            "missing_reason": null
+          },
+          "low": {
+            "state": "available",
+            "value": "101",
+            "missing_reason": null
+          },
+          "close": {
+            "state": "available",
+            "value": "103.125",
+            "missing_reason": null
+          },
+          "volume": {
+            "state": "available",
+            "value": "9007199254740993",
+            "missing_reason": null
+          }
+        }
+      }
+    ]
+  },
+  "verification": {
+    "input_sha256": "8d23718876daafa367dcd843661466e2b44206052c99985f44071758fd3594cc",
+    "adapter_id": "synthetic-fixture-digest-allowlist-v1",
+    "mode": "synthetic_fixture_only",
+    "verified_at": "2026-10-22T01:00:00.123456789012345678904Z",
+    "assurance": "invented_fixture_checks_not_source_authentication",
+    "confirmed": {
+      "fixture_lineage": "synthetic:fixture_lineage",
+      "identity": "synthetic:identity",
+      "field_semantics": "synthetic:field_semantics",
+      "units": "synthetic:units",
+      "currency": "synthetic:currency",
+      "scales": "synthetic:scales",
+      "session_calendar": "synthetic:session_calendar",
+      "unadjusted_basis": "synthetic:unadjusted_basis",
+      "no_actions": "synthetic:no_actions",
+      "finality_revision": "synthetic:finality_revision",
+      "publication_availability": "synthetic:publication_availability",
+      "rights": "synthetic:rights"
+    }
+  },
+  "lineage": {
+    "original_body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+    "raw_dto_sha256": "7451fefc4cb5c961dcc9c592b3de6ba31210c427b652404db9895241288fc3a7",
+    "raw_input_sha256": "9c47b48f03f88c733b214a220d44044988b315bdbaaa46a680f2bf706467fbeb",
+    "selector": {
+      "id": "kis.kr-daily.synthetic.named-ohlcv/1",
+      "date": "stck_bsop_date",
+      "open": "stck_oprc",
+      "high": "stck_hgpr",
+      "low": "stck_lwpr",
+      "close": "stck_clpr",
+      "volume": "acml_vol"
+    },
+    "source_row_indices": [
+      0,
+      1,
+      2
+    ],
+    "raw_blockers": [
+      "price_currency_and_scale_not_stated_in_endpoint_schema",
+      "volume_unit_not_stated_in_endpoint_schema",
+      "trade_amount_currency_and_scale_not_stated_in_endpoint_schema",
+      "adjustment_code_portal_sample_conflict",
+      "response_identity_not_independently_verified",
+      "date_only_no_provider_time_or_timezone",
+      "data_rights_and_host_egress_not_approved_by_this_contract"
+    ],
+    "raw_projection_status": "blocked",
+    "raw_adjustment_code_interpretation": "blocked_portal_sample_conflict"
+  },
+  "inputs": {
+    "raw_input": {
+      "request": {
+        "symbol": "999999",
+        "board": "J",
+        "start_date": "2026-10-16",
+        "end_date": "2026-10-22",
+        "interval": "1d",
+        "adjustment_code": "0"
+      },
+      "capture": {
+        "origin": "synthetic",
+        "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+        "expected_body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0"
+      },
+      "cutoff": "2026-10-22T00:00:00.123456789012345678903Z"
+    },
+    "raw_evidence": {
+      "contract": "moai.kis.kr-daily-raw-evidence.v1",
+      "provider": "KIS",
+      "operation_id": "KIS-039",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "tr_id": "FHKST03010100",
+      "request": {
+        "symbol": "999999",
+        "board": "J",
+        "start_date": "2026-10-16",
+        "end_date": "2026-10-22",
+        "interval": "1d",
+        "adjustment_code": "0"
+      },
+      "capture": {
+        "origin": "synthetic",
+        "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+        "body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+        "body_byte_length": 983,
+        "hash_scope": "decoded_response_text_utf8",
+        "hash_algorithm": "sha256",
+        "provenance_status": "caller_supplied_capture_metadata",
+        "source_authentication": "not_established"
+      },
+      "cutoff": "2026-10-22T00:00:00.123456789012345678903Z",
+      "provider_success_status": "0",
+      "success_policy": "string_zero_only",
+      "identity_status": "request_context_only_not_response_verified",
+      "source_as_of": null,
+      "publication_at": null,
+      "receipt_cutoff_status": "receipt_not_after_cutoff_no_publication_inference",
+      "adjustment_code_interpretation": "blocked_portal_sample_conflict",
+      "row_order": "captured_output2_array_order",
+      "row_index_basis": "zero_based_output2_index",
+      "row_count": 3,
+      "response_status": "rows_preserved",
+      "rows": [
+        {
+          "source_row_index": 0,
+          "provider_business_date": "2026-10-21",
+          "raw_fields": {
+            "stck_bsop_date": {
+              "state": "present",
+              "value": "20261021"
+            },
+            "stck_clpr": {
+              "state": "present",
+              "value": "103.125"
+            },
+            "stck_oprc": {
+              "state": "present",
+              "value": "102"
+            },
+            "stck_hgpr": {
+              "state": "present",
+              "value": "105"
+            },
+            "stck_lwpr": {
+              "state": "present",
+              "value": "101"
+            },
+            "acml_vol": {
+              "state": "present",
+              "value": "9007199254740993"
+            },
+            "acml_tr_pbmn": {
+              "state": "blank",
+              "value": ""
+            },
+            "flng_cls_code": {
+              "state": "blank",
+              "value": ""
+            },
+            "prtt_rate": {
+              "state": "blank",
+              "value": ""
+            },
+            "mod_yn": {
+              "state": "blank",
+              "value": ""
+            },
+            "revl_issu_reas": {
+              "state": "blank",
+              "value": ""
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "date": null,
+            "open": null,
+            "high": null,
+            "low": null,
+            "close": null,
+            "volume": null,
+            "turnover": null,
+            "currency": null,
+            "price_unit": null,
+            "volume_unit": null,
+            "turnover_unit": null,
+            "adjusted": null,
+            "adjustment_factor": null,
+            "source_as_of": null,
+            "publication_at": null,
+            "session": null
+          }
+        },
+        {
+          "source_row_index": 1,
+          "provider_business_date": "2026-10-19",
+          "raw_fields": {
+            "stck_bsop_date": {
+              "state": "present",
+              "value": "20261019"
+            },
+            "stck_clpr": {
+              "state": "present",
+              "value": "000101.125"
+            },
+            "stck_oprc": {
+              "state": "blank",
+              "value": ""
+            },
+            "stck_hgpr": {
+              "state": "present",
+              "value": "103"
+            },
+            "stck_lwpr": {
+              "state": "present",
+              "value": "99"
+            },
+            "acml_vol": {
+              "state": "present",
+              "value": "2000"
+            },
+            "acml_tr_pbmn": {
+              "state": "blank",
+              "value": ""
+            },
+            "flng_cls_code": {
+              "state": "blank",
+              "value": ""
+            },
+            "prtt_rate": {
+              "state": "blank",
+              "value": ""
+            },
+            "mod_yn": {
+              "state": "blank",
+              "value": ""
+            },
+            "revl_issu_reas": {
+              "state": "blank",
+              "value": ""
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "date": null,
+            "open": null,
+            "high": null,
+            "low": null,
+            "close": null,
+            "volume": null,
+            "turnover": null,
+            "currency": null,
+            "price_unit": null,
+            "volume_unit": null,
+            "turnover_unit": null,
+            "adjusted": null,
+            "adjustment_factor": null,
+            "source_as_of": null,
+            "publication_at": null,
+            "session": null
+          }
+        },
+        {
+          "source_row_index": 2,
+          "provider_business_date": "2026-10-16",
+          "raw_fields": {
+            "stck_bsop_date": {
+              "state": "present",
+              "value": "20261016"
+            },
+            "stck_clpr": {
+              "state": "present",
+              "value": "100.125"
+            },
+            "stck_oprc": {
+              "state": "present",
+              "value": "100"
+            },
+            "stck_hgpr": {
+              "state": "present",
+              "value": "102"
+            },
+            "stck_lwpr": {
+              "state": "present",
+              "value": "98"
+            },
+            "acml_vol": {
+              "state": "present",
+              "value": "1000"
+            },
+            "acml_tr_pbmn": {
+              "state": "blank",
+              "value": ""
+            },
+            "flng_cls_code": {
+              "state": "blank",
+              "value": ""
+            },
+            "prtt_rate": {
+              "state": "blank",
+              "value": ""
+            },
+            "mod_yn": {
+              "state": "blank",
+              "value": ""
+            },
+            "revl_issu_reas": {
+              "state": "blank",
+              "value": ""
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "date": null,
+            "open": null,
+            "high": null,
+            "low": null,
+            "close": null,
+            "volume": null,
+            "turnover": null,
+            "currency": null,
+            "price_unit": null,
+            "volume_unit": null,
+            "turnover_unit": null,
+            "adjusted": null,
+            "adjustment_factor": null,
+            "source_as_of": null,
+            "publication_at": null,
+            "session": null
+          }
+        }
+      ],
+      "response_range_completeness": "unknown_pagination_not_demonstrated",
+      "rights_status": "pending",
+      "source_time_status": "date_only_no_provider_time_or_timezone",
+      "canonical_projection_status": "blocked",
+      "blockers": [
+        "price_currency_and_scale_not_stated_in_endpoint_schema",
+        "volume_unit_not_stated_in_endpoint_schema",
+        "trade_amount_currency_and_scale_not_stated_in_endpoint_schema",
+        "adjustment_code_portal_sample_conflict",
+        "response_identity_not_independently_verified",
+        "date_only_no_provider_time_or_timezone",
+        "data_rights_and_host_egress_not_approved_by_this_contract"
+      ],
+      "warnings": [
+        "SHA256 binds original decoded response text encoded as UTF-8, not wire bytes or source authenticity. Original text must be retained separately.",
+        "Request, origin, receipt and cutoff are caller-supplied metadata, not authenticated transport observations or publication evidence.",
+        "Only the eleven documented output2 row fields are projected. Provider messages, output1, headers and arbitrary metadata are never public evidence fields.",
+        "Provider order and date labels are retained without sorting, deduplication, calendar-session inference, completeness claims or canonical chart/metric promotion.",
+        "Empty successful output2 is retained as empty capture evidence only, not proof of no trading or complete history. The existing price-history v1 contract is unchanged."
+      ]
+    },
+    "original_body_text": "{\n  \"rt_cd\": \"0\",\n  \"output1\": {},\n  \"output2\": [\n    {\n      \"stck_bsop_date\": \"20261021\",\n      \"stck_clpr\": \"103.125\",\n      \"stck_oprc\": \"102\",\n      \"stck_hgpr\": \"105\",\n      \"stck_lwpr\": \"101\",\n      \"acml_vol\": \"9007199254740993\",\n      \"acml_tr_pbmn\": \"\",\n      \"flng_cls_code\": \"\",\n      \"prtt_rate\": \"\",\n      \"mod_yn\": \"\",\n      \"revl_issu_reas\": \"\"\n    },\n    {\n      \"stck_bsop_date\": \"20261019\",\n      \"stck_clpr\": \"000101.125\",\n      \"stck_oprc\": \"\",\n      \"stck_hgpr\": \"103\",\n      \"stck_lwpr\": \"99\",\n      \"acml_vol\": \"2000\",\n      \"acml_tr_pbmn\": \"\",\n      \"flng_cls_code\": \"\",\n      \"prtt_rate\": \"\",\n      \"mod_yn\": \"\",\n      \"revl_issu_reas\": \"\"\n    },\n    {\n      \"stck_bsop_date\": \"20261016\",\n      \"stck_clpr\": \"100.125\",\n      \"stck_oprc\": \"100\",\n      \"stck_hgpr\": \"102\",\n      \"stck_lwpr\": \"98\",\n      \"acml_vol\": \"1000\",\n      \"acml_tr_pbmn\": \"\",\n      \"flng_cls_code\": \"\",\n      \"prtt_rate\": \"\",\n      \"mod_yn\": \"\",\n      \"revl_issu_reas\": \"\"\n    }\n  ]\n}\n",
+    "binding": {
+      "contract": "moai.kr-daily.synthetic-only-history-binding.v1",
+      "scope": "synthetic_fixture_demonstration_only",
+      "history_id": "SYNTHETIC-KR-DAILY",
+      "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+      "cutoff": "2026-10-22T00:00:00.123456789012345678903Z",
+      "request": {
+        "start_date": "2026-10-19",
+        "end_date": "2026-10-21"
+      },
+      "provider_identity": {
+        "symbol": "999999",
+        "board": "J"
+      },
+      "source_link": {
+        "original_body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+        "raw_dto_sha256": "7451fefc4cb5c961dcc9c592b3de6ba31210c427b652404db9895241288fc3a7",
+        "raw_input_sha256": "9c47b48f03f88c733b214a220d44044988b315bdbaaa46a680f2bf706467fbeb"
+      },
+      "selector": {
+        "id": "kis.kr-daily.synthetic.named-ohlcv/1",
+        "date": "stck_bsop_date",
+        "open": "stck_oprc",
+        "high": "stck_hgpr",
+        "low": "stck_lwpr",
+        "close": "stck_clpr",
+        "volume": "acml_vol"
+      },
+      "adjustment_code_policy": "opaque_uninterpreted_portal_sample_conflict_remains",
+      "context": {
+        "identity": {
+          "instrument_id": "SYNTHETIC-KR-COMMON",
+          "issuer_id": "SYNTHETIC-KR-ISSUER",
+          "venue": "SYNTHETIC-KR-VENUE",
+          "asset_class": "equity",
+          "share_class": "common",
+          "contract_id": "not_applicable"
+        },
+        "units": {
+          "price_unit": "money_per_share",
+          "currency": "KRW",
+          "price_scale": "1",
+          "volume_unit": "shares",
+          "volume_scale": "1"
+        },
+        "session": {
+          "calendar_id": "SYNTHETIC-EXPLICIT-NOT-EXCHANGE-CALENDAR",
+          "timezone": "Asia/Seoul",
+          "session_id": "SYNTHETIC-REGULAR",
+          "interval": "daily",
+          "date_basis": "trade_date",
+          "calendar_verified": true,
+          "calendar_evidence_ref": "synthetic:session_calendar",
+          "coverage_start": "2026-10-16",
+          "coverage_end": "2026-10-22",
+          "coverage_complete": true,
+          "expected_sessions": [
+            "2026-10-16",
+            "2026-10-19",
+            "2026-10-20",
+            "2026-10-21"
+          ]
+        },
+        "basis": {
+          "price_kind": "price_level",
+          "return_policy": "price_return",
+          "adjustment": "unadjusted",
+          "adjustment_id": "SYNTHETIC-NO-ACTION-BASIS",
+          "adjustment_asof": "2026-10-21T09:00:00Z",
+          "actions_coverage_verified": true,
+          "actions_evidence_ref": "synthetic:no_actions",
+          "volume_adjustment": "unadjusted",
+          "revision_policy": "final_current_at_cutoff",
+          "price_definition": "official_close",
+          "allow_negative_prices": false,
+          "roll_policy": "not_applicable"
+        }
+      },
+      "no_actions": {
+        "policy": "no_adjustment_relevant_actions",
+        "coverage_complete": true,
+        "coverage_start": "2026-10-16",
+        "coverage_end": "2026-10-22",
+        "effective_from": "2026-10-16T00:00:00+09:00",
+        "effective_through": "2026-10-22T00:00:00.123456789012345678903Z",
+        "knowledge_asof": "2026-10-22T00:00:00.123456789012345678903Z",
+        "events": [],
+        "price_basis_changes": false,
+        "share_basis_changes": false,
+        "quantity_unit_changes": false,
+        "evidence_ref": "synthetic:no_actions"
+      },
+      "rights": {
+        "use": "local_report",
+        "scope": "synthetic_fixture_only",
+        "evidence_ref": "synthetic:rights",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-10-23T00:00:00Z"
+      },
+      "evidence": {
+        "fixture_lineage": "synthetic:fixture_lineage",
+        "identity": "synthetic:identity",
+        "field_semantics": "synthetic:field_semantics",
+        "units": "synthetic:units",
+        "currency": "synthetic:currency",
+        "scales": "synthetic:scales",
+        "session_calendar": "synthetic:session_calendar",
+        "unadjusted_basis": "synthetic:unadjusted_basis",
+        "no_actions": "synthetic:no_actions",
+        "finality_revision": "synthetic:finality_revision",
+        "publication_availability": "synthetic:publication_availability",
+        "rights": "synthetic:rights"
+      },
+      "artifacts": [
+        {
+          "id": "synthetic:fixture_lineage",
+          "axis": "fixture_lineage",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented JSON response and raw DTO linked by separately checked hashes. No provider call or source authentication.",
+          "sha256": "cdb1719fd3168a62aa0dcf595f22cd500e1320cb639b331caf4aa33845615eae",
+          "locator": "synthetic://kr-history-fixture/fixture_lineage"
+        },
+        {
+          "id": "synthetic:identity",
+          "axis": "identity",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Fictional symbol 999999 represents SYNTHETIC-KR-COMMON equity on SYNTHETIC-KR-VENUE, common share class, issuer SYNTHETIC-KR-ISSUER.",
+          "sha256": "e1d6a7f85b25ff4f152d7e07a52a4c65b274b63ea3242d2a8b9c69d61ea160b8",
+          "locator": "synthetic://kr-history-fixture/identity"
+        },
+        {
+          "id": "synthetic:field_semantics",
+          "axis": "field_semantics",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented stck_oprc, stck_hgpr, stck_lwpr, stck_clpr and acml_vol mean open, high, low, official close and daily share volume respectively.",
+          "sha256": "5e39035f4346cdebe17715e31e9f9996ec2c42cdcf7c154b231e1629f79ab4d3",
+          "locator": "synthetic://kr-history-fixture/field_semantics"
+        },
+        {
+          "id": "synthetic:units",
+          "axis": "units",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Fictional prices are money_per_share and fictional volume is shares. No endpoint unit inference.",
+          "sha256": "534e164ecb8110ef7adb13039292b958b270fbac957c17b6c7c09217683dc18f",
+          "locator": "synthetic://kr-history-fixture/units"
+        },
+        {
+          "id": "synthetic:currency",
+          "axis": "currency",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Fictional prices are explicitly KRW. No market-code currency inference.",
+          "sha256": "4d25e12523774110601b12b23170908c685b2651d79f6d87e8a51e873d2d84f8",
+          "locator": "synthetic://kr-history-fixture/currency"
+        },
+        {
+          "id": "synthetic:scales",
+          "axis": "scales",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Both fictional price and volume scales are explicitly 1.",
+          "sha256": "c75638a8883b78de1282d5091d862367812f76ad898bc2e939e880124d432459",
+          "locator": "synthetic://kr-history-fixture/scales"
+        },
+        {
+          "id": "synthetic:session_calendar",
+          "axis": "session_calendar",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented complete calendar covers 2026-10-16 through 2026-10-22. Exactly 16, 19, 20, 21 are sessions; includes all supplied warm-up rows. This is NOT a verified exchange calendar.",
+          "sha256": "d79d50ffd68f01d4e65c8940c099120520986428ce11b20aa5298d757f5c6b03",
+          "locator": "synthetic://kr-history-fixture/session_calendar"
+        },
+        {
+          "id": "synthetic:unadjusted_basis",
+          "axis": "unadjusted_basis",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented data are unadjusted final daily official-close price levels and unadjusted quantities. Adjustment codes 0 and 1 remain opaque and unresolved for actual data.",
+          "sha256": "e72bb63c1ca3b6fa301d59935f1e786bd7b7af0ece3a55e901c3de0003ffa6f5",
+          "locator": "synthetic://kr-history-fixture/unadjusted_basis"
+        },
+        {
+          "id": "synthetic:no_actions",
+          "axis": "no_actions",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented world has no adjustment-relevant actions or price/share/quantity-unit changes from 2026-10-16 local midnight through the exact cutoff, including all warm-up dates and capture/adjustment vintage. No events are supported.",
+          "sha256": "f55ca6b238bb57ee01f2befd719cf2fcb9e7a7cbf89ce52a91aca93098f628eb",
+          "locator": "synthetic://kr-history-fixture/no_actions"
+        },
+        {
+          "id": "synthetic:finality_revision",
+          "axis": "finality_revision",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented original revision r1 is final and current at the exact cutoff for every supplied row.",
+          "sha256": "ccac6e3c30f195508d65079503ad5febd6c3fdb768b85ecbb5fdc64602b4a5d0",
+          "locator": "synthetic://kr-history-fixture/finality_revision"
+        },
+        {
+          "id": "synthetic:publication_availability",
+          "axis": "publication_availability",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented dates use Asia/Seoul close-date trade dates with explicit close and publication instants. Date-only observations have no observed_at instant.",
+          "sha256": "84892dba00a33ece1f967d480c12d5536723b280abce952375ec2f36335eb9b1",
+          "locator": "synthetic://kr-history-fixture/publication_availability"
+        },
+        {
+          "id": "synthetic:rights",
+          "axis": "rights",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture_definition_utf8",
+          "content": "Invented fixtures alone permit local_report use from 2026-10-01T00:00:00Z through 2026-10-23T00:00:00Z. No real provider rights are established.",
+          "sha256": "aad2f1b4aaca8d0b4592ab1a55a656694153a4a8c723eb742183ae4c179b81d0",
+          "locator": "synthetic://kr-history-fixture/rights"
+        }
+      ],
+      "points": [
+        {
+          "source_row_index": 0,
+          "trade_date": "2026-10-21",
+          "session_close_at": "2026-10-21T15:30:00+09:00",
+          "published_at": "2026-10-21T15:31:00+09:00",
+          "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "r1",
+            "evidence_ref": "synthetic:finality_revision"
+          }
+        },
+        {
+          "source_row_index": 1,
+          "trade_date": "2026-10-19",
+          "session_close_at": "2026-10-19T15:30:00+09:00",
+          "published_at": "2026-10-19T15:31:00+09:00",
+          "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "r1",
+            "evidence_ref": "synthetic:finality_revision"
+          }
+        },
+        {
+          "source_row_index": 2,
+          "trade_date": "2026-10-16",
+          "session_close_at": "2026-10-16T15:30:00+09:00",
+          "published_at": "2026-10-16T15:31:00+09:00",
+          "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "r1",
+            "evidence_ref": "synthetic:finality_revision"
+          }
+        }
+      ]
+    }
+  },
+  "report_runtime": {
+    "contract": "canonical-history/1.0",
+    "runtime_version": "canonical-history-semantics/rc5.1",
+    "files": {
+      "canonical-history.schema.json": "ac755724fc93442a50f38f3da4ff1749cafdb84221cc6b36efa448b562f55b4f",
+      "history_semantics.py": "55b7c1a0ab05b643d27bb27e072f00846b92d7f8bf749c479dcfedc8479318de",
+      "numeric_core.py": "02e3c646714eec8dca3ceffc9c9b9746f6d0670634a31b81fdb937f9f3656f37"
+    }
+  },
+  "warnings": [
+    "SYNTHETIC FIXTURE DEMONSTRATION ONLY. Actual-origin promotion is unsupported and fails before verifier or clock.",
+    "Neither adjustment code 0 nor 1 is interpreted. The original portal/sample conflict and every raw blocker remain unresolved.",
+    "Fixture assertions and hashes do not authenticate real prices, identity, units, currency, calendar, adjustment, publication or rights.",
+    "The pinned report does not implement split-event boundaries. Separate no-adjustment-relevant-actions evidence must cover all supplied calendar and warm-up dates through cutoff, including capture and adjustment vintage.",
+    "No production verifier, network call, MCP route, source completeness inference, filled/resampled values or benchmark is supplied."
+  ]
+}

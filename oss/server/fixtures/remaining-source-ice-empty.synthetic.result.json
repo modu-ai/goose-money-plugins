@@ -1,0 +1,68 @@
+{
+  "contract": "moai.kis.remaining-source-inputs.v1",
+  "provider": "KIS",
+  "operation_ref": "KIS-280",
+  "catalog_id": "kis.catalog.commit2077773a.row.328",
+  "endpoint": "/uapi/overseas-price/v1/quotations/rights-by-ice",
+  "tr_id": "HHDFS78330900",
+  "request": {
+    "operation_ref": "KIS-280",
+    "query": {
+      "NCOD": "US",
+      "SYMB": "SYNTH",
+      "ST_YMD": "20261001",
+      "ED_YMD": "20261031"
+    }
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T08:00:00.123456789Z",
+    "body_sha256": "f638a7109366994298ecda38b6b41ba124268717d5c35ff0773be19b2f95cb5e",
+    "body_byte_length": 36,
+    "hash_scope": "decoded_response_text_utf8",
+    "hash_algorithm": "sha256",
+    "provenance_status": "caller_supplied_unverified",
+    "source_authentication": "not_established"
+  },
+  "cutoff": "2026-10-22T08:00:00.123456789Z",
+  "scope": "overseas_ICE_A4_A5_not_domestic_KSD",
+  "provider_success_status": "0",
+  "request_execution_status": "not_asserted",
+  "first_page_origin": "not_verified",
+  "identity_status": "request_context_only_not_response_verified",
+  "source_as_of": null,
+  "publication_at": null,
+  "receipt_policy": "receipt_not_after_cutoff_no_publication_inference",
+  "groups": [
+    {
+      "source_root": "output1",
+      "row_count": 0,
+      "rows": []
+    }
+  ],
+  "row_order": "captured_array_order_zero_based_indices",
+  "response_completeness": "not_established",
+  "rights_status": "pending",
+  "canonical_projection_status": "blocked",
+  "metric_ready": false,
+  "ambiguities": [
+    "ca_title_taxonomy_incomplete_no_event_type_mapping",
+    "request_date_basis_varies_by_event_no_announcement_date_range_filter",
+    "future_payment_or_effective_dates_allowed",
+    "country_and_symbol_identity_request_context_only"
+  ],
+  "blockers": [
+    "response_identity_not_independently_verified",
+    "publication_time_not_available",
+    "source_authenticity_not_established",
+    "rights_and_host_egress_not_approved",
+    "canonical_values_not_promoted"
+  ],
+  "warnings": [
+    "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity.",
+    "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified.",
+    "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text.",
+    "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data.",
+    "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+  ]
+}

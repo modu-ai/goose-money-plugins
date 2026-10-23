@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "pattern": "^\\d{6}$"
+    },
+    "board": {
+      "type": "string",
+      "enum": [
+        "J",
+        "NX",
+        "UN"
+      ]
+    }
+  },
+  "required": [
+    "symbol",
+    "board"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/market-reference/orderbook-input-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime entrypoints additionally enforce inert bounded plain JSON, conservative private-data marker rejection, exact instants, echo and request consistency, source DTO reconstruction where available, deterministic full-candidate replay and integrity links. Shape validity is not source authentication, economic validity, rights clearance or metric readiness. The .invalid namespace is an identifier, not a hosted resource."
+}

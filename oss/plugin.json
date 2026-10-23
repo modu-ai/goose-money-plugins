@@ -1,0 +1,16 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "moai-atp",
+  "version": "0.1.0-dev.1",
+  "description": "Local research workflow instructions and 34 default-denied read-only MCP tools. No accounts or orders. Development only.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "MoAI-ATP",
+        "shortDescription": "근거 중심 주식 리서치와 보고서 검수",
+        "capabilities": []
+      },
+      "requires_local_executor": true
+    }
+  }
+}

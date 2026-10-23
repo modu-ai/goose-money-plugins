@@ -1,0 +1,53 @@
+{
+  "scope": "Three scalar original formulas only; no original report slot claimed complete. Existing raw provider QuoteSnapshot lacks independent previous close and bid/ask; no provider metric-ready mapping added.",
+  "frozen_reported_roles_modified": false,
+  "source_authenticated": false,
+  "actual_bindings": 0,
+  "live_bindings": 0,
+  "rows": [
+    {
+      "metric_id": "metric.change_pct",
+      "original_formula": "(last/previous_close-1)*100",
+      "original_preconditions": "same venue/session/reference;previous_close>0;provider percent independently crosscheck",
+      "implementation": "market_metrics.py: calculate_entry",
+      "implementation_status": "conditional_supplied_observation_metric",
+      "claim_boundary": "Exact arithmetic can remain as a labeled formula exercise while separate provider-percent or stale/closed interpretation gates block. canonical_metric.value then remains null; accepted_chart_bindings=0 always. No source authentication.",
+      "tests": "test_market_metrics.py",
+      "whole_original_slot_complete": false,
+      "extra_narrow_scope": "Regular equity/ETF last vs independently supplied official previous close. Percent must match under exact declared half-even/half-up 0..12-place policy; declaration is not independent source authentication."
+    },
+    {
+      "metric_id": "metric.spread_bps",
+      "original_formula": "(ask-bid)/((ask+bid)/2)*10000",
+      "original_preconditions": "simultaneous valid bid<=ask;mid>0;not promised execution cost",
+      "implementation": "market_metrics.py: calculate_entry",
+      "implementation_status": "conditional_supplied_observation_metric",
+      "claim_boundary": "Exact arithmetic can remain as a labeled formula exercise while separate provider-percent or stale/closed interpretation gates block. canonical_metric.value then remains null; accepted_chart_bindings=0 always. No source authentication.",
+      "tests": "test_market_metrics.py",
+      "whole_original_slot_complete": false,
+      "extra_narrow_scope": "Nonnegative firm equity/ETF quotes at exactly the same instant and positive midpoint. No implied execution cost."
+    },
+    {
+      "metric_id": "metric.etf_premium",
+      "original_formula": "(price/NAV-1)*100",
+      "original_preconditions": "same timestamp/currency/NAV unit;cross-market closed/stale mismatch blocks interpretation",
+      "implementation": "market_metrics.py: calculate_entry",
+      "implementation_status": "conditional_supplied_observation_metric",
+      "claim_boundary": "Exact arithmetic can remain as a labeled formula exercise while separate provider-percent or stale/closed interpretation gates block. canonical_metric.value then remains null; accepted_chart_bindings=0 always. No source authentication.",
+      "tests": "test_market_metrics.py",
+      "whole_original_slot_complete": false,
+      "extra_narrow_scope": "Official closing exchange price vs official closing per-share NAV, exactly same instant and synchronized underlying valuation assertion. iNAV is unsupported."
+    }
+  ],
+  "unimplemented": [
+    "Source authentication and licensed live acquisition/binding",
+    "Indicative NAV, asynchronous NAV, FX or share-unit conversions",
+    "Cross-market stale/closed correction or inferred arbitrage",
+    "Full original report slot, chart and report-family assembly"
+  ],
+  "missing_input_not_unimplemented": [
+    "Required canonical observations",
+    "Independent provider percent and explicit rounding policy",
+    "Rights, provenance, session/reference/split/share and freshness assertions"
+  ]
+}

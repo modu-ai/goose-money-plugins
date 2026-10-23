@@ -1,0 +1,17 @@
+{
+  "request": {
+    "operation_ref": "KIS-280",
+    "query": {
+      "NCOD": "US",
+      "SYMB": "SYNTH",
+      "ST_YMD": "20261001",
+      "ED_YMD": "20261031"
+    }
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T08:00:00.123456789Z",
+    "expected_body_sha256": "b5b3ea3c0bbc12ec87aa699f763986fe5b1ef9bfd2aae7e3c7b71507d0e50e2d"
+  },
+  "cutoff": "2026-10-22T08:00:00.123456789Z"
+}

@@ -1,0 +1,15 @@
+{
+  "origin": "synthetic",
+  "observed_market_data": false,
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "receipt": "2026-10-22T03:00:00.123456789123Z",
+  "cutoff": "2026-10-22T03:00:00.123456789124Z",
+  "purpose": "Offline deterministic shape/reconstruction tests only. All values and times are fabricated. Public source labels do not authenticate these records or grant data rights.",
+  "source_authentication": false,
+  "canonical_observations": 0,
+  "metric_ready": false,
+  "live_financial_api_calls": 0,
+  "credentials_read": 0,
+  "account_or_order_operations": 0,
+  "dependencies_installed": 0
+}

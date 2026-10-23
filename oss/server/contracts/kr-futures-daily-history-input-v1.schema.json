@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "pattern": "^1[0-9A-Z]{3}(?:0[1-9]|1[0-2])$"
+    },
+    "start_date": {
+      "type": "string",
+      "pattern": "^\\d{8}$"
+    },
+    "end_date": {
+      "type": "string",
+      "pattern": "^\\d{8}$"
+    },
+    "period": {
+      "type": "string",
+      "const": "D"
+    }
+  },
+  "required": [
+    "symbol",
+    "start_date",
+    "end_date",
+    "period"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/kr-futures-daily-history-input-v1.schema.json",
+  "$comment": "Offline JSON Schema projection. Runtime Zod schema additionally enforces actual calendar dates, exact receipt equality, row count/coverage/cursor provenance, identity and date-range guards. The .invalid namespace is an identifier, not a hosted resource."
+}

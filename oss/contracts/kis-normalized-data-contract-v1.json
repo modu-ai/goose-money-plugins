@@ -1,0 +1,411 @@
+{
+  "contract_id": "moai.stock.data.v1",
+  "version": "0.3.0-draft",
+  "status": "review-draft; reconciled to R01 consumer 0.2; no live provider validation",
+  "updated_at": "2026-10-21",
+  "scope": {
+    "runtime": "user-owned environment; ChatGPT desktop Work project is the selected product surface, not proof of local execution",
+    "moai_server": "authentication, course entitlement, device/license state only; never a KIS proxy or financial-data store",
+    "transport": "FastMCP 4.1.3 over official MCP Python SDK 2.3.0; user-local stdio; 2026-07-28 stable MCP protocol; WebSocket and remote HTTP deferred",
+    "excluded": [
+      "order",
+      "cancel",
+      "amend",
+      "reserve-order",
+      "credit-order",
+      "transfer",
+      "auto-trading",
+      "arbitrary-URL",
+      "arbitrary-API",
+      "raw-account-number-in-tool-arguments"
+    ]
+  },
+  "security": {
+    "credential_source": "user-owned OS secure store; .goose contains non-secret references only (recommendation pending user confirmation)",
+    "credential_tool_arguments": "forbidden",
+    "token_storage": "process memory only; no disk cache, logs, prompt or report",
+    "account_identifier": "opaque account_ref resolved only inside the user runtime",
+    "cache_default": "disabled; cache TTL and freshness budget are separate controls",
+    "model_context": "send only minimum normalized facts; account raw payload is local to the adapter and is not fanned out to specialist prompts",
+    "live_network_default": "disabled by policy; market rights false; account read false",
+    "transport_protection": "HTTPS certificate verification enabled; exact KIS host/path allowlist; redirects rejected; no retries; bounded response size",
+    "account_read_status": "not exposed until local account resolution, response-field mapping and explicit consent UX are implemented",
+    "market_rights_gate_semantics": "market_rights_enabled=false and rights_pending are conservative prototype configuration defaults, not a finding that KIS prohibits a single individual from using quote data locally for their own assets",
+    "rights_evidence": "provider basis must be purpose-scoped and cited; technical configuration does not create provider or exchange permission"
+  },
+  "common_envelope": {
+    "ok": "boolean",
+    "provider": "kis|opendart|sec|web",
+    "operation_id": "versioned internal allowlist ID",
+    "market": "KR|US|other-supported",
+    "instrument_ref": {
+      "market": "KR|US",
+      "exchange": "controlled exchange code",
+      "symbol": "provider symbol",
+      "asset_type": "equity|etf|other-supported"
+    },
+    "provenance": {
+      "api_reference": "static catalog function/endpoint/TR mapping ID; no secret",
+      "source_as_of": "source or market observation time, nullable if provider does not return it",
+      "retrieved_at": "UTC ISO-8601 timestamp",
+      "timezone": "IANA name or explicit unknown",
+      "session": "pre|regular|after|close|unknown",
+      "currency": "ISO 4217 or unknown",
+      "unit": "explicit provider unit or unknown",
+      "delay_state": "realtime|delayed|end_of_day|unknown",
+      "adjusted": "true|false|null",
+      "rights_status": "approved only when an explicit purpose-specific decision and basis are recorded; pending is the default when only a technical policy allows the call; blocked when purpose is disallowed",
+      "partial": "boolean derived from field availability; missing data is not zero",
+      "stale": "boolean|null; null when freshness budget/calendar is unknown",
+      "provider_api_version": "provider version or explicit unknown; do not substitute code catalog commit",
+      "event_time": "provider event time or null",
+      "published_at": "provider publication time or null",
+      "received_at": "local provider-response receipt observation in UTC",
+      "available_at": "time available to the local runtime in UTC",
+      "effective_from": "economic validity start or null",
+      "effective_to": "economic validity end or null",
+      "supersedes": "provider revision/document identifier replaced or null",
+      "report_cutoff": "report snapshot cutoff or null when not supplied to the tool",
+      "source_timezone": "timezone for provider source time",
+      "clock_basis": "which clock/event was used for each timestamp",
+      "origin": "actual|synthetic",
+      "estimate_kind": "reported|guidance|internal|consensus|not_applicable",
+      "finality": "preliminary|final|unknown",
+      "revision_id": "provider revision ID or null",
+      "availability": "available|partial|unavailable",
+      "validation_status": "provider_shape_checked|synthetic_fixture|independently_reconciled|unverified",
+      "freshness": "fresh|stale|unknown; independent of cache TTL"
+    },
+    "warnings": "array of safe, non-secret diagnostic codes",
+    "error": "typed error object or null"
+  },
+  "normalized_types": {
+    "NumericFact": {
+      "concept": "stable normalized concept or unmapped",
+      "source_field": "original KIS/DART/SEC field name",
+      "value": "decimal string, never binary float for financial arithmetic",
+      "unit": "currency|shares|percent|ratio|count|provider-defined|unknown",
+      "currency": "ISO 4217 or null",
+      "period_start": "YYYY-MM-DD or null",
+      "period_end": "YYYY-MM-DD or null",
+      "period_type": "instant|duration|unknown",
+      "accounting_basis": "K-IFRS-CFS|K-IFRS-OFS|US-GAAP|as-reported|unknown",
+      "estimate": "boolean|null",
+      "source_label": "original provider label"
+    },
+    "Quote": {
+      "last": "decimal string|null",
+      "open": "decimal string|null",
+      "high": "decimal string|null",
+      "low": "decimal string|null",
+      "previous_close": "unsupported in the current registered quote output; absent from outputSchema; never infer from last and change",
+      "change": "decimal string|null",
+      "change_percent": "decimal string|null",
+      "volume": "decimal string|null",
+      "currency": "ISO 4217 or unknown",
+      "price_unit": "per-share or provider-defined",
+      "source_field_values": "bounded unmapped provider fields; no unsupported interpretation",
+      "null_reasons": "normalized field → safe reason code; never replace with 0",
+      "field_lineage": "per normalized field: provider/API version, endpoint, tool, parameter schema, raw path/unit/sign, transform, nullable reason, pagination, entitlement, fixture ID, and verification status"
+    },
+    "PriceBar": {
+      "trade_date": "YYYY-MM-DD",
+      "open": "decimal string|null",
+      "high": "decimal string|null",
+      "low": "decimal string|null",
+      "close": "decimal string|null",
+      "volume": "decimal string|null",
+      "currency": "ISO 4217 or unknown",
+      "adjusted": "boolean|null",
+      "source_field_values": "preserved unmodeled fields"
+    },
+    "FlowObservation": {
+      "date": "YYYY-MM-DD or provider time",
+      "flow_class": "provider-defined category; do not infer KR↔US equivalence",
+      "net_shares": "decimal string|null",
+      "net_value": "decimal string|null",
+      "unit": "provider field mapping or unknown",
+      "estimate": "boolean",
+      "source_field_values": "preserved unmodeled fields"
+    },
+    "Headline": {
+      "title": "plain text title only",
+      "published_at": "provider timestamp or null",
+      "source_label": "provider source label or null",
+      "article_url": "only when provider supplies and rights permit it; otherwise null",
+      "body_included": false
+    },
+    "AccountPosition": {
+      "instrument_ref": "InstrumentRef",
+      "quantity": "decimal string|null",
+      "average_cost": "decimal string|null",
+      "market_value": "decimal string|null",
+      "unrealized_profit_loss": "decimal string|null",
+      "currency": "ISO 4217 or unknown",
+      "source_field_values": "preserved unmodeled fields"
+    },
+    "AccountSnapshot": {
+      "account_ref": "opaque local reference, never CANO or full account",
+      "observed_at": "UTC ISO-8601 or null",
+      "positions": "array of AccountPosition",
+      "cash_by_currency": "array of normalized NumericFact",
+      "totals": "normalized NumericFact array",
+      "raw_account_payload_returned": false
+    }
+  },
+  "common_errors": [
+    "invalid_input",
+    "ambiguous_instrument",
+    "tier_denied",
+    "consent_required",
+    "account_scope_denied",
+    "rights_pending",
+    "auth_expired",
+    "rate_limited",
+    "no_data",
+    "partial_result",
+    "stale_data",
+    "schema_drift",
+    "upstream_unavailable",
+    "operation_blocked"
+  ],
+  "tool_surface_note": "Candidate operations derive from user-facing functions and report requirements, not the 334 sample rows. The product report set is being reorganized around common investor tasks; prior 23 routes and previous 14+3 baseline are historical only. Keep six asset categories, including futures, in product scope; no futures tools or trade actions are exposed in this slice.",
+  "prototype_exposed_tools": [
+    "get_market_snapshot"
+  ],
+  "prototype_not_exposed_tools": [
+    "get_price_history",
+    "get_fundamentals",
+    "get_market_flows",
+    "get_account_snapshot",
+    "get_account_activity",
+    "get_market_headlines",
+    "get_instrument_profile",
+    "get_public_filings",
+    "WebSocket tools",
+    "orders",
+    "transfers",
+    "arbitrary API dispatch"
+  ],
+  "mcp_library": {
+    "decision_date": "2026-10-21",
+    "authoring_framework": {
+      "package": "fastmcp",
+      "version": "4.1.3",
+      "license": "Apache-2.0",
+      "selection": "user-proposed FastMCP; exact stable pin used for typed Python implementation and in-memory/stdio tests"
+    },
+    "protocol_sdk": {
+      "package": "mcp",
+      "version": "2.3.0",
+      "license": "MIT",
+      "relationship": "underlying official MCP Python SDK dependency; distinct from standalone fastmcp package"
+    },
+    "protocol_specification": "2026-07-28 stable",
+    "host_compatibility": "ChatGPT desktop Work install and runtime not verified"
+  },
+  "data_status_axes": {
+    "origin": [
+      "actual",
+      "synthetic"
+    ],
+    "estimate_kind": [
+      "reported",
+      "guidance",
+      "internal",
+      "consensus",
+      "not_applicable"
+    ],
+    "finality": [
+      "preliminary",
+      "final",
+      "unknown"
+    ],
+    "revision_id": "provider revision identifier or null; do not infer",
+    "freshness": [
+      "fresh",
+      "stale",
+      "unknown"
+    ],
+    "availability": [
+      "available",
+      "partial",
+      "unavailable"
+    ],
+    "validation": [
+      "provider_shape_checked",
+      "synthetic_fixture",
+      "independently_reconciled",
+      "unverified"
+    ],
+    "rights": [
+      "approved",
+      "pending",
+      "blocked"
+    ],
+    "null_reason": "field-specific code; missing, blank, invalid, not-supported and not-requested are not numeric zero",
+    "rights_semantics": "market_rights_enabled or a local policy allow does not set rights_status=approved. This prototype emits pending because it has no purpose-specific permission reference. The gate is a conservative runtime default, not a legal ruling on individual own-account local use."
+  },
+  "candidate_tool_surface": [
+    "resolve_instrument",
+    "get_instrument_profile",
+    "get_market_snapshot",
+    "get_price_history",
+    "get_fundamentals",
+    "get_market_flows",
+    "get_market_headlines",
+    "get_public_filings",
+    "get_account_snapshot",
+    "get_account_activity"
+  ],
+  "report_integration": {
+    "masterplan_review": "/Users/goos/Documents/Codex/2026-10-21/task-6/review/Goose_리서치설계_독립심층검토_2026-10-21.html (read-only evidence)",
+    "report_family": "R01 심층 (reviewed family label)",
+    "manifest_id": null,
+    "mapping_status": "candidate data-adapter mapping only; not a report body or complete R01 implementation",
+    "tier": "KIS credential/data is Pro-only by current product boundary; exact report-manifest mapping remains pending",
+    "free_source_boundary": "Free basic stock analysis uses web search and optional OpenDART; no KIS credential/account access",
+    "consumer_version": "r01-public-quote-consumer/0.2",
+    "consumer_acknowledgment": {
+      "source": "shared/r01-wire-ack-r2.json",
+      "status": "accepted for partial public KR quote input only; not full deep input or live clearance",
+      "accepted_binding_version": "0.1.0-draft",
+      "current_binding_revision": "0.2.0-draft; report-owner acknowledgment pending"
+    }
+  },
+  "review_basis": {
+    "source": "read-only independent master-plan review",
+    "findings": {
+      "P0": 22,
+      "P1": 2
+    },
+    "new_independent_reports_recommended": 0,
+    "R01_status": "earlier review family label only; final user-centered function count and manifest IDs remain pending",
+    "U03": "internal QA"
+  },
+  "scope_revision": {
+    "asset_categories": [
+      "KR equities",
+      "US equities",
+      "KR ETFs",
+      "US ETFs",
+      "KR futures",
+      "US futures"
+    ],
+    "screen_policy": "common beginner/frequent tasks first; futures are optional staged portfolio/risk inputs",
+    "trade_execution": "excluded"
+  },
+  "tool_output_schema": {
+    "currently_exposed": [
+      "get_market_snapshot"
+    ],
+    "input": {
+      "symbol": "string matching ^[0-9]{6}$",
+      "board": "J|NX|UN; defaults J"
+    },
+    "quote_fields": [
+      "last",
+      "open",
+      "high",
+      "low",
+      "change",
+      "change_percent",
+      "volume",
+      "currency",
+      "price_unit",
+      "volume_unit",
+      "change_percent_unit",
+      "source_field_values",
+      "null_reasons",
+      "field_lineage"
+    ],
+    "field_lineage_fields": [
+      "normalized_field",
+      "provider_field",
+      "raw_path",
+      "raw_unit",
+      "raw_sign",
+      "transform",
+      "nullable_reason",
+      "fixture_id",
+      "mapping_status"
+    ],
+    "provenance_fields": [
+      "api_reference",
+      "provider_api_version",
+      "source_as_of",
+      "event_time",
+      "published_at",
+      "received_at",
+      "available_at",
+      "effective_from",
+      "effective_to",
+      "supersedes",
+      "report_cutoff",
+      "retrieved_at",
+      "source_timezone",
+      "clock_basis",
+      "timezone",
+      "session",
+      "currency",
+      "unit",
+      "delay_state",
+      "adjusted",
+      "rights_status",
+      "origin",
+      "estimate_kind",
+      "finality",
+      "revision_id",
+      "availability",
+      "validation_status",
+      "freshness",
+      "partial",
+      "stale"
+    ],
+    "actual_error_surface": [
+      "invalid_input",
+      "rights_pending",
+      "tier_denied",
+      "consent_required",
+      "credential_missing",
+      "rate_limited",
+      "auth_expired",
+      "upstream_unavailable",
+      "schema_drift",
+      "upstream_rejected",
+      "response_too_large"
+    ],
+    "paging": "none for single snapshot; page/budget contract required before history or list tools",
+    "live_and_host_status": "no live KIS call; local stdio test does not prove ChatGPT Work host support"
+  },
+  "quota_evidence": {
+    "published_real_rest_per_second": 18,
+    "published_paper_rest_per_second": 1,
+    "published_websocket_subscriptions": 41,
+    "source_library_file_id": "libfile_3e07fb879d6881919603c363e58faf89",
+    "as_of": "2026-10-21",
+    "status": "official code assistant inventory memo; customer/account-specific limits and live behavior not verified",
+    "implemented_local_limit": "1 outbound HTTP request per second per process; no retry; no cross-process/device coordinator"
+  },
+  "purpose_specific_rights": {
+    "official_kis_personal_guidance": {
+      "source": "https://apiportal.koreainvestment.com/about-open-api",
+      "summary": "KIS states that quote information may be used by an individual customer with a KIS account only for investment in that customer own assets, and that provision to third parties is not allowed.",
+      "implication": "supports the narrow own-account, own-investment use case; does not grant third-party access or redistribution"
+    },
+    "official_kis_partner_guidance": {
+      "source": "https://apiportal.koreainvestment.com/provider",
+      "summary": "KIS distinguishes corporate third-party service providers from individual customers using their own assets; its exchange data-use agreement notice is framed for partner institutions displaying KIS market data in a partner-branded service.",
+      "implication": "do not automatically impose the partner agreement path on one individual personal-use call; do not infer that a multi-user product or model-host transfer is covered"
+    },
+    "rights_pending_meaning": "local technical deny-by-default sentinel; not an external provider rejection and not proof of a legal prohibition on the narrow personal-use scenario",
+    "purpose_states": {
+      "single_user_local_view": "KIS public guidance supports own-asset investment use by an individual account holder; local product execution must still preserve that purpose and account ownership",
+      "local_save": "not implemented by this quote tool; storage duration/retention rights not established here",
+      "derived_analysis": "not conclusively addressed by the reviewed portal pages; do not claim blanket authorization",
+      "third_party_provision_or_redistribution": "blocked by KIS personal-use guidance; do not enable export/share",
+      "student_plugin_distribution_or_chat_model_egress": "scope not resolved by the reviewed public pages; treat as a separate product/host boundary question, not a ban on a single user personal call"
+    },
+    "runtime_action": "keep the default false until the local purpose and host data path are explicitly configured; do not require a generic written-rights approval for a user local own-account quote solely on the basis of this flag"
+  }
+}

@@ -1,0 +1,354 @@
+{
+  "contract": "moai.sec.capture-financial-evidence-candidate.v1",
+  "provider": "SEC",
+  "status": "capture_bound_selected_evidence_candidate_only",
+  "origin": "synthetic",
+  "requested_role": "reported.revenue",
+  "cutoff": "2026-10-22T00:00:00.123456789Z",
+  "calendar_guard": {
+    "timezone": "UTC",
+    "cutoff_local_date": "2026-10-22",
+    "status": "caller_selected_timezone_not_source_verified"
+  },
+  "selector": {
+    "cik": "0000000001",
+    "taxonomy": "us-gaap",
+    "concept": "Revenues",
+    "unit_raw": "USD",
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "period_kind": "duration",
+    "accession_number": "0000000001-26-000111",
+    "filed": "2026-02-10",
+    "fiscal_year": null,
+    "fiscal_period": null,
+    "form": "10-K",
+    "frame": null,
+    "filing": {
+      "filing_date": "2026-02-10",
+      "report_date": "2025-12-31",
+      "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+      "primary_document": "synthetic.htm"
+    }
+  },
+  "source_locator": {
+    "source_index": 110,
+    "source_unit_index": 0,
+    "source_row_index": 110
+  },
+  "role_association_status": "unverified_caller_request",
+  "semantic_binding_verified": false,
+  "canonical_fact": null,
+  "metric_eligible": false,
+  "published_at": null,
+  "available_at": null,
+  "source_authentication": "not_established",
+  "rights_status": "pending",
+  "unit_scale": null,
+  "accounting_basis": null,
+  "finality": "unknown",
+  "coverage_complete": false,
+  "selection_policy": "exact_caller_selector_and_capture_ordinal_no_latest_or_restatement_inference",
+  "constituent_receipt_latest": "2026-10-22T00:00:00.123456789Z",
+  "receipt_status": "capture_and_dto_receipts_checked_not_publication_times",
+  "issuer": {
+    "cik": "0000000001",
+    "status": "capture_and_supplied_dto_cik_join_only_not_security_identity"
+  },
+  "selected": {
+    "row": {
+      "source_index": 110,
+      "source_unit_index": 0,
+      "source_row_index": 110,
+      "unit_raw": "USD",
+      "numeric_lexeme": "9007199254740993.2500",
+      "start": "2025-01-01",
+      "end": "2025-12-31",
+      "accession_number": "0000000001-26-000111",
+      "filed": "2026-02-10",
+      "fiscal_year": null,
+      "fiscal_period": null,
+      "form": "10-K",
+      "frame": null,
+      "period_kind": "duration",
+      "accounting_basis": null,
+      "canonical_metric": null
+    },
+    "filing": {
+      "accession_number": "0000000001-26-000111",
+      "filing_date": "2026-02-10",
+      "report_date": "2025-12-31",
+      "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+      "form": "10-K",
+      "primary_document": "synthetic.htm",
+      "primary_doc_description": "Synthetic fixture, not a public filing"
+    },
+    "numeric_lexeme": "9007199254740993.2500",
+    "unit_raw": "USD",
+    "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+    "acceptance_status": "source_acceptance_metadata_not_publication_availability"
+  },
+  "coverage": {
+    "concept_total_fact_count": 126,
+    "concept_selected_fact_count": 4,
+    "concept_omitted_fact_count": 122,
+    "capture_coverage": "supplied_capture_only_not_complete_filing_history",
+    "filings_recent_count": 1,
+    "filings_omitted_recent_count": 0,
+    "historical_file_count": 1,
+    "filings_completeness": "recent_subset_historical_files_not_fetched",
+    "complete": false
+  },
+  "lineage": {
+    "capture": {
+      "independent_input": {
+        "request": {
+          "cik": "0000000001",
+          "taxonomy": "us-gaap",
+          "concept": "Revenues"
+        },
+        "selection": {
+          "kind": "source_indices",
+          "indices": [
+            100,
+            110,
+            124,
+            125
+          ]
+        },
+        "capture": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T00:00:00.123456789Z",
+          "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/Revenues.json",
+          "expected_body_sha256": "0257058417cc789f57014403df862368e098d5120c80042796f2b352e96dc1e8"
+        },
+        "cutoff": "2026-10-22T00:00:00.123456789Z",
+        "calendar_guard": {
+          "timezone": "UTC",
+          "cutoff_local_date": "2026-10-22"
+        }
+      },
+      "value": {
+        "contract": "moai.sec.company-concept-capture-slice.v1",
+        "provider": "SEC",
+        "request": {
+          "cik": "0000000001",
+          "taxonomy": "us-gaap",
+          "concept": "Revenues"
+        },
+        "selection": {
+          "kind": "source_indices",
+          "indices": [
+            100,
+            110,
+            124,
+            125
+          ]
+        },
+        "capture": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T00:00:00.123456789Z",
+          "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/Revenues.json",
+          "body_sha256": "0257058417cc789f57014403df862368e098d5120c80042796f2b352e96dc1e8",
+          "body_byte_length": 18111,
+          "hash_scope": "decoded_response_text_utf8",
+          "hash_algorithm": "sha256",
+          "provenance_status": "caller_supplied_capture_metadata",
+          "source_authentication": "not_established"
+        },
+        "cutoff": "2026-10-22T00:00:00.123456789Z",
+        "calendar_guard": {
+          "timezone": "UTC",
+          "cutoff_local_date": "2026-10-22"
+        },
+        "identity_status": "source_cik_matched_not_security_identity",
+        "source_as_of": null,
+        "rights": "pending",
+        "entity_name": "SYNTHETIC ONLY CAPTURE FINANCIAL",
+        "taxonomy": "us-gaap",
+        "concept": "Revenues",
+        "label": "Synthetic revenue",
+        "source_units": [
+          {
+            "unit_raw": "USD",
+            "source_unit_index": 0,
+            "first_source_index": 0,
+            "fact_count": 125
+          },
+          {
+            "unit_raw": "EUR",
+            "source_unit_index": 1,
+            "first_source_index": 125,
+            "fact_count": 1
+          },
+          {
+            "unit_raw": "shares",
+            "source_unit_index": 2,
+            "first_source_index": 126,
+            "fact_count": 0
+          }
+        ],
+        "facts": [
+          {
+            "source_index": 100,
+            "source_unit_index": 0,
+            "source_row_index": 100,
+            "unit_raw": "USD",
+            "numeric_lexeme": "-9.9E-099",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "accession_number": "0000000001-26-000101",
+            "filed": "2026-02-10",
+            "fiscal_year": null,
+            "fiscal_period": null,
+            "form": "10-K",
+            "frame": null,
+            "period_kind": "duration",
+            "accounting_basis": null,
+            "canonical_metric": null
+          },
+          {
+            "source_index": 110,
+            "source_unit_index": 0,
+            "source_row_index": 110,
+            "unit_raw": "USD",
+            "numeric_lexeme": "9007199254740993.2500",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "accession_number": "0000000001-26-000111",
+            "filed": "2026-02-10",
+            "fiscal_year": null,
+            "fiscal_period": null,
+            "form": "10-K",
+            "frame": null,
+            "period_kind": "duration",
+            "accounting_basis": null,
+            "canonical_metric": null
+          },
+          {
+            "source_index": 124,
+            "source_unit_index": 0,
+            "source_row_index": 124,
+            "unit_raw": "USD",
+            "numeric_lexeme": "-9.9E-099",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "accession_number": "0000000001-26-000125",
+            "filed": "2026-02-10",
+            "fiscal_year": null,
+            "fiscal_period": null,
+            "form": "10-K",
+            "frame": null,
+            "period_kind": "duration",
+            "accounting_basis": null,
+            "canonical_metric": null
+          },
+          {
+            "source_index": 125,
+            "source_unit_index": 1,
+            "source_row_index": 0,
+            "unit_raw": "EUR",
+            "numeric_lexeme": "9007199254740993.2500",
+            "start": "2025-01-01",
+            "end": "2025-12-31",
+            "accession_number": "0000000001-26-000501",
+            "filed": "2026-02-10",
+            "fiscal_year": null,
+            "fiscal_period": null,
+            "form": "10-K",
+            "frame": null,
+            "period_kind": "duration",
+            "accounting_basis": null,
+            "canonical_metric": null
+          }
+        ],
+        "total_fact_count": 126,
+        "selected_fact_count": 4,
+        "omitted_fact_count": 122,
+        "omitted_before_count": 100,
+        "omitted_between_count": 22,
+        "omitted_after_count": 0,
+        "selected_source_index_min": 100,
+        "selected_source_index_max": 125,
+        "selection_policy": "explicit_capture_bound_provider_order_no_semantic_selection",
+        "coverage_status": "supplied_capture_only_not_complete_filing_history",
+        "warnings": [
+          "Decoded response text encoded as UTF-8 SHA256 binds the requested capture and indices, not compressed or TLS wire bytes; integrity is not source authentication or rights clearance.",
+          "Capture origin, source URL and receipt are caller-supplied provenance, not independently verified transport observations.",
+          "Absolute ordinals follow captured units member order then array row order, a capture convention not financial chronology. Numeric lexemes are retained; no latest, restatement or fiscal-period inference occurs.",
+          "Date-only labels are not publication instants. Caller-selected calendar guards do not establish publication availability.",
+          "No canonical metric, financial candidate, accounting basis, security identity or eligibility is produced. Source text is supplied separately."
+        ]
+      },
+      "body_sha256": "0257058417cc789f57014403df862368e098d5120c80042796f2b352e96dc1e8",
+      "hash_scope": "decoded_response_text_utf8",
+      "original_text_included": false,
+      "reconstruction_status": "reconstructed_against_supplied_independent_input_and_original_text",
+      "source_authentication": "not_established"
+    },
+    "submissions": {
+      "value": {
+        "contract": "moai.sec.submissions.v1",
+        "provider": "SEC",
+        "origin": "synthetic",
+        "received_at": "2026-10-22T00:00:00.123456789Z",
+        "source_as_of": null,
+        "rights": "pending",
+        "identity_status": "cik_matched",
+        "source_url": "https://data.sec.gov/submissions/CIK0000000001.json",
+        "warnings": [
+          "No historical files or linked primary documents fetched. Filing metadata is not article/report text.",
+          "CIK identifies reporting entity; ticker/exchange lists are not proven one-to-one or current security mappings.",
+          "Acceptance timestamps retained only with explicit timezone; filing/report dates are not publication instants.",
+          "User-agent/fair-access transport integration and data use review remain host responsibilities."
+        ],
+        "request": {
+          "cik": "0000000001",
+          "max_filings": 10
+        },
+        "entity_name": "SYNTHETIC ONLY CAPTURE FINANCIAL",
+        "tickers": [],
+        "exchanges": [],
+        "filings": [
+          {
+            "accession_number": "0000000001-26-000111",
+            "filing_date": "2026-02-10",
+            "report_date": "2025-12-31",
+            "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+            "form": "10-K",
+            "primary_document": "synthetic.htm",
+            "primary_doc_description": "Synthetic fixture, not a public filing"
+          }
+        ],
+        "recent_filing_count": 1,
+        "omitted_recent_count": 0,
+        "historical_file_count": 1,
+        "completeness": "recent_subset_historical_files_not_fetched"
+      },
+      "sha256": "ab49e2a51f37840162dbe0bc87cc86d63254b5f69c97e0cf2fa0106ee26e8e88",
+      "hash_scope": "validated_provider_dto_snapshot",
+      "hash_algorithm": "sha256",
+      "serialization": "sorted_object_keys_json_utf8_v1",
+      "original_http_body_hash": null,
+      "source_authentication": "not_established"
+    }
+  },
+  "mapping_blockers": [
+    "source_authenticity_not_independently_verified",
+    "security_identity_not_verified",
+    "semantic_role_binding_not_verified",
+    "unit_scale_currency_and_accounting_basis_not_verified",
+    "publication_availability_not_verified",
+    "complete_coverage_finality_and_revision_choice_not_verified",
+    "rights_pending"
+  ],
+  "warnings": [
+    "Capture-bound selected evidence is not a canonical fact, an authenticated source, or an eligible metric input.",
+    "Original capture SHA256 binds decoded response text encoded as UTF-8 to independent caller expectations; it is not a signature, authenticated transport, compressed HTTP bytes, or rights clearance.",
+    "Capture metadata and supplied submissions DTO remain caller assertions. The submissions hash covers only a validated DTO, not its original HTTP body.",
+    "Numeric lexeme, source ordinals, unit and period labels are preserved without conversion, scaling, accounting-basis inference, aggregation or semantic role binding.",
+    "Exact uniqueness applies only to the supplied capture slice and bounded submissions subset; there is no latest, restatement, complete-history or publication-availability inference.",
+    "Date labels, acceptance timestamps and constituent receipts do not prove publication availability. Calendar timezone remains caller-selected and unverified.",
+    "Persisted verification must reconstruct from separately retained independent inputs and original capture text; embedded expectations and successful flags are not trusted."
+  ]
+}

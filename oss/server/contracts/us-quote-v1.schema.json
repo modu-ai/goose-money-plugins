@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.us-quote.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "not_returned_by_reviewed_quote_contract"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "warnings": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "symbol_from_request": {
+      "type": "string",
+      "maxLength": 16,
+      "pattern": "^[A-Z][A-Z0-9]*(?:[.-][A-Z0-9]+)*$"
+    },
+    "exchange_from_request": {
+      "type": "string",
+      "enum": [
+        "NAS",
+        "NYS",
+        "AMS"
+      ]
+    },
+    "asset_class_from_request": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "stock",
+            "etf"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "conservative_rsym_guard_matched_not_master_verified"
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "rsym": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 24,
+          "pattern": "^[A-Z0-9.-]+$"
+        },
+        "zdiv": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{1,2}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "base": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "pvol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "last": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^\\d+(?:\\.\\d+)?$"
+        },
+        "sign": {
+          "type": "string",
+          "maxLength": 4
+        },
+        "diff": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "tvol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "tamt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "ordy": {
+          "type": "string",
+          "maxLength": 8
+        }
+      },
+      "required": [
+        "rsym",
+        "last"
+      ],
+      "additionalProperties": false
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "asset_class": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "last_price": {
+          "type": "null"
+        },
+        "previous_close": {
+          "type": "null"
+        },
+        "change": {
+          "type": "null"
+        },
+        "change_percent": {
+          "type": "null"
+        },
+        "volume": {
+          "type": "null"
+        },
+        "turnover": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "volume_unit": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "asset_class",
+        "currency",
+        "last_price",
+        "previous_close",
+        "change",
+        "change_percent",
+        "volume",
+        "turnover",
+        "price_unit",
+        "volume_unit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "source_time_status",
+    "rights_status",
+    "validation_status",
+    "canonical_projection_status",
+    "mapping_blockers",
+    "warnings",
+    "symbol_from_request",
+    "exchange_from_request",
+    "asset_class_from_request",
+    "identity_status",
+    "raw",
+    "canonical"
+  ],
+  "additionalProperties": false
+}

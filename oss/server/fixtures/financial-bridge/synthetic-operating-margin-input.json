@@ -1,0 +1,95 @@
+{
+  "cutoff": "2026-10-22T00:00:00.123456789Z",
+  "facts": {
+    "reported.revenue": {
+      "fact_id": "moai:financial:4a1d915090c86d98c958a3a44417ec04053866273eee43368ce9c2436ee2747b",
+      "concept": "reported.revenue",
+      "state": "available",
+      "value": "1000",
+      "unit": "money",
+      "scale": "1",
+      "currency": "USD",
+      "issuer_id": "synthetic:issuer:1",
+      "security_id": "synthetic:security:1",
+      "share_class": "ordinary-common",
+      "venue": "SYNTHETIC",
+      "population": "same-issuer-common-shares",
+      "data_kind": "synthetic",
+      "basis": {
+        "scope": "consolidated",
+        "standard": "US-GAAP",
+        "revision_basis": "synthetic-original",
+        "split_basis": "synthetic-unadjusted",
+        "methodology_id": "synthetic-policy-1",
+        "attribution": "total",
+        "definition": "revenue"
+      },
+      "period": {
+        "kind": "FY",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "label": "SYNTHETIC FY2025"
+      },
+      "published_at": "2026-02-10T15:30:01.000000001Z",
+      "available_at": "2026-02-10T15:30:02Z",
+      "finality": "final",
+      "coverage_complete": true,
+      "date_timezone": "UTC",
+      "provenance": {
+        "source_id": "SEC",
+        "document_id": "0000000001-26-000001",
+        "locator": "synthetic://fixture/financial",
+        "revision_id": "synthetic-revision-1",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "selector_id": "sha256:b641a9102362a06a8453b99b950b5b3f0590de19635d04819619de152939aedb",
+        "semantic_binding_verified": true,
+        "data_kind": "synthetic"
+      }
+    },
+    "reported.operating_profit": {
+      "fact_id": "moai:financial:4d0634a194a2636a80d94856e3d4ffc1cb1a0e9f84637cf1791b470e189051ed",
+      "concept": "reported.operating_profit",
+      "state": "available",
+      "value": "200",
+      "unit": "money",
+      "scale": "1",
+      "currency": "USD",
+      "issuer_id": "synthetic:issuer:1",
+      "security_id": "synthetic:security:1",
+      "share_class": "ordinary-common",
+      "venue": "SYNTHETIC",
+      "population": "same-issuer-common-shares",
+      "data_kind": "synthetic",
+      "basis": {
+        "scope": "consolidated",
+        "standard": "US-GAAP",
+        "revision_basis": "synthetic-original",
+        "split_basis": "synthetic-unadjusted",
+        "methodology_id": "synthetic-policy-1",
+        "attribution": "total",
+        "definition": "operating_profit"
+      },
+      "period": {
+        "kind": "FY",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "label": "SYNTHETIC FY2025"
+      },
+      "published_at": "2026-02-10T15:30:01.000000001Z",
+      "available_at": "2026-02-10T15:30:02Z",
+      "finality": "final",
+      "coverage_complete": true,
+      "date_timezone": "UTC",
+      "provenance": {
+        "source_id": "SEC",
+        "document_id": "0000000001-26-000001",
+        "locator": "synthetic://fixture/financial",
+        "revision_id": "synthetic-revision-1",
+        "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "selector_id": "sha256:17b07cca122ac2d42d22bd4d696e3fe6ccf18275c6b27bbab69167c797c82bc6",
+        "semantic_binding_verified": true,
+        "data_kind": "synthetic"
+      }
+    }
+  }
+}

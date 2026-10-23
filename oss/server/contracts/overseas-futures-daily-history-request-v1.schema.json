@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "type": "string",
+      "const": "kis.overseas_futures_daily_history"
+    },
+    "method": {
+      "type": "string",
+      "const": "GET"
+    },
+    "path": {
+      "type": "string",
+      "const": "/uapi/overseas-futureoption/v1/quotations/daily-ccnl"
+    },
+    "tr_id": {
+      "type": "string",
+      "const": "HHDFC55020100"
+    },
+    "tr_cont": {
+      "type": "string",
+      "const": ""
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "SRS_CD": {
+          "type": "string",
+          "maxLength": 13,
+          "pattern": "^[A-Z0-9]{1,10}[FGHJKMNQUVXZ]\\d{2}$"
+        },
+        "EXCH_CD": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8,
+          "pattern": "^[A-Z0-9]+$"
+        },
+        "START_DATE_TIME": {
+          "type": "string",
+          "const": ""
+        },
+        "CLOSE_DATE_TIME": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "QRY_TP": {
+          "type": "string",
+          "const": "Q"
+        },
+        "QRY_CNT": {
+          "type": "string",
+          "pattern": "^(?:[1-9]|[1-3][0-9]|40)$"
+        },
+        "QRY_GAP": {
+          "type": "string",
+          "const": ""
+        },
+        "INDEX_KEY": {
+          "type": "string",
+          "const": ""
+        }
+      },
+      "required": [
+        "SRS_CD",
+        "EXCH_CD",
+        "START_DATE_TIME",
+        "CLOSE_DATE_TIME",
+        "QRY_TP",
+        "QRY_CNT",
+        "QRY_GAP",
+        "INDEX_KEY"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "operation",
+    "method",
+    "path",
+    "tr_id",
+    "tr_cont",
+    "query"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/overseas-futures-daily-history-request-v1.schema.json",
+  "$comment": "Offline JSON Schema projection. Runtime Zod schema additionally enforces actual calendar dates, exact receipt equality, row count/coverage/cursor provenance, identity and date-range guards. The .invalid namespace is an identifier, not a hosted resource."
+}

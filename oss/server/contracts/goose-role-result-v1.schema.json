@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "role_id": {
+      "type": "string",
+      "enum": [
+        "company-analysis",
+        "disclosure-event",
+        "market-behavior",
+        "valuation",
+        "fact-check-report-qa"
+      ]
+    },
+    "findings": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "claim_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "calculation",
+              "assumption",
+              "estimate"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "source_refs": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100,
+              "pattern": "^[A-Za-z0-9_.:-]+$"
+            }
+          },
+          "formula_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100,
+                "pattern": "^[A-Za-z0-9_.:-]+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "kind",
+          "text",
+          "source_refs",
+          "formula_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "tool_operation_ids": {
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80
+      }
+    },
+    "counterevidence": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2000
+      }
+    },
+    "unresolved": {
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 2000
+      }
+    }
+  },
+  "required": [
+    "run_id",
+    "role_id",
+    "findings",
+    "tool_operation_ids",
+    "counterevidence",
+    "unresolved"
+  ],
+  "additionalProperties": false
+}

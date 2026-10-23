@@ -1,0 +1,498 @@
+{
+  "contract": "moai.financial.component-derivation-candidate.v1",
+  "status": "raw_arithmetic_candidate_only",
+  "request": {
+    "policy_id": "us-gaap.short-plus-long-debt.v1",
+    "destination_role": "reported.debt",
+    "cutoff": "2026-10-22T00:00:00.123456789Z"
+  },
+  "origin": "synthetic",
+  "input_sha256": "8fef86c742748e7d28e2f9fa84dbdb8794a6c73e6af4c4090f354604d191118c",
+  "leaves": [
+    {
+      "component_id": "short_term",
+      "candidate": {
+        "contract": "moai.financial.selected-evidence-candidate.v1",
+        "status": "selected_evidence_candidate_only",
+        "origin": "synthetic",
+        "cutoff": "2026-10-22T00:00:00.123456789Z",
+        "calendar_guard": {
+          "timezone": "UTC",
+          "cutoff_local_date": "2026-10-22",
+          "status": "caller_selected_timezone_not_source_verified"
+        },
+        "requested_role": "reported.debt",
+        "role_association_status": "unverified_caller_request",
+        "semantic_binding_verified": false,
+        "canonical_fact": null,
+        "published_at": null,
+        "available_at": null,
+        "rights_status": "pending",
+        "unit_scale": null,
+        "accounting_basis": null,
+        "finality": "unknown",
+        "coverage_complete": false,
+        "selection_policy": "exact_caller_selector_no_latest_or_restatement_inference",
+        "constituent_receipt_latest": "2026-10-22T00:00:00.123456789Z",
+        "receipt_status": "constituent_dto_receipts_checked_not_publication_times",
+        "mapping_blockers": [
+          "source_authenticity_not_independently_verified",
+          "security_identity_not_verified",
+          "semantic_role_binding_not_verified",
+          "unit_scale_currency_and_accounting_basis_not_verified",
+          "publication_availability_not_verified",
+          "complete_coverage_finality_and_revision_choice_not_verified",
+          "rights_pending"
+        ],
+        "warnings": [
+          "This is selected provider evidence, not a canonical fact or authenticated source.",
+          "Requested reported.* role association is unverified. No computation, conversion, scaling, aggregation, semantic binding or rights clearance occurs.",
+          "Snapshot SHA256 identifies a validated DTO serialized with sorted object keys, not an original HTTP response, signature or authenticated provenance.",
+          "Caller calendar choice is explicit but unverified. Date labels and SEC acceptance timestamps do not establish public availability.",
+          "Exact uniqueness is local to supplied bounded snapshots, never proof of complete filing history or latest/restated selection.",
+          "Downstream canonical-engine validation is not source authentication or independent verification of rights, identity, units or semantic binding."
+        ],
+        "provider": "SEC",
+        "selector": {
+          "cik": "0000000001",
+          "taxonomy": "us-gaap",
+          "concept": "ShortTermBorrowings",
+          "unit_raw": "USD",
+          "start": null,
+          "end": "2025-12-31",
+          "period_kind": "instant",
+          "accession_number": "0000000001-26-000001",
+          "filed": "2026-02-10",
+          "fiscal_year": 2025,
+          "fiscal_period": "FY",
+          "form": "10-K",
+          "frame": "CY2025",
+          "filing": {
+            "filing_date": "2026-02-10",
+            "report_date": "2025-12-31",
+            "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+            "primary_document": "synthetic.htm"
+          }
+        },
+        "issuer": {
+          "cik": "0000000001",
+          "status": "supplied_dto_cik_join_only_not_security_identity"
+        },
+        "selected": {
+          "row": {
+            "unit_raw": "USD",
+            "numeric_lexeme": "100.00",
+            "start": null,
+            "end": "2025-12-31",
+            "accession_number": "0000000001-26-000001",
+            "filed": "2026-02-10",
+            "fiscal_year": 2025,
+            "fiscal_period": "FY",
+            "form": "10-K",
+            "frame": "CY2025",
+            "period_kind": "instant",
+            "accounting_basis": null,
+            "canonical_metric": null
+          },
+          "filing": {
+            "accession_number": "0000000001-26-000001",
+            "filing_date": "2026-02-10",
+            "report_date": "2025-12-31",
+            "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+            "form": "10-K",
+            "primary_document": "synthetic.htm",
+            "primary_doc_description": "Synthetic fixture"
+          },
+          "numeric_lexeme": "100.00",
+          "unit_raw": "USD",
+          "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+          "acceptance_status": "source_acceptance_metadata_not_publication_availability"
+        },
+        "coverage": {
+          "concept_total_fact_count": 1,
+          "concept_truncated": false,
+          "concept_selection": "provider_unit_and_row_order_first_n",
+          "filings_recent_count": 1,
+          "filings_omitted_recent_count": 0,
+          "historical_file_count": 1,
+          "filings_completeness": "recent_subset_historical_files_not_fetched",
+          "complete": false
+        },
+        "snapshots": {
+          "financial": {
+            "sha256": "8f1dbd334434b280276b142983e243821faceb32cc6dfa1993c399f687e8a2fd",
+            "hash_scope": "validated_provider_dto_snapshot",
+            "hash_algorithm": "sha256",
+            "serialization": "sorted_object_keys_json_utf8_v1",
+            "original_http_body_hash": null,
+            "received_at": "2026-10-22T00:00:00.123456789Z",
+            "value": {
+              "contract": "moai.sec.company-concept.v1",
+              "provider": "SEC",
+              "origin": "synthetic",
+              "received_at": "2026-10-22T00:00:00.123456789Z",
+              "source_as_of": null,
+              "rights": "pending",
+              "identity_status": "cik_matched",
+              "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/ShortTermBorrowings.json",
+              "warnings": [
+                "Original JSON numeric lexemes retained exactly; raw transport must never reserialize previously parsed numeric data.",
+                "Units are source XBRL units, not an implicit currency conversion or inferred reporting scale.",
+                "All reported versions retained in provider order, not latest/restatement selection. No quarterly/cumulative or accounting-basis inference.",
+                "No complete company financial model, recommendation, rights clearance or live verification is implied."
+              ],
+              "request": {
+                "cik": "0000000001",
+                "taxonomy": "us-gaap",
+                "concept": "ShortTermBorrowings",
+                "max_facts": 10
+              },
+              "entity_name": "SYNTHETIC ONLY",
+              "taxonomy": "us-gaap",
+              "concept": "ShortTermBorrowings",
+              "label": "Synthetic revenue",
+              "facts": [
+                {
+                  "unit_raw": "USD",
+                  "numeric_lexeme": "100.00",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "accession_number": "0000000001-26-000001",
+                  "filed": "2026-02-10",
+                  "fiscal_year": 2025,
+                  "fiscal_period": "FY",
+                  "form": "10-K",
+                  "frame": "CY2025",
+                  "period_kind": "instant",
+                  "accounting_basis": null,
+                  "canonical_metric": null
+                }
+              ],
+              "total_fact_count": 1,
+              "truncated": false,
+              "selection": "provider_unit_and_row_order_first_n"
+            }
+          },
+          "filings": {
+            "sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+            "hash_scope": "validated_provider_dto_snapshot",
+            "hash_algorithm": "sha256",
+            "serialization": "sorted_object_keys_json_utf8_v1",
+            "original_http_body_hash": null,
+            "received_at": "2026-10-22T00:00:00.123456789Z",
+            "value": {
+              "contract": "moai.sec.submissions.v1",
+              "provider": "SEC",
+              "origin": "synthetic",
+              "received_at": "2026-10-22T00:00:00.123456789Z",
+              "source_as_of": null,
+              "rights": "pending",
+              "identity_status": "cik_matched",
+              "source_url": "https://data.sec.gov/submissions/CIK0000000001.json",
+              "warnings": [
+                "No historical files or linked primary documents fetched. Filing metadata is not article/report text.",
+                "CIK identifies reporting entity; ticker/exchange lists are not proven one-to-one or current security mappings.",
+                "Acceptance timestamps retained only with explicit timezone; filing/report dates are not publication instants.",
+                "User-agent/fair-access transport integration and data use review remain host responsibilities."
+              ],
+              "request": {
+                "cik": "0000000001",
+                "max_filings": 10
+              },
+              "entity_name": "SYNTHETIC ONLY",
+              "tickers": [],
+              "exchanges": [],
+              "filings": [
+                {
+                  "accession_number": "0000000001-26-000001",
+                  "filing_date": "2026-02-10",
+                  "report_date": "2025-12-31",
+                  "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+                  "form": "10-K",
+                  "primary_document": "synthetic.htm",
+                  "primary_doc_description": "Synthetic fixture"
+                }
+              ],
+              "recent_filing_count": 1,
+              "omitted_recent_count": 0,
+              "historical_file_count": 1,
+              "completeness": "recent_subset_historical_files_not_fetched"
+            }
+          }
+        }
+      },
+      "candidate_sha256": "072883c9140a48c7a407fec461d23badd2a5848cab8d3d71236bfbbe9fa99a97"
+    },
+    {
+      "component_id": "long_all_maturities",
+      "candidate": {
+        "contract": "moai.financial.selected-evidence-candidate.v1",
+        "status": "selected_evidence_candidate_only",
+        "origin": "synthetic",
+        "cutoff": "2026-10-22T00:00:00.123456789Z",
+        "calendar_guard": {
+          "timezone": "UTC",
+          "cutoff_local_date": "2026-10-22",
+          "status": "caller_selected_timezone_not_source_verified"
+        },
+        "requested_role": "reported.debt",
+        "role_association_status": "unverified_caller_request",
+        "semantic_binding_verified": false,
+        "canonical_fact": null,
+        "published_at": null,
+        "available_at": null,
+        "rights_status": "pending",
+        "unit_scale": null,
+        "accounting_basis": null,
+        "finality": "unknown",
+        "coverage_complete": false,
+        "selection_policy": "exact_caller_selector_no_latest_or_restatement_inference",
+        "constituent_receipt_latest": "2026-10-22T00:00:00.123456789Z",
+        "receipt_status": "constituent_dto_receipts_checked_not_publication_times",
+        "mapping_blockers": [
+          "source_authenticity_not_independently_verified",
+          "security_identity_not_verified",
+          "semantic_role_binding_not_verified",
+          "unit_scale_currency_and_accounting_basis_not_verified",
+          "publication_availability_not_verified",
+          "complete_coverage_finality_and_revision_choice_not_verified",
+          "rights_pending"
+        ],
+        "warnings": [
+          "This is selected provider evidence, not a canonical fact or authenticated source.",
+          "Requested reported.* role association is unverified. No computation, conversion, scaling, aggregation, semantic binding or rights clearance occurs.",
+          "Snapshot SHA256 identifies a validated DTO serialized with sorted object keys, not an original HTTP response, signature or authenticated provenance.",
+          "Caller calendar choice is explicit but unverified. Date labels and SEC acceptance timestamps do not establish public availability.",
+          "Exact uniqueness is local to supplied bounded snapshots, never proof of complete filing history or latest/restated selection.",
+          "Downstream canonical-engine validation is not source authentication or independent verification of rights, identity, units or semantic binding."
+        ],
+        "provider": "SEC",
+        "selector": {
+          "cik": "0000000001",
+          "taxonomy": "us-gaap",
+          "concept": "LongTermDebt",
+          "unit_raw": "USD",
+          "start": null,
+          "end": "2025-12-31",
+          "period_kind": "instant",
+          "accession_number": "0000000001-26-000001",
+          "filed": "2026-02-10",
+          "fiscal_year": 2025,
+          "fiscal_period": "FY",
+          "form": "10-K",
+          "frame": "CY2025",
+          "filing": {
+            "filing_date": "2026-02-10",
+            "report_date": "2025-12-31",
+            "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+            "primary_document": "synthetic.htm"
+          }
+        },
+        "issuer": {
+          "cik": "0000000001",
+          "status": "supplied_dto_cik_join_only_not_security_identity"
+        },
+        "selected": {
+          "row": {
+            "unit_raw": "USD",
+            "numeric_lexeme": "20.000",
+            "start": null,
+            "end": "2025-12-31",
+            "accession_number": "0000000001-26-000001",
+            "filed": "2026-02-10",
+            "fiscal_year": 2025,
+            "fiscal_period": "FY",
+            "form": "10-K",
+            "frame": "CY2025",
+            "period_kind": "instant",
+            "accounting_basis": null,
+            "canonical_metric": null
+          },
+          "filing": {
+            "accession_number": "0000000001-26-000001",
+            "filing_date": "2026-02-10",
+            "report_date": "2025-12-31",
+            "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+            "form": "10-K",
+            "primary_document": "synthetic.htm",
+            "primary_doc_description": "Synthetic fixture"
+          },
+          "numeric_lexeme": "20.000",
+          "unit_raw": "USD",
+          "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+          "acceptance_status": "source_acceptance_metadata_not_publication_availability"
+        },
+        "coverage": {
+          "concept_total_fact_count": 1,
+          "concept_truncated": false,
+          "concept_selection": "provider_unit_and_row_order_first_n",
+          "filings_recent_count": 1,
+          "filings_omitted_recent_count": 0,
+          "historical_file_count": 1,
+          "filings_completeness": "recent_subset_historical_files_not_fetched",
+          "complete": false
+        },
+        "snapshots": {
+          "financial": {
+            "sha256": "3cfd95a3c67e7a9005a829646e15b3eaa2b6c1e149655ebd4037b862f735eb67",
+            "hash_scope": "validated_provider_dto_snapshot",
+            "hash_algorithm": "sha256",
+            "serialization": "sorted_object_keys_json_utf8_v1",
+            "original_http_body_hash": null,
+            "received_at": "2026-10-22T00:00:00.123456789Z",
+            "value": {
+              "contract": "moai.sec.company-concept.v1",
+              "provider": "SEC",
+              "origin": "synthetic",
+              "received_at": "2026-10-22T00:00:00.123456789Z",
+              "source_as_of": null,
+              "rights": "pending",
+              "identity_status": "cik_matched",
+              "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/LongTermDebt.json",
+              "warnings": [
+                "Original JSON numeric lexemes retained exactly; raw transport must never reserialize previously parsed numeric data.",
+                "Units are source XBRL units, not an implicit currency conversion or inferred reporting scale.",
+                "All reported versions retained in provider order, not latest/restatement selection. No quarterly/cumulative or accounting-basis inference.",
+                "No complete company financial model, recommendation, rights clearance or live verification is implied."
+              ],
+              "request": {
+                "cik": "0000000001",
+                "taxonomy": "us-gaap",
+                "concept": "LongTermDebt",
+                "max_facts": 10
+              },
+              "entity_name": "SYNTHETIC ONLY",
+              "taxonomy": "us-gaap",
+              "concept": "LongTermDebt",
+              "label": "Synthetic revenue",
+              "facts": [
+                {
+                  "unit_raw": "USD",
+                  "numeric_lexeme": "20.000",
+                  "start": null,
+                  "end": "2025-12-31",
+                  "accession_number": "0000000001-26-000001",
+                  "filed": "2026-02-10",
+                  "fiscal_year": 2025,
+                  "fiscal_period": "FY",
+                  "form": "10-K",
+                  "frame": "CY2025",
+                  "period_kind": "instant",
+                  "accounting_basis": null,
+                  "canonical_metric": null
+                }
+              ],
+              "total_fact_count": 1,
+              "truncated": false,
+              "selection": "provider_unit_and_row_order_first_n"
+            }
+          },
+          "filings": {
+            "sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+            "hash_scope": "validated_provider_dto_snapshot",
+            "hash_algorithm": "sha256",
+            "serialization": "sorted_object_keys_json_utf8_v1",
+            "original_http_body_hash": null,
+            "received_at": "2026-10-22T00:00:00.123456789Z",
+            "value": {
+              "contract": "moai.sec.submissions.v1",
+              "provider": "SEC",
+              "origin": "synthetic",
+              "received_at": "2026-10-22T00:00:00.123456789Z",
+              "source_as_of": null,
+              "rights": "pending",
+              "identity_status": "cik_matched",
+              "source_url": "https://data.sec.gov/submissions/CIK0000000001.json",
+              "warnings": [
+                "No historical files or linked primary documents fetched. Filing metadata is not article/report text.",
+                "CIK identifies reporting entity; ticker/exchange lists are not proven one-to-one or current security mappings.",
+                "Acceptance timestamps retained only with explicit timezone; filing/report dates are not publication instants.",
+                "User-agent/fair-access transport integration and data use review remain host responsibilities."
+              ],
+              "request": {
+                "cik": "0000000001",
+                "max_filings": 10
+              },
+              "entity_name": "SYNTHETIC ONLY",
+              "tickers": [],
+              "exchanges": [],
+              "filings": [
+                {
+                  "accession_number": "0000000001-26-000001",
+                  "filing_date": "2026-02-10",
+                  "report_date": "2025-12-31",
+                  "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+                  "form": "10-K",
+                  "primary_document": "synthetic.htm",
+                  "primary_doc_description": "Synthetic fixture"
+                }
+              ],
+              "recent_filing_count": 1,
+              "omitted_recent_count": 0,
+              "historical_file_count": 1,
+              "completeness": "recent_subset_historical_files_not_fetched"
+            }
+          }
+        }
+      },
+      "candidate_sha256": "73abc8c656ecacb54add9993f5cc06cc18a50a3b7e9d4f52b8946e3ad3625df6"
+    }
+  ],
+  "operation": {
+    "kind": "sum",
+    "component_order": [
+      "short_term",
+      "long_all_maturities"
+    ],
+    "sign_policy": "require_nonnegative_no_abs_or_sign_flip",
+    "missing_policy": "reject_no_implicit_zero",
+    "rounding": "none"
+  },
+  "raw_arithmetic": {
+    "decimal": "120.000",
+    "unscaled_integer": "120000",
+    "fractional_digits": 3,
+    "source_unit_label": "USD",
+    "unit_status": "source_label_equal_not_verified_canonical_unit",
+    "scale_policy": "source_numeric_lexemes_only_no_rescaling",
+    "representation": "max_input_fractional_digits_not_measurement_precision"
+  },
+  "source_context": {
+    "provider": "SEC",
+    "cik": "0000000001",
+    "accession_number": "0000000001-26-000001",
+    "period_start": null,
+    "period_end": "2025-12-31",
+    "period_kind": "instant",
+    "filings_snapshot_sha256": "d6d004263388fd700b1685fc51ef62b372d2071c13bccd4bcab00fc04b2daaf9",
+    "constituent_receipt_latest": "2026-10-22T00:00:00.123456789Z"
+  },
+  "canonical_fact": null,
+  "metric_ready": false,
+  "semantic_binding_verified": false,
+  "unit_scale": null,
+  "accounting_basis": null,
+  "published_at": null,
+  "available_at": null,
+  "rights_status": "pending",
+  "coverage_complete": false,
+  "component_disjointness_verified": false,
+  "unresolved": [
+    "source_authenticity_and_original_bytes_linkage",
+    "issuer_security_and_common_scope",
+    "unit_scale_and_currency_semantics",
+    "period_and_accounting_basis",
+    "component_disjointness_and_complete_coverage",
+    "publication_availability_and_finality",
+    "revision_and_split_basis",
+    "current_use_rights",
+    "reviewed_derivation_to_report_fact_contract"
+  ],
+  "warnings": [
+    "Exact arithmetic over supplied source lexemes is not a canonical financial amount or a metric-ready reported fact.",
+    "Finite tag compatibility does not prove issuer applicability, accounting scope, complete components or non-overlap.",
+    "No zero-fill, aggregation across filings/issuers/currencies, sign reversal, FX conversion, canonical scaling or live request occurs.",
+    "PPE plus intangibles is not verified full capex; borrowing sums are not verified complete interest-bearing debt.",
+    "A scalar and primary-document citation alone cannot encode this derivation. Preserve all leaves and recompute before any future reviewed promotion."
+  ]
+}

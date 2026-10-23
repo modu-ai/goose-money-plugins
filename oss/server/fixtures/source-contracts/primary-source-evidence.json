@@ -1,0 +1,1093 @@
+{
+  "checked_at_date": "2026-10-22",
+  "scope": "Public taxonomy documents only. Not company facts, source authentication, rights clearance, SEC API availability or universal cross-version applicability.",
+  "source_documents": [
+    {
+      "taxonomy": "us-gaap",
+      "release": "2025",
+      "url": "https://xbrl.fasb.org/us-gaap/2025/elts/us-gaap-2025.xsd",
+      "sha256": "4639263ec38aaa5d531cb7d0afb33f9582c2d602fb4623d4921e47e365b6ac9f",
+      "byte_length": 5002637,
+      "target_namespace": "http://fasb.org/us-gaap/2025"
+    },
+    {
+      "taxonomy": "us-gaap",
+      "release": "2026",
+      "url": "https://xbrl.fasb.org/us-gaap/2026/elts/us-gaap-2026.xsd",
+      "sha256": "5df2d5054b8a37ef1a00bbbad621317833e7c2cb65a421a283128efbd707da7e",
+      "byte_length": 4966701,
+      "target_namespace": "http://fasb.org/us-gaap/2026"
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "release": "2025-03-27",
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/full_ifrs-cor_2025-03-27.xsd",
+      "sha256": "60d4e6852e2d7c15da1516d1317648a64ffd9db850ca4e28a302ffbc50eeac19",
+      "byte_length": 1642425,
+      "target_namespace": "https://xbrl.ifrs.org/taxonomy/2025-03-27/ifrs-full"
+    },
+    {
+      "url": "https://xbrl.fasb.org/us-gaap/2025/elts/us-gaap-doc-2025.xml",
+      "sha256": "27f1d4ba06b0dcb0c91225db2ac746d5adefc167518fa3948abbdfb944dab019",
+      "byte_length": 13776290,
+      "kind": "documentation_or_label_linkbase"
+    },
+    {
+      "url": "https://xbrl.fasb.org/us-gaap/2026/elts/us-gaap-doc-2026.xml",
+      "sha256": "320b4eb074533a8f939d3db104153e9870c24a20e89fb32037ac30b44d07abb2",
+      "byte_length": 13644711,
+      "kind": "documentation_or_label_linkbase"
+    },
+    {
+      "url": "https://www.ifrs.org/content/dam/ifrs/standards/taxonomy/ifrs-taxonomies/IFRSAT-2025.zip",
+      "sha256": "302afc7f69c5f92697ab8d87a6f584406f4addaf7f905468052c280c2fe16d19",
+      "byte_length": 2103003,
+      "kind": "taxonomy_package"
+    },
+    {
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/labels/doc_full_ifrs-en_2025-03-27.xml",
+      "sha256": "e74e8e85eec1ffd49095136c464063464c3df5002bac5e60f31c7cf2dceb6dd5",
+      "byte_length": 3082164,
+      "kind": "documentation_or_label_linkbase",
+      "retrieval": {
+        "source": "member extracted from the official taxonomy package",
+        "package_url": "https://www.ifrs.org/content/dam/ifrs/standards/taxonomy/ifrs-taxonomies/IFRSAT-2025.zip",
+        "member": "IFRSAT-2025/full_ifrs/labels/doc_full_ifrs-en_2025-03-27.xml",
+        "hash_scope": "extracted member bytes; direct URL not separately downloaded"
+      }
+    },
+    {
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/labels/lab_full_ifrs-en_2025-03-27.xml",
+      "sha256": "2d33122311f63550a59ac7b0d996c2988f3a4a4bb6fe1ab25a1eb2b75f0a313f",
+      "byte_length": 3371503,
+      "kind": "documentation_or_label_linkbase",
+      "retrieval": {
+        "source": "member extracted from the official taxonomy package",
+        "package_url": "https://www.ifrs.org/content/dam/ifrs/standards/taxonomy/ifrs-taxonomies/IFRSAT-2025.zip",
+        "member": "IFRSAT-2025/full_ifrs/labels/lab_full_ifrs-en_2025-03-27.xml",
+        "hash_scope": "extracted member bytes; direct URL not separately downloaded"
+      }
+    },
+    {
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/labels/doc_ias_1-en_2025-03-27.xml",
+      "sha256": "0164b46fc41819a244ea076c638f8f84962c2f569b970e3c651e091efc36426d",
+      "byte_length": 507095,
+      "kind": "documentation_or_label_linkbase"
+    },
+    {
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/labels/lab_ias_1-en_2025-03-27.xml",
+      "sha256": "e48a62a2289a288f9409ea27591c9b852c6824c3980a672de3c7cf86aa33dc0a",
+      "byte_length": 242135,
+      "kind": "documentation_or_label_linkbase"
+    },
+    {
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/labels-ea/doc_ifrs_18-en_2025-03-27.xml",
+      "sha256": "ec2747b27e28c3f8f42586bb8f20f03ef37813fb1f4e7c1d4aa572bbbea6451b",
+      "byte_length": 572062,
+      "kind": "documentation_or_label_linkbase"
+    },
+    {
+      "url": "https://xbrl.ifrs.org/taxonomy/2025-03-27/full_ifrs/labels-ea/lab_ifrs_18-en_2025-03-27.xml",
+      "sha256": "4645046d02083beefaa4bcf99f16297d37a01b264c0ecb241587446715da4e28",
+      "byte_length": 276096,
+      "kind": "documentation_or_label_linkbase"
+    }
+  ],
+  "entries": [
+    {
+      "taxonomy": "us-gaap",
+      "concept": "Revenues",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_Revenues",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_Revenues",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_RevenueFromContractWithCustomerExcludingAssessedTax",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "NetIncomeLoss",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_NetIncomeLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_NetIncomeLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Parent-attributable income is not consolidated total income including noncontrolling interests, nor income available only to common shareholders."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "Assets",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_Assets",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "debit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_Assets",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "debit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "Liabilities",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_Liabilities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_Liabilities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "StockholdersEquity",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_StockholdersEquity",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_StockholdersEquity",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Parent equity excludes noncontrolling interests and temporary equity; it is not automatically common-only equity or consolidated total equity."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "CashAndCashEquivalentsAtCarryingValue",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_CashAndCashEquivalentsAtCarryingValue",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "debit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_CashAndCashEquivalentsAtCarryingValue",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "debit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "NetCashProvidedByUsedInOperatingActivities",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_NetCashProvidedByUsedInOperatingActivities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_NetCashProvidedByUsedInOperatingActivities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_PaymentsToAcquirePropertyPlantAndEquipment",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_PaymentsToAcquirePropertyPlantAndEquipment",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "PPE cash purchases alone do not establish the report definition that also includes intangible-asset purchases."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "EarningsPerShareDiluted",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_EarningsPerShareDiluted",
+          "declared_item_type": "dtr-types:perShareItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_EarningsPerShareDiluted",
+          "declared_item_type": "dtr-types:perShareItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "WeightedAverageNumberOfDilutedSharesOutstanding",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_WeightedAverageNumberOfDilutedSharesOutstanding",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_WeightedAverageNumberOfDilutedSharesOutstanding",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Diluted EPS/EPU denominator; never silently substitute for basic weighted common shares."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "CommonStockSharesOutstanding",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_CommonStockSharesOutstanding",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "instant",
+          "declared_balance": null,
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_CommonStockSharesOutstanding",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "instant",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Point-in-time outstanding common shares are not a duration-weighted basic denominator."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "OperatingIncomeLoss",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_OperatingIncomeLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_OperatingIncomeLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Operating result, not net income, EBITDA or an inferred margin."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "WeightedAverageNumberOfSharesOutstandingBasic",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_WeightedAverageNumberOfSharesOutstandingBasic",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_WeightedAverageNumberOfSharesOutstandingBasic",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Basic weighted shares or units remain distinct from diluted weighted shares and point-in-time shares. Common-share class and report-role suitability require separate verification."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "NetIncomeLossAvailableToCommonStockholdersBasic",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_NetIncomeLossAvailableToCommonStockholdersBasic",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_NetIncomeLossAvailableToCommonStockholdersBasic",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Common-shareholder basic numerator reflects tax, noncontrolling interests, preferred dividends and participating securities. Not total or parent-only income; no report-role binding is performed."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "ProfitLoss",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_ProfitLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_ProfitLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Consolidated income includes noncontrolling interests; do not substitute parent-attributable or common-shareholder income."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Parent plus noncontrolling equity excludes temporary equity; not common-only equity."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "ShortTermBorrowings",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_ShortTermBorrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_ShortTermBorrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Short initial-term debt carrying amount; component overlap and completeness must be checked separately before any total-debt calculation."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "LongTermDebtCurrent",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_LongTermDebtCurrent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_LongTermDebtCurrent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Current classification of long-term debt, net of the specified debt adjustments and excluding leases. Not an additional component when a covering aggregate is used."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "LongTermDebtNoncurrent",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_LongTermDebtNoncurrent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_LongTermDebtNoncurrent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Noncurrent classification of long-term debt, net of the specified debt adjustments and excluding leases."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "LongTermDebt",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_LongTermDebt",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_LongTermDebt",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Long-term debt across classifications, net of the specified debt adjustments and excluding leases. Not interchangeable with LongTermDebtNoncurrent or total interest-bearing debt."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "LongTermDebtAndCapitalLeaseObligationsCurrent",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_LongTermDebtAndCapitalLeaseObligationsCurrent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_LongTermDebtAndCapitalLeaseObligationsCurrent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Current debt-and-lease combination; not interchangeable with the lease-excluding current debt concept."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "LongTermDebtAndCapitalLeaseObligations",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_LongTermDebtAndCapitalLeaseObligations",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_LongTermDebtAndCapitalLeaseObligations",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Despite its name, the documented amount is NONCURRENT debt plus lease obligations. Not the all-maturity aggregate."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Debt-and-lease combination including the current portion. Do not add overlapping current or noncurrent aggregates without separate verification."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "CommercialPaper",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_CommercialPaper",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_CommercialPaper",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Borrower-side short-term unsecured debt carrying amount; may overlap ShortTermBorrowings. Not the investment asset CommercialPaperAtCarryingValue."
+    },
+    {
+      "taxonomy": "us-gaap",
+      "concept": "PaymentsToAcquireIntangibleAssets",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025",
+          "element_id": "us-gaap_PaymentsToAcquireIntangibleAssets",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        },
+        {
+          "release": "2026",
+          "element_id": "us-gaap_PaymentsToAcquireIntangibleAssets",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Intangible-asset cash purchases excluding goodwill; not total capex and no addition to PPE purchases is performed."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "Revenue",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_Revenue",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "ProfitLoss",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_ProfitLoss",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Total profit/loss excludes other comprehensive income; not automatically parent-owner or ordinary-equity-holder income."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "Assets",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_Assets",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "debit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "Liabilities",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_Liabilities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "Equity",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_Equity",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Residual total equity is not automatically parent-owner or common-only equity."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "CashAndCashEquivalents",
+      "introduced_by_this_change": false,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_CashAndCashEquivalents",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "debit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Raw input only; no canonical role, unit, reporting basis or availability is verified."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "ProfitLossFromOperatingActivities",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_ProfitLossFromOperatingActivities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "IAS 1 presentation concept; not an alias for the IFRS 18 operating-category subtotal. Reporting-standard adoption must be verified separately."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "OperatingProfitLossOperating",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_OperatingProfitLossOperating",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "IFRS 18 early-application operating-category subtotal in the 2025 taxonomy; not an alias for the IAS 1 operating-activities concept."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "WeightedAverageShares",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_WeightedAverageShares",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Basic EPS ordinary-share weighted denominator; not diluted weighted shares or point-in-time outstanding shares."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "AdjustedWeightedAverageShares",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_AdjustedWeightedAverageShares",
+          "declared_item_type": "xbrli:sharesItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Diluted EPS denominator including potential ordinary shares; never silently substitute for basic weighted shares."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "ProfitLossAttributableToOrdinaryEquityHoldersOfParentEntity",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_ProfitLossAttributableToOrdinaryEquityHoldersOfParentEntity",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Basic EPS ordinary-equity-holder numerator; distinct from parent-owner income and total income."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "ProfitLossAttributableToOwnersOfParent",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_ProfitLossAttributableToOwnersOfParent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Parent-owner income is not automatically ordinary-equity-holder basic EPS income or consolidated total income."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "EquityAttributableToOwnersOfParent",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_EquityAttributableToOwnersOfParent",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Parent-owner equity excludes noncontrolling interests; it is not automatically common-only equity."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "Borrowings",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_Borrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Outstanding repayable funds; interest-bearing scope, lease treatment, completeness and overlapping components remain unresolved."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "CurrentBorrowingsAndCurrentPortionOfNoncurrentBorrowings",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_CurrentBorrowingsAndCurrentPortionOfNoncurrentBorrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Combined current borrowings and current portion of noncurrent borrowings; not disjoint from either component."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "CurrentPortionOfLongtermBorrowings",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_CurrentPortionOfLongtermBorrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Current portion of noncurrent borrowings; not interchangeable with current borrowings alone."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "ShorttermBorrowings",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_ShorttermBorrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Documented as current borrowings; do not infer equivalence to US GAAP initial-term short-term debt."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "LongtermBorrowings",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_LongtermBorrowings",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "instant",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Documented as the NONCURRENT portion of noncurrent borrowings, not an all-maturity total."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "CashFlowsFromUsedInOperatingActivities",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_CashFlowsFromUsedInOperatingActivities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": null,
+          "abstract": false
+        }
+      ],
+      "distinction_note": "IAS 1 and IFRS 18 documentation differs. Taxonomy name alone does not establish accounting basis, adoption or comparable cash-flow classification."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "PPE purchase cash outflow classified as investing; not total capex and no aggregation or sign conversion is performed."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities",
+      "introduced_by_this_change": true,
+      "verified_schema_declarations": [
+        {
+          "release": "2025-03-27",
+          "element_id": "ifrs-full_PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities",
+          "declared_item_type": "xbrli:monetaryItemType",
+          "declared_period_type": "duration",
+          "declared_balance": "credit",
+          "abstract": false
+        }
+      ],
+      "distinction_note": "Intangible purchase cash outflow classified as investing; not total capex and no aggregation or sign conversion is performed."
+    }
+  ],
+  "not_added_candidates": [
+    {
+      "taxonomy": "us-gaap",
+      "concept": "CommonStockholdersEquity",
+      "checked_releases": [
+        "2025",
+        "2026"
+      ],
+      "result": "No matching element declaration in checked schemas; not admitted."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "WeightedAverageNumberOfOrdinarySharesOutstandingBasic",
+      "checked_releases": [
+        "2025-03-27"
+      ],
+      "result": "No matching element declaration in checked schema; not admitted."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "BorrowingsNoncurrent",
+      "checked_releases": [
+        "2025-03-27"
+      ],
+      "result": "No matching element declaration in checked schema; not admitted."
+    },
+    {
+      "taxonomy": "ifrs-full",
+      "concept": "OperatingProfitLoss",
+      "checked_releases": [
+        "2025-03-27"
+      ],
+      "result": "No matching element declaration in checked schema; not admitted."
+    }
+  ]
+}

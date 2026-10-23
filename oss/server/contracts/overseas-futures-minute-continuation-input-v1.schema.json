@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "maxLength": 13,
+      "pattern": "^[A-Z0-9]{1,10}[FGHJKMNQUVXZ]\\d{2}$"
+    },
+    "exchange": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 8,
+      "pattern": "^[A-Z0-9]+$"
+    },
+    "provider_cursor": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    }
+  },
+  "required": [
+    "symbol",
+    "exchange",
+    "provider_cursor"
+  ],
+  "additionalProperties": false
+}

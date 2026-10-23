@@ -1,0 +1,115 @@
+{
+  "contract": "moai.stock.llm-envelope.v2",
+  "provenance": {
+    "api_reference": "2077773a69a428daf63e148182511f068cc45de3; /uapi/domestic-stock/v1/quotations/inquire-price; FHKST01010100",
+    "provider_api_version": "not_versioned_in_reviewed_sample",
+    "source_as_of": "2026-10-20",
+    "event_time": null,
+    "published_at": null,
+    "received_at": "2026-10-22T01:00:00.000000001Z",
+    "available_at": "2026-10-22T01:00:00.000000001Z",
+    "effective_from": null,
+    "effective_to": null,
+    "supersedes": null,
+    "report_cutoff": "2026-10-22T01:00:00.000000001Z",
+    "retrieved_at": "2026-10-22T01:00:00.000000001Z",
+    "source_timezone": "Asia/Seoul",
+    "clock_basis": "local_post_response_utc; source provides business date only in reviewed mapping",
+    "timezone": "Asia/Seoul",
+    "session": "unknown",
+    "currency": "KRW",
+    "unit": "KRW/share; shares; percent",
+    "delay_state": "unknown",
+    "adjusted": null,
+    "rights_status": "pending",
+    "origin": "synthetic",
+    "estimate_kind": "reported",
+    "finality": "unknown",
+    "revision_id": null,
+    "availability": "available",
+    "validation_status": "synthetic_fixture",
+    "freshness": "unknown",
+    "partial": false,
+    "stale": null
+  },
+  "input": {
+    "contract": "moai.stock.llm-facts.v1",
+    "instrument": {
+      "market": "KR",
+      "symbol": "000660",
+      "asset_type": "equity"
+    },
+    "times": {
+      "source_as_of": "2026-10-20",
+      "received_at": "2026-10-22T01:00:00.000000001Z",
+      "timezone": "Asia/Seoul"
+    },
+    "facts": [
+      {
+        "fact_id": "R01.last",
+        "value": "70000",
+        "unit": "KRW/share",
+        "currency": "KRW",
+        "source_field": "stck_prpr",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:last",
+        "status": "provider_observed"
+      },
+      {
+        "fact_id": "R01.open",
+        "value": "69000",
+        "unit": "KRW/share",
+        "currency": "KRW",
+        "source_field": "stck_oprc",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:open",
+        "status": "provider_observed"
+      },
+      {
+        "fact_id": "R01.high",
+        "value": "70500",
+        "unit": "KRW/share",
+        "currency": "KRW",
+        "source_field": "stck_hgpr",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:high",
+        "status": "provider_observed"
+      },
+      {
+        "fact_id": "R01.low",
+        "value": "68800",
+        "unit": "KRW/share",
+        "currency": "KRW",
+        "source_field": "stck_lwpr",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:low",
+        "status": "provider_observed"
+      },
+      {
+        "fact_id": "R01.change",
+        "value": "-1000",
+        "unit": "KRW/share",
+        "currency": "KRW",
+        "source_field": "prdy_vrss+prdy_vrss_sign",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:change",
+        "status": "provider_derived"
+      },
+      {
+        "fact_id": "R01.change_percent",
+        "value": "-1.41",
+        "unit": "percent",
+        "currency": null,
+        "source_field": "prdy_ctrt",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:change_percent",
+        "status": "provider_observed"
+      },
+      {
+        "fact_id": "R01.volume",
+        "value": "123456",
+        "unit": "shares",
+        "currency": null,
+        "source_field": "acml_vol",
+        "evidence_ref": "dto:kis.kr.quote.snapshot.v1:volume",
+        "status": "provider_observed"
+      }
+    ],
+    "evidence_note": "Fact IDs resolve to canonical DTO or deterministic calculation lineage; missing values are not zero."
+  },
+  "usage": "research_only_not_trade_execution"
+}

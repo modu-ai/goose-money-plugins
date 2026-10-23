@@ -1,0 +1,50 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { executeGoosePlan, GoosePlanSchema, GooseExecutionResultSchema, type RoleTask } from '../src/goose-orchestrator.js';
+const start = '2026-10-22T00:00:00Z', end = '2026-10-22T00:00:10Z';
+const plan = { run_id: 'synthetic-run', requested_scope: 'Synthetic research', roles: ['company-analysis', 'disclosure-event'], cutoff_at: start, evidence: [{ evidence_ref: 'source1', origin: 'synthetic', received_at: start, source_as_of: null }], timeout_ms: 100 };
+const result = (t: RoleTask) => ({ run_id: t.run_id, role_id: t.role_id, findings: [{ claim_id: 'c1', kind: 'fact', text: 'Synthetic assertion', source_refs: ['source1'], formula_id: null }], tool_operation_ids: [], counterevidence: [], unresolved: ['Synthetic only'] });
+test('Goose defaults sequential, uses public scope only and never writes a report', async () => { let active = 0, max = 0; const r = await executeGoosePlan(plan, { async run(t) { active++; max = Math.max(max, active); await Promise.resolve(); active--; assert.ok(!t.allowed_tool_operation_ids.includes('get_account_snapshot')); return result(t); } }, { clock: () => end }); assert.equal(max, 1); assert.equal(r.execution_mode, 'sequential'); assert.equal(r.host_execution_verified, false); assert.equal(r.report_rendered, false); assert.equal(r.records[0]?.data_class, 'synthetic'); assert.equal(r.records[0]?.observed_child_id, null); });
+test('parallel preference falls back to explicit sequential when no launcher exists', async () => { const r = await executeGoosePlan({ ...plan, execution_preference: 'parallel_if_available' }, { async run(t) { return result(t); } }, { clock: () => end }); assert.equal(r.execution_mode, 'sequential'); assert.ok(r.warnings.some(w => w.includes('fallback'))); });
+test('single role uses single_role mode and preserves source attribution', async () => { const r = await executeGoosePlan({ ...plan, roles: ['company-analysis'] }, { async run(t) { return result(t); } }, { clock: () => end }); assert.equal(r.execution_mode, 'single_role'); assert.deepEqual(r.records[0]?.result?.findings[0]?.source_refs, ['source1']); });
+test('facts without allowed sources, trade tools and forged roles become partial failures', async () => { for (const mutate of [(x: any) => x.findings[0].source_refs = ['invented'], (x: any) => x.findings[0].source_refs = [], (x: any) => x.tool_operation_ids = ['place_order'], (x: any) => x.role_id = 'valuation']) {
+    const r = await executeGoosePlan({ ...plan, roles: ['company-analysis'] }, { async run(t) { const x = result(t); mutate(x); return x; } }, { clock: () => end });
+    assert.equal(r.records[0]?.failure, 'role_result_invalid');
+    assert.equal(r.records[0]?.result, null);
+} });
+test('invalid plans including account role and post-cutoff evidence never dispatch', async () => { let calls = 0; const runner = { async run(t: RoleTask) { calls++; return result(t); } }; for (const p of [{ ...plan, roles: ['portfolio-risk'] }, { ...plan, roles: ['company-analysis', 'company-analysis'] }, { ...plan, evidence: [{ ...plan.evidence[0], received_at: end }] }])
+    await assert.rejects(executeGoosePlan(p, runner)); assert.equal(calls, 0); });
+test('runner errors are sanitized and remaining independent roles still run', async () => { const r = await executeGoosePlan(plan, { async run(t) { if (t.role_id === 'company-analysis')
+        throw new Error('SECRET upstream'); return result(t); } }, { clock: () => end }); assert.equal(r.records[0]?.failure, 'role_failed'); assert.equal(r.records[1]?.validation_state, 'schema_validated'); assert.ok(!JSON.stringify(r).includes('SECRET')); });
+test('timeout aborts once, never retries and records uncertain completion', async () => { let calls = 0, aborted = false; const r = await executeGoosePlan({ ...plan, roles: ['company-analysis'], timeout_ms: 5 }, { async run(_t, s) { calls++; s.addEventListener('abort', () => { aborted = true; }); return new Promise(() => { }); } }, { clock: () => end }); assert.equal(calls, 1); assert.equal(aborted, true); assert.equal(r.records[0]?.validation_state, 'timed_out'); });
+function native(origin: 'actual' | 'synthetic' = 'synthetic', overlap = true) { return { kind: 'host_native' as const, async runAll(tasks: readonly RoleTask[]) { return tasks.map((t, i) => ({ run_id: t.run_id, role_id: t.role_id, child_id: `observed-child-${i}`, observation_origin: origin, started_at: i === 1 && !overlap ? '2026-10-22T00:00:06Z' : '2026-10-22T00:00:01Z', completed_at: '2026-10-22T00:00:05Z', result: result(t) })); } }; }
+test('synthetic native receipts are distinctly labeled test evidence, never actual parallel execution', async () => { let tick = 0; const r = await executeGoosePlan({ ...plan, execution_preference: 'parallel_if_available' }, { async run() { throw new Error('must not run'); } }, { nativeExecutor: native(), clock: () => tick++ === 0 ? start : end }); assert.equal(r.execution_mode, 'synthetic_parallel_test'); assert.equal(r.host_execution_verified, false); });
+test('invalid native receipts do not silently rerun or claim sequential/native success', async () => { let tick = 0, calls = 0; const r = await executeGoosePlan({ ...plan, execution_preference: 'parallel_if_available' }, { async run(t) { calls++; return result(t); } }, { nativeExecutor: native('synthetic', false), clock: () => tick++ === 0 ? start : end }); assert.equal(calls, 0); assert.equal(r.execution_mode, 'native_dispatch_unverified'); assert.equal(r.host_execution_verified, false); assert.ok(r.records.every(r => r.failure === 'role_result_invalid')); });
+test('execution schema rejects forged child/parallel claims and record metadata', async () => { const r = await executeGoosePlan(plan, { async run(t) { return result(t); } }, { clock: () => end }); for (const mutate of [(x: any) => x.execution_mode = 'host_native_parallel', (x: any) => x.records[0].tool_operation_ids = ['place_order'], (x: any) => x.records[0].skill = 'references/roles/portfolio-risk/PROCEDURE.md']) {
+    const x = structuredClone(r);
+    mutate(x);
+    assert.equal(GooseExecutionResultSchema.safeParse(x).success, false);
+} });
+test('sub-millisecond evidence after cutoff is rejected exactly, not truncated', async () => {
+    const nano = '2026-10-22T00:00:00.000000001Z';
+    let called = false;
+    for (const evidence of [[{ ...plan.evidence[0], received_at: nano }], [{ ...plan.evidence[0], source_as_of: nano }]])
+        await assert.rejects(executeGoosePlan({ ...plan, evidence }, { async run(t) { called = true; return result(t); } }));
+    assert.equal(called, false);
+});
+test('native receipt nanosecond beyond observed finish invalidates attestation', async () => { let tick = 0; const executor = native(); const run = executor.runAll; executor.runAll = async (tasks) => (await run(tasks)).map(r => ({ ...r, completed_at: '2026-10-22T00:00:10.000000001Z' })); const r = await executeGoosePlan({ ...plan, execution_preference: 'parallel_if_available' }, { async run(t) { return result(t); } }, { nativeExecutor: executor, clock: () => tick++ === 0 ? start : end }); assert.equal(r.execution_mode, 'native_dispatch_unverified'); assert.equal(r.host_execution_attested, false); assert.equal(r.host_execution_verified, false); });
+test('runner cannot mutate role, source allowlist, or operation grant after dispatch', async () => { for (const mutate of [(t: any) => { t.role_id = 'valuation'; }, (t: any) => { t.evidence_refs.push('invented'); }, (t: any) => { t.allowed_tool_operation_ids.push('place_order'); }]) {
+    const r = await executeGoosePlan({ ...plan, roles: ['company-analysis'] }, { async run(t) { try {
+            mutate(t);
+        }
+        catch { } assert.equal(t.role_id, 'company-analysis'); assert.deepEqual(t.evidence_refs, ['source1']); assert.ok(!t.allowed_tool_operation_ids.includes('place_order')); return result(t); } }, { clock: () => end });
+    assert.equal(r.records[0]?.role_id, 'company-analysis');
+    assert.equal(r.records[0]?.validation_state, 'schema_validated');
+} });
+test('native dispatch array and nested task grants are immutable', async () => { let tick = 0; const e = native(); const run = e.runAll; e.runAll = async (tasks) => { assert.ok(Object.isFrozen(tasks)); assert.ok(tasks.every(t => Object.isFrozen(t) && Object.isFrozen(t.evidence_refs) && Object.isFrozen(t.allowed_tool_operation_ids))); try {
+    (tasks as any).pop();
+}
+catch { } return run(tasks); }; const r = await executeGoosePlan({ ...plan, execution_preference: 'parallel_if_available' }, { async run(t) { return result(t); } }, { nativeExecutor: e, clock: () => tick++ === 0 ? start : end }); assert.equal(r.records.length, 2); assert.equal(r.execution_mode, 'synthetic_parallel_test'); });
+test('supplied actual host receipts are attestation only, never independent verification', async () => { let tick = 0; const r = await executeGoosePlan({ ...plan, execution_preference: 'parallel_if_available' }, { async run(t) { return result(t); } }, { nativeExecutor: native('actual'), clock: () => tick++ === 0 ? start : end }); assert.equal(r.execution_mode, 'host_native_parallel'); assert.equal(r.host_execution_attested, true); assert.equal(r.host_execution_verified, false); assert.equal(r.factual_accuracy_verified, false); assert.ok(r.warnings.some(w => w.includes('not independently verified'))); });
+
+test('malformed plan and execution timestamps return validation failure without safeParse throwing',async()=>{for(const bad of ['bad','2026-02-30T00:00:00Z','2026-10-22T00:00:00']){const p={...plan,cutoff_at:bad};assert.equal(GoosePlanSchema.safeParse(p).success,false);await assert.rejects(executeGoosePlan(p,{async run(){throw new Error('must not dispatch');}}),/invalid_input/);const r=await executeGoosePlan(plan,{async run(t){return result(t);}},{clock:()=>end});for(const key of ['cutoff_at','started_at','completed_at']){const mutated=structuredClone(r);(mutated.records[0] as any)[key]=bad;assert.equal(GooseExecutionResultSchema.safeParse(mutated).success,false);}}});

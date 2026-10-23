@@ -1,0 +1,633 @@
+{
+  "contract": "moai.market.observation-report-handoff.v1",
+  "status": "conditional_supplied_report_input_only",
+  "source_authenticated": false,
+  "actual_bindings": 0,
+  "live_bindings": 0,
+  "actual_provider_calls": 0,
+  "report_input": {
+    "contract": "moai.market-observations/0.1-rc7",
+    "request": {
+      "cutoff": "2026-10-22T14:30:01.123456789124Z",
+      "data_kind": "synthetic",
+      "purpose": "private_analysis"
+    },
+    "entries": [
+      {
+        "id": "synthetic-us_equity_change",
+        "metric_id": "metric.change_pct",
+        "observations": {
+          "market.last": {
+            "observation_id": "moai:market:2a63029d9bbc619076a5cf7cdb94634ca24aca07e0e6a81d17c059f2cafd4657",
+            "role": "market.last",
+            "data_kind": "synthetic",
+            "value": "101.2500",
+            "unit": "money_per_share",
+            "scale": "1",
+            "currency": "USD",
+            "instrument": {
+              "security_id": "SYNTHETIC:security:us_equity_change",
+              "symbol": "SYNTH",
+              "instrument_kind": "equity",
+              "venue": "SYNTHETIC:XNAS",
+              "share_class": "SYNTHETIC:common",
+              "share_unit": "one_share",
+              "split_basis": "SYNTHETIC:current-share-unadjusted"
+            },
+            "basis": {
+              "session_id": "SYNTHETIC:2026-10-22",
+              "observation_session_id": "SYNTHETIC:2026-10-22",
+              "session_type": "regular",
+              "reference_id": "SYNTHETIC:unadjusted-reference",
+              "price_basis": "unadjusted_per_current_share",
+              "valuation_basis": "regular_last_vs_official_previous_close",
+              "market_state": "regular_open",
+              "semantics": "last_trade"
+            },
+            "source_at": "2026-10-22T14:30:00.123456789123Z",
+            "published_at": "2026-10-22T14:30:00.123456789124Z",
+            "available_at": "2026-10-22T14:30:01.123456789124Z",
+            "provenance": {
+              "source_id": "KIS",
+              "document_id": "SYNTHETIC:original-response",
+              "record_id": "direct:market.last",
+              "locator": "$.output.last",
+              "revision_id": "SYNTHETIC:original",
+              "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+              "origin": "direct_observation",
+              "semantic_binding_asserted": true
+            },
+            "rights": {
+              "processing_allowed": true,
+              "portable_export_allowed": false,
+              "assertion_id": "synthetic-private-analysis-only"
+            }
+          },
+          "market.previous_close": {
+            "observation_id": "moai:market:90dfec828b617f82f83b445a6bc7d3dbdd3ca47399ac0a20ebc9fdafa9cb0ecb",
+            "role": "market.previous_close",
+            "data_kind": "synthetic",
+            "value": "100.0000",
+            "unit": "money_per_share",
+            "scale": "1",
+            "currency": "USD",
+            "instrument": {
+              "security_id": "SYNTHETIC:security:us_equity_change",
+              "symbol": "SYNTH",
+              "instrument_kind": "equity",
+              "venue": "SYNTHETIC:XNAS",
+              "share_class": "SYNTHETIC:common",
+              "share_unit": "one_share",
+              "split_basis": "SYNTHETIC:current-share-unadjusted"
+            },
+            "basis": {
+              "session_id": "SYNTHETIC:2026-10-22",
+              "observation_session_id": "SYNTHETIC:2026-10-21",
+              "session_type": "regular",
+              "reference_id": "SYNTHETIC:unadjusted-reference",
+              "price_basis": "unadjusted_per_current_share",
+              "valuation_basis": "regular_last_vs_official_previous_close",
+              "market_state": "regular_open",
+              "semantics": "official_previous_session_close"
+            },
+            "source_at": "2026-10-21T20:00:00Z",
+            "published_at": "2026-10-21T20:00:00.000000000001Z",
+            "available_at": "2026-10-22T14:30:01.123456789124Z",
+            "provenance": {
+              "source_id": "KIS",
+              "document_id": "SYNTHETIC:original-response",
+              "record_id": "direct:market.previous_close",
+              "locator": "$.output.base",
+              "revision_id": "SYNTHETIC:original",
+              "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+              "origin": "direct_observation",
+              "semantic_binding_asserted": true
+            },
+            "rights": {
+              "processing_allowed": true,
+              "portable_export_allowed": false,
+              "assertion_id": "synthetic-private-analysis-only"
+            }
+          }
+        },
+        "context": {
+          "session_id": "SYNTHETIC:2026-10-22",
+          "session_type": "regular",
+          "reference_id": "SYNTHETIC:unadjusted-reference",
+          "freshness_policy": {
+            "policy_id": "synthetic-private-report-freshness",
+            "max_age_seconds": {
+              "market.last": "10",
+              "market.previous_close": "172800"
+            }
+          },
+          "previous_session_id": "SYNTHETIC:2026-10-21",
+          "previous_close_at": "2026-10-21T20:00:00Z"
+        }
+      }
+    ]
+  },
+  "verification": {
+    "input_sha256": "cf7e286174be6ed844b866745a822c368dc1713edc46bf79df1b970fa91b0720",
+    "adapter_id": "synthetic-market-fixture-verifier",
+    "mode": "synthetic_test_only",
+    "verified_at": "2026-10-22T14:30:02.000000000002Z",
+    "assurance": "trusted_adapter_attestation_not_host_authentication",
+    "confirmed": {
+      "original_bytes_dto_linkage": [
+        "original-body",
+        "review-record"
+      ],
+      "identity": [
+        "review-record"
+      ],
+      "field_semantics": [
+        "review-record"
+      ],
+      "units_currency_scales": [
+        "review-record"
+      ],
+      "observation_reference_sessions": [
+        "review-record"
+      ],
+      "adjustment_basis": [
+        "review-record"
+      ],
+      "publication_availability": [
+        "review-record"
+      ],
+      "market_state": [
+        "review-record"
+      ],
+      "quote_firmness_simultaneity": [
+        "review-record"
+      ],
+      "finality_revision": [
+        "review-record"
+      ],
+      "rights": [
+        "review-record"
+      ]
+    }
+  },
+  "lineage": {
+    "source_dto_sha256": "60d65e54373fc65f5c4d59724a90e3ecf0fbb584e898a864d72337bdff7c614f",
+    "original_body_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+    "selections": [
+      {
+        "role": "market.last",
+        "dto_selector": "$.raw.last",
+        "provider_selector": "$.output.last",
+        "raw_lexeme": "000101.2500",
+        "raw_state": "decimal_text_candidate",
+        "canonical_observation": null,
+        "metric_ready": false
+      },
+      {
+        "role": "market.previous_close",
+        "dto_selector": "$.raw.base",
+        "provider_selector": "$.output.base",
+        "raw_lexeme": "000100.0000",
+        "raw_state": "decimal_text_candidate",
+        "canonical_observation": null,
+        "metric_ready": false
+      }
+    ],
+    "artifacts": [
+      {
+        "id": "original-body",
+        "data_kind": "synthetic",
+        "digest_kind": "synthetic_fixture",
+        "sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+        "locator": "synthetic://market-observation/original-body",
+        "snapshot": {
+          "source_dto_sha256": "60d65e54373fc65f5c4d59724a90e3ecf0fbb584e898a864d72337bdff7c614f",
+          "received_at": "2026-10-22T14:30:01.123456789123Z"
+        }
+      },
+      {
+        "id": "review-record",
+        "data_kind": "synthetic",
+        "digest_kind": "synthetic_fixture",
+        "sha256": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+        "locator": "synthetic://market-observation/review-record",
+        "snapshot": null
+      }
+    ],
+    "identity": {
+      "issuer_id": "SYNTHETIC:issuer:us_equity_change",
+      "listing_id": "SYNTHETIC:listing:us_equity_change",
+      "provider_symbol": "SYNTH",
+      "provider_market": "NAS"
+    },
+    "revisions": [
+      {
+        "role": "market.last",
+        "revision": {
+          "revision_id": "SYNTHETIC:original",
+          "status": "original",
+          "finality": "final_current_at_cutoff",
+          "evidence_ref": "review-record"
+        }
+      },
+      {
+        "role": "market.previous_close",
+        "revision": {
+          "revision_id": "SYNTHETIC:original",
+          "status": "original",
+          "finality": "final_current_at_cutoff",
+          "evidence_ref": "review-record"
+        }
+      }
+    ],
+    "receipt": "2026-10-22T14:30:01.123456789123Z"
+  },
+  "inputs": {
+    "candidate": {
+      "contract": "moai.market.observation-evidence.v1",
+      "policy": "us_equity_change",
+      "cutoff": "2026-10-22T14:30:01.123456789124Z",
+      "include_provider_percent": false,
+      "source_dto": {
+        "contract": "moai.stock.us-quote.v1",
+        "provider": "kis",
+        "origin": "synthetic",
+        "received_at": "2026-10-22T14:30:01.123456789123Z",
+        "source_as_of": null,
+        "source_time_status": "not_returned_by_reviewed_quote_contract",
+        "rights_status": "pending",
+        "validation_status": "provider_shape_checked_not_live_reconciled",
+        "canonical_projection_status": "blocked",
+        "mapping_blockers": [
+          "authoritative_instrument_master_binding_missing",
+          "currency_not_returned_by_quote",
+          "price_volume_turnover_units_not_reconciled",
+          "stock_or_etf_classification_not_verified"
+        ],
+        "warnings": [
+          "Request exchange and asset class are caller inputs, not verified classification.",
+          "rsym matching is a conservative request guard, not authoritative master-data reconciliation.",
+          "No live, delayed, session, timezone or freshness claim is inferred. Raw fields retain provider decimal strings."
+        ],
+        "symbol_from_request": "SYNTH",
+        "exchange_from_request": "NAS",
+        "asset_class_from_request": "stock",
+        "identity_status": "conservative_rsym_guard_matched_not_master_verified",
+        "raw": {
+          "rsym": "DNASSYNTH",
+          "zdiv": "4",
+          "base": "000100.0000",
+          "last": "000101.2500",
+          "diff": "1.25",
+          "rate": "001.25"
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "currency": null,
+          "last_price": null,
+          "previous_close": null,
+          "change": null,
+          "change_percent": null,
+          "volume": null,
+          "turnover": null,
+          "price_unit": null,
+          "volume_unit": null
+        }
+      },
+      "source_dto_sha256": "60d65e54373fc65f5c4d59724a90e3ecf0fbb584e898a864d72337bdff7c614f",
+      "origin": "synthetic",
+      "reference_candidates": [
+        {
+          "contract": "moai.market.selected-reference-evidence.v1",
+          "status": "selected_raw_evidence_candidate_only",
+          "policy": "us_quote_previous_close",
+          "cutoff": "2026-10-22T14:30:01.123456789124Z",
+          "requested_role": "market.previous_close",
+          "role_association_status": "requested_destination_label_not_semantic_binding",
+          "provider": "kis",
+          "origin": "synthetic",
+          "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+          "source_request": {
+            "operation": "kis.us_quote",
+            "method": "GET",
+            "path": "/uapi/overseas-price/v1/quotations/price",
+            "tr_id": "HHDFS00000300",
+            "query": {
+              "AUTH": "",
+              "EXCD": "NAS",
+              "SYMB": "SYNTH"
+            }
+          },
+          "request_evidence_status": "reconstructed_from_existing_dto_not_original_http_receipt",
+          "selected": {
+            "dto_selector": "$.raw.base",
+            "provider_selector": "$.output.base",
+            "raw_lexeme": "000100.0000",
+            "raw_state": "decimal_text_candidate",
+            "lexical_profile": "ascii_unsigned_decimal_max_40_chars_no_whitespace_sign_exponent_or_grouping",
+            "lexical_status_note": "syntax_only_not_economic_validity_units_or_canonical_value"
+          },
+          "received_at": "2026-10-22T14:30:01.123456789123Z",
+          "receipt_status": "local_receipt_not_source_or_publication_time",
+          "source_at": null,
+          "published_at": null,
+          "available_at": null,
+          "session": null,
+          "previous_session_id": null,
+          "previous_session_close_at": null,
+          "currency": null,
+          "price_unit": null,
+          "split_basis": null,
+          "source_authenticated": false,
+          "identity_verified": false,
+          "semantic_binding_verified": false,
+          "simultaneous_quotes_verified": false,
+          "quote_firmness": "unverified",
+          "rights_status": "pending",
+          "canonical_observation": null,
+          "metric_ready": false,
+          "snapshot": {
+            "value": {
+              "contract": "moai.stock.us-quote.v1",
+              "provider": "kis",
+              "origin": "synthetic",
+              "received_at": "2026-10-22T14:30:01.123456789123Z",
+              "source_as_of": null,
+              "source_time_status": "not_returned_by_reviewed_quote_contract",
+              "rights_status": "pending",
+              "validation_status": "provider_shape_checked_not_live_reconciled",
+              "canonical_projection_status": "blocked",
+              "mapping_blockers": [
+                "authoritative_instrument_master_binding_missing",
+                "currency_not_returned_by_quote",
+                "price_volume_turnover_units_not_reconciled",
+                "stock_or_etf_classification_not_verified"
+              ],
+              "warnings": [
+                "Request exchange and asset class are caller inputs, not verified classification.",
+                "rsym matching is a conservative request guard, not authoritative master-data reconciliation.",
+                "No live, delayed, session, timezone or freshness claim is inferred. Raw fields retain provider decimal strings."
+              ],
+              "symbol_from_request": "SYNTH",
+              "exchange_from_request": "NAS",
+              "asset_class_from_request": "stock",
+              "identity_status": "conservative_rsym_guard_matched_not_master_verified",
+              "raw": {
+                "rsym": "DNASSYNTH",
+                "zdiv": "4",
+                "base": "000100.0000",
+                "last": "000101.2500",
+                "diff": "1.25",
+                "rate": "001.25"
+              },
+              "canonical": {
+                "instrument_id": null,
+                "asset_class": null,
+                "currency": null,
+                "last_price": null,
+                "previous_close": null,
+                "change": null,
+                "change_percent": null,
+                "volume": null,
+                "turnover": null,
+                "price_unit": null,
+                "volume_unit": null
+              }
+            },
+            "sha256": "60d65e54373fc65f5c4d59724a90e3ecf0fbb584e898a864d72337bdff7c614f",
+            "hash_algorithm": "sha256",
+            "serialization": "sorted_object_keys_json_utf8_v1",
+            "hash_scope": "whole_validated_provider_dto_snapshot",
+            "original_http_body_hash": null,
+            "source_authentication": false
+          },
+          "mapping_blockers": [
+            "source_authenticity_and_current_rights_unverified",
+            "security_class_venue_and_split_basis_unverified",
+            "currency_scale_and_one_share_price_unit_unverified",
+            "exact_source_publication_and_availability_instants_unverified",
+            "official_previous_session_reference_unverified",
+            "firm_regular_session_and_same_instant_book_unverified"
+          ],
+          "warnings": [
+            "Finite raw field selection only. Existing market.* names are requested destination labels, not verified report inputs.",
+            "Whole DTO and candidate SHA256 are deterministic integrity links, not original HTTP-body hashes, signatures or source authentication.",
+            "No last-minus-change, stck_sdpr substitution, output2 indicative promotion, zdiv scaling or currency inference occurs.",
+            "Receipt time and intraday bar dates/times never date an orderbook clock or an output1 prior-close header.",
+            "A decimal-text syntax candidate may be zero, stale, crossed or economically invalid. No canonical value or metric is computed.",
+            "This selector does not authorize acquisition, persistence, model-host egress, derived use, export or redistribution."
+          ],
+          "integrity": {
+            "sha256": "374eaab5dac66f28c7afe4e7eb216950c56f0f10395a78bda38010835879bb4e",
+            "hash_algorithm": "sha256",
+            "serialization": "sorted_object_keys_json_utf8_v1",
+            "scope": "candidate_except_integrity",
+            "source_authentication": false
+          }
+        }
+      ],
+      "selections": [
+        {
+          "role": "market.last",
+          "dto_selector": "$.raw.last",
+          "provider_selector": "$.output.last",
+          "raw_lexeme": "000101.2500",
+          "raw_state": "decimal_text_candidate",
+          "canonical_observation": null,
+          "metric_ready": false
+        },
+        {
+          "role": "market.previous_close",
+          "dto_selector": "$.raw.base",
+          "provider_selector": "$.output.base",
+          "raw_lexeme": "000100.0000",
+          "raw_state": "decimal_text_candidate",
+          "canonical_observation": null,
+          "metric_ready": false
+        }
+      ],
+      "source_authenticated": false,
+      "canonical_observation": null,
+      "metric_ready": false,
+      "selection_status": "fixed_fields_only_no_semantic_binding",
+      "warnings": [
+        "Fixed raw selection is not identity, unit, scale, session, finality, source authentication or rights verification.",
+        "A shared response does not prove contemporaneous firm quotes or an independent provider-percent check.",
+        "No previous close is derived from last minus change. Original raw numeric lexemes remain unchanged."
+      ],
+      "integrity_sha256": "ac8df2902e8f1f381a9c746428c3e4f41011bd8998a86a8ccdb5d15e6e9807cf"
+    },
+    "binding": {
+      "contract": "moai.market.observation-binding.v1",
+      "entry_id": "synthetic-us_equity_change",
+      "candidate_sha256": "ac8df2902e8f1f381a9c746428c3e4f41011bd8998a86a8ccdb5d15e6e9807cf",
+      "instrument": {
+        "security_id": "SYNTHETIC:security:us_equity_change",
+        "symbol": "SYNTH",
+        "instrument_kind": "equity",
+        "venue": "SYNTHETIC:XNAS",
+        "share_class": "SYNTHETIC:common",
+        "share_unit": "one_share",
+        "split_basis": "SYNTHETIC:current-share-unadjusted"
+      },
+      "identity": {
+        "issuer_id": "SYNTHETIC:issuer:us_equity_change",
+        "listing_id": "SYNTHETIC:listing:us_equity_change",
+        "provider_symbol": "SYNTH",
+        "provider_market": "NAS"
+      },
+      "price_basis": "unadjusted_per_current_share",
+      "market_state": "regular_open",
+      "source_artifact_id": "original-body",
+      "document_id": "SYNTHETIC:original-response",
+      "observations": [
+        {
+          "role": "market.last",
+          "source_at": "2026-10-22T14:30:00.123456789123Z",
+          "published_at": "2026-10-22T14:30:00.123456789124Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "observation_session_id": "SYNTHETIC:2026-10-22",
+          "unit": "money_per_share",
+          "scale": "1",
+          "currency": "USD",
+          "numeric_semantics": "raw_decimal_times_explicit_scale",
+          "revision": {
+            "revision_id": "SYNTHETIC:original",
+            "status": "original",
+            "finality": "final_current_at_cutoff",
+            "evidence_ref": "review-record"
+          }
+        },
+        {
+          "role": "market.previous_close",
+          "source_at": "2026-10-21T20:00:00Z",
+          "published_at": "2026-10-21T20:00:00.000000000001Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "observation_session_id": "SYNTHETIC:2026-10-21",
+          "unit": "money_per_share",
+          "scale": "1",
+          "currency": "USD",
+          "numeric_semantics": "raw_decimal_times_explicit_scale",
+          "revision": {
+            "revision_id": "SYNTHETIC:original",
+            "status": "original",
+            "finality": "final_current_at_cutoff",
+            "evidence_ref": "review-record"
+          }
+        }
+      ],
+      "rights": {
+        "purpose": "private_analysis",
+        "processing_allowed": true,
+        "portable_export_allowed": false,
+        "assertion_id": "synthetic-private-analysis-only",
+        "evidence_ref": "review-record",
+        "valid_from": "2026-10-21T00:00:00Z",
+        "valid_until": "2026-10-23T00:00:00Z"
+      },
+      "evidence": {
+        "original_bytes_dto_linkage": [
+          "original-body",
+          "review-record"
+        ],
+        "identity": [
+          "review-record"
+        ],
+        "field_semantics": [
+          "review-record"
+        ],
+        "units_currency_scales": [
+          "review-record"
+        ],
+        "observation_reference_sessions": [
+          "review-record"
+        ],
+        "adjustment_basis": [
+          "review-record"
+        ],
+        "publication_availability": [
+          "review-record"
+        ],
+        "market_state": [
+          "review-record"
+        ],
+        "quote_firmness_simultaneity": [
+          "review-record"
+        ],
+        "finality_revision": [
+          "review-record"
+        ],
+        "rights": [
+          "review-record"
+        ]
+      },
+      "artifacts": [
+        {
+          "id": "original-body",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture",
+          "sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+          "locator": "synthetic://market-observation/original-body",
+          "snapshot": {
+            "source_dto_sha256": "60d65e54373fc65f5c4d59724a90e3ecf0fbb584e898a864d72337bdff7c614f",
+            "received_at": "2026-10-22T14:30:01.123456789123Z"
+          }
+        },
+        {
+          "id": "review-record",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture",
+          "sha256": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+          "locator": "synthetic://market-observation/review-record",
+          "snapshot": null
+        }
+      ],
+      "policy": "us_equity_change",
+      "context": {
+        "session_id": "SYNTHETIC:2026-10-22",
+        "session_type": "regular",
+        "reference_id": "SYNTHETIC:unadjusted-reference",
+        "freshness_policy": {
+          "policy_id": "synthetic-private-report-freshness",
+          "max_age_seconds": {
+            "market.last": "10",
+            "market.previous_close": "172800"
+          }
+        },
+        "previous_session_id": "SYNTHETIC:2026-10-21",
+        "previous_close_at": "2026-10-21T20:00:00Z"
+      },
+      "valuation_basis": "regular_last_vs_official_previous_close",
+      "quote_pair": null
+    }
+  },
+  "rights": {
+    "purpose": "private_analysis",
+    "processing_allowed": true,
+    "portable_export_allowed": false,
+    "assertion_id": "synthetic-private-analysis-only",
+    "evidence_ref": "review-record",
+    "valid_from": "2026-10-21T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "report_runtime": {
+    "contract": "moai.market-observations/0.1-rc7",
+    "authority": "moai-atp-report/vm-market-metrics-rc7-packaging-fix",
+    "files": {
+      "market_metrics.py": "5b7ee095e5fb0f678a8d33e7c6fdee9638997be59997a7d277ecd1532f0f05a8",
+      "financial_core.py": "02f307a1f159efc80a64542dd324b6c5fcc33a7169655328a65ff8d6b25aa180",
+      "input.schema.json": "6ea5017f13ac18231e5b80d646d95419637dff5cd85a9dfad2b29912121a3fa2",
+      "requirements-crosswalk.json": "ab559688641cffa557a64a9eed0ad413765faa31289c6f9cbe0fa16938fb5ee5"
+    },
+    "dependency_closure": "market_metrics.py imports financial_core.py; remaining imports are Python standard library",
+    "source_authentication_performed": false
+  },
+  "warnings": [
+    "No production verifier is supplied or configured. Trusted host code must independently establish all evidence axes.",
+    "No metric formula is implemented here. The unchanged pinned Python runtime independently validates and calculates supplied observations.",
+    "Without an independently verified provider-percent observation, change arithmetic remains arithmetic-only, not an accepted canonical metric.",
+    "Raw DTOs and candidates remain null-canonical and metric_ready=false. Serialized success never authorizes use.",
+    "Private analysis only. No export, redistribution, source authentication, live acquisition or complete report-slot coverage is established."
+  ]
+}

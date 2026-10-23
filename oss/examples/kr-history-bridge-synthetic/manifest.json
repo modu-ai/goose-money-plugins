@@ -1,0 +1,61 @@
+{
+  "scope": "synthetic_fixture_demonstration_only",
+  "actual_origin_supported": false,
+  "actual_provider_calls": 0,
+  "canonical_actual_bindings": 0,
+  "raw_adjustment_code_interpretation": "blocked_portal_sample_conflict",
+  "raw_contract_unchanged": true,
+  "report_runtime": {
+    "contract": "canonical-history/1.0",
+    "runtime_version": "canonical-history-semantics/rc5.1",
+    "files": {
+      "canonical-history.schema.json": "ac755724fc93442a50f38f3da4ff1749cafdb84221cc6b36efa448b562f55b4f",
+      "history_semantics.py": "55b7c1a0ab05b643d27bb27e072f00846b92d7f8bf749c479dcfedc8479318de",
+      "numeric_core.py": "02e3c646714eec8dca3ceffc9c9b9746f6d0670634a31b81fdb937f9f3656f37"
+    }
+  },
+  "input_sha256": "8d23718876daafa367dcd843661466e2b44206052c99985f44071758fd3594cc",
+  "source_link": {
+    "original_body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+    "raw_dto_sha256": "7451fefc4cb5c961dcc9c592b3de6ba31210c427b652404db9895241288fc3a7",
+    "raw_input_sha256": "9c47b48f03f88c733b214a220d44044988b315bdbaaa46a680f2bf706467fbeb"
+  },
+  "output_files": [
+    {
+      "name": "SYNTHETIC-original-body.json",
+      "sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0"
+    },
+    {
+      "name": "SYNTHETIC-raw-input.json",
+      "sha256": "c5bf0c5640f7fdefd9acba6069ba0e6ef38fbac568a9edc64d7905ed6570eb97"
+    },
+    {
+      "name": "SYNTHETIC-source.json",
+      "sha256": "704470ae2052a135731026b90a886d6aa2c33d86d439d47dabfcc1ee3582d2d4"
+    },
+    {
+      "name": "SYNTHETIC-binding.json",
+      "sha256": "622f3fbd63153e7d20904b97f3bd89f7bb6461009738f1c66a1a1cb53048c8b5"
+    },
+    {
+      "name": "SYNTHETIC-input.json",
+      "sha256": "feaa85b4553ef100ba862f7311d055a832c93c7f45af795fe145ae595590e89a"
+    },
+    {
+      "name": "SYNTHETIC-handoff.json",
+      "sha256": "8b44cfda16d129148d8269c18d4d06ae3444d7b55a3372e9ed87c9d7efc92b7f"
+    },
+    {
+      "name": "SYNTHETIC-reverified-handoff.json",
+      "sha256": "5c2af789236cd0a80ecec5a21169cba7c27415f6afba6470b73e910a14bd764b"
+    },
+    {
+      "name": "SYNTHETIC-report-input.json",
+      "sha256": "9cec073e3e372e3ed2ccae287c4aa78d31624ba4af089aa79404774ab73902f7"
+    },
+    {
+      "name": "SYNTHETIC-report-result.json",
+      "sha256": "93a7dd541bbe20093a5949ae2c729d57f9a13ac15da0623ecea0bec7915b3f61"
+    }
+  ]
+}

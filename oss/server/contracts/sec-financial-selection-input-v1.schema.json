@@ -1,0 +1,690 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "requested_role": {
+      "type": "string",
+      "enum": [
+        "reported.revenue",
+        "reported.operating_profit",
+        "reported.net_income_total",
+        "reported.net_income_common",
+        "reported.cfo",
+        "reported.capex",
+        "reported.debt",
+        "reported.cash",
+        "reported.equity",
+        "reported.liabilities",
+        "reported.equity_common_open",
+        "reported.equity_common_close",
+        "reported.shares_weighted"
+      ]
+    },
+    "cutoff": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "calendar_guard": {
+      "type": "object",
+      "properties": {
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "cutoff_local_date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      },
+      "required": [
+        "timezone",
+        "cutoff_local_date"
+      ],
+      "additionalProperties": false
+    },
+    "selector": {
+      "type": "object",
+      "properties": {
+        "cik": {
+          "type": "string",
+          "pattern": "^\\d{10}$"
+        },
+        "taxonomy": {
+          "type": "string",
+          "enum": [
+            "us-gaap",
+            "ifrs-full"
+          ]
+        },
+        "concept": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "unit_raw": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "period_kind": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "duration"
+          ]
+        },
+        "accession_number": {
+          "type": "string",
+          "pattern": "^\\d{10}-\\d{2}-\\d{6}$"
+        },
+        "filed": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "fiscal_year": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1900,
+              "maximum": 9999
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fiscal_period": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 10
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "form": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "frame": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 60
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "filing": {
+          "type": "object",
+          "properties": {
+            "filing_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "report_date": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "acceptance_datetime": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 80,
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "primary_document": {
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "required": [
+            "filing_date",
+            "report_date",
+            "acceptance_datetime",
+            "primary_document"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "cik",
+        "taxonomy",
+        "concept",
+        "unit_raw",
+        "start",
+        "end",
+        "period_kind",
+        "accession_number",
+        "filed",
+        "fiscal_year",
+        "fiscal_period",
+        "form",
+        "frame",
+        "filing"
+      ],
+      "additionalProperties": false
+    },
+    "concept_result": {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "type": "string",
+          "const": "moai.sec.company-concept.v1"
+        },
+        "provider": {
+          "type": "string",
+          "const": "SEC"
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "source_as_of": {
+          "type": "null"
+        },
+        "rights": {
+          "type": "string",
+          "const": "pending"
+        },
+        "identity_status": {
+          "type": "string",
+          "const": "cik_matched"
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "warnings": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "cik": {
+              "type": "string",
+              "pattern": "^\\d{10}$"
+            },
+            "taxonomy": {
+              "type": "string",
+              "enum": [
+                "us-gaap",
+                "ifrs-full"
+              ]
+            },
+            "concept": {
+              "type": "string",
+              "enum": [
+                "Revenues",
+                "RevenueFromContractWithCustomerExcludingAssessedTax",
+                "NetIncomeLoss",
+                "Assets",
+                "Liabilities",
+                "StockholdersEquity",
+                "CashAndCashEquivalentsAtCarryingValue",
+                "NetCashProvidedByUsedInOperatingActivities",
+                "PaymentsToAcquirePropertyPlantAndEquipment",
+                "EarningsPerShareDiluted",
+                "WeightedAverageNumberOfDilutedSharesOutstanding",
+                "CommonStockSharesOutstanding",
+                "OperatingIncomeLoss",
+                "WeightedAverageNumberOfSharesOutstandingBasic",
+                "NetIncomeLossAvailableToCommonStockholdersBasic",
+                "ProfitLoss",
+                "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+                "ShortTermBorrowings",
+                "LongTermDebtCurrent",
+                "LongTermDebtNoncurrent",
+                "LongTermDebt",
+                "LongTermDebtAndCapitalLeaseObligationsCurrent",
+                "LongTermDebtAndCapitalLeaseObligations",
+                "LongTermDebtAndCapitalLeaseObligationsIncludingCurrentMaturities",
+                "CommercialPaper",
+                "PaymentsToAcquireIntangibleAssets",
+                "Revenue",
+                "Equity",
+                "CashAndCashEquivalents",
+                "ProfitLossFromOperatingActivities",
+                "OperatingProfitLossOperating",
+                "WeightedAverageShares",
+                "AdjustedWeightedAverageShares",
+                "ProfitLossAttributableToOrdinaryEquityHoldersOfParentEntity",
+                "ProfitLossAttributableToOwnersOfParent",
+                "EquityAttributableToOwnersOfParent",
+                "Borrowings",
+                "CurrentBorrowingsAndCurrentPortionOfNoncurrentBorrowings",
+                "CurrentPortionOfLongtermBorrowings",
+                "ShorttermBorrowings",
+                "LongtermBorrowings",
+                "CashFlowsFromUsedInOperatingActivities",
+                "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+                "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities"
+              ]
+            },
+            "max_facts": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "cik",
+            "taxonomy",
+            "concept",
+            "max_facts"
+          ],
+          "additionalProperties": false
+        },
+        "entity_name": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "taxonomy": {
+          "type": "string",
+          "enum": [
+            "us-gaap",
+            "ifrs-full"
+          ]
+        },
+        "concept": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "facts": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "unit_raw": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9_/-]{0,79}$"
+              },
+              "numeric_lexeme": {
+                "type": "string",
+                "maxLength": 200,
+                "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$"
+              },
+              "start": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "end": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "accession_number": {
+                "type": "string",
+                "pattern": "^\\d{10}-\\d{2}-\\d{6}$"
+              },
+              "filed": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "fiscal_year": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1900,
+                    "maximum": 9999
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fiscal_period": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 10
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "form": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30
+              },
+              "frame": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 60
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "period_kind": {
+                "type": "string",
+                "enum": [
+                  "duration",
+                  "instant"
+                ]
+              },
+              "accounting_basis": {
+                "type": "null"
+              },
+              "canonical_metric": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "unit_raw",
+              "numeric_lexeme",
+              "start",
+              "end",
+              "accession_number",
+              "filed",
+              "fiscal_year",
+              "fiscal_period",
+              "form",
+              "frame",
+              "period_kind",
+              "accounting_basis",
+              "canonical_metric"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "total_fact_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "selection": {
+          "type": "string",
+          "const": "provider_unit_and_row_order_first_n"
+        }
+      },
+      "required": [
+        "contract",
+        "provider",
+        "origin",
+        "received_at",
+        "source_as_of",
+        "rights",
+        "identity_status",
+        "source_url",
+        "warnings",
+        "request",
+        "entity_name",
+        "taxonomy",
+        "concept",
+        "label",
+        "facts",
+        "total_fact_count",
+        "truncated",
+        "selection"
+      ],
+      "additionalProperties": false
+    },
+    "submissions_result": {
+      "type": "object",
+      "properties": {
+        "contract": {
+          "type": "string",
+          "const": "moai.sec.submissions.v1"
+        },
+        "provider": {
+          "type": "string",
+          "const": "SEC"
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "source_as_of": {
+          "type": "null"
+        },
+        "rights": {
+          "type": "string",
+          "const": "pending"
+        },
+        "identity_status": {
+          "type": "string",
+          "const": "cik_matched"
+        },
+        "source_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "warnings": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "cik": {
+              "type": "string",
+              "pattern": "^\\d{10}$"
+            },
+            "max_filings": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "cik",
+            "max_filings"
+          ],
+          "additionalProperties": false
+        },
+        "entity_name": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "tickers": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 30
+          }
+        },
+        "exchanges": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "filings": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession_number": {
+                "type": "string",
+                "pattern": "^\\d{10}-\\d{2}-\\d{6}$"
+              },
+              "filing_date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "report_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "acceptance_datetime": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "form": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30
+              },
+              "primary_document": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "primary_doc_description": {
+                "type": "string",
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "accession_number",
+              "filing_date",
+              "report_date",
+              "acceptance_datetime",
+              "form",
+              "primary_document",
+              "primary_doc_description"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "recent_filing_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "omitted_recent_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "historical_file_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "completeness": {
+          "type": "string",
+          "const": "recent_subset_historical_files_not_fetched"
+        }
+      },
+      "required": [
+        "contract",
+        "provider",
+        "origin",
+        "received_at",
+        "source_as_of",
+        "rights",
+        "identity_status",
+        "source_url",
+        "warnings",
+        "request",
+        "entity_name",
+        "tickers",
+        "exchanges",
+        "filings",
+        "recent_filing_count",
+        "omitted_recent_count",
+        "historical_file_count",
+        "completeness"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "requested_role",
+    "cutoff",
+    "calendar_guard",
+    "selector",
+    "concept_result",
+    "submissions_result"
+  ],
+  "additionalProperties": false,
+  "$comment": "Structure only. JSON Schema omits runtime refinements, hostile-object guards, exact joins/calendar/receipt checks, DART reconstruction and snapshot hashes. Use selectSecFinancialEvidence/selectDartFinancialEvidence; persisted candidates MUST pass validateFinancialEvidenceCandidate."
+}

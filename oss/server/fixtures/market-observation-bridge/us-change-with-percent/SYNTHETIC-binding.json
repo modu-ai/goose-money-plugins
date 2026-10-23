@@ -1,0 +1,172 @@
+{
+  "contract": "moai.market.observation-binding.v1",
+  "policy": "us_equity_change",
+  "entry_id": "synthetic-us_equity_change",
+  "candidate_sha256": "c9e1e490ade4d370b837ff54f6eba20a562bc795b1ecac8babb018ec7170d955",
+  "instrument": {
+    "security_id": "SYNTHETIC:security:us_equity_change",
+    "symbol": "SYNTH",
+    "instrument_kind": "equity",
+    "venue": "SYNTHETIC:XNAS",
+    "share_class": "SYNTHETIC:common",
+    "share_unit": "one_share",
+    "split_basis": "SYNTHETIC:current-share-unadjusted"
+  },
+  "identity": {
+    "issuer_id": "SYNTHETIC:issuer:us_equity_change",
+    "listing_id": "SYNTHETIC:listing:us_equity_change",
+    "provider_symbol": "SYNTH",
+    "provider_market": "NAS"
+  },
+  "price_basis": "unadjusted_per_current_share",
+  "market_state": "regular_open",
+  "context": {
+    "session_id": "SYNTHETIC:2026-10-22",
+    "session_type": "regular",
+    "reference_id": "SYNTHETIC:unadjusted-reference",
+    "freshness_policy": {
+      "policy_id": "synthetic-private-report-freshness",
+      "max_age_seconds": {
+        "market.last": "10",
+        "market.previous_close": "172800",
+        "market.provider_change_pct": "10"
+      }
+    },
+    "previous_session_id": "SYNTHETIC:2026-10-21",
+    "previous_close_at": "2026-10-21T20:00:00Z",
+    "independent_percent_assertion": {
+      "assertion_id": "synthetic-percent-independence",
+      "provider_percent_independent_of_local_calculation": true,
+      "previous_close_independently_supplied": true
+    },
+    "provider_rounding_policy": {
+      "policy_id": "synthetic-pct-rounding",
+      "decimal_places": 2,
+      "mode": "half_even",
+      "scope": "percent_value_after_scale"
+    }
+  },
+  "valuation_basis": "regular_last_vs_official_previous_close",
+  "quote_pair": null,
+  "source_artifact_id": "original-body",
+  "document_id": "SYNTHETIC:original-response",
+  "observations": [
+    {
+      "role": "market.last",
+      "source_at": "2026-10-22T14:30:00.123456789123Z",
+      "published_at": "2026-10-22T14:30:00.123456789124Z",
+      "available_at": "2026-10-22T14:30:01.123456789124Z",
+      "observation_session_id": "SYNTHETIC:2026-10-22",
+      "unit": "money_per_share",
+      "scale": "1",
+      "currency": "USD",
+      "numeric_semantics": "raw_decimal_times_explicit_scale",
+      "revision": {
+        "revision_id": "SYNTHETIC:original",
+        "status": "original",
+        "finality": "final_current_at_cutoff",
+        "evidence_ref": "review-record"
+      }
+    },
+    {
+      "role": "market.previous_close",
+      "source_at": "2026-10-21T20:00:00Z",
+      "published_at": "2026-10-21T20:00:00.000000000001Z",
+      "available_at": "2026-10-22T14:30:01.123456789124Z",
+      "observation_session_id": "SYNTHETIC:2026-10-21",
+      "unit": "money_per_share",
+      "scale": "1",
+      "currency": "USD",
+      "numeric_semantics": "raw_decimal_times_explicit_scale",
+      "revision": {
+        "revision_id": "SYNTHETIC:original",
+        "status": "original",
+        "finality": "final_current_at_cutoff",
+        "evidence_ref": "review-record"
+      }
+    },
+    {
+      "role": "market.provider_change_pct",
+      "source_at": "2026-10-22T14:30:00.123456789123Z",
+      "published_at": "2026-10-22T14:30:00.123456789124Z",
+      "available_at": "2026-10-22T14:30:01.123456789124Z",
+      "observation_session_id": "SYNTHETIC:2026-10-22",
+      "unit": "percent",
+      "scale": "1",
+      "currency": "USD",
+      "numeric_semantics": "raw_decimal_times_explicit_scale",
+      "revision": {
+        "revision_id": "SYNTHETIC:original",
+        "status": "original",
+        "finality": "final_current_at_cutoff",
+        "evidence_ref": "review-record"
+      }
+    }
+  ],
+  "rights": {
+    "purpose": "private_analysis",
+    "processing_allowed": true,
+    "portable_export_allowed": false,
+    "assertion_id": "synthetic-private-analysis-only",
+    "evidence_ref": "review-record",
+    "valid_from": "2026-10-21T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "evidence": {
+    "original_bytes_dto_linkage": [
+      "original-body",
+      "review-record"
+    ],
+    "identity": [
+      "review-record"
+    ],
+    "field_semantics": [
+      "review-record"
+    ],
+    "units_currency_scales": [
+      "review-record"
+    ],
+    "observation_reference_sessions": [
+      "review-record"
+    ],
+    "adjustment_basis": [
+      "review-record"
+    ],
+    "publication_availability": [
+      "review-record"
+    ],
+    "market_state": [
+      "review-record"
+    ],
+    "quote_firmness_simultaneity": [
+      "review-record"
+    ],
+    "finality_revision": [
+      "review-record"
+    ],
+    "rights": [
+      "review-record"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "original-body",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture",
+      "sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+      "locator": "synthetic://market-observation/original-body",
+      "snapshot": {
+        "source_dto_sha256": "60d65e54373fc65f5c4d59724a90e3ecf0fbb584e898a864d72337bdff7c614f",
+        "received_at": "2026-10-22T14:30:01.123456789123Z"
+      }
+    },
+    {
+      "id": "review-record",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture",
+      "sha256": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+      "locator": "synthetic://market-observation/review-record",
+      "snapshot": null
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+# Local inputs and project documents are preserved, never published.
+/project-docs/
+/moai-atp-0.1.0-rc.23/
+/review/
+/tools/
+/report-templates/
+**/node_modules/
+**/dist/
+**/__pycache__/
+**/.runtime/
+**/.venv/
+.DS_Store
+.goose/
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+*.log
+*.zip
+*.tar.xz

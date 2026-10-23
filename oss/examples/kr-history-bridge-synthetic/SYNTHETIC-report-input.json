@@ -1,0 +1,294 @@
+{
+  "contract": "canonical-history/1.0",
+  "cutoff": "2026-10-22T00:00:00.123456789012345678903Z",
+  "request": {
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21"
+  },
+  "histories": {
+    "subject": {
+      "contract": "canonical-history/1.0",
+      "history_id": "SYNTHETIC-KR-DAILY",
+      "data_kind": "synthetic",
+      "context": {
+        "identity": {
+          "instrument_id": "SYNTHETIC-KR-COMMON",
+          "issuer_id": "SYNTHETIC-KR-ISSUER",
+          "venue": "SYNTHETIC-KR-VENUE",
+          "asset_class": "equity",
+          "share_class": "common",
+          "contract_id": "not_applicable"
+        },
+        "units": {
+          "price_unit": "money_per_share",
+          "currency": "KRW",
+          "price_scale": "1",
+          "volume_unit": "shares",
+          "volume_scale": "1"
+        },
+        "session": {
+          "calendar_id": "SYNTHETIC-EXPLICIT-NOT-EXCHANGE-CALENDAR",
+          "timezone": "Asia/Seoul",
+          "session_id": "SYNTHETIC-REGULAR",
+          "interval": "daily",
+          "date_basis": "trade_date",
+          "calendar_verified": true,
+          "calendar_evidence_ref": "synthetic:session_calendar",
+          "coverage_start": "2026-10-16",
+          "coverage_end": "2026-10-22",
+          "coverage_complete": true,
+          "expected_sessions": [
+            "2026-10-16",
+            "2026-10-19",
+            "2026-10-20",
+            "2026-10-21"
+          ]
+        },
+        "basis": {
+          "price_kind": "price_level",
+          "return_policy": "price_return",
+          "adjustment": "unadjusted",
+          "adjustment_id": "SYNTHETIC-NO-ACTION-BASIS",
+          "adjustment_asof": "2026-10-21T09:00:00Z",
+          "actions_coverage_verified": true,
+          "actions_evidence_ref": "synthetic:no_actions",
+          "volume_adjustment": "unadjusted",
+          "revision_policy": "final_current_at_cutoff",
+          "price_definition": "official_close",
+          "allow_negative_prices": false,
+          "roll_policy": "not_applicable"
+        }
+      },
+      "points": [
+        {
+          "fact_id": "moai:kr-synthetic:a73675412322191f7dd260db82bc663f5a9307109f87947b75e2e2d093b182ce",
+          "trade_date": "2026-10-16",
+          "context_sha256": "ec1b0061520c72ceb27a71d580f11f9c279496cbf28a86e4245373ec1da1938f",
+          "point_kind": "date",
+          "observed_at": null,
+          "session_close_at": "2026-10-16T15:30:00+09:00",
+          "published_at": "2026-10-16T15:31:00+09:00",
+          "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+          "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "r1",
+            "evidence_ref": "synthetic:finality_revision",
+            "current_at_cutoff_verified": true
+          },
+          "provenance": {
+            "source_id": "KIS-SYNTHETIC-FIXTURE",
+            "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+            "locator": "output2[2]:2026-10-16",
+            "revision_id": "r1",
+            "source_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+            "selector_id": "kis.kr-daily.synthetic.named-ohlcv/1",
+            "data_kind": "synthetic",
+            "semantic_binding_verified": true,
+            "semantic_evidence_ref": "synthetic:field_semantics",
+            "identity_verified": true,
+            "identity_evidence_ref": "synthetic:identity",
+            "unit_verified": true,
+            "unit_evidence_ref": "synthetic:units",
+            "currency_verified": true,
+            "currency_evidence_ref": "synthetic:currency",
+            "scale_verified": true,
+            "scale_evidence_ref": "synthetic:scales",
+            "time_verified": true,
+            "time_evidence_ref": "synthetic:publication_availability"
+          },
+          "rights": {
+            "state": "allowed",
+            "use": "local_report",
+            "evidence_ref": "synthetic:rights",
+            "expires_at": "2026-10-23T00:00:00Z"
+          },
+          "values": {
+            "open": {
+              "state": "available",
+              "value": "100",
+              "missing_reason": null
+            },
+            "high": {
+              "state": "available",
+              "value": "102",
+              "missing_reason": null
+            },
+            "low": {
+              "state": "available",
+              "value": "98",
+              "missing_reason": null
+            },
+            "close": {
+              "state": "available",
+              "value": "100.125",
+              "missing_reason": null
+            },
+            "volume": {
+              "state": "available",
+              "value": "1000",
+              "missing_reason": null
+            }
+          }
+        },
+        {
+          "fact_id": "moai:kr-synthetic:64e25b762b08a0575275c60e233eeed22ed505f8e5afcfd91ae7a5e3e3af3d75",
+          "trade_date": "2026-10-19",
+          "context_sha256": "ec1b0061520c72ceb27a71d580f11f9c279496cbf28a86e4245373ec1da1938f",
+          "point_kind": "date",
+          "observed_at": null,
+          "session_close_at": "2026-10-19T15:30:00+09:00",
+          "published_at": "2026-10-19T15:31:00+09:00",
+          "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+          "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "r1",
+            "evidence_ref": "synthetic:finality_revision",
+            "current_at_cutoff_verified": true
+          },
+          "provenance": {
+            "source_id": "KIS-SYNTHETIC-FIXTURE",
+            "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+            "locator": "output2[1]:2026-10-19",
+            "revision_id": "r1",
+            "source_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+            "selector_id": "kis.kr-daily.synthetic.named-ohlcv/1",
+            "data_kind": "synthetic",
+            "semantic_binding_verified": true,
+            "semantic_evidence_ref": "synthetic:field_semantics",
+            "identity_verified": true,
+            "identity_evidence_ref": "synthetic:identity",
+            "unit_verified": true,
+            "unit_evidence_ref": "synthetic:units",
+            "currency_verified": true,
+            "currency_evidence_ref": "synthetic:currency",
+            "scale_verified": true,
+            "scale_evidence_ref": "synthetic:scales",
+            "time_verified": true,
+            "time_evidence_ref": "synthetic:publication_availability"
+          },
+          "rights": {
+            "state": "allowed",
+            "use": "local_report",
+            "evidence_ref": "synthetic:rights",
+            "expires_at": "2026-10-23T00:00:00Z"
+          },
+          "values": {
+            "open": {
+              "state": "unavailable",
+              "value": null,
+              "missing_reason": "provider_blank"
+            },
+            "high": {
+              "state": "available",
+              "value": "103",
+              "missing_reason": null
+            },
+            "low": {
+              "state": "available",
+              "value": "99",
+              "missing_reason": null
+            },
+            "close": {
+              "state": "available",
+              "value": "101.125",
+              "missing_reason": null
+            },
+            "volume": {
+              "state": "available",
+              "value": "2000",
+              "missing_reason": null
+            }
+          }
+        },
+        {
+          "fact_id": "moai:kr-synthetic:c3ae2bf8326b75fa28ec3c0408e9163a87236b8368ce217d5cb8f7413849a927",
+          "trade_date": "2026-10-21",
+          "context_sha256": "ec1b0061520c72ceb27a71d580f11f9c279496cbf28a86e4245373ec1da1938f",
+          "point_kind": "date",
+          "observed_at": null,
+          "session_close_at": "2026-10-21T15:30:00+09:00",
+          "published_at": "2026-10-21T15:31:00+09:00",
+          "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+          "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "r1",
+            "evidence_ref": "synthetic:finality_revision",
+            "current_at_cutoff_verified": true
+          },
+          "provenance": {
+            "source_id": "KIS-SYNTHETIC-FIXTURE",
+            "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+            "locator": "output2[0]:2026-10-21",
+            "revision_id": "r1",
+            "source_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+            "selector_id": "kis.kr-daily.synthetic.named-ohlcv/1",
+            "data_kind": "synthetic",
+            "semantic_binding_verified": true,
+            "semantic_evidence_ref": "synthetic:field_semantics",
+            "identity_verified": true,
+            "identity_evidence_ref": "synthetic:identity",
+            "unit_verified": true,
+            "unit_evidence_ref": "synthetic:units",
+            "currency_verified": true,
+            "currency_evidence_ref": "synthetic:currency",
+            "scale_verified": true,
+            "scale_evidence_ref": "synthetic:scales",
+            "time_verified": true,
+            "time_evidence_ref": "synthetic:publication_availability"
+          },
+          "rights": {
+            "state": "allowed",
+            "use": "local_report",
+            "evidence_ref": "synthetic:rights",
+            "expires_at": "2026-10-23T00:00:00Z"
+          },
+          "values": {
+            "open": {
+              "state": "available",
+              "value": "102",
+              "missing_reason": null
+            },
+            "high": {
+              "state": "available",
+              "value": "105",
+              "missing_reason": null
+            },
+            "low": {
+              "state": "available",
+              "value": "101",
+              "missing_reason": null
+            },
+            "close": {
+              "state": "available",
+              "value": "103.125",
+              "missing_reason": null
+            },
+            "volume": {
+              "state": "available",
+              "value": "9007199254740993",
+              "missing_reason": null
+            }
+          }
+        }
+      ]
+    }
+  },
+  "options": {
+    "sma_windows": [
+      2,
+      3
+    ],
+    "volume_direction": {
+      "rule": "neutral",
+      "evidence_ref": "synthetic:neutral-volume",
+      "disclosure": "Neutral quantity bars only."
+    },
+    "aggregation_windows": []
+  }
+}

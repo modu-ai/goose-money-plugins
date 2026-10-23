@@ -1,0 +1,39 @@
+{
+  "contract": "moai.instrument.search.v1",
+  "request": {
+    "query": "Synthetic",
+    "limit": 10
+  },
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_received_at": "2026-10-22T00:00:00Z",
+  "source_as_of": null,
+  "source_url": "https://example.invalid/synthetic-directory",
+  "coverage": "synthetic examples only",
+  "rights_status": "pending",
+  "resolution_status": "single_candidate_not_confirmed",
+  "match_count": 1,
+  "truncated": false,
+  "candidates": [
+    {
+      "instrument_ref": "SYN:000660",
+      "symbol": "000660",
+      "name": "Synthetic Company",
+      "market": "KR",
+      "asset_class": "equity",
+      "exchange": null,
+      "currency": null,
+      "cik": null,
+      "corp_code": null,
+      "aliases": [],
+      "source_ref": "synthetic-entry",
+      "match_basis": "name_substring",
+      "identity_status": "directory_candidate_not_confirmed"
+    }
+  ],
+  "warnings": [
+    "Search only covers the supplied directory; no match does not prove nonexistence.",
+    "Directory candidates require independent identity, current listing/classification and source-rights verification. Never auto-select an ambiguous candidate.",
+    "No network master download, account lookup or credential handling occurs."
+  ]
+}

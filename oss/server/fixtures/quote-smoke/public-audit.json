@@ -1,0 +1,36 @@
+{
+  "contract": "moai.stock.quote-smoke-packet.v1",
+  "origin": "synthetic",
+  "request": {
+    "symbol": "000660",
+    "board": "J"
+  },
+  "report_cutoff": "2026-10-22T01:00:00.000000001Z",
+  "source": {
+    "url": "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price",
+    "method": "GET",
+    "response_status": 200,
+    "received_at": "2026-10-22T01:00:00.000000001Z",
+    "sha256": "b59bff786f363bc4dc594b647d102b1e6fed333f014b3b0a974c8c3fba0ee2c5",
+    "hash_scope": "utf8_decoded_response_text_not_original_wire_bytes"
+  },
+  "audit": {
+    "normalized_partial": false,
+    "transport_invocations": 1,
+    "automatic_retries": 0,
+    "credentials_loaded_by_harness": false,
+    "token_issuance": false,
+    "operational_server_configuration_changed": false,
+    "read_gate": "trusted_host_attested_current_not_independently_authenticated",
+    "source_assurance": "injected_adapter_capture_not_independent_transport_authentication",
+    "html_comparison": "not_run",
+    "full_actual_report_complete": false
+  },
+  "warnings": [
+    "One quote capture is not a full actual financial report or independent source authentication.",
+    "Source instant, identity and rights limitations in the DTO and renderer must remain visible.",
+    "Only a separately approved existing ephemeral credential route and current entitlement check may enable an actual run.",
+    "No credentials, request headers or URL queries are included in audit fields; keep the raw public response out of logs and review it before sharing."
+  ],
+  "actual_network_requests": 0
+}

@@ -1,0 +1,40 @@
+{
+  "source": "opendart",
+  "documentation": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001",
+  "status": "ok",
+  "provider_status": "000",
+  "request": {
+    "corp_code": "00126380",
+    "bgn_de": "20260101",
+    "end_de": "20261022",
+    "last_reprt_at": "N",
+    "sort": "date",
+    "sort_mth": "desc",
+    "page_no": 1,
+    "page_count": 1
+  },
+  "provenance": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T01:00:00Z"
+  },
+  "total_count": 2,
+  "total_page": 2,
+  "next_page_no": 2,
+  "has_more": true,
+  "rows": [
+    {
+      "raw": {
+        "corp_cls": "Y",
+        "corp_name": "Synthetic Corp",
+        "corp_code": "00126380",
+        "stock_code": "005930",
+        "report_nm": "[Synthetic correction]annual report",
+        "rcept_no": "20260301000001",
+        "flr_nm": "Synthetic Filer",
+        "rcept_dt": "20260301",
+        "rm": "정"
+      },
+      "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260301000001"
+    }
+  ]
+}

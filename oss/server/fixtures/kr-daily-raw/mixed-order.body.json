@@ -1,0 +1,39 @@
+{
+  "rt_cd": "0",
+  "msg_cd": "SYNTHETIC_PRIVATE_CODE",
+  "msg1": "SYNTHETIC_PRIVATE_MESSAGE_NOT_PUBLIC",
+  "output1": {
+    "unprojected": "SYNTHETIC_PRIVATE_HEADER"
+  },
+  "output2": [
+    {
+      "stck_bsop_date": "20261021",
+      "stck_clpr": "000123.00",
+      "stck_oprc": "-0.00",
+      "stck_hgpr": "123.4",
+      "stck_lwpr": "001.00",
+      "acml_vol": "999999999999999999",
+      "acml_tr_pbmn": "000000000000000001",
+      "flng_cls_code": "00",
+      "prtt_rate": "0001.000",
+      "mod_yn": "N",
+      "revl_issu_reas": "01"
+    },
+    {
+      "stck_bsop_date": "20261019",
+      "stck_clpr": "",
+      "stck_oprc": "",
+      "stck_hgpr": "",
+      "stck_lwpr": "",
+      "acml_vol": "",
+      "acml_tr_pbmn": "",
+      "flng_cls_code": "",
+      "prtt_rate": "",
+      "mod_yn": "",
+      "revl_issu_reas": ""
+    },
+    {
+      "stck_bsop_date": "20261020"
+    }
+  ]
+}

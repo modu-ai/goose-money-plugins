@@ -1,0 +1,42 @@
+{
+  "fixture_metadata": {
+    "origin": "synthetic_fixture",
+    "fixture_class": "official-schema-shaped-synthetic",
+    "not_a_kis_response": true,
+    "purpose": "test the documented KIS-039 field names, String lengths, date-only handling, blank fields and blocked canonical projection"
+  },
+  "response": {
+    "rt_cd": "0",
+    "msg_cd": "00000",
+    "msg1": "synthetic fixture only",
+    "output1": {},
+    "output2": [
+      {
+        "stck_bsop_date": "20261020",
+        "stck_clpr": "12345",
+        "stck_oprc": "12100",
+        "stck_hgpr": "12400",
+        "stck_lwpr": "12050",
+        "acml_vol": "987654",
+        "acml_tr_pbmn": "12345678900",
+        "flng_cls_code": "00",
+        "prtt_rate": "1.0000",
+        "mod_yn": "N",
+        "revl_issu_reas": "00"
+      },
+      {
+        "stck_bsop_date": "20261021",
+        "stck_clpr": "",
+        "stck_oprc": "",
+        "stck_hgpr": "",
+        "stck_lwpr": "",
+        "acml_vol": "0",
+        "acml_tr_pbmn": "0",
+        "flng_cls_code": "00",
+        "prtt_rate": "",
+        "mod_yn": "Y",
+        "revl_issu_reas": "00"
+      }
+    ]
+  }
+}

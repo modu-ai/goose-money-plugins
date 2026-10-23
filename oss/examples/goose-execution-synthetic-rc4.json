@@ -1,0 +1,80 @@
+{
+  "contract": "moai.goose.execution.v1",
+  "run_id": "synthetic-rc4",
+  "execution_mode": "sequential",
+  "host_execution_verified": false,
+  "host_execution_attested": false,
+  "single_writer": "goose",
+  "report_rendered": false,
+  "factual_accuracy_verified": false,
+  "records": [
+    {
+      "role_id": "company-analysis",
+      "skill": "references/roles/company-analysis/SKILL.md",
+      "phase": "analysis",
+      "requested_scope": "Offline fixture only, not actual financial research",
+      "input_refs": [
+        "synthetic-fixture"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T00:00:00Z",
+      "started_at": "2026-10-22T00:00:00Z",
+      "completed_at": "2026-10-22T00:00:00Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-rc4",
+        "role_id": "company-analysis",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic adapter callback only; no model, actual source or native child launched."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    },
+    {
+      "role_id": "disclosure-event",
+      "skill": "references/roles/disclosure-event/SKILL.md",
+      "phase": "analysis",
+      "requested_scope": "Offline fixture only, not actual financial research",
+      "input_refs": [
+        "synthetic-fixture"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T00:00:00Z",
+      "started_at": "2026-10-22T00:00:00Z",
+      "completed_at": "2026-10-22T00:00:00Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-rc4",
+        "role_id": "disclosure-event",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic adapter callback only; no model, actual source or native child launched."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    }
+  ],
+  "warnings": [
+    "Execution adapter does not install/launch a host by itself. Native execution is host-attested from validated supplied receipts, not independently verified by this library. Caller-supplied origin labels are a trusted host boundary, not proof by themselves.",
+    "Runner must enforce actual tool capabilities and data egress; result auditing is not a security sandbox. Accounts/trading/portfolio role are excluded."
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "contract": "moai.us-daily.history-binding.v1",
+  "history_id": "synthetic:US-daily:1",
+  "cutoff": "2026-10-22T00:00:00.123456790Z",
+  "request": {
+    "start_date": "2026-10-20",
+    "end_date": "2026-10-21"
+  },
+  "provider_identity": {
+    "symbol": "SYNTH",
+    "exchange": "NAS"
+  },
+  "context": {
+    "identity": {
+      "instrument_id": "synthetic:equity:1",
+      "issuer_id": "synthetic:issuer:1",
+      "venue": "SYNTHETIC-NOT-A-VENUE",
+      "asset_class": "equity",
+      "share_class": "synthetic:common",
+      "contract_id": "not_applicable"
+    },
+    "units": {
+      "price_unit": "money_per_share",
+      "currency": "USD",
+      "price_scale": "1",
+      "volume_unit": "shares",
+      "volume_scale": "1"
+    },
+    "session": {
+      "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+      "timezone": "America/New_York",
+      "session_id": "synthetic:regular",
+      "interval": "daily",
+      "date_basis": "trade_date",
+      "calendar_verified": true,
+      "calendar_evidence_ref": "review",
+      "coverage_start": "2026-10-20",
+      "coverage_end": "2026-10-21",
+      "coverage_complete": true,
+      "expected_sessions": [
+        "2026-10-20",
+        "2026-10-21"
+      ]
+    },
+    "basis": {
+      "price_kind": "price_level",
+      "return_policy": "price_return",
+      "adjustment": "unadjusted",
+      "adjustment_id": "synthetic:unadjusted",
+      "adjustment_asof": "2026-10-21T20:00:00Z",
+      "actions_coverage_verified": true,
+      "actions_evidence_ref": "review",
+      "volume_adjustment": "unadjusted",
+      "revision_policy": "final_current_at_cutoff",
+      "price_definition": "official_close",
+      "allow_negative_prices": false,
+      "roll_policy": "not_applicable"
+    }
+  },
+  "document_id": "synthetic:source-page:1",
+  "source_artifact_id": "source-page",
+  "selector": {
+    "id": "kis.us-daily.named-ohlcv/1",
+    "date": "xymd",
+    "open": "open",
+    "high": "high",
+    "low": "low",
+    "close": "clos",
+    "volume": "tvol"
+  },
+  "publication_basis": "explicit_publication_evidence_not_receipt_or_date_substitution",
+  "coverage": "selected_single_page_not_complete_provider_collection",
+  "rights": {
+    "use": "local_report",
+    "evidence_ref": "review",
+    "valid_from": "2026-10-01T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "evidence": {
+    "source_authenticity": [
+      "source-page"
+    ],
+    "identity": [
+      "review"
+    ],
+    "field_semantics": [
+      "review"
+    ],
+    "units": [
+      "review"
+    ],
+    "currency": [
+      "review"
+    ],
+    "scales": [
+      "review"
+    ],
+    "session_calendar": [
+      "review"
+    ],
+    "adjustment_actions": [
+      "review"
+    ],
+    "finality_revision": [
+      "review"
+    ],
+    "publication_availability": [
+      "review"
+    ],
+    "coverage": [
+      "review"
+    ],
+    "rights": [
+      "review"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "source-page",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture",
+      "sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+      "locator": "synthetic://invented/source-page",
+      "snapshot": {
+        "dto_sha256": "1fa3f30b27cc04af8104193e7e429e5ba3e0787d8426ea98fdfd9fa067efcc95",
+        "received_at": "2026-10-22T00:00:00.123456789Z"
+      }
+    },
+    {
+      "id": "review",
+      "data_kind": "synthetic",
+      "digest_kind": "review_record",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "locator": "synthetic://invented/all-independent-axis-assertions",
+      "snapshot": null
+    }
+  ],
+  "points": [
+    {
+      "row_index": 0,
+      "trade_date": "2026-10-21",
+      "session_close_at": "2026-10-21T16:00:00-04:00",
+      "published_at": "2026-10-21T20:01:00Z",
+      "available_at": "2026-10-22T00:00:00.123456790Z",
+      "finality": "final",
+      "revision": {
+        "status": "original",
+        "revision_id": "synthetic:r1",
+        "evidence_ref": "review"
+      }
+    },
+    {
+      "row_index": 1,
+      "trade_date": "2026-10-20",
+      "session_close_at": "2026-10-20T16:00:00-04:00",
+      "published_at": "2026-10-20T20:01:00Z",
+      "available_at": "2026-10-22T00:00:00.123456790Z",
+      "finality": "final",
+      "revision": {
+        "status": "original",
+        "revision_id": "synthetic:r1",
+        "evidence_ref": "review"
+      }
+    }
+  ]
+}

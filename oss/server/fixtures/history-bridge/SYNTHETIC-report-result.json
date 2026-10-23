@@ -1,0 +1,1619 @@
+{
+  "version": "canonical-history-semantics/rc5.1",
+  "actual_source_authenticated": false,
+  "source_authentication_performed": false,
+  "verified_live_provider_bindings": 0,
+  "actual_provider_calls": 0,
+  "results": {
+    "price_relative": {
+      "id": "price_relative",
+      "status": "computed",
+      "records": [
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "subject",
+          "x_kind": "date",
+          "x_value": "2026-10-20",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "100",
+          "exact_fraction": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic"
+        },
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "subject",
+          "x_kind": "date",
+          "x_value": "2026-10-21",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "101",
+          "exact_fraction": {
+            "numerator": "101",
+            "denominator": "1"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+            "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic"
+        }
+      ],
+      "reasons": [],
+      "connect_nulls": false,
+      "actual_source_authenticated": false,
+      "verified_live_provider_bindings": 0,
+      "context": [
+        {
+          "identity": {
+            "instrument_id": "synthetic:equity:1",
+            "issuer_id": "synthetic:issuer:1",
+            "venue": "SYNTHETIC-NOT-A-VENUE",
+            "asset_class": "equity",
+            "share_class": "synthetic:common",
+            "contract_id": "not_applicable"
+          },
+          "units": {
+            "price_unit": "money_per_share",
+            "currency": "USD",
+            "price_scale": "1",
+            "volume_unit": "shares",
+            "volume_scale": "1"
+          },
+          "session": {
+            "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+            "timezone": "America/New_York",
+            "session_id": "synthetic:regular",
+            "interval": "daily",
+            "date_basis": "trade_date",
+            "calendar_verified": true,
+            "calendar_evidence_ref": "review",
+            "coverage_start": "2026-10-20",
+            "coverage_end": "2026-10-21",
+            "coverage_complete": true,
+            "expected_sessions": [
+              "2026-10-20",
+              "2026-10-21"
+            ]
+          },
+          "basis": {
+            "price_kind": "price_level",
+            "return_policy": "price_return",
+            "adjustment": "unadjusted",
+            "adjustment_id": "synthetic:unadjusted",
+            "adjustment_asof": "2026-10-21T20:00:00Z",
+            "actions_coverage_verified": true,
+            "actions_evidence_ref": "review",
+            "volume_adjustment": "unadjusted",
+            "revision_policy": "final_current_at_cutoff",
+            "price_definition": "official_close",
+            "allow_negative_prices": false,
+            "roll_policy": "not_applicable"
+          }
+        }
+      ],
+      "cutoff_basis": {
+        "whole_second_utc": "2026-10-22T00:00:00+00:00",
+        "fraction_of_second": "0.123456790"
+      },
+      "lineage": [
+        {
+          "history_id": "synthetic:US-daily:1",
+          "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+          "points": [
+            {
+              "trade_date": "2026-10-20",
+              "input_sha256": "35c40c31f1e708b5c60450dc0bdc38e5bb53f872bf176649326437fba0769b3e",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+                "trade_date": "2026-10-20",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-20T16:00:00-04:00",
+                "published_at": "2026-10-20T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[1]:20261020",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "98",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "100",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "1000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            },
+            {
+              "trade_date": "2026-10-21",
+              "input_sha256": "cacd7feb246af445819a728fc5605310d5ae6724ec7b76bf2bc3995c61958dc4",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436",
+                "trade_date": "2026-10-21",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-21T16:00:00-04:00",
+                "published_at": "2026-10-21T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[0]:20261021",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "100.000000000000000001",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "102",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "9007199254740993000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Conditional local deterministic math; upstream verification fields are supplied assertions, not authentication.",
+        "Provider RC5 histories are RAW ONLY. No raw-provider adapter, promotion, network access or live binding exists here.",
+        "No return forecast, causal explanation, ranking, outperformance conclusion or buy/sell recommendation is established.",
+        "Only R01.S01 price_relative and neutral volume are traced to the original chart plan. SMA/OHLCV/aggregation are additive capabilities."
+      ],
+      "missing_record_count": 0,
+      "unit": "index100",
+      "currency": "not_applicable",
+      "baseline_date": "2026-10-20",
+      "formula": "100 * close_t / close_first_common_valid",
+      "benchmark_status": "unavailable",
+      "benchmark_reason": {
+        "code": "history_not_supplied",
+        "detail": "History is not supplied; a snapshot is not historical evidence."
+      },
+      "comparison_conclusion": null,
+      "source_plan": "R01.S01 / price_relative",
+      "minimum_observations": 2,
+      "result_id": "history:92a1b143624a250ef419e2bd24855c45fe90e952788fab2ba1f65d066b34a2cf"
+    },
+    "sma": {
+      "id": "sma",
+      "status": "computed",
+      "records": [
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "sma_1",
+          "x_kind": "date",
+          "x_value": "2026-10-20",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "100",
+          "exact_fraction": {
+            "numerator": "100",
+            "denominator": "1"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic"
+        },
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "sma_1",
+          "x_kind": "date",
+          "x_value": "2026-10-21",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "101",
+          "exact_fraction": {
+            "numerator": "101",
+            "denominator": "1"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic"
+        },
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "sma_2",
+          "x_kind": "date",
+          "x_value": "2026-10-20",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": null,
+          "exact_fraction": null,
+          "decimal_policy": null,
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918"
+          ],
+          "missing_reason": "warmup_insufficient_sessions",
+          "data_kind": "synthetic"
+        },
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "sma_2",
+          "x_kind": "date",
+          "x_value": "2026-10-21",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "100.5",
+          "exact_fraction": {
+            "numerator": "201",
+            "denominator": "2"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+            "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic"
+        }
+      ],
+      "reasons": [],
+      "connect_nulls": false,
+      "actual_source_authenticated": false,
+      "verified_live_provider_bindings": 0,
+      "context": [
+        {
+          "identity": {
+            "instrument_id": "synthetic:equity:1",
+            "issuer_id": "synthetic:issuer:1",
+            "venue": "SYNTHETIC-NOT-A-VENUE",
+            "asset_class": "equity",
+            "share_class": "synthetic:common",
+            "contract_id": "not_applicable"
+          },
+          "units": {
+            "price_unit": "money_per_share",
+            "currency": "USD",
+            "price_scale": "1",
+            "volume_unit": "shares",
+            "volume_scale": "1"
+          },
+          "session": {
+            "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+            "timezone": "America/New_York",
+            "session_id": "synthetic:regular",
+            "interval": "daily",
+            "date_basis": "trade_date",
+            "calendar_verified": true,
+            "calendar_evidence_ref": "review",
+            "coverage_start": "2026-10-20",
+            "coverage_end": "2026-10-21",
+            "coverage_complete": true,
+            "expected_sessions": [
+              "2026-10-20",
+              "2026-10-21"
+            ]
+          },
+          "basis": {
+            "price_kind": "price_level",
+            "return_policy": "price_return",
+            "adjustment": "unadjusted",
+            "adjustment_id": "synthetic:unadjusted",
+            "adjustment_asof": "2026-10-21T20:00:00Z",
+            "actions_coverage_verified": true,
+            "actions_evidence_ref": "review",
+            "volume_adjustment": "unadjusted",
+            "revision_policy": "final_current_at_cutoff",
+            "price_definition": "official_close",
+            "allow_negative_prices": false,
+            "roll_policy": "not_applicable"
+          }
+        }
+      ],
+      "cutoff_basis": {
+        "whole_second_utc": "2026-10-22T00:00:00+00:00",
+        "fraction_of_second": "0.123456790"
+      },
+      "lineage": [
+        {
+          "history_id": "synthetic:US-daily:1",
+          "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+          "points": [
+            {
+              "trade_date": "2026-10-20",
+              "input_sha256": "35c40c31f1e708b5c60450dc0bdc38e5bb53f872bf176649326437fba0769b3e",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+                "trade_date": "2026-10-20",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-20T16:00:00-04:00",
+                "published_at": "2026-10-20T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[1]:20261020",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "98",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "100",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "1000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            },
+            {
+              "trade_date": "2026-10-21",
+              "input_sha256": "cacd7feb246af445819a728fc5605310d5ae6724ec7b76bf2bc3995c61958dc4",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436",
+                "trade_date": "2026-10-21",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-21T16:00:00-04:00",
+                "published_at": "2026-10-21T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[0]:20261021",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "100.000000000000000001",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "102",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "9007199254740993000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Conditional local deterministic math; upstream verification fields are supplied assertions, not authentication.",
+        "Provider RC5 histories are RAW ONLY. No raw-provider adapter, promotion, network access or live binding exists here.",
+        "No return forecast, causal explanation, ranking, outperformance conclusion or buy/sell recommendation is established.",
+        "Only R01.S01 price_relative and neutral volume are traced to the original chart plan. SMA/OHLCV/aggregation are additive capabilities."
+      ],
+      "missing_record_count": 1,
+      "unit": "money_per_share",
+      "currency": "USD",
+      "windows": [
+        1,
+        2
+      ],
+      "formula": "sum(last N contiguous expected-session closes, including current) / N",
+      "warmup": "full N sessions required; explicit prehistory may warm up requested range",
+      "gap_policy": "any missing expected close nulls entire window; no skip, forward fill or lookahead",
+      "source_plan": "additive capability; not a claimed R01 plan section",
+      "result_id": "history:000d2083a0994f35ead93bca45f5a0c5fe466e352ffe2b2e63e6ca18b8ca1dcb"
+    },
+    "ohlcv": {
+      "id": "ohlcv",
+      "status": "computed",
+      "records": [
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "ohlcv",
+          "x_kind": "date",
+          "x_value": "2026-10-20",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": null,
+          "exact_fraction": null,
+          "decimal_policy": null,
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic",
+          "ohlc": {
+            "open": {
+              "value": "99",
+              "exact_fraction": {
+                "numerator": "99",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            },
+            "high": {
+              "value": "101",
+              "exact_fraction": {
+                "numerator": "101",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            },
+            "low": {
+              "value": "98",
+              "exact_fraction": {
+                "numerator": "98",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            },
+            "close": {
+              "value": "100",
+              "exact_fraction": {
+                "numerator": "100",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            }
+          },
+          "close_only": {
+            "value": "100",
+            "exact_fraction": {
+              "numerator": "100",
+              "denominator": "1"
+            },
+            "decimal_policy": {
+              "precision": 50,
+              "rounding": "ROUND_HALF_EVEN",
+              "exact": true
+            }
+          },
+          "close_only_missing_reason": null,
+          "volume": {
+            "value": "1000",
+            "exact_fraction": {
+              "numerator": "1000",
+              "denominator": "1"
+            },
+            "decimal_policy": {
+              "precision": 50,
+              "rounding": "ROUND_HALF_EVEN",
+              "exact": true
+            }
+          },
+          "volume_missing_reason": null
+        },
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "ohlcv",
+          "x_kind": "date",
+          "x_value": "2026-10-21",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": null,
+          "exact_fraction": null,
+          "decimal_policy": null,
+          "source_fact_result_ids": [
+            "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic",
+          "ohlc": {
+            "open": {
+              "value": "100.000000000000000001",
+              "exact_fraction": {
+                "numerator": "100000000000000000001",
+                "denominator": "1000000000000000000"
+              },
+              "decimal_policy": {
+                "precision": 101,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            },
+            "high": {
+              "value": "102",
+              "exact_fraction": {
+                "numerator": "102",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            },
+            "low": {
+              "value": "99",
+              "exact_fraction": {
+                "numerator": "99",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            },
+            "close": {
+              "value": "101",
+              "exact_fraction": {
+                "numerator": "101",
+                "denominator": "1"
+              },
+              "decimal_policy": {
+                "precision": 50,
+                "rounding": "ROUND_HALF_EVEN",
+                "exact": true
+              }
+            }
+          },
+          "close_only": {
+            "value": "101",
+            "exact_fraction": {
+              "numerator": "101",
+              "denominator": "1"
+            },
+            "decimal_policy": {
+              "precision": 50,
+              "rounding": "ROUND_HALF_EVEN",
+              "exact": true
+            }
+          },
+          "close_only_missing_reason": null,
+          "volume": {
+            "value": "9007199254740993000",
+            "exact_fraction": {
+              "numerator": "9007199254740993000",
+              "denominator": "1"
+            },
+            "decimal_policy": {
+              "precision": 50,
+              "rounding": "ROUND_HALF_EVEN",
+              "exact": true
+            }
+          },
+          "volume_missing_reason": null
+        }
+      ],
+      "reasons": [],
+      "connect_nulls": false,
+      "actual_source_authenticated": false,
+      "verified_live_provider_bindings": 0,
+      "context": [
+        {
+          "identity": {
+            "instrument_id": "synthetic:equity:1",
+            "issuer_id": "synthetic:issuer:1",
+            "venue": "SYNTHETIC-NOT-A-VENUE",
+            "asset_class": "equity",
+            "share_class": "synthetic:common",
+            "contract_id": "not_applicable"
+          },
+          "units": {
+            "price_unit": "money_per_share",
+            "currency": "USD",
+            "price_scale": "1",
+            "volume_unit": "shares",
+            "volume_scale": "1"
+          },
+          "session": {
+            "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+            "timezone": "America/New_York",
+            "session_id": "synthetic:regular",
+            "interval": "daily",
+            "date_basis": "trade_date",
+            "calendar_verified": true,
+            "calendar_evidence_ref": "review",
+            "coverage_start": "2026-10-20",
+            "coverage_end": "2026-10-21",
+            "coverage_complete": true,
+            "expected_sessions": [
+              "2026-10-20",
+              "2026-10-21"
+            ]
+          },
+          "basis": {
+            "price_kind": "price_level",
+            "return_policy": "price_return",
+            "adjustment": "unadjusted",
+            "adjustment_id": "synthetic:unadjusted",
+            "adjustment_asof": "2026-10-21T20:00:00Z",
+            "actions_coverage_verified": true,
+            "actions_evidence_ref": "review",
+            "volume_adjustment": "unadjusted",
+            "revision_policy": "final_current_at_cutoff",
+            "price_definition": "official_close",
+            "allow_negative_prices": false,
+            "roll_policy": "not_applicable"
+          }
+        }
+      ],
+      "cutoff_basis": {
+        "whole_second_utc": "2026-10-22T00:00:00+00:00",
+        "fraction_of_second": "0.123456790"
+      },
+      "lineage": [
+        {
+          "history_id": "synthetic:US-daily:1",
+          "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+          "points": [
+            {
+              "trade_date": "2026-10-20",
+              "input_sha256": "35c40c31f1e708b5c60450dc0bdc38e5bb53f872bf176649326437fba0769b3e",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+                "trade_date": "2026-10-20",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-20T16:00:00-04:00",
+                "published_at": "2026-10-20T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[1]:20261020",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "98",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "100",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "1000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            },
+            {
+              "trade_date": "2026-10-21",
+              "input_sha256": "cacd7feb246af445819a728fc5605310d5ae6724ec7b76bf2bc3995c61958dc4",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436",
+                "trade_date": "2026-10-21",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-21T16:00:00-04:00",
+                "published_at": "2026-10-21T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[0]:20261021",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "100.000000000000000001",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "102",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "9007199254740993000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Conditional local deterministic math; upstream verification fields are supplied assertions, not authentication.",
+        "Provider RC5 histories are RAW ONLY. No raw-provider adapter, promotion, network access or live binding exists here.",
+        "No return forecast, causal explanation, ranking, outperformance conclusion or buy/sell recommendation is established.",
+        "Only R01.S01 price_relative and neutral volume are traced to the original chart plan. SMA/OHLCV/aggregation are additive capabilities."
+      ],
+      "missing_record_count": 0,
+      "unit": "money_per_share",
+      "currency": "USD",
+      "volume_unit": "shares",
+      "candle_order": "named OHLC fields; adapter must map explicitly",
+      "candle_status": "computed",
+      "close_status": "computed",
+      "source_plan": "additive capability; R01.S01 price_relative remains line-only",
+      "result_id": "history:f5f87f717e67842ddeedc5a90050a43ea8bbe4f15347e1aa137fc09423b2c2e1"
+    },
+    "volume": {
+      "id": "volume",
+      "status": "computed",
+      "records": [
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "volume",
+          "x_kind": "date",
+          "x_value": "2026-10-20",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "1000",
+          "exact_fraction": {
+            "numerator": "1000",
+            "denominator": "1"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic",
+          "direction": null,
+          "direction_label": "중립 / 비교 불가",
+          "color": "#68737D",
+          "direction_reference_date": null,
+          "direction_reference_value": null,
+          "direction_rule": "neutral",
+          "volume_change_inferred": false
+        },
+        {
+          "subject_id": "synthetic:equity:1",
+          "series_id": "volume",
+          "x_kind": "date",
+          "x_value": "2026-10-21",
+          "y_axis": "left",
+          "y_kind": "numeric",
+          "y_value": "9007199254740993000",
+          "exact_fraction": {
+            "numerator": "9007199254740993000",
+            "denominator": "1"
+          },
+          "decimal_policy": {
+            "precision": 50,
+            "rounding": "ROUND_HALF_EVEN",
+            "exact": true
+          },
+          "source_fact_result_ids": [
+            "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436"
+          ],
+          "missing_reason": null,
+          "data_kind": "synthetic",
+          "direction": null,
+          "direction_label": "중립 / 비교 불가",
+          "color": "#68737D",
+          "direction_reference_date": null,
+          "direction_reference_value": null,
+          "direction_rule": "neutral",
+          "volume_change_inferred": false
+        }
+      ],
+      "reasons": [],
+      "connect_nulls": false,
+      "actual_source_authenticated": false,
+      "verified_live_provider_bindings": 0,
+      "context": [
+        {
+          "identity": {
+            "instrument_id": "synthetic:equity:1",
+            "issuer_id": "synthetic:issuer:1",
+            "venue": "SYNTHETIC-NOT-A-VENUE",
+            "asset_class": "equity",
+            "share_class": "synthetic:common",
+            "contract_id": "not_applicable"
+          },
+          "units": {
+            "price_unit": "money_per_share",
+            "currency": "USD",
+            "price_scale": "1",
+            "volume_unit": "shares",
+            "volume_scale": "1"
+          },
+          "session": {
+            "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+            "timezone": "America/New_York",
+            "session_id": "synthetic:regular",
+            "interval": "daily",
+            "date_basis": "trade_date",
+            "calendar_verified": true,
+            "calendar_evidence_ref": "review",
+            "coverage_start": "2026-10-20",
+            "coverage_end": "2026-10-21",
+            "coverage_complete": true,
+            "expected_sessions": [
+              "2026-10-20",
+              "2026-10-21"
+            ]
+          },
+          "basis": {
+            "price_kind": "price_level",
+            "return_policy": "price_return",
+            "adjustment": "unadjusted",
+            "adjustment_id": "synthetic:unadjusted",
+            "adjustment_asof": "2026-10-21T20:00:00Z",
+            "actions_coverage_verified": true,
+            "actions_evidence_ref": "review",
+            "volume_adjustment": "unadjusted",
+            "revision_policy": "final_current_at_cutoff",
+            "price_definition": "official_close",
+            "allow_negative_prices": false,
+            "roll_policy": "not_applicable"
+          }
+        }
+      ],
+      "cutoff_basis": {
+        "whole_second_utc": "2026-10-22T00:00:00+00:00",
+        "fraction_of_second": "0.123456790"
+      },
+      "lineage": [
+        {
+          "history_id": "synthetic:US-daily:1",
+          "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+          "points": [
+            {
+              "trade_date": "2026-10-20",
+              "input_sha256": "35c40c31f1e708b5c60450dc0bdc38e5bb53f872bf176649326437fba0769b3e",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+                "trade_date": "2026-10-20",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-20T16:00:00-04:00",
+                "published_at": "2026-10-20T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[1]:20261020",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "98",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "100",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "1000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            },
+            {
+              "trade_date": "2026-10-21",
+              "input_sha256": "cacd7feb246af445819a728fc5605310d5ae6724ec7b76bf2bc3995c61958dc4",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436",
+                "trade_date": "2026-10-21",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-21T16:00:00-04:00",
+                "published_at": "2026-10-21T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[0]:20261021",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "100.000000000000000001",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "102",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "9007199254740993000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Conditional local deterministic math; upstream verification fields are supplied assertions, not authentication.",
+        "Provider RC5 histories are RAW ONLY. No raw-provider adapter, promotion, network access or live binding exists here.",
+        "No return forecast, causal explanation, ranking, outperformance conclusion or buy/sell recommendation is established.",
+        "Only R01.S01 price_relative and neutral volume are traced to the original chart plan. SMA/OHLCV/aggregation are additive capabilities."
+      ],
+      "missing_record_count": 0,
+      "unit": "shares",
+      "currency": "not_applicable",
+      "direction_policy": {
+        "rule": "neutral",
+        "evidence_ref": "synthetic:neutral",
+        "disclosure": "Invented neutral quantities only; no volume change or directional inference."
+      },
+      "source_plan": "R01.S01 / volume; neutral default. Explicit price-direction coloring is an additive disclosed convention, not signed volume change.",
+      "result_id": "history:4eee26c19a85fbb60ef76bf37ad0f5faf2c83fae049826d9d2bf14bdb60fc7fc"
+    },
+    "aggregation": {
+      "id": "aggregation",
+      "status": "unavailable",
+      "records": [],
+      "reasons": [],
+      "connect_nulls": false,
+      "actual_source_authenticated": false,
+      "verified_live_provider_bindings": 0,
+      "context": [
+        {
+          "identity": {
+            "instrument_id": "synthetic:equity:1",
+            "issuer_id": "synthetic:issuer:1",
+            "venue": "SYNTHETIC-NOT-A-VENUE",
+            "asset_class": "equity",
+            "share_class": "synthetic:common",
+            "contract_id": "not_applicable"
+          },
+          "units": {
+            "price_unit": "money_per_share",
+            "currency": "USD",
+            "price_scale": "1",
+            "volume_unit": "shares",
+            "volume_scale": "1"
+          },
+          "session": {
+            "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+            "timezone": "America/New_York",
+            "session_id": "synthetic:regular",
+            "interval": "daily",
+            "date_basis": "trade_date",
+            "calendar_verified": true,
+            "calendar_evidence_ref": "review",
+            "coverage_start": "2026-10-20",
+            "coverage_end": "2026-10-21",
+            "coverage_complete": true,
+            "expected_sessions": [
+              "2026-10-20",
+              "2026-10-21"
+            ]
+          },
+          "basis": {
+            "price_kind": "price_level",
+            "return_policy": "price_return",
+            "adjustment": "unadjusted",
+            "adjustment_id": "synthetic:unadjusted",
+            "adjustment_asof": "2026-10-21T20:00:00Z",
+            "actions_coverage_verified": true,
+            "actions_evidence_ref": "review",
+            "volume_adjustment": "unadjusted",
+            "revision_policy": "final_current_at_cutoff",
+            "price_definition": "official_close",
+            "allow_negative_prices": false,
+            "roll_policy": "not_applicable"
+          }
+        }
+      ],
+      "cutoff_basis": {
+        "whole_second_utc": "2026-10-22T00:00:00+00:00",
+        "fraction_of_second": "0.123456790"
+      },
+      "lineage": [
+        {
+          "history_id": "synthetic:US-daily:1",
+          "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+          "points": [
+            {
+              "trade_date": "2026-10-20",
+              "input_sha256": "35c40c31f1e708b5c60450dc0bdc38e5bb53f872bf176649326437fba0769b3e",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+                "trade_date": "2026-10-20",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-20T16:00:00-04:00",
+                "published_at": "2026-10-20T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[1]:20261020",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "98",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "100",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "1000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            },
+            {
+              "trade_date": "2026-10-21",
+              "input_sha256": "cacd7feb246af445819a728fc5605310d5ae6724ec7b76bf2bc3995c61958dc4",
+              "envelope_valid": true,
+              "field_errors": {},
+              "accepted_fact": {
+                "fact_id": "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436",
+                "trade_date": "2026-10-21",
+                "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+                "point_kind": "date",
+                "observed_at": null,
+                "session_close_at": "2026-10-21T16:00:00-04:00",
+                "published_at": "2026-10-21T20:01:00Z",
+                "received_at": "2026-10-22T00:00:00.123456789Z",
+                "available_at": "2026-10-22T00:00:00.123456790Z",
+                "finality": "final",
+                "revision": {
+                  "status": "original",
+                  "revision_id": "synthetic:r1",
+                  "evidence_ref": "review",
+                  "current_at_cutoff_verified": true
+                },
+                "provenance": {
+                  "source_id": "KIS",
+                  "document_id": "synthetic:source-page:1",
+                  "locator": "output2[0]:20261021",
+                  "revision_id": "synthetic:r1",
+                  "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+                  "selector_id": "kis.us-daily.named-ohlcv/1",
+                  "data_kind": "synthetic",
+                  "semantic_binding_verified": true,
+                  "semantic_evidence_ref": "review",
+                  "identity_verified": true,
+                  "identity_evidence_ref": "review",
+                  "unit_verified": true,
+                  "unit_evidence_ref": "review",
+                  "currency_verified": true,
+                  "currency_evidence_ref": "review",
+                  "scale_verified": true,
+                  "scale_evidence_ref": "review",
+                  "time_verified": true,
+                  "time_evidence_ref": "review"
+                },
+                "rights": {
+                  "state": "allowed",
+                  "use": "local_report",
+                  "evidence_ref": "review",
+                  "expires_at": "2026-10-23T00:00:00Z"
+                },
+                "values": {
+                  "open": {
+                    "state": "available",
+                    "value": "100.000000000000000001",
+                    "missing_reason": null
+                  },
+                  "high": {
+                    "state": "available",
+                    "value": "102",
+                    "missing_reason": null
+                  },
+                  "low": {
+                    "state": "available",
+                    "value": "99",
+                    "missing_reason": null
+                  },
+                  "close": {
+                    "state": "available",
+                    "value": "101",
+                    "missing_reason": null
+                  },
+                  "volume": {
+                    "state": "available",
+                    "value": "9007199254740993000",
+                    "missing_reason": null
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "limitations": [
+        "Conditional local deterministic math; upstream verification fields are supplied assertions, not authentication.",
+        "Provider RC5 histories are RAW ONLY. No raw-provider adapter, promotion, network access or live binding exists here.",
+        "No return forecast, causal explanation, ranking, outperformance conclusion or buy/sell recommendation is established.",
+        "Only R01.S01 price_relative and neutral volume are traced to the original chart plan. SMA/OHLCV/aggregation are additive capabilities."
+      ],
+      "missing_record_count": 0,
+      "rejected_windows": [],
+      "unit": "money_per_share",
+      "currency": "USD",
+      "volume_unit": "shares",
+      "ordering": "Separate frequency series, then chronological period start. Validated rejected windows retain null geometry. A gap_before requires a rendering break, never a connecting segment.",
+      "formula": "open=first open; high=max highs; low=min lows; close=last close; volume=sum quantities; full explicit sessions only",
+      "source_plan": "additive complete-calendar window capability, not general provider resampling",
+      "result_id": "history:cfc906c4d03bf5c89da856c30846a3dd24153ee2844986ebc67064574bdfe72d"
+    }
+  },
+  "limitations": [
+    "Conditional local deterministic math; upstream verification fields are supplied assertions, not authentication.",
+    "Provider RC5 histories are RAW ONLY. No raw-provider adapter, promotion, network access or live binding exists here.",
+    "No return forecast, causal explanation, ranking, outperformance conclusion or buy/sell recommendation is established.",
+    "Only R01.S01 price_relative and neutral volume are traced to the original chart plan. SMA/OHLCV/aggregation are additive capabilities."
+  ],
+  "data_kind": "synthetic",
+  "data_notice": "SYNTHETIC TEST ONLY",
+  "actual_input_rows": 0,
+  "report_cutoff": "2026-10-22T00:00:00.123456790Z",
+  "status_counts": {
+    "computed": 4,
+    "unavailable": 1,
+    "blocked": 0
+  }
+}

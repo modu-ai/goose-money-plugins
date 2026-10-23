@@ -1,0 +1,70 @@
+{
+  "contract": "moai.stock.price-history.v1",
+  "provider": "kis",
+  "operation_id": "KIS-039",
+  "instrument": {
+    "market": "KR",
+    "symbol": "000660",
+    "board": "J"
+  },
+  "interval": "1d",
+  "requested_start": "2026-10-20",
+  "requested_end": "2026-10-21",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "rights_status": "pending",
+  "completeness": "unknown",
+  "bars": [
+    {
+      "date": "2026-10-20",
+      "open": null,
+      "high": null,
+      "low": null,
+      "close": null,
+      "volume": null,
+      "turnover": null,
+      "currency": null,
+      "price_unit": null,
+      "volume_unit": null,
+      "turnover_unit": null,
+      "adjusted": null,
+      "source_ref": "KIS-039:000660:2026-10-20",
+      "mapping_status": "blocked",
+      "blockers": [
+        "price_currency_and_scale_not_stated_in_endpoint_schema",
+        "volume_unit_not_stated_in_endpoint_schema",
+        "trade_amount_currency_and_scale_not_stated_in_endpoint_schema",
+        "adjustment_code_portal_sample_conflict",
+        "data_rights_and_host_egress_not_approved_by_this_parser"
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "open": null,
+      "high": null,
+      "low": null,
+      "close": null,
+      "volume": null,
+      "turnover": null,
+      "currency": null,
+      "price_unit": null,
+      "volume_unit": null,
+      "turnover_unit": null,
+      "adjusted": null,
+      "source_ref": "KIS-039:000660:2026-10-21",
+      "mapping_status": "blocked",
+      "blockers": [
+        "price_currency_and_scale_not_stated_in_endpoint_schema",
+        "volume_unit_not_stated_in_endpoint_schema",
+        "trade_amount_currency_and_scale_not_stated_in_endpoint_schema",
+        "adjustment_code_portal_sample_conflict",
+        "data_rights_and_host_egress_not_approved_by_this_parser"
+      ]
+    }
+  ],
+  "warnings": [
+    "Canonical OHLCV withheld: endpoint units and adjustment semantics remain unresolved.",
+    "Business dates are not source publication timestamps; range completeness is unknown."
+  ]
+}

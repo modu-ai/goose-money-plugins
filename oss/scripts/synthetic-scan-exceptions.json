@@ -1,0 +1,50 @@
+[
+  {
+    "path": "oss/scripts/test_check_secrets.py",
+    "rule": "private_key",
+    "line_sha256": "0539bf3683d2831a5c76b73cd732fbfc7c5d9105989385910a71d10925017d8e",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/scripts/test_check_secrets.py",
+    "rule": "account_literal",
+    "line_sha256": "20527d2013d1d1221ad699faaf593f8ac744dee922380b0bb66f7db709344f9f",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/daily-history-bridge.test.ts",
+    "rule": "credential_url",
+    "line_sha256": "ad0c57ce29497e634365f9a36446384082c7de47fcdf02eeac315d752fe5e30d",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/futures-history.test.ts",
+    "rule": "credential_literal",
+    "line_sha256": "dd28acf20e11aff7441721d0a14554ab5d3d768355d6780b8dd0fb92c4c5515c",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/futures-history.test.ts",
+    "rule": "account_literal",
+    "line_sha256": "dd28acf20e11aff7441721d0a14554ab5d3d768355d6780b8dd0fb92c4c5515c",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/historical-stock-bars.test.ts",
+    "rule": "account_literal",
+    "line_sha256": "cb572844bcdc751c71ff863377419a233feecf3dca1606486e8184fd47558dc7",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/market-observation-bridge.test.ts",
+    "rule": "credential_url",
+    "line_sha256": "6fec3ef983c88d40551ea1cdb55e8e3e9f83d92b3ba59f47f529bd3b482b15db",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/market-orderbook.test.ts",
+    "rule": "credential_url",
+    "line_sha256": "f6bc4d2481a27889dcd8c6f08611b0e9772d956e4d02dcba483e0ad8b29fe6e9",
+    "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  }
+]

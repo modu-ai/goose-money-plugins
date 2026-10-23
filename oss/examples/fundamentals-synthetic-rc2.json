@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "provider_status": "000",
+  "request": {
+    "corp_code": "00126380",
+    "bsns_year": "2025",
+    "reprt_code": "11012",
+    "fs_div": "CFS"
+  },
+  "provenance": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T01:00:00Z"
+  },
+  "source": "opendart",
+  "documentation": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS003&apiId=2019020",
+  "rows": [
+    {
+      "raw": {
+        "rcept_no": "20250814000001",
+        "reprt_code": "11012",
+        "bsns_year": "2025",
+        "corp_code": "00126380",
+        "sj_div": "IS",
+        "sj_nm": "Synthetic income statement",
+        "account_id": "ifrs-full_Revenue",
+        "account_nm": "Synthetic revenue",
+        "thstrm_nm": "Synthetic half year",
+        "thstrm_amount": "9,007,199,254,740,993.25",
+        "thstrm_add_amount": "18,000,000,000,000,000.50",
+        "frmtrm_amount": "",
+        "frmtrm_q_amount": "-100.75",
+        "frmtrm_add_amount": "0",
+        "ord": "1",
+        "currency": "USD"
+      },
+      "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001",
+      "fs_div": "CFS",
+      "current_period_kind": "three_months",
+      "amounts": {
+        "current": {
+          "state": "value",
+          "raw": "9,007,199,254,740,993.25",
+          "decimal": "9007199254740993.25"
+        },
+        "current_cumulative": {
+          "state": "value",
+          "raw": "18,000,000,000,000,000.50",
+          "decimal": "18000000000000000.50"
+        },
+        "prior": {
+          "state": "blank",
+          "raw": ""
+        },
+        "prior_comparable": {
+          "state": "value",
+          "raw": "-100.75",
+          "decimal": "-100.75"
+        },
+        "prior_cumulative": {
+          "state": "value",
+          "raw": "0",
+          "decimal": "0"
+        },
+        "two_years_prior": {
+          "state": "missing"
+        }
+      }
+    }
+  ]
+}

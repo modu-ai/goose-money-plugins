@@ -1,0 +1,178 @@
+{
+  "contract": "moai.kis.remaining-source-inputs.v1",
+  "provider": "KIS",
+  "operation_ref": "KIS-113",
+  "catalog_id": "kis.catalog.commit2077773a.row.145",
+  "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+  "tr_id": "FHPTJ04040000",
+  "request": {
+    "operation_ref": "KIS-113",
+    "query": {
+      "FID_COND_MRKT_DIV_CODE": "U",
+      "FID_INPUT_ISCD": "0001",
+      "FID_INPUT_DATE_1": "20261021",
+      "FID_INPUT_DATE_2": "20261021",
+      "FID_INPUT_ISCD_1": "KSP",
+      "FID_INPUT_ISCD_2": ""
+    }
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T08:00:00.123456789Z",
+    "body_sha256": "4572f69a1e18a9d1c02ca893a97143a0025f1cc16a5d2e1631a683803d184c24",
+    "body_byte_length": 306,
+    "hash_scope": "decoded_response_text_utf8",
+    "hash_algorithm": "sha256",
+    "provenance_status": "caller_supplied_unverified",
+    "source_authentication": "not_established"
+  },
+  "cutoff": "2026-10-22T08:00:00.123456789Z",
+  "scope": "market_industry_one_day_aggregate_not_stock_flow",
+  "provider_success_status": "0",
+  "request_execution_status": "not_asserted",
+  "first_page_origin": "not_verified",
+  "identity_status": "request_context_only_not_response_verified",
+  "source_as_of": null,
+  "publication_at": null,
+  "receipt_policy": "receipt_not_after_cutoff_no_publication_inference",
+  "groups": [
+    {
+      "source_root": "output",
+      "row_count": 2,
+      "rows": [
+        {
+          "source_row_index": 0,
+          "raw_fields": {
+            "stck_bsop_date": {
+              "state": "present",
+              "value": "20261021"
+            },
+            "frgn_ntby_qty": {
+              "state": "present",
+              "value": "000012"
+            },
+            "prsn_ntby_qty": {
+              "state": "blank",
+              "value": ""
+            },
+            "orgn_ntby_qty": {
+              "state": "missing",
+              "value": null
+            },
+            "frgn_ntby_tr_pbmn": {
+              "state": "missing",
+              "value": null
+            },
+            "prsn_ntby_tr_pbmn": {
+              "state": "missing",
+              "value": null
+            },
+            "orgn_ntby_tr_pbmn": {
+              "state": "present",
+              "value": "-00001.500"
+            },
+            "bstp_nmix_prpr": {
+              "state": "missing",
+              "value": null
+            },
+            "bstp_nmix_prdy_ctrt": {
+              "state": "missing",
+              "value": null
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "market_id": null,
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "metric": null,
+            "event_type": null,
+            "date": null,
+            "source_as_of": null,
+            "publication_at": null
+          }
+        },
+        {
+          "source_row_index": 1,
+          "raw_fields": {
+            "stck_bsop_date": {
+              "state": "present",
+              "value": "20261021"
+            },
+            "frgn_ntby_qty": {
+              "state": "present",
+              "value": "000012"
+            },
+            "prsn_ntby_qty": {
+              "state": "missing",
+              "value": null
+            },
+            "orgn_ntby_qty": {
+              "state": "missing",
+              "value": null
+            },
+            "frgn_ntby_tr_pbmn": {
+              "state": "missing",
+              "value": null
+            },
+            "prsn_ntby_tr_pbmn": {
+              "state": "missing",
+              "value": null
+            },
+            "orgn_ntby_tr_pbmn": {
+              "state": "missing",
+              "value": null
+            },
+            "bstp_nmix_prpr": {
+              "state": "missing",
+              "value": null
+            },
+            "bstp_nmix_prdy_ctrt": {
+              "state": "missing",
+              "value": null
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "market_id": null,
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "metric": null,
+            "event_type": null,
+            "date": null,
+            "source_as_of": null,
+            "publication_at": null
+          }
+        }
+      ]
+    }
+  ],
+  "row_order": "captured_array_order_zero_based_indices",
+  "response_completeness": "not_established",
+  "rights_status": "pending",
+  "canonical_projection_status": "blocked",
+  "metric_ready": false,
+  "ambiguities": [
+    "currency_scale_quantity_unit_unknown_do_not_borrow_KIS_115",
+    "subgroup_code_semantics_not_verified",
+    "industry_and_market_identity_request_context_only"
+  ],
+  "blockers": [
+    "response_identity_not_independently_verified",
+    "publication_time_not_available",
+    "source_authenticity_not_established",
+    "rights_and_host_egress_not_approved",
+    "canonical_values_not_promoted"
+  ],
+  "warnings": [
+    "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity.",
+    "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified.",
+    "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text.",
+    "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data.",
+    "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+  ]
+}

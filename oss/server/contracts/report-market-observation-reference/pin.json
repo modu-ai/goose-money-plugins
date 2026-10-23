@@ -1,0 +1,12 @@
+{
+  "contract": "moai.market-observations/0.1-rc7",
+  "authority": "moai-atp-report/vm-market-metrics-rc7-packaging-fix",
+  "files": {
+    "market_metrics.py": "5b7ee095e5fb0f678a8d33e7c6fdee9638997be59997a7d277ecd1532f0f05a8",
+    "financial_core.py": "02f307a1f159efc80a64542dd324b6c5fcc33a7169655328a65ff8d6b25aa180",
+    "input.schema.json": "6ea5017f13ac18231e5b80d646d95419637dff5cd85a9dfad2b29912121a3fa2",
+    "requirements-crosswalk.json": "ab559688641cffa557a64a9eed0ad413765faa31289c6f9cbe0fa16938fb5ee5"
+  },
+  "dependency_closure": "market_metrics.py imports financial_core.py; remaining imports are Python standard library",
+  "source_authentication_performed": false
+}

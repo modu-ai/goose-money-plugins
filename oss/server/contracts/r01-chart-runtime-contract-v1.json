@@ -1,0 +1,3041 @@
+{
+  "contract_id": "moai.stock.r01.chart-provider-runtime.v1",
+  "version": "1.1.0-draft",
+  "generated_on": "2026-10-21",
+  "status": "design_contract_only_no_live_provider_validation",
+  "provenance": {
+    "source_contract": "outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
+    "source_sha256": "803477a62949c7186cf6d1c833ae37ed057af646df3f529e59f565623132081d",
+    "source_binding_id": "R01-chart-provider-binding-v1",
+    "source_binding_version": "1.1.0-draft",
+    "provider_catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+    "provider_catalog_scope": "334 rows only; not full portal/partner API coverage and not live-tested",
+    "consumer_source_refs": [
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
+        "sha256": "9497207439e3916be39af7aa00e13100c7751c514d9497fb1394656c1717f008",
+        "contract_id": "goose.consumer-chart-requirements.v1",
+        "version": "0.1.0-design",
+        "modified_by_provider_owner": false
+      },
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
+        "sha256": "280f79c54b733dcade6deb06a5471901a63df2dde76f24de688dce521f427153",
+        "contract_id": "goose.consumer-chart-requirements.v1",
+        "version": "0.1.0-design",
+        "modified_by_provider_owner": false
+      }
+    ],
+    "scope_note": "Pinned official KIS samples establish endpoint/TR identity, request names, output roots, and some paging code. Official KIS portal response schemas were reviewed for the ten R01-selected endpoints and exact raw field names/declared String lengths were added. Canonical units, rights, time, scope, live response and pagination conflicts remain explicit; no live call was made.",
+    "provider_response_schema_evidence": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+    "supplier_registry_version": "1.0.1-draft",
+    "supplier_registry_sha256": "21a79d2315af767b9d3684739cb248c089c7fbb8d0e43902c4537dee4724b71d"
+  },
+  "counts": {
+    "requirements": 9,
+    "standard_requirements": 6,
+    "supplemental_requirements": 3,
+    "unique_chart_input_fields": 48,
+    "verification_pending_fields": 39,
+    "derived_fields": 9,
+    "official_response_field_bindings_confirmed": 0,
+    "provider_operations": 10,
+    "kis_portal_endpoint_schemas_reviewed": 10,
+    "kis_documented_raw_candidate_paths": 27,
+    "consumer_statuses_promoted": 0,
+    "live_provider_responses_verified": 0,
+    "previous_dart_filing_raw_keys_verified": 3,
+    "kis_portal_request_schemas_reviewed": 10
+  },
+  "runtime_policy": {
+    "exposed_as_mcp_tools": false,
+    "arbitrary_endpoint_call": false,
+    "read_only_catalog_only": true,
+    "candidate_aliases_may_be_emitted_as_verified": false,
+    "rights_status": "pending; no commercial display, retention, redistribution or host-egress right inferred",
+    "actual_kis_calls_performed_for_this_contract": false,
+    "source_as_of_policy": "Only a provider-supplied and verified source timestamp/date may populate source_as_of. received_at is local UTC reception time and must never substitute for source_as_of.",
+    "account_access": "none; these ten operations are market/reference data operations, no account number in this reviewed request contract",
+    "orders_transfers_or_trading": "not implemented"
+  },
+  "requirements": [
+    {
+      "requirement_id": "R01-S01-CHART",
+      "consumer_section_id": "R01.S01",
+      "slot_class": "standard",
+      "section_title": "한 장 투자 요약·변경점",
+      "required_field_ids": [
+        "actions.events",
+        "history.adjustment",
+        "history.benchmark",
+        "history.close",
+        "history.date",
+        "history.volume",
+        "metric.price_rebased"
+      ],
+      "expanded_field_dependencies": [
+        "actions.events",
+        "history.adjustment",
+        "history.benchmark",
+        "history.close",
+        "history.date",
+        "history.volume",
+        "metric.price_rebased"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-S02-CHART",
+      "consumer_section_id": "R01.S02",
+      "slot_class": "standard",
+      "section_title": "사업·경쟁·산업 사이클",
+      "required_field_ids": [
+        "evidence.business_facts",
+        "frame.segment",
+        "frame.segment_revenue",
+        "reported.period",
+        "reported.scope"
+      ],
+      "expanded_field_dependencies": [
+        "evidence.business_facts",
+        "frame.segment",
+        "frame.segment_revenue",
+        "reported.period",
+        "reported.scope"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-S03-CHART",
+      "consumer_section_id": "R01.S03",
+      "slot_class": "standard",
+      "section_title": "분기 실적·전망·추정 변경",
+      "required_field_ids": [
+        "estimates.consensus",
+        "estimates.guidance",
+        "frame.earnings_value",
+        "frame.estimate_role",
+        "frame.period_label",
+        "reported.period",
+        "reported.scope"
+      ],
+      "expanded_field_dependencies": [
+        "estimates.consensus",
+        "estimates.guidance",
+        "frame.earnings_value",
+        "frame.estimate_role",
+        "frame.period_label",
+        "reported.operating_profit",
+        "reported.period",
+        "reported.revenue",
+        "reported.scope"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-S04-CHART",
+      "consumer_section_id": "R01.S04",
+      "slot_class": "standard",
+      "section_title": "가치평가·민감도·비교기업",
+      "required_field_ids": [
+        "assumption.multiple",
+        "assumption.scenario",
+        "frame.scenario",
+        "frame.scenario_value",
+        "metric.eps"
+      ],
+      "expanded_field_dependencies": [
+        "assumption.multiple",
+        "assumption.scenario",
+        "frame.scenario",
+        "frame.scenario_value",
+        "metric.eps",
+        "metric.scenario_valuation",
+        "reported.net_income_common",
+        "reported.shares_weighted"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-S05-CHART",
+      "consumer_section_id": "R01.S05",
+      "slot_class": "standard",
+      "section_title": "현금흐름·재무안정성",
+      "required_field_ids": [
+        "frame.period_label",
+        "metric.fcf",
+        "reported.capex",
+        "reported.cfo",
+        "reported.period",
+        "reported.scope"
+      ],
+      "expanded_field_dependencies": [
+        "frame.period_label",
+        "metric.fcf",
+        "reported.capex",
+        "reported.cfo",
+        "reported.period",
+        "reported.scope"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-S06-CHART",
+      "consumer_section_id": "R01.S06",
+      "slot_class": "standard",
+      "section_title": "위험·촉매·반증·3대 재무제표",
+      "required_field_ids": [
+        "analysis.claim_kind",
+        "analysis.next_check",
+        "filing.body_locator",
+        "filing.receipt",
+        "frame.event_date",
+        "frame.event_lane"
+      ],
+      "expanded_field_dependencies": [
+        "analysis.claim_kind",
+        "analysis.next_check",
+        "filing.body_locator",
+        "filing.date",
+        "filing.receipt",
+        "filing.title",
+        "frame.event_date",
+        "frame.event_lane",
+        "time.published_at"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-X01-CHART",
+      "consumer_section_id": "R01.X01",
+      "slot_class": "supplemental",
+      "section_title": "주가·거래량 추세와 기술 해석",
+      "required_field_ids": [
+        "actions.events",
+        "history.adjustment",
+        "history.close",
+        "history.date",
+        "history.volume",
+        "metric.ma20"
+      ],
+      "expanded_field_dependencies": [
+        "actions.events",
+        "history.adjustment",
+        "history.close",
+        "history.date",
+        "history.volume",
+        "metric.ma20"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-X02-CHART",
+      "consumer_section_id": "R01.X02",
+      "slot_class": "supplemental",
+      "section_title": "외국인·기관·개인 수급과 누적",
+      "required_field_ids": [
+        "flow.category_tree",
+        "flow.coverage",
+        "flow.foreign.net_value",
+        "flow.individual.net_value",
+        "flow.institution.net_value",
+        "frame.flow_date",
+        "metric.flow_cumulative"
+      ],
+      "expanded_field_dependencies": [
+        "flow.category_tree",
+        "flow.coverage",
+        "flow.foreign.net_value",
+        "flow.individual.net_value",
+        "flow.institution.net_value",
+        "frame.flow_date",
+        "metric.flow_cumulative",
+        "time.source_at"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    },
+    {
+      "requirement_id": "R01-X03-CHART",
+      "consumer_section_id": "R01.X03",
+      "slot_class": "supplemental",
+      "section_title": "뉴스·공시·거시 사건의 연결",
+      "required_field_ids": [
+        "analysis.claim_kind",
+        "analysis.next_check",
+        "filing.body_locator",
+        "filing.receipt",
+        "frame.event_date",
+        "frame.event_lane"
+      ],
+      "expanded_field_dependencies": [
+        "analysis.claim_kind",
+        "analysis.next_check",
+        "filing.body_locator",
+        "filing.date",
+        "filing.receipt",
+        "filing.title",
+        "frame.event_date",
+        "frame.event_lane",
+        "time.published_at"
+      ],
+      "provider_binding_status": "no full end-to-end provider mapping; per-field resolution in field_bindings",
+      "source_policy": {
+        "primary": "KIS purpose-specific data;DART supplements verified KR filing/financial facts",
+        "each_value": "source snapshot/fact ID/raw path/unit/period/clock/revision/rights;local derived values reference calculation IDs",
+        "no_unmapped_substitute": "missing US/news/macro/ETF/futures source is not fabricated;no one snapshot repeated into series",
+        "no_account_scope_expansion": true
+      }
+    }
+  ],
+  "operations": [
+    {
+      "operation_ref": "KIS-039",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "tr_id": {
+        "real": "FHKST03010100",
+        "paper": "FHKST03010100"
+      },
+      "asset_scope": [
+        "A1",
+        "A2"
+      ],
+      "sample_request_field_names": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_DATE_2",
+        "FID_PERIOD_DIV_CODE",
+        "FID_ORG_ADJ_PRC"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object",
+          "sample_description": "object -> one-row DataFrame"
+        },
+        {
+          "name": "output2",
+          "shape": "array",
+          "sample_description": "array -> DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "sample says up to 100 rows; paging implementation not demonstrated",
+      "max_rows_or_page_hint": 100,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.095",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "sample states up to 100 records; does not demonstrate continuation paging.",
+        "FID_ORG_ADJ_PRC meaning conflicts with the daily-price sample (0 adjusted/1 original vs 0 unadjusted/1 adjusted); preserve literal code and block normalized adjustment label."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; FID_ORG_ADJ_PRC interpretation still conflicts with pinned sample; no live request",
+      "portal_document_title": "REST 국내주식기간별시세(일/주/월/년)[v1_국내주식-016]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "portal says continuation is unavailable; sample also does not demonstrate continuation; no pagination implementation approved",
+      "provider_unknowns": [
+        "Price and trade-amount currency/scale and volume unit are not stated in this response schema; do not default to KRW/shares.",
+        "Provider response has no intraday source timestamp or timezone; retain date as LocalDate and runtime received_at separately.",
+        "Portal says FID_ORG_ADJ_PRC 0 adjusted / 1 original; pinned sample comments conflict, so portal is recorded as controlling source but a live fixture remains absent."
+      ],
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "J",
+            "NX",
+            "UN"
+          ],
+          "meaning": "KRX, NXT, integrated market"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(12)",
+          "meaning": "equity code input; example is a six digit code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        },
+        {
+          "name": "FID_ORG_ADJ_PRC",
+          "type": "String(10)",
+          "values": [
+            "0",
+            "1"
+          ],
+          "meaning": "0 adjusted; 1 original, per portal (sample comment conflict resolved in favor of portal)"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-254",
+      "method": "GET",
+      "endpoint": "/uapi/overseas-price/v1/quotations/dailyprice",
+      "tr_id": {
+        "real": "HHDFS76240000",
+        "paper": "HHDFS76240000"
+      },
+      "asset_scope": [
+        "A4",
+        "A5"
+      ],
+      "sample_request_field_names": [
+        "AUTH",
+        "EXCD",
+        "SYMB",
+        "GUBN",
+        "BYMD",
+        "MODP"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "object/list normalized to DataFrame"
+        },
+        {
+          "name": "output2",
+          "shape": "object_or_array",
+          "sample_description": "object/list normalized to DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "sample follows tr_cont M/F -> N; recursion cap 10",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.303",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/dailyprice/dailyprice.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "The sample documents TR and input names, normalizes output1/output2, and follows M/F continuation with N; it does not enumerate response keys, currency scale, timestamp, or market-specific data rights."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "REST 해외주식 기간별시세[v1_해외주식-010]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/dailyprice",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "conflict_portal_vs_sample; portal says continuation unavailable while pinned sample follows tr_cont M/F→N; block multi-page collection until KIS resolves",
+      "provider_unknowns": [
+        "Price currency is not a response field; resolve from verified exchange/instrument metadata. zdiv is a decimal scale, not currency.",
+        "Volume and traded-amount units are not stated in this response schema.",
+        "Portal labels this a free delayed-data route; US daily rows and Asian market delay/venue limits remain source-specific. No paid real-time entitlement inferred.",
+        "Date is date-only; no provider time or timezone."
+      ],
+      "request_constraints": [
+        {
+          "name": "EXCD / SYMB",
+          "meaning": "market/exchange code and symbol"
+        },
+        {
+          "name": "GUBN / BYMD / MODP",
+          "meaning": "period/date/adjustment request fields; exact enum typing remains in portal request schema"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-303",
+      "method": "GET",
+      "endpoint": "/uapi/overseas-futureoption/v1/quotations/daily-ccnl",
+      "tr_id": {
+        "real": "HHDFC55020100",
+        "paper": "HHDFC55020100"
+      },
+      "asset_scope": [
+        "A6"
+      ],
+      "sample_request_field_names": [
+        "SRS_CD",
+        "EXCH_CD",
+        "START_DATE_TIME",
+        "CLOSE_DATE_TIME",
+        "QRY_TP",
+        "QRY_CNT",
+        "QRY_GAP",
+        "INDEX_KEY"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "object or list"
+        },
+        {
+          "name": "output2",
+          "shape": "object_or_array",
+          "sample_description": "object or list"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "query pagination uses Q then P/INDEX_KEY; sample recursion cap 10",
+      "max_rows_or_page_hint": 40,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.264",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_futureoption/daily_ccnl/daily_ccnl.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Overseas futures daily trade/settlement-series candidate; contract identity, price meaning, volume unit, currency and session still require contract-master binding."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "REST 해외선물 체결추이(일간)[해외선물-018]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-futureoption/v1/quotations/daily-ccnl",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "portal Q/P + INDEX_KEY documented; no live pagination validation",
+      "provider_unknowns": [
+        "Portal says price scaling depends on overseas futures product master field ffcode.mst.sCalcDesz (examples 6A -4, GC -1). Do not parse price as ordinary decimal before that binding.",
+        "Currency, multiplier, contract month, session/timezone and volume unit require instrument/contract master mapping; CME/SGX access may require paid quote entitlement.",
+        "Mock host unsupported; real account permission is not implied."
+      ],
+      "request_constraints": [
+        {
+          "name": "SRS_CD / EXCH_CD",
+          "meaning": "security series and exchange"
+        },
+        {
+          "name": "START_DATE_TIME / CLOSE_DATE_TIME",
+          "meaning": "query time range"
+        },
+        {
+          "name": "QRY_TP",
+          "type": "String",
+          "values": [
+            "Q",
+            "P"
+          ],
+          "meaning": "first query then continuation query"
+        },
+        {
+          "name": "QRY_CNT",
+          "type": "String",
+          "max_value": 40,
+          "meaning": "requested record count"
+        },
+        {
+          "name": "QRY_GAP",
+          "meaning": "blank or minute interval per portal"
+        },
+        {
+          "name": "INDEX_KEY",
+          "meaning": "continuation key"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-212",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice",
+      "tr_id": {
+        "real": "FHKIF03020100",
+        "paper": "FHKIF03020100"
+      },
+      "asset_scope": [
+        "A3"
+      ],
+      "sample_request_field_names": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_DATE_2",
+        "FID_PERIOD_DIV_CODE"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object",
+          "sample_description": "object -> basic information DataFrame"
+        },
+        {
+          "name": "output2",
+          "shape": "array",
+          "sample_description": "array -> chart DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "docs mention continuing after 100 but sample call does not implement paging",
+      "max_rows_or_page_hint": 100,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.037",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_futureoption/inquire_daily_fuopchartprice/inquire_daily_fuopchartprice.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Official sample output shape and 100-row hint reviewed; consumer raw field names are absent/archived and no actual continuation behavior was verified. Futures multiplier, expiry, settlement currency and roll policy remain separate instrument metadata requirements."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "REST 선물옵션기간별시세(일/주/월/년)[v1_국내선물-008]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "portal says later rows can be retrieved by continuation after 100; sample does not implement; continuation token/request rules need adapter test",
+      "provider_unknowns": [
+        "No explicit currency, contract multiplier, tick size/value, expiry, settlement or roll policy in this endpoint response; contract master required.",
+        "Price and volume units are not stated by this endpoint schema.",
+        "Date-only; no provider timestamp/timezone."
+      ],
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "F",
+            "O",
+            "JF",
+            "JO",
+            "CF",
+            "CM",
+            "EU"
+          ],
+          "meaning": "future/option product category"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(12)",
+          "meaning": "contract code; format is product-specific"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-072",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice",
+      "tr_id": {
+        "real": "FHKUP03500100",
+        "paper": "FHKUP03500100"
+      },
+      "asset_scope": [
+        "A1",
+        "A2"
+      ],
+      "sample_request_field_names": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_DATE_2",
+        "FID_PERIOD_DIV_CODE"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "DataFrame"
+        },
+        {
+          "name": "output2",
+          "shape": "object_or_array",
+          "sample_description": "DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "sample follows tr_cont M/F -> N; recursion cap 10",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.104",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_indexchartprice/inquire_daily_indexchartprice.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Sample uses tr_cont M/F followed by N and max recursion 10; sample output keys and index return/price basis are not enumerated."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "국내주식업종기간별시세(일/주/월/년)[v1_국내주식-021]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "conflict_portal_vs_sample; portal marks continuation unavailable while pinned sample follows tr_cont M/F→N; block multi-page collection pending KIS confirmation",
+      "provider_unknowns": [
+        "Index/sector values are not equity closes; keep distinct from stock-price fields.",
+        "Portal lengths 82/112 are unusually large; preserve exact documented limits and request correction rather than silently narrowing.",
+        "Unit/currency and timezone are not stated; date is date-only."
+      ],
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "value": "U",
+          "meaning": "index/sector"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(2)",
+          "meaning": "industry code, e.g. 0001; not a six-digit stock code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-264",
+      "method": "GET",
+      "endpoint": "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+      "tr_id": {
+        "real": "FHKST03030100",
+        "paper": "FHKST03030100"
+      },
+      "asset_scope": [
+        "A4",
+        "A5"
+      ],
+      "sample_request_field_names": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_DATE_2",
+        "FID_PERIOD_DIV_CODE"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "DataFrame"
+        },
+        {
+          "name": "output2",
+          "shape": "object_or_array",
+          "sample_description": "DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "sample follows tr_cont M/F -> N; recursion cap 10",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.312",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/inquire_daily_chartprice/inquire_daily_chartprice.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "The sample notes US index availability limited to Dow 30, Nasdaq 100 and S&P 500 for this route; broader US stock prices use dailyprice. No general ETF/index coverage claim."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "해외주식 종목/지수/환율기간별시세(일/주/월/년)[v1_해외주식-012]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "conflict_portal_vs_sample; portal says no tr_cont continuation while sample follows M/F→N; block multi-page collection pending KIS confirmation",
+      "provider_unknowns": [
+        "Category-specific currency and index/FX/bond/gold units are not explicit in these response fields; resolve by FID_COND_MRKT_DIV_CODE and instrument metadata.",
+        "Numeric 11.4 is formatting precision, not an index unit or currency. Date is date-only; no timezone."
+      ],
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "N",
+            "X",
+            "I",
+            "S"
+          ],
+          "meaning": "overseas index, FX, government bond, gold futures"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(12)",
+          "meaning": "instrument/index code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-115",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+      "tr_id": {
+        "real": "FHPTJ04160001",
+        "paper": "FHPTJ04160001"
+      },
+      "asset_scope": [
+        "A1"
+      ],
+      "sample_request_field_names": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_ORG_ADJ_PRC",
+        "FID_ETC_CLS_CODE"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "object/list"
+        },
+        {
+          "name": "output2",
+          "shape": "object_or_array",
+          "sample_description": "object/list"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "sample follows tr_cont M/F -> N; recursion cap 10",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.218",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/investor_trade_by_stock_daily/investor_trade_by_stock_daily.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Sample handles output1/output2 list or singleton and follows tr_cont M/F then N, recursion cap 10. It does not enumerate exact field names, sign semantics, currencies, units, category codebook, provisional flag, or source time. Stock-scope endpoint only."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; FID_ETC_CLS_CODE portal/sample conflict blocks request; no live request",
+      "portal_document_title": "종목별 투자자매매동향(일별)",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "sample follows tr_cont M/F→N with depth cap 10; official response page cap not found in the reviewed section",
+      "provider_unknowns": [
+        "Portal requires FID_ETC_CLS_CODE=1 but pinned sample sends blank; no request was sent.",
+        "Investor categories in this operation are stock-specific; do not merge with KIS-113 market/industry aggregates.",
+        "Current-day provisional status is operation-level; no response flag is treated as a finality field.",
+        "Date is date-only; preserve receive time separately."
+      ],
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "J",
+            "NX",
+            "UN"
+          ],
+          "meaning": "market board"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "meaning": "one stock code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1",
+          "meaning": "business date; current-day values normally after close"
+        },
+        {
+          "name": "FID_ETC_CLS_CODE",
+          "portal_value": "1",
+          "meaning": "portal says 1; pinned sample sends blank; preserve conflict until confirmed"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-113",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+      "tr_id": {
+        "real": "FHPTJ04040000",
+        "paper": "FHPTJ04040000"
+      },
+      "asset_scope": [
+        "A1"
+      ],
+      "sample_request_field_names": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_ISCD_1",
+        "FID_INPUT_DATE_2",
+        "FID_INPUT_ISCD_2"
+      ],
+      "response_roots": [
+        {
+          "name": "output",
+          "shape": "object_or_array",
+          "sample_description": "DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "no paging established by sample",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.145",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_investor_daily_by_market/inquire_investor_daily_by_market.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Market-scope aggregation is not equivalent to stock-scope KIS-115; never merge as same series. Sample output field names, units and continuation are not established."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "시장별 투자자매매동향(일별)[국내주식-075]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "one-day response in sample; no paging established",
+      "provider_unknowns": [
+        "Portal does not state currency/scale for *_ntby_tr_pbmn and does not state quantity unit for this endpoint. Do not borrow KIS-115 units.",
+        "This is market/industry scope, not a stock-specific investor flow endpoint.",
+        "Date-only; no provider timestamp/timezone; mock call unsupported."
+      ],
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "value": "U",
+          "meaning": "industry/index"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(12)",
+          "meaning": "industry code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "meaning": "same date required"
+        },
+        {
+          "name": "FID_INPUT_ISCD_1",
+          "values": [
+            "KSP",
+            "KSQ"
+          ],
+          "meaning": "KOSPI or KOSDAQ market"
+        },
+        {
+          "name": "FID_INPUT_ISCD_2",
+          "meaning": "subgroup code"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-109",
+      "method": "GET",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/estimate-perform",
+      "tr_id": {
+        "real": "HHKST668300C0",
+        "paper": "HHKST668300C0"
+      },
+      "asset_scope": [
+        "A1"
+      ],
+      "sample_request_field_names": [
+        "SHT_CD"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "list/singleton object"
+        },
+        {
+          "name": "output2",
+          "shape": "object_or_array",
+          "sample_description": "list/singleton object"
+        },
+        {
+          "name": "output3",
+          "shape": "object_or_array",
+          "sample_description": "list/singleton object"
+        },
+        {
+          "name": "output4",
+          "shape": "object_or_array",
+          "sample_description": "list/singleton object"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "sample follows tr_cont M/F -> N; recursion cap 10",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.141",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/estimate_perform/estimate_perform.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Sample converts four generic output roots to DataFrames and follows M/F continuation with N; it gives no semantic names for roots or columns. DATA1 is an archived consumer reference only, not verified as consensus/revenue/EPS or period."
+      ],
+      "request_schema_status": "official_portal_request_constraint_reviewed; SHT_CD length conflicts with sample symbol format; no live request",
+      "portal_document_title": "국내주식 종목추정실적[국내주식-187]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/estimate-perform",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "conflict_portal_vs_sample; portal says tr_cont unavailable while pinned sample recurses M/F→N; block pagination pending correction",
+      "provider_unknowns": [
+        "Do not map KIS-house estimates to cross-broker consensus. Consensus permission remains separate and unresolved.",
+        "Portal output1 has apparent ELW labels inconsistent with endpoint; do not use output1 as estimate field source.",
+        "data1..data5 are positional String values; exact row-to-metric and period alignment must be verified with a provider fixture before calculations.",
+        "Portal unit notes (e.g. EBITDA 십억원, EPS 원, valuation multiples 배) are metric-specific; preserve raw data1..data5 without cross-metric unit assignment until alignment verified.",
+        "The endpoint provides estimate periods, not a verified publication timestamp/source_as_of."
+      ],
+      "request_constraints": [
+        {
+          "name": "SHT_CD",
+          "portal_type": "String, portal length says 2",
+          "sample_example": "six-digit listed equity code",
+          "conflict": "portal length and sample example conflict; do not auto-correct"
+        }
+      ]
+    },
+    {
+      "operation_ref": "KIS-280",
+      "method": "GET",
+      "endpoint": "/uapi/overseas-price/v1/quotations/rights-by-ice",
+      "tr_id": {
+        "real": "HHDFS78330900",
+        "paper": "HHDFS78330900"
+      },
+      "asset_scope": [
+        "A4",
+        "A5"
+      ],
+      "sample_request_field_names": [
+        "ncod",
+        "symb",
+        "st_ymd",
+        "ed_ymd"
+      ],
+      "response_roots": [
+        {
+          "name": "output1",
+          "shape": "object_or_array",
+          "sample_description": "DataFrame"
+        }
+      ],
+      "sample_field_names_enumerated": false,
+      "pagination_evidence": "no pagination shown",
+      "max_rows_or_page_hint": null,
+      "provider_evidence_state": "official_portal_response_schema_reviewed; pinned_sample_crosschecked; live_response_not_verified",
+      "catalog_id": "kis.catalog.commit2077773a.row.328",
+      "catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/rights_by_ice/rights_by_ice.py",
+      "authentication": "KIS OAuth bearer plus appkey/appsecret and TR-ID; values remain outside this contract; market-data route does not require CANO/account number.",
+      "rate_limit": {
+        "provider_notice": "real REST 18 req/s, paper REST 1 req/s (as carried by prior evidence)",
+        "customer_or_operation_specific_limit": "unverified",
+        "safe_runtime_default": "existing prototype uses one request/second/process; not provider-validated"
+      },
+      "cache_refresh": {
+        "cache": "disabled pending rights/retention review",
+        "ttl": null,
+        "refresh": "explicit user request only",
+        "background_polling": false
+      },
+      "rights": "DATA_RIGHTS gate is not cleared here; local personal-use and host-egress/retention/product scope require separate confirmation; no redistribution permission inferred.",
+      "errors": {
+        "http_and_provider_business_code": "must be parsed separately; endpoint-specific mapping not live-validated",
+        "local_mapping": [
+          "invalid_input",
+          "credential_missing",
+          "auth_expired",
+          "rights_pending",
+          "rate_limited",
+          "upstream_rejected",
+          "upstream_unavailable",
+          "schema_drift",
+          "response_too_large"
+        ],
+        "automatic_retry": false
+      },
+      "notes": [
+        "Overseas rights-by-ICE operation, not Korean KSD events. Country scope and date basis vary by event; exact response fields are not enumerated by sample. Consumer raw aliases are archived candidates only.",
+        "KIS-280 is overseas rights-by-ICE only (A4/A5); it is not a Korean KSD action schedule. The consumer raw keys ca_title/effective_dt/div_lock_dt/pay_dt are archived candidates and were not enumerated by the pinned sample."
+      ],
+      "request_schema_status": "official_portal_request_constraints_reviewed; remaining untyped fields or paging behavior stay unresolved; no live request",
+      "portal_document_title": "해외주식 권리종합[해외주식-050]",
+      "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/rights-by-ice",
+      "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "portal_schema_review_date": "2026-10-21",
+      "pagination_status": "portal and sample show no continuation/pagination",
+      "provider_unknowns": [
+        "This source only covers overseas markets A4/A5. It does not supply Korean KSD action events.",
+        "Event type taxonomy is incomplete; preserve ca_title verbatim until a codebook is available.",
+        "All dates are date-only; no event time/timezone or provider publication timestamp."
+      ],
+      "request_constraints": [
+        {
+          "name": "NCOD",
+          "type": "String(2)",
+          "values": [
+            "CN",
+            "HK",
+            "US",
+            "JP",
+            "VN"
+          ],
+          "meaning": "country code"
+        },
+        {
+          "name": "SYMB",
+          "type": "String(20)",
+          "meaning": "symbol"
+        },
+        {
+          "name": "ST_YMD / ED_YMD",
+          "type": "String(8)",
+          "meaning": "date range; defaults ±3 months when omitted per portal"
+        }
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "field_id": "actions.events",
+      "consumer_type": "array",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S01-CHART",
+        "R01-X01-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-280",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "ca_title",
+          "response_path": "$.output1[*].ca_title",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/rights_by_ice/rights_by_ice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/rights-by-ice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 12,
+          "provider_semantics": "corporate-action type/title; portal gives no full codebook",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "event_category; associated event dates are date-only",
+          "scope_note": "Overseas ICE rights only (A4/A5); not domestic KSD."
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-280",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "effective_dt",
+          "response_path": "$.output1[*].effective_dt",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/rights_by_ice/rights_by_ice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/rights-by-ice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "effective date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone",
+          "scope_note": "Overseas ICE rights only (A4/A5); not domestic KSD."
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-280",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "div_lock_dt",
+          "response_path": "$.output1[*].div_lock_dt",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/rights_by_ice/rights_by_ice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/rights-by-ice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "dividend ex-date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone",
+          "scope_note": "Overseas ICE rights only (A4/A5); not domestic KSD."
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-280",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "pay_dt",
+          "response_path": "$.output1[*].pay_dt",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/rights_by_ice/rights_by_ice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/rights-by-ice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "payment date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone",
+          "scope_note": "Overseas ICE rights only (A4/A5); not domestic KSD."
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code.",
+        "KIS-280 applies only to overseas rights A4/A5, not Korean KSD events. Domestic KSD endpoint candidates are separately listed; their raw event fields remain unverified and event types must not be collapsed."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "analysis.claim_kind",
+      "consumer_type": "versioned evidence-linked object",
+      "consumer_unit": null,
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "analysis.next_check",
+      "consumer_type": "versioned evidence-linked object",
+      "consumer_unit": null,
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "assumption.multiple",
+      "consumer_type": "versioned declared input",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "assumption.scenario",
+      "consumer_type": "versioned declared input",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "estimates.consensus",
+      "consumer_type": "object|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-109",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "data1",
+          "response_path": "$.output2[*].data1",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/estimate_perform/estimate_perform.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/estimate-perform",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 15,
+          "provider_semantics": "one positional period value; output2 metric order described by portal as revenue, revenue growth, operating profit, operating-profit growth, net income, net-income growth; row/array alignment unresolved",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "estimate_period_row; exact join to output4.dt unresolved; not publication time",
+          "scope_note": "KIS-house estimates only; not cross-broker consensus; data1..data5 alignment unresolved."
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code.",
+        "KIS-109 DATA1..DATA5 cannot be labeled consensus/revenue/EPS without an official output schema. Do not draw an estimates chart as observed consensus yet."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "estimates.guidance",
+      "consumer_type": "object|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "evidence.business_facts",
+      "consumer_type": "claims with paragraph locators",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S02-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-DOCUMENT",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": null,
+          "response_path": null,
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": false,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "filing.body_locator",
+      "consumer_type": "string|array|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-DOCUMENT",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": null,
+          "response_path": null,
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": false,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "filing.date",
+      "consumer_type": "string|array|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_guide_field_or_operation_confirmed",
+      "provider_resolution": "field_name_confirmed_but_consumer_type_or_document_locator_partial",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-LIST",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "rcept_dt",
+          "response_path": "$.list[*].rcept_dt",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Filing receipt date has date-only precision; body locator is local derived storage metadata, not a DART JSON response field."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "filing.receipt",
+      "consumer_type": "string|array|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_guide_field_or_operation_confirmed",
+      "provider_resolution": "field_name_confirmed_but_consumer_type_or_document_locator_partial",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-LIST",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "rcept_no",
+          "response_path": "$.list[*].rcept_no",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Filing receipt date has date-only precision; body locator is local derived storage metadata, not a DART JSON response field."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "filing.title",
+      "consumer_type": "string|array|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_guide_field_or_operation_confirmed",
+      "provider_resolution": "field_name_confirmed_but_consumer_type_or_document_locator_partial",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-LIST",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "report_nm",
+          "response_path": "$.list[*].report_nm",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Filing receipt date has date-only precision; body locator is local derived storage metadata, not a DART JSON response field."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "flow.category_tree",
+      "consumer_type": "object|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute.",
+        "KIS-115 is stock scope and KIS-113 is market scope; use separate coverage and never merge them. Currency/scale/sign/time/category codebook remain unresolved."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "flow.coverage",
+      "consumer_type": "object|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute.",
+        "KIS-115 is stock scope and KIS-113 is market scope; use separate coverage and never merge them. Currency/scale/sign/time/category codebook remain unresolved."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "flow.foreign.net_value",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency × unverified scale",
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-115",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "frgn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].frgn_ntby_tr_pbmn",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/investor_trade_by_stock_daily/investor_trade_by_stock_daily.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "foreign investor net trade amount",
+          "provider_unit": "KRW millions (백만원)",
+          "provider_unit_status": "explicit_in_endpoint_documentation",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-113",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "frgn_ntby_tr_pbmn",
+          "response_path": "$.output[*].frgn_ntby_tr_pbmn",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_investor_daily_by_market/inquire_investor_daily_by_market.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "foreign investor net trade amount",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_record_context_no_time_or_timezone",
+          "scope_note": "Market/industry aggregate; not stock-specific investor flow."
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code.",
+        "KIS-115 is stock scope and KIS-113 is market scope; use separate coverage and never merge them. Currency/scale/sign/time/category codebook remain unresolved."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "flow.individual.net_value",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency × unverified scale",
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-115",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "prsn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].prsn_ntby_tr_pbmn",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/investor_trade_by_stock_daily/investor_trade_by_stock_daily.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "individual investor net trade amount",
+          "provider_unit": "KRW millions (백만원)",
+          "provider_unit_status": "explicit_in_endpoint_documentation",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-113",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "prsn_ntby_tr_pbmn",
+          "response_path": "$.output[*].prsn_ntby_tr_pbmn",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_investor_daily_by_market/inquire_investor_daily_by_market.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "individual investor net trade amount",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_record_context_no_time_or_timezone",
+          "scope_note": "Market/industry aggregate; not stock-specific investor flow."
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code.",
+        "KIS-115 is stock scope and KIS-113 is market scope; use separate coverage and never merge them. Currency/scale/sign/time/category codebook remain unresolved."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "flow.institution.net_value",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency × unverified scale",
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-115",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "orgn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].orgn_ntby_tr_pbmn",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/investor_trade_by_stock_daily/investor_trade_by_stock_daily.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "institutional investor net trade amount",
+          "provider_unit": "KRW millions (백만원)",
+          "provider_unit_status": "explicit_in_endpoint_documentation",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-113",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "orgn_ntby_tr_pbmn",
+          "response_path": "$.output[*].orgn_ntby_tr_pbmn",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_investor_daily_by_market/inquire_investor_daily_by_market.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "institutional investor net trade amount",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_record_context_no_time_or_timezone",
+          "scope_note": "Market/industry aggregate; not stock-specific investor flow."
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code.",
+        "KIS-115 is stock scope and KIS-113 is market scope; use separate coverage and never merge them. Currency/scale/sign/time/category codebook remain unresolved."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.earnings_value",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "one chosen financial metric and currency/scale",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.estimate_role",
+      "consumer_type": "string enum reported|guidance|internal|consensus",
+      "consumer_unit": "category",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.event_date",
+      "consumer_type": "date|timezone instant|null",
+      "consumer_unit": "date or ISO8601 with declared precision",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute.",
+        "Do not use received_at as provider timestamp; date-only fields cannot be plotted at an invented time."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.event_lane",
+      "consumer_type": "string",
+      "consumer_unit": "category",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.flow_date",
+      "consumer_type": "date|timezone instant",
+      "consumer_unit": "date/instant",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.period_label",
+      "consumer_type": "string",
+      "consumer_unit": "fiscal period/scope",
+      "status": "verification_pending",
+      "provider_classification": "partial_request_or_guide_metadata",
+      "provider_resolution": "partial_precision_or_period_mapping_only",
+      "requirements": [
+        "R01-S03-CHART",
+        "R01-S05-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Use only exact filing/date or request period metadata; do not invent a timestamp, timezone, period type, or publication instant."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.scenario",
+      "consumer_type": "string",
+      "consumer_unit": "category",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.scenario_value",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency/share or scenario-specific unit",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.segment",
+      "consumer_type": "string",
+      "consumer_unit": "category",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "frame.segment_revenue",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency × declared display scale",
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-S02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "history.adjustment",
+      "consumer_type": "series<date/decimal/status>",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S01-CHART",
+        "R01-X01-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-039",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": "prtt_rate",
+          "response_path": "$.output2[*].prtt_rate",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 11,
+          "provider_semantics": "split ratio; portal describes as base price / previous close",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-039",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": "flng_cls_code",
+          "response_path": "$.output2[*].flng_cls_code",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 2,
+          "provider_semantics": "corporate-action/distribution class code; portal codebook distinguishes ex-rights, ex-dividend, distribution and mixed events",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "event code on business-date row"
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "history.benchmark",
+      "consumer_type": "series",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S01-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-072",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": "bstp_nmix_prpr",
+          "response_path": "$.output2[*].bstp_nmix_prpr",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_indexchartprice/inquire_daily_indexchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 112,
+          "provider_semantics": "sector/index value; portal-declared length retained verbatim; schema anomaly pending confirmation",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-264",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "ovrs_nmix_prpr",
+          "response_path": "$.output2[*].ovrs_nmix_prpr",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/inquire_daily_chartprice/inquire_daily_chartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 16,
+          "provider_semantics": "overseas index value; portal numeric format 11.4",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_record_context_no_time_or_timezone"
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "history.close",
+      "consumer_type": "series<date/decimal/status>",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S01-CHART",
+        "R01-X01-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-039",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": "stck_clpr",
+          "response_path": "$.output2[*].stck_clpr",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 10,
+          "provider_semantics": "daily close price",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-254",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "clos",
+          "response_path": "$.output2[*].clos",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/dailyprice/dailyprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/dailyprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 12,
+          "provider_semantics": "close price",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-303",
+          "asset_scope": [
+            "A6"
+          ],
+          "raw_field": "last_price",
+          "response_path": "$.output2[*].last_price",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_futureoption/daily_ccnl/daily_ccnl.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-futureoption/v1/quotations/daily-ccnl",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 15,
+          "provider_semantics": "last/trade price; not asserted to be daily settlement or close",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "per-record date/time; timezone unresolved"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-212",
+          "asset_scope": [
+            "A3"
+          ],
+          "raw_field": "futs_prpr",
+          "response_path": "$.output2[*].futs_prpr",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_futureoption/inquire_daily_fuopchartprice/inquire_daily_fuopchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 14,
+          "provider_semantics": "futures current price on period row; not mapped as close until portal meaning is clarified",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "history.date",
+      "consumer_type": "series<date/decimal/status>",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S01-CHART",
+        "R01-X01-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-039",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "business date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-254",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "xymd",
+          "response_path": "$.output2[*].xymd",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/dailyprice/dailyprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/dailyprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-303",
+          "asset_scope": [
+            "A6"
+          ],
+          "raw_field": "data_date",
+          "response_path": "$.output2[*].data_date",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_futureoption/daily_ccnl/daily_ccnl.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-futureoption/v1/quotations/daily-ccnl",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "record date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_component_no_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-212",
+          "asset_scope": [
+            "A3"
+          ],
+          "raw_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_futureoption/inquire_daily_fuopchartprice/inquire_daily_fuopchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 8,
+          "provider_semantics": "business date",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "history.volume",
+      "consumer_type": "series<date/decimal/status>",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "official_endpoint_candidate_response_fields_pending",
+      "provider_resolution": "candidate_only_no_raw_field_confirmation",
+      "requirements": [
+        "R01-S01-CHART",
+        "R01-X01-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-039",
+          "asset_scope": [
+            "A1",
+            "A2"
+          ],
+          "raw_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "accumulated/day volume",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-254",
+          "asset_scope": [
+            "A4",
+            "A5"
+          ],
+          "raw_field": "tvol",
+          "response_path": "$.output2[*].tvol",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/dailyprice/dailyprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/dailyprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 14,
+          "provider_semantics": "traded volume",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_no_time_or_timezone"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-303",
+          "asset_scope": [
+            "A6"
+          ],
+          "raw_field": "vol",
+          "response_path": "$.output2[*].vol",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_futureoption/daily_ccnl/daily_ccnl.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-futureoption/v1/quotations/daily-ccnl",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 10,
+          "provider_semantics": "cumulative trade quantity",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "per-record date/time"
+        },
+        {
+          "provider": "KIS",
+          "source_operation_id": "KIS-212",
+          "asset_scope": [
+            "A3"
+          ],
+          "raw_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "binding_status": "provider_key_path_confirmed_canonical_mapping_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_futureoption/inquire_daily_fuopchartprice/inquire_daily_fuopchartprice.py",
+          "candidate_source": "official KIS portal response schema reviewed; raw key/path documented; canonical mapping and live response remain unverified",
+          "portal_document_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice",
+          "portal_schema_evidence_ref": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+          "provider_type": "String",
+          "provider_max_length": 18,
+          "provider_semantics": "accumulated period volume",
+          "provider_unit": null,
+          "provider_unit_status": "not_stated_in_endpoint_schema",
+          "provider_time_semantics": "date_only_record_context_no_time_or_timezone"
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains unchanged. Archived source-operation raw names and paths are candidates only unless separately confirmed by current official schema/code."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "metric.eps",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency/share",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "metric.fcf",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S05-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "metric.flow_cumulative",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "metric.ma20",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "quote currency",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-X01-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "metric.price_rebased",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "index100",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S01-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "metric.scenario_valuation",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "currency/share",
+      "status": "derived",
+      "provider_classification": "local_derived_or_analysis",
+      "provider_resolution": "producer_generated_no_raw_provider_field",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Consumer status is retained. Formula, input facts and deterministic calculation ID must be specified before producing values."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.capex",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "status": "verification_pending",
+      "provider_classification": "generic_official_response_fields_confirmed_concept_pending",
+      "provider_resolution": "provider_generic_fields_confirmed_canonical_metric_unresolved",
+      "requirements": [
+        "R01-S05-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-FIN",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "thstrm_amount|thstrm_add_amount",
+          "response_path": "$.list[*].thstrm_amount or $.list[*].thstrm_add_amount",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains verification_pending. The source guide proves generic amount/row fields only, not the selected canonical account concept.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.cfo",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "status": "verification_pending",
+      "provider_classification": "generic_official_response_fields_confirmed_concept_pending",
+      "provider_resolution": "provider_generic_fields_confirmed_canonical_metric_unresolved",
+      "requirements": [
+        "R01-S05-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-FIN",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "thstrm_amount|thstrm_add_amount",
+          "response_path": "$.list[*].thstrm_amount or $.list[*].thstrm_add_amount",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains verification_pending. The source guide proves generic amount/row fields only, not the selected canonical account concept.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.net_income_common",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "status": "verification_pending",
+      "provider_classification": "generic_official_response_fields_confirmed_concept_pending",
+      "provider_resolution": "provider_generic_fields_confirmed_canonical_metric_unresolved",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-FIN",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "thstrm_amount|thstrm_add_amount",
+          "response_path": "$.list[*].thstrm_amount or $.list[*].thstrm_add_amount",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains verification_pending. The source guide proves generic amount/row fields only, not the selected canonical account concept.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.operating_profit",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "status": "verification_pending",
+      "provider_classification": "generic_official_response_fields_confirmed_concept_pending",
+      "provider_resolution": "provider_generic_fields_confirmed_canonical_metric_unresolved",
+      "requirements": [
+        "R01-S03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-FIN",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "thstrm_amount|thstrm_add_amount",
+          "response_path": "$.list[*].thstrm_amount or $.list[*].thstrm_add_amount",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains verification_pending. The source guide proves generic amount/row fields only, not the selected canonical account concept.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.period",
+      "consumer_type": "object|string|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "partial_request_or_guide_metadata",
+      "provider_resolution": "partial_precision_or_period_mapping_only",
+      "requirements": [
+        "R01-S02-CHART",
+        "R01-S03-CHART",
+        "R01-S05-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Use only exact filing/date or request period metadata; do not invent a timestamp, timezone, period type, or publication instant.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.revenue",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "status": "verification_pending",
+      "provider_classification": "generic_official_response_fields_confirmed_concept_pending",
+      "provider_resolution": "provider_generic_fields_confirmed_canonical_metric_unresolved",
+      "requirements": [
+        "R01-S03-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-FIN",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "thstrm_amount|thstrm_add_amount",
+          "response_path": "$.list[*].thstrm_amount or $.list[*].thstrm_add_amount",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains verification_pending. The source guide proves generic amount/row fields only, not the selected canonical account concept.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.scope",
+      "consumer_type": "object|string|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "partial_request_or_guide_metadata",
+      "provider_resolution": "partial_precision_or_period_mapping_only",
+      "requirements": [
+        "R01-S02-CHART",
+        "R01-S03-CHART",
+        "R01-S05-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Use only exact filing/date or request period metadata; do not invent a timestamp, timezone, period type, or publication instant.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "reported.shares_weighted",
+      "consumer_type": "decimal_string|null",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "status": "verification_pending",
+      "provider_classification": "generic_official_response_fields_confirmed_concept_pending",
+      "provider_resolution": "provider_generic_fields_confirmed_canonical_metric_unresolved",
+      "requirements": [
+        "R01-S04-CHART"
+      ],
+      "candidate_bindings": [
+        {
+          "provider": "OpenDART",
+          "source_operation_id": "DART-FIN",
+          "asset_scope": [
+            "A1"
+          ],
+          "raw_field": "thstrm_amount|thstrm_add_amount",
+          "response_path": "$.list[*].thstrm_amount or $.list[*].thstrm_add_amount",
+          "binding_status": "verification_pending",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false,
+          "evidence_url": null,
+          "candidate_source": null
+        }
+      ],
+      "unresolved_notes": [
+        "Consumer status remains verification_pending. The source guide proves generic amount/row fields only, not the selected canonical account concept.",
+        "OpenDART amount field is generic; map by issuer-specific taxonomy/account ID, statement, period, consolidation, currency and filing lineage before calculations."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "time.published_at",
+      "consumer_type": "string|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "partial_request_or_guide_metadata",
+      "provider_resolution": "partial_precision_or_period_mapping_only",
+      "requirements": [
+        "R01-S06-CHART",
+        "R01-X03-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "Use only exact filing/date or request period metadata; do not invent a timestamp, timezone, period type, or publication instant."
+      ],
+      "canonical_mapping_verified": false
+    },
+    {
+      "field_id": "time.source_at",
+      "consumer_type": "string|null",
+      "consumer_unit": null,
+      "status": "verification_pending",
+      "provider_classification": "no_exact_provider_mapping_in_reviewed_scope",
+      "provider_resolution": "local_input_or_unavailable_or_verification_pending",
+      "requirements": [
+        "R01-X02-CHART"
+      ],
+      "candidate_bindings": [],
+      "unresolved_notes": [
+        "No exact provider response field is mapped by the reviewed KIS sample inventory and OpenDART guides. Preserve the consumer contract and show missing/verification status; do not substitute.",
+        "Do not use received_at as provider timestamp; date-only fields cannot be plotted at an invented time."
+      ],
+      "canonical_mapping_verified": false
+    }
+  ],
+  "official_provider_schema_evidence": {
+    "artifact": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+    "reviewed_on": "2026-10-21",
+    "operations_reviewed": 10,
+    "portal_response_schemas_reviewed": 10,
+    "r01_chart_contract": {
+      "fields": 48,
+      "verification_pending": 39,
+      "derived": 9
+    },
+    "consumer_statuses_promoted": 0,
+    "live_provider_responses_verified": 0,
+    "previous_dart_filing_raw_keys": [
+      "rcept_dt",
+      "rcept_no",
+      "report_nm"
+    ],
+    "scope_note": "The three DART filing-list keys are a separate provider key/path evidence slice. They are not part of KIS response mapping and do not change R01 consumer completion counts.",
+    "portal_request_schemas_reviewed": 10
+  }
+}

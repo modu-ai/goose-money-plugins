@@ -1,0 +1,176 @@
+{
+  "contract": "moai.goose.execution.v1",
+  "run_id": "synthetic-current-procedure-references",
+  "execution_mode": "sequential",
+  "host_execution_verified": false,
+  "host_execution_attested": false,
+  "single_writer": "goose",
+  "report_rendered": false,
+  "factual_accuracy_verified": false,
+  "records": [
+    {
+      "role_id": "company-analysis",
+      "skill": "references/roles/company-analysis/PROCEDURE.md",
+      "phase": "analysis",
+      "requested_scope": "Synthetic procedure and grant fixture, not host execution",
+      "input_refs": [
+        "synthetic-only"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T08:00:00.123456790Z",
+      "started_at": "2026-10-22T08:00:00.123456790Z",
+      "completed_at": "2026-10-22T08:00:00.123456790Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-current-procedure-references",
+        "role_id": "company-analysis",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic only; canonical metrics and actual host execution not established."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    },
+    {
+      "role_id": "disclosure-event",
+      "skill": "references/roles/disclosure-event/PROCEDURE.md",
+      "phase": "analysis",
+      "requested_scope": "Synthetic procedure and grant fixture, not host execution",
+      "input_refs": [
+        "synthetic-only"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T08:00:00.123456790Z",
+      "started_at": "2026-10-22T08:00:00.123456790Z",
+      "completed_at": "2026-10-22T08:00:00.123456790Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-current-procedure-references",
+        "role_id": "disclosure-event",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic only; canonical metrics and actual host execution not established."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    },
+    {
+      "role_id": "market-behavior",
+      "skill": "references/roles/market-behavior/PROCEDURE.md",
+      "phase": "analysis",
+      "requested_scope": "Synthetic procedure and grant fixture, not host execution",
+      "input_refs": [
+        "synthetic-only"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T08:00:00.123456790Z",
+      "started_at": "2026-10-22T08:00:00.123456790Z",
+      "completed_at": "2026-10-22T08:00:00.123456790Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-current-procedure-references",
+        "role_id": "market-behavior",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic only; canonical metrics and actual host execution not established."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    },
+    {
+      "role_id": "valuation",
+      "skill": "references/roles/valuation/PROCEDURE.md",
+      "phase": "analysis",
+      "requested_scope": "Synthetic procedure and grant fixture, not host execution",
+      "input_refs": [
+        "synthetic-only"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T08:00:00.123456790Z",
+      "started_at": "2026-10-22T08:00:00.123456790Z",
+      "completed_at": "2026-10-22T08:00:00.123456790Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-current-procedure-references",
+        "role_id": "valuation",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic only; canonical metrics and actual host execution not established."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    },
+    {
+      "role_id": "fact-check-report-qa",
+      "skill": "references/roles/fact-check-report-qa/PROCEDURE.md",
+      "phase": "analysis",
+      "requested_scope": "Synthetic procedure and grant fixture, not host execution",
+      "input_refs": [
+        "synthetic-only"
+      ],
+      "output_path": null,
+      "data_class": "synthetic",
+      "tool_operation_ids": [],
+      "cutoff_at": "2026-10-22T08:00:00.123456790Z",
+      "started_at": "2026-10-22T08:00:00.123456790Z",
+      "completed_at": "2026-10-22T08:00:00.123456790Z",
+      "observed_child_id": null,
+      "validation_state": "schema_validated",
+      "failure": null,
+      "completion_status": "response_observed",
+      "result": {
+        "run_id": "synthetic-current-procedure-references",
+        "role_id": "fact-check-report-qa",
+        "findings": [],
+        "tool_operation_ids": [],
+        "counterevidence": [],
+        "unresolved": [
+          "Synthetic only; canonical metrics and actual host execution not established."
+        ]
+      },
+      "warnings": [
+        "Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here."
+      ]
+    }
+  ],
+  "warnings": [
+    "Execution adapter does not install/launch a host by itself. Native execution is host-attested from validated supplied receipts, not independently verified by this library. Caller-supplied origin labels are a trusted host boundary, not proof by themselves.",
+    "Runner must enforce actual tool capabilities and data egress; result auditing is not a security sandbox. Accounts/trading/portfolio role are excluded."
+  ]
+}

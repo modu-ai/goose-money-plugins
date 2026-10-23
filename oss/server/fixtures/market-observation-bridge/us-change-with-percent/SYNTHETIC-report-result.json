@@ -1,0 +1,298 @@
+{
+  "contract": "moai.market-observations/0.1-rc7",
+  "status": "evaluated",
+  "request": {
+    "cutoff": "2026-10-22T14:30:01.123456789124Z",
+    "data_kind": "synthetic",
+    "purpose": "private_analysis"
+  },
+  "results": [
+    {
+      "id": "synthetic-us_equity_change",
+      "metric_id": "metric.change_pct",
+      "formula": "(last/previous_close-1)*100",
+      "unit": "percent",
+      "status": "conditional_supplied_metric",
+      "arithmetic": {
+        "status": "computed",
+        "value": {
+          "decimal": "1.25",
+          "exact_fraction": {
+            "numerator": "5",
+            "denominator": "4"
+          },
+          "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+        },
+        "claim": "Exact arithmetic on supplied assertions only"
+      },
+      "canonical_metric": {
+        "status": "conditional_supplied_assertions_only",
+        "value": {
+          "decimal": "1.25",
+          "exact_fraction": {
+            "numerator": "5",
+            "denominator": "4"
+          },
+          "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+        }
+      },
+      "accepted_chart_bindings": 0,
+      "provider_crosscheck": {
+        "status": "matched_supplied_assertion",
+        "reason": null,
+        "expected_rounded": {
+          "decimal": "1.25",
+          "exact_fraction": {
+            "numerator": "5",
+            "denominator": "4"
+          },
+          "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+        },
+        "supplied_value": {
+          "decimal": "1.25",
+          "exact_fraction": {
+            "numerator": "5",
+            "denominator": "4"
+          },
+          "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+        },
+        "source_authenticated": false,
+        "independence": "supplied_assertion_only",
+        "lineage": [
+          {
+            "observation_id": "moai:market:ffb03e63575da2831ca55edc8b5141f16bebb295870fe2a07bddc943c7828ec6",
+            "observation_sha256": "9caea9e57a3fac5a539b60fea676276eadae3c85bdd892b722b967ab19187849",
+            "role": "market.provider_change_pct",
+            "raw_decimal": "1.25",
+            "scale": "1",
+            "normalized_value": {
+              "decimal": "1.25",
+              "exact_fraction": {
+                "numerator": "5",
+                "denominator": "4"
+              },
+              "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+            },
+            "unit": "percent",
+            "currency": "USD",
+            "data_kind": "synthetic",
+            "instrument": {
+              "security_id": "SYNTHETIC:security:us_equity_change",
+              "symbol": "SYNTH",
+              "instrument_kind": "equity",
+              "venue": "SYNTHETIC:XNAS",
+              "share_class": "SYNTHETIC:common",
+              "share_unit": "one_share",
+              "split_basis": "SYNTHETIC:current-share-unadjusted"
+            },
+            "basis": {
+              "session_id": "SYNTHETIC:2026-10-22",
+              "observation_session_id": "SYNTHETIC:2026-10-22",
+              "session_type": "regular",
+              "reference_id": "SYNTHETIC:unadjusted-reference",
+              "price_basis": "unadjusted_per_current_share",
+              "valuation_basis": "regular_last_vs_official_previous_close",
+              "market_state": "regular_open",
+              "semantics": "provider_published_change_from_previous_close"
+            },
+            "source_at": "2026-10-22T14:30:00.123456789123Z",
+            "published_at": "2026-10-22T14:30:00.123456789124Z",
+            "available_at": "2026-10-22T14:30:01.123456789124Z",
+            "provenance": {
+              "source_id": "KIS",
+              "document_id": "SYNTHETIC:original-response",
+              "record_id": "direct:market.provider_change_pct",
+              "locator": "$.output.rate",
+              "revision_id": "SYNTHETIC:original",
+              "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+              "origin": "direct_observation",
+              "semantic_binding_asserted": true
+            },
+            "rights": {
+              "processing_allowed": true,
+              "portable_export_allowed": false,
+              "assertion_id": "synthetic-private-analysis-only"
+            },
+            "source_authenticated": false
+          }
+        ],
+        "rounding_policy": {
+          "policy_id": "synthetic-pct-rounding",
+          "decimal_places": 2,
+          "mode": "half_even",
+          "scope": "percent_value_after_scale"
+        }
+      },
+      "interpretation": {
+        "status": "bounded_supplied_assertions_only",
+        "reasons": [],
+        "meaning": "Descriptive change versus explicitly supplied previous close; no trend or return prediction."
+      },
+      "lineage": [
+        {
+          "observation_id": "moai:market:556717649baecff3c5819a8ece1132d409016db8df40e5a036d05f244a58ee86",
+          "observation_sha256": "9c95b12a5d219a50f1b8e335bbe446985f61b514e81bde6733f334ff1a5353e3",
+          "role": "market.last",
+          "raw_decimal": "101.2500",
+          "scale": "1",
+          "normalized_value": {
+            "decimal": "101.25",
+            "exact_fraction": {
+              "numerator": "405",
+              "denominator": "4"
+            },
+            "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+          },
+          "unit": "money_per_share",
+          "currency": "USD",
+          "data_kind": "synthetic",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:us_equity_change",
+            "symbol": "SYNTH",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XNAS",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-22",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "regular_last_vs_official_previous_close",
+            "market_state": "regular_open",
+            "semantics": "last_trade"
+          },
+          "source_at": "2026-10-22T14:30:00.123456789123Z",
+          "published_at": "2026-10-22T14:30:00.123456789124Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.last",
+            "locator": "$.output.last",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          },
+          "source_authenticated": false
+        },
+        {
+          "observation_id": "moai:market:f043a690043a7c0792270f772408ae60c1cd878e164bcde50691a525e9bff10f",
+          "observation_sha256": "50c0561b4bc3e5bcbde9c91bf9056a159ec180c296b1ea4ef33d100597d7c29c",
+          "role": "market.previous_close",
+          "raw_decimal": "100.0000",
+          "scale": "1",
+          "normalized_value": {
+            "decimal": "100",
+            "exact_fraction": {
+              "numerator": "100",
+              "denominator": "1"
+            },
+            "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+          },
+          "unit": "money_per_share",
+          "currency": "USD",
+          "data_kind": "synthetic",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:us_equity_change",
+            "symbol": "SYNTH",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XNAS",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-21",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "regular_last_vs_official_previous_close",
+            "market_state": "regular_open",
+            "semantics": "official_previous_session_close"
+          },
+          "source_at": "2026-10-21T20:00:00Z",
+          "published_at": "2026-10-21T20:00:00.000000000001Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.previous_close",
+            "locator": "$.output.base",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          },
+          "source_authenticated": false
+        }
+      ],
+      "context": {
+        "session_id": "SYNTHETIC:2026-10-22",
+        "session_type": "regular",
+        "reference_id": "SYNTHETIC:unadjusted-reference",
+        "freshness_policy": {
+          "policy_id": "synthetic-private-report-freshness",
+          "max_age_seconds": {
+            "market.last": "10",
+            "market.previous_close": "172800",
+            "market.provider_change_pct": "10"
+          }
+        },
+        "previous_session_id": "SYNTHETIC:2026-10-21",
+        "previous_close_at": "2026-10-21T20:00:00Z",
+        "independent_percent_assertion": {
+          "assertion_id": "synthetic-percent-independence",
+          "provider_percent_independent_of_local_calculation": true,
+          "previous_close_independently_supplied": true
+        },
+        "provider_rounding_policy": {
+          "policy_id": "synthetic-pct-rounding",
+          "decimal_places": 2,
+          "mode": "half_even",
+          "scope": "percent_value_after_scale"
+        }
+      },
+      "source_authenticated": false,
+      "actual_bindings": 0,
+      "live_bindings": 0
+    }
+  ],
+  "reasons": [],
+  "limitations": [
+    "All inputs are supplied assertions. source_authenticated=false; actual_bindings=0; live_bindings=0. No provider raw adapter is metric-ready.",
+    "Arithmetic facts, supplied provider-percent cross-check, and bounded interpretation are independent statuses. A numeric arithmetic result does not imply original preconditions passed.",
+    "No authentication, licensed live acquisition, full report-slot completion, investment conclusion, price target, forecast, or promised execution cost is established.",
+    "ETF support is limited to official closing exchange price and official closing per-share NAV at the exact same valuation instant. Indicative NAV, current price versus previous NAV, cross-market stale/closed mismatch, FX conversion and share-unit conversion are not implemented.",
+    "Same venue, symbol, security, split, share, session and reference bases must be explicitly supplied. They are not inferred from labels or provider raw fields."
+  ],
+  "source_authenticated": false,
+  "actual_bindings": 0,
+  "live_bindings": 0,
+  "actual_provider_calls": 0,
+  "accepted_chart_bindings": 0,
+  "whole_original_slots_complete": false,
+  "input_sha256": "c86c5c06d06f1f6f1f006d188406a8b482d7672356865d997f0b1f77c0089c6b",
+  "status_counts": {
+    "conditional_supplied_metric": 1,
+    "arithmetic_only": 0,
+    "missing_inputs": 0,
+    "unimplemented": 0,
+    "blocked": 0
+  }
+}

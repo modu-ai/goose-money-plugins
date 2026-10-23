@@ -1,0 +1,201 @@
+{
+  "contract": "moai.market-observations/0.1-rc7",
+  "status": "evaluated",
+  "request": {
+    "cutoff": "2026-10-22T14:30:01.123456789124Z",
+    "data_kind": "synthetic",
+    "purpose": "private_analysis"
+  },
+  "results": [
+    {
+      "id": "synthetic-kr_equity_spread",
+      "metric_id": "metric.spread_bps",
+      "formula": "(ask-bid)/((ask+bid)/2)*10000",
+      "unit": "bps",
+      "status": "conditional_supplied_metric",
+      "arithmetic": {
+        "status": "computed",
+        "value": {
+          "decimal": "20",
+          "exact_fraction": {
+            "numerator": "20",
+            "denominator": "1"
+          },
+          "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+        },
+        "claim": "Exact arithmetic on supplied assertions only"
+      },
+      "canonical_metric": {
+        "status": "conditional_supplied_assertions_only",
+        "value": {
+          "decimal": "20",
+          "exact_fraction": {
+            "numerator": "20",
+            "denominator": "1"
+          },
+          "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+        }
+      },
+      "accepted_chart_bindings": 0,
+      "provider_crosscheck": {
+        "status": "not_applicable"
+      },
+      "interpretation": {
+        "status": "bounded_supplied_assertions_only",
+        "reasons": [],
+        "meaning": "Quoted relative top-of-book spread only; not execution cost, liquidity depth or guaranteed fill."
+      },
+      "lineage": [
+        {
+          "observation_id": "moai:market:cbe113cecebaca8cc306360a7091cc14b0f98534928b0ce5bca12ccf2c8314f2",
+          "observation_sha256": "da15259687d2757f973366cfdf790b006a9e03e873ace30b6149c210b5ed1742",
+          "role": "market.best_bid",
+          "raw_decimal": "99.9000",
+          "scale": "1",
+          "normalized_value": {
+            "decimal": "99.9",
+            "exact_fraction": {
+              "numerator": "999",
+              "denominator": "10"
+            },
+            "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+          },
+          "unit": "money_per_share",
+          "currency": "KRW",
+          "data_kind": "synthetic",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:kr_equity_spread",
+            "symbol": "005930",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XKRX",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-22",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "same_instant_firm_book",
+            "market_state": "regular_open",
+            "semantics": "firm_best_bid"
+          },
+          "source_at": "2026-10-22T14:30:00.123456789123Z",
+          "published_at": "2026-10-22T14:30:00.123456789124Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.best_bid",
+            "locator": "$.output1.bidp1",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "179bb2f1448239111601d68e360a6419bb541b5630eecc2d63bbc616ab89b144",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          },
+          "source_authenticated": false
+        },
+        {
+          "observation_id": "moai:market:b9211ad6fc8963dc5d3c4b36e9066abae560ff77a18f445639fc860d390a60c9",
+          "observation_sha256": "1def55d48f0a1f8c91560d8ddd4ac27e3c2128e9ca4703e6e88361040a9f48d3",
+          "role": "market.best_ask",
+          "raw_decimal": "100.1000",
+          "scale": "1",
+          "normalized_value": {
+            "decimal": "100.1",
+            "exact_fraction": {
+              "numerator": "1001",
+              "denominator": "10"
+            },
+            "display_policy": "24 decimal places, half-even; exact fraction authoritative"
+          },
+          "unit": "money_per_share",
+          "currency": "KRW",
+          "data_kind": "synthetic",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:kr_equity_spread",
+            "symbol": "005930",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XKRX",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-22",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "same_instant_firm_book",
+            "market_state": "regular_open",
+            "semantics": "firm_best_ask"
+          },
+          "source_at": "2026-10-22T14:30:00.123456789123Z",
+          "published_at": "2026-10-22T14:30:00.123456789124Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.best_ask",
+            "locator": "$.output1.askp1",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "179bb2f1448239111601d68e360a6419bb541b5630eecc2d63bbc616ab89b144",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          },
+          "source_authenticated": false
+        }
+      ],
+      "context": {
+        "session_id": "SYNTHETIC:2026-10-22",
+        "session_type": "regular",
+        "reference_id": "SYNTHETIC:unadjusted-reference",
+        "freshness_policy": {
+          "policy_id": "synthetic-private-report-freshness",
+          "max_age_seconds": {
+            "market.best_bid": "10",
+            "market.best_ask": "10"
+          }
+        }
+      },
+      "source_authenticated": false,
+      "actual_bindings": 0,
+      "live_bindings": 0
+    }
+  ],
+  "reasons": [],
+  "limitations": [
+    "All inputs are supplied assertions. source_authenticated=false; actual_bindings=0; live_bindings=0. No provider raw adapter is metric-ready.",
+    "Arithmetic facts, supplied provider-percent cross-check, and bounded interpretation are independent statuses. A numeric arithmetic result does not imply original preconditions passed.",
+    "No authentication, licensed live acquisition, full report-slot completion, investment conclusion, price target, forecast, or promised execution cost is established.",
+    "ETF support is limited to official closing exchange price and official closing per-share NAV at the exact same valuation instant. Indicative NAV, current price versus previous NAV, cross-market stale/closed mismatch, FX conversion and share-unit conversion are not implemented.",
+    "Same venue, symbol, security, split, share, session and reference bases must be explicitly supplied. They are not inferred from labels or provider raw fields."
+  ],
+  "source_authenticated": false,
+  "actual_bindings": 0,
+  "live_bindings": 0,
+  "actual_provider_calls": 0,
+  "accepted_chart_bindings": 0,
+  "whole_original_slots_complete": false,
+  "input_sha256": "48d69f99c51767d49d6c700441dd762bc2852e1bcb88eaea542a7b2798f84c25",
+  "status_counts": {
+    "conditional_supplied_metric": 1,
+    "arithmetic_only": 0,
+    "missing_inputs": 0,
+    "unimplemented": 0,
+    "blocked": 0
+  }
+}

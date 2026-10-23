@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "symbol": {
+      "type": "string",
+      "pattern": "^\\d{6}$"
+    },
+    "board": {
+      "type": "string",
+      "enum": [
+        "J",
+        "NX",
+        "UN"
+      ]
+    },
+    "anchor_date": {
+      "type": "string",
+      "pattern": "^\\d{8}$"
+    },
+    "anchor_time": {
+      "type": "string",
+      "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+    },
+    "include_past_data": {
+      "type": "string",
+      "enum": [
+        "Y",
+        "N"
+      ]
+    }
+  },
+  "required": [
+    "symbol",
+    "board",
+    "anchor_date",
+    "anchor_time",
+    "include_past_data"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/kr-historical-intraday-input-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime Zod additionally checks real calendar dates, exact receipt/availability equality, row counts/coverage, continuation provenance and duplicate/blank-label status. Entry point additionally snapshots and bounds hostile inputs and responses. The .invalid namespace is an identifier, not a hosted resource."
+}

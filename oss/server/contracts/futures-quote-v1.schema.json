@@ -1,0 +1,1602 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.index-futures-quote.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "not_returned_by_reviewed_quote_contract"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "warnings": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "symbol_from_request": {
+      "type": "string",
+      "pattern": "^1[0-9A-Z]{3}(?:0[1-9]|1[0-2])$"
+    },
+    "market_code_from_request": {
+      "type": "string",
+      "const": "F"
+    },
+    "expected_name_from_request": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "identity_status": {
+      "type": "string",
+      "enum": [
+        "no_returned_contract_code",
+        "caller_name_expectation_matched_not_verified"
+      ]
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "output1": {
+          "type": "object",
+          "properties": {
+            "hts_kor_isnm": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "futs_prpr": {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            "futs_prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "prdy_vrss_sign": {
+              "type": "string",
+              "maxLength": 4
+            },
+            "futs_prdy_clpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_vol": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_tr_pbmn": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_otst_stpl_qty": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "otst_stpl_qty_icdc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_oprc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_hgpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lwpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_mxpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_llam": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "basis": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_sdpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_thpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "dprt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "crbr_aply_mxpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "crbr_aply_llam": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_last_tr_date": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_rmnn_dynu": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lstn_medm_hgpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lstn_medm_lwpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "delta_val": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "gama": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "theta": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "vega": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "rho": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hist_vltl": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_ints_vltl": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "mrkt_basis": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_cls_code": {
+              "type": "string",
+              "maxLength": 8
+            },
+            "bstp_nmix_prpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_nmix_prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_nmix_prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            }
+          },
+          "required": [
+            "hts_kor_isnm",
+            "futs_prpr"
+          ],
+          "additionalProperties": false
+        },
+        "output2": {
+          "type": "object",
+          "properties": {
+            "hts_kor_isnm": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "futs_prpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "prdy_vrss_sign": {
+              "type": "string",
+              "maxLength": 4
+            },
+            "futs_prdy_clpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_vol": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_tr_pbmn": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_otst_stpl_qty": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "otst_stpl_qty_icdc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_oprc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_hgpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lwpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_mxpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_llam": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "basis": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_sdpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_thpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "dprt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "crbr_aply_mxpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "crbr_aply_llam": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_last_tr_date": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_rmnn_dynu": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lstn_medm_hgpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lstn_medm_lwpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "delta_val": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "gama": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "theta": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "vega": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "rho": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hist_vltl": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_ints_vltl": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "mrkt_basis": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_cls_code": {
+              "type": "string",
+              "maxLength": 8
+            },
+            "bstp_nmix_prpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_nmix_prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_nmix_prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "output3": {
+          "type": "object",
+          "properties": {
+            "hts_kor_isnm": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "futs_prpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "prdy_vrss_sign": {
+              "type": "string",
+              "maxLength": 4
+            },
+            "futs_prdy_clpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_vol": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_tr_pbmn": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_otst_stpl_qty": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "otst_stpl_qty_icdc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_oprc": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_hgpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lwpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_mxpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_llam": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "basis": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_sdpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_thpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "dprt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "crbr_aply_mxpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "crbr_aply_llam": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_last_tr_date": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_rmnn_dynu": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lstn_medm_hgpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "futs_lstn_medm_lwpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "delta_val": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "gama": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "theta": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "vega": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "rho": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hist_vltl": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_ints_vltl": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "mrkt_basis": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_cls_code": {
+              "type": "string",
+              "maxLength": 8
+            },
+            "bstp_nmix_prpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_nmix_prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "bstp_nmix_prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "output1",
+        "output2",
+        "output3"
+      ],
+      "additionalProperties": false
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "underlying_id": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "last_price": {
+          "type": "null"
+        },
+        "previous_close": {
+          "type": "null"
+        },
+        "change": {
+          "type": "null"
+        },
+        "change_percent": {
+          "type": "null"
+        },
+        "volume": {
+          "type": "null"
+        },
+        "turnover": {
+          "type": "null"
+        },
+        "open_interest": {
+          "type": "null"
+        },
+        "expiry_date": {
+          "type": "null"
+        },
+        "last_trading_date": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "volume_unit": {
+          "type": "null"
+        },
+        "contract_multiplier": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "underlying_id",
+        "currency",
+        "last_price",
+        "previous_close",
+        "change",
+        "change_percent",
+        "volume",
+        "turnover",
+        "open_interest",
+        "expiry_date",
+        "last_trading_date",
+        "price_unit",
+        "volume_unit",
+        "contract_multiplier"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "source_time_status",
+    "rights_status",
+    "validation_status",
+    "canonical_projection_status",
+    "mapping_blockers",
+    "warnings",
+    "symbol_from_request",
+    "market_code_from_request",
+    "expected_name_from_request",
+    "identity_status",
+    "raw",
+    "canonical"
+  ],
+  "additionalProperties": false
+}

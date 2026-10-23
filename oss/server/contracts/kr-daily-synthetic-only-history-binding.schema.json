@@ -1,0 +1,779 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.kr-daily.synthetic-only-history-binding.v1"
+    },
+    "scope": {
+      "type": "string",
+      "const": "synthetic_fixture_demonstration_only"
+    },
+    "history_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "document_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "cutoff": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+        },
+        "end_date": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "additionalProperties": false
+    },
+    "provider_identity": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6,
+          "pattern": "^\\d{6}(?![\\s\\S])"
+        },
+        "board": {
+          "type": "string",
+          "const": "J"
+        }
+      },
+      "required": [
+        "symbol",
+        "board"
+      ],
+      "additionalProperties": false
+    },
+    "source_link": {
+      "type": "object",
+      "properties": {
+        "original_body_sha256": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "raw_dto_sha256": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        },
+        "raw_input_sha256": {
+          "type": "string",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "original_body_sha256",
+        "raw_dto_sha256",
+        "raw_input_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "selector": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "const": "kis.kr-daily.synthetic.named-ohlcv/1"
+        },
+        "date": {
+          "type": "string",
+          "const": "stck_bsop_date"
+        },
+        "open": {
+          "type": "string",
+          "const": "stck_oprc"
+        },
+        "high": {
+          "type": "string",
+          "const": "stck_hgpr"
+        },
+        "low": {
+          "type": "string",
+          "const": "stck_lwpr"
+        },
+        "close": {
+          "type": "string",
+          "const": "stck_clpr"
+        },
+        "volume": {
+          "type": "string",
+          "const": "acml_vol"
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "additionalProperties": false
+    },
+    "adjustment_code_policy": {
+      "type": "string",
+      "const": "opaque_uninterpreted_portal_sample_conflict_remains"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "identity": {
+          "type": "object",
+          "properties": {
+            "instrument_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "issuer_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "venue": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "asset_class": {
+              "type": "string",
+              "const": "equity"
+            },
+            "share_class": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "contract_id": {
+              "type": "string",
+              "const": "not_applicable"
+            }
+          },
+          "required": [
+            "instrument_id",
+            "issuer_id",
+            "venue",
+            "asset_class",
+            "share_class",
+            "contract_id"
+          ],
+          "additionalProperties": false
+        },
+        "units": {
+          "type": "object",
+          "properties": {
+            "price_unit": {
+              "type": "string",
+              "const": "money_per_share"
+            },
+            "currency": {
+              "type": "string",
+              "const": "KRW"
+            },
+            "price_scale": {
+              "type": "string",
+              "maxLength": 14,
+              "pattern": "^(?:10{0,12}|0\\.0{0,11}1)(?![\\s\\S])"
+            },
+            "volume_unit": {
+              "type": "string",
+              "const": "shares"
+            },
+            "volume_scale": {
+              "type": "string",
+              "maxLength": 14,
+              "pattern": "^(?:10{0,12}|0\\.0{0,11}1)(?![\\s\\S])"
+            }
+          },
+          "required": [
+            "price_unit",
+            "currency",
+            "price_scale",
+            "volume_unit",
+            "volume_scale"
+          ],
+          "additionalProperties": false
+        },
+        "session": {
+          "type": "object",
+          "properties": {
+            "calendar_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "timezone": {
+              "type": "string",
+              "const": "Asia/Seoul"
+            },
+            "session_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "interval": {
+              "type": "string",
+              "const": "daily"
+            },
+            "date_basis": {
+              "type": "string",
+              "const": "trade_date"
+            },
+            "calendar_verified": {
+              "type": "boolean",
+              "const": true
+            },
+            "calendar_evidence_ref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+            },
+            "coverage_start": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+            },
+            "coverage_end": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+            },
+            "coverage_complete": {
+              "type": "boolean",
+              "const": true
+            },
+            "expected_sessions": {
+              "minItems": 1,
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 10,
+                "maxLength": 10,
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+              }
+            }
+          },
+          "required": [
+            "calendar_id",
+            "timezone",
+            "session_id",
+            "interval",
+            "date_basis",
+            "calendar_verified",
+            "calendar_evidence_ref",
+            "coverage_start",
+            "coverage_end",
+            "coverage_complete",
+            "expected_sessions"
+          ],
+          "additionalProperties": false
+        },
+        "basis": {
+          "type": "object",
+          "properties": {
+            "price_kind": {
+              "type": "string",
+              "const": "price_level"
+            },
+            "return_policy": {
+              "type": "string",
+              "const": "price_return"
+            },
+            "adjustment": {
+              "type": "string",
+              "const": "unadjusted"
+            },
+            "adjustment_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512
+            },
+            "adjustment_asof": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "actions_coverage_verified": {
+              "type": "boolean",
+              "const": true
+            },
+            "actions_evidence_ref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 120,
+              "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+            },
+            "volume_adjustment": {
+              "type": "string",
+              "const": "unadjusted"
+            },
+            "revision_policy": {
+              "type": "string",
+              "const": "final_current_at_cutoff"
+            },
+            "price_definition": {
+              "type": "string",
+              "const": "official_close"
+            },
+            "allow_negative_prices": {
+              "type": "boolean",
+              "const": false
+            },
+            "roll_policy": {
+              "type": "string",
+              "const": "not_applicable"
+            }
+          },
+          "required": [
+            "price_kind",
+            "return_policy",
+            "adjustment",
+            "adjustment_id",
+            "adjustment_asof",
+            "actions_coverage_verified",
+            "actions_evidence_ref",
+            "volume_adjustment",
+            "revision_policy",
+            "price_definition",
+            "allow_negative_prices",
+            "roll_policy"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "identity",
+        "units",
+        "session",
+        "basis"
+      ],
+      "additionalProperties": false
+    },
+    "no_actions": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "type": "string",
+          "const": "no_adjustment_relevant_actions"
+        },
+        "coverage_complete": {
+          "type": "boolean",
+          "const": true
+        },
+        "coverage_start": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+        },
+        "coverage_end": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+        },
+        "effective_from": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "effective_through": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "knowledge_asof": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "events": {
+          "maxItems": 0,
+          "type": "array",
+          "items": {
+            "not": {}
+          }
+        },
+        "price_basis_changes": {
+          "type": "boolean",
+          "const": false
+        },
+        "share_basis_changes": {
+          "type": "boolean",
+          "const": false
+        },
+        "quantity_unit_changes": {
+          "type": "boolean",
+          "const": false
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "policy",
+        "coverage_complete",
+        "coverage_start",
+        "coverage_end",
+        "effective_from",
+        "effective_through",
+        "knowledge_asof",
+        "events",
+        "price_basis_changes",
+        "share_basis_changes",
+        "quantity_unit_changes",
+        "evidence_ref"
+      ],
+      "additionalProperties": false
+    },
+    "rights": {
+      "type": "object",
+      "properties": {
+        "use": {
+          "type": "string",
+          "const": "local_report"
+        },
+        "scope": {
+          "type": "string",
+          "const": "synthetic_fixture_only"
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "valid_from": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "valid_until": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "use",
+        "scope",
+        "evidence_ref",
+        "valid_from",
+        "valid_until"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "fixture_lineage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "identity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "field_semantics": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "units": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "scales": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "session_calendar": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "unadjusted_basis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "no_actions": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "finality_revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "publication_availability": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        },
+        "rights": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "fixture_lineage",
+        "identity",
+        "field_semantics",
+        "units",
+        "currency",
+        "scales",
+        "session_calendar",
+        "unadjusted_basis",
+        "no_actions",
+        "finality_revision",
+        "publication_availability",
+        "rights"
+      ],
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "minItems": 12,
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+          },
+          "axis": {
+            "type": "string",
+            "enum": [
+              "fixture_lineage",
+              "identity",
+              "field_semantics",
+              "units",
+              "currency",
+              "scales",
+              "session_calendar",
+              "unadjusted_basis",
+              "no_actions",
+              "finality_revision",
+              "publication_availability",
+              "rights"
+            ]
+          },
+          "data_kind": {
+            "type": "string",
+            "const": "synthetic"
+          },
+          "digest_kind": {
+            "type": "string",
+            "const": "synthetic_fixture_definition_utf8"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64,
+            "pattern": "^[a-f0-9]{64}(?![\\s\\S])"
+          },
+          "locator": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^synthetic:\\/\\/kr-history-fixture\\/[A-Za-z0-9_.-]+(?![\\s\\S])"
+          }
+        },
+        "required": [
+          "id",
+          "axis",
+          "data_kind",
+          "digest_kind",
+          "content",
+          "sha256",
+          "locator"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "points": {
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_row_index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 99
+          },
+          "trade_date": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}(?![\\s\\S])"
+          },
+          "session_close_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "published_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "available_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "finality": {
+            "type": "string",
+            "const": "final"
+          },
+          "revision": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "const": "original"
+              },
+              "revision_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "evidence_ref": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 120,
+                "pattern": "^[A-Za-z0-9_.:-]+(?![\\s\\S])"
+              }
+            },
+            "required": [
+              "status",
+              "revision_id",
+              "evidence_ref"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "source_row_index",
+          "trade_date",
+          "session_close_at",
+          "published_at",
+          "available_at",
+          "finality",
+          "revision"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "scope",
+    "history_id",
+    "document_id",
+    "cutoff",
+    "request",
+    "provider_identity",
+    "source_link",
+    "selector",
+    "adjustment_code_policy",
+    "context",
+    "no_actions",
+    "rights",
+    "evidence",
+    "artifacts",
+    "points"
+  ],
+  "additionalProperties": false,
+  "$id": "https://moai.local/contracts/kr-daily-synthetic-only-history-binding.schema.json",
+  "title": "KR daily SYNTHETIC-ONLY fixture binding",
+  "x-runtime-refinements": [
+    "STRUCTURAL SCHEMA ONLY. Parse success does not authorize canonical use or resolve adjustment_code semantics.",
+    "Runtime reconstructs unchanged raw evidence from independent raw input and verbatim original decoded text; checks SHA linkage, supported scope and exact numeric ranges.",
+    "Actual origin is unsupported and rejected before reading verifier properties or invoking a verifier/clock; synthetic source labels are not authentication.",
+    "Runtime checks ordered complete explicit session calendar with all supplied warm-up rows; exact original-index row mapping; exact close <= publication <= receipt <= availability <= cutoff; close-date match.",
+    "Runtime requires independently evidenced no-adjustment-relevant-actions policy over the entire supplied calendar and warm-up range through cutoff, capture and adjustment vintage, no events or unit/basis changes.",
+    "Runtime requires immutable independent evidence axes, bounded descriptor-only JSON, fresh injected synthetic verifier confirming the exact input digest and axes, current rights and fresh clock.",
+    "Persisted receipt fields are not credentials. Complete deterministic reconstruction and fresh verification/current rights are mandatory; handoff history/lineage/runtime opaque fields need runtime comparison.",
+    "Canonical report remains unchanged and does not verify actual market, calendar, currency, units or source authenticity. No inferred times, prices or share quantities."
+  ]
+}

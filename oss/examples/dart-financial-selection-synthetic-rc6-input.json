@@ -1,0 +1,141 @@
+{
+  "requested_role": "reported.revenue",
+  "cutoff": "2026-10-22T00:00:00.123456789Z",
+  "calendar_guard": {
+    "timezone": "UTC",
+    "cutoff_local_date": "2026-10-22"
+  },
+  "statement_result": {
+    "status": "ok",
+    "provider_status": "000",
+    "request": {
+      "corp_code": "00000001",
+      "bsns_year": "2025",
+      "reprt_code": "11012",
+      "fs_div": "CFS"
+    },
+    "provenance": {
+      "origin": "synthetic",
+      "received_at": "2026-10-22T00:00:00.123456789Z"
+    },
+    "source": "opendart",
+    "documentation": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS003&apiId=2019020",
+    "rows": [
+      {
+        "raw": {
+          "rcept_no": "20250814000001",
+          "reprt_code": "11012",
+          "bsns_year": "2025",
+          "corp_code": "00000001",
+          "sj_div": "IS",
+          "sj_nm": "Synthetic income statement",
+          "account_id": "ifrs-full_Revenue",
+          "account_nm": "Synthetic revenue",
+          "account_detail": "",
+          "thstrm_nm": "Synthetic current label",
+          "thstrm_amount": "+9,007,199,254,740,993.2500",
+          "thstrm_add_amount": "18,000,000,000,000,000.50",
+          "frmtrm_amount": "  ",
+          "frmtrm_q_nm": "Synthetic comparable label",
+          "frmtrm_q_amount": "-100.750",
+          "frmtrm_add_amount": "0.00",
+          "ord": "1",
+          "currency": "USD"
+        },
+        "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001",
+        "fs_div": "CFS",
+        "current_period_kind": "three_months",
+        "amounts": {
+          "current": {
+            "state": "value",
+            "raw": "+9,007,199,254,740,993.2500",
+            "decimal": "+9007199254740993.2500"
+          },
+          "current_cumulative": {
+            "state": "value",
+            "raw": "18,000,000,000,000,000.50",
+            "decimal": "18000000000000000.50"
+          },
+          "prior": {
+            "state": "blank",
+            "raw": "  "
+          },
+          "prior_comparable": {
+            "state": "value",
+            "raw": "-100.750",
+            "decimal": "-100.750"
+          },
+          "prior_cumulative": {
+            "state": "value",
+            "raw": "0.00",
+            "decimal": "0.00"
+          },
+          "two_years_prior": {
+            "state": "missing"
+          }
+        }
+      }
+    ]
+  },
+  "filings_result": {
+    "source": "opendart",
+    "documentation": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001",
+    "status": "ok",
+    "provider_status": "000",
+    "request": {
+      "corp_code": "00000001",
+      "bgn_de": "20250101",
+      "end_de": "20261231",
+      "last_reprt_at": "N",
+      "sort": "date",
+      "sort_mth": "desc",
+      "page_no": 1,
+      "page_count": 1
+    },
+    "provenance": {
+      "origin": "synthetic",
+      "received_at": "2026-10-22T00:00:00.123456789Z"
+    },
+    "total_count": 2,
+    "total_page": 2,
+    "next_page_no": 2,
+    "has_more": true,
+    "rows": [
+      {
+        "raw": {
+          "corp_cls": "K",
+          "corp_name": "SYNTHETIC ONLY",
+          "corp_code": "00000001",
+          "stock_code": "000001",
+          "report_nm": "Synthetic half-year statement",
+          "rcept_no": "20250814000001",
+          "flr_nm": "Synthetic filer",
+          "rcept_dt": "20250814",
+          "rm": ""
+        },
+        "filing_url": "https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20250814000001"
+      }
+    ]
+  },
+  "selector": {
+    "corp_code": "00000001",
+    "bsns_year": "2025",
+    "reprt_code": "11012",
+    "fs_div": "CFS",
+    "rcept_no": "20250814000001",
+    "sj_div": "IS",
+    "account_id": "ifrs-full_Revenue",
+    "account_nm": "Synthetic revenue",
+    "account_detail": "",
+    "ord": "1",
+    "currency": "USD",
+    "amount_kind": "current",
+    "period_label": "Synthetic current label",
+    "filing": {
+      "rcept_dt": "20250814",
+      "report_nm": "Synthetic half-year statement",
+      "corp_cls": "K",
+      "stock_code": "000001"
+    }
+  }
+}

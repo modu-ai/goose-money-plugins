@@ -1,0 +1,828 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.domestic-etf-quote.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "not_returned_by_reviewed_quote_contract"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "warnings": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500
+      }
+    },
+    "symbol_from_request": {
+      "type": "string",
+      "pattern": "^\\d{6}$"
+    },
+    "board_from_request": {
+      "type": "string",
+      "enum": [
+        "J",
+        "NX",
+        "UN"
+      ]
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "no_returned_instrument_code"
+    },
+    "coverage": {
+      "type": "string",
+      "const": "dedicated_etf_etn_price_nav_not_holdings"
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "stck_prpr": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^\\d+(?:\\.\\d+)?$"
+        },
+        "nav": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_vrss_sign": {
+          "type": "string",
+          "maxLength": 4
+        },
+        "prdy_vrss": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_ctrt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "acml_vol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_vol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_mxpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_llam": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_prdy_clpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_oprc": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_clpr_vrss_oprc_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_hgpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_clpr_vrss_hgpr_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_lwpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_clpr_vrss_lwpr_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_last_nav": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "nav_prdy_vrss": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "nav_prdy_vrss_sign": {
+          "type": "string",
+          "maxLength": 4
+        },
+        "nav_prdy_ctrt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "trc_errt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_sdpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_sspr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "nmix_ctrt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_crcl_stcn": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_ntas_ttam": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_frcr_ntas_ttam": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "frgn_limt_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "frgn_oder_able_qty": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_cu_unit_scrt_cnt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_cnfg_issu_cnt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_dvdn_cycl": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "crcd": {
+          "type": "string",
+          "maxLength": 8
+        },
+        "etf_crcl_ntas_ttam": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_frcr_crcl_ntas_ttam": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_frcr_last_ntas_wrth_val": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "lp_oder_able_cls_code": {
+          "type": "string",
+          "maxLength": 8
+        },
+        "stck_dryy_hgpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "dryy_hgpr_vrss_prpr_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "dryy_hgpr_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_dryy_lwpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "dryy_lwpr_vrss_prpr_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "dryy_lwpr_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "bstp_kor_isnm": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "vi_cls_code": {
+          "type": "string",
+          "maxLength": 8
+        },
+        "lstn_stcn": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "frgn_hldn_qty": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "frgn_hldn_qty_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_trc_ert_mltp": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "dprt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "mbcr_name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "stck_lstn_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "mtrt_date": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "shrg_type_code": {
+          "type": "string",
+          "maxLength": 8
+        },
+        "lp_hldn_rate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "etf_trgt_nmix_bstp_code": {
+          "type": "string",
+          "maxLength": 12
+        },
+        "etf_div_name": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "etf_rprs_bstp_kor_isnm": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "lp_hldn_vol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        }
+      },
+      "required": [
+        "stck_prpr",
+        "nav"
+      ],
+      "additionalProperties": false
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "asset_class": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "last_price": {
+          "type": "null"
+        },
+        "nav": {
+          "type": "null"
+        },
+        "previous_nav": {
+          "type": "null"
+        },
+        "nav_change": {
+          "type": "null"
+        },
+        "nav_change_percent": {
+          "type": "null"
+        },
+        "tracking_error": {
+          "type": "null"
+        },
+        "premium_discount": {
+          "type": "null"
+        },
+        "net_assets": {
+          "type": "null"
+        },
+        "volume": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "nav_unit": {
+          "type": "null"
+        },
+        "net_assets_unit": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "asset_class",
+        "currency",
+        "last_price",
+        "nav",
+        "previous_nav",
+        "nav_change",
+        "nav_change_percent",
+        "tracking_error",
+        "premium_discount",
+        "net_assets",
+        "volume",
+        "price_unit",
+        "nav_unit",
+        "net_assets_unit"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "source_time_status",
+    "rights_status",
+    "validation_status",
+    "canonical_projection_status",
+    "mapping_blockers",
+    "warnings",
+    "symbol_from_request",
+    "board_from_request",
+    "identity_status",
+    "coverage",
+    "raw",
+    "canonical"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,111 @@
+{
+  "contract": "moai.stock.market-risk.v1",
+  "kind": "lending",
+  "request": {
+    "symbol": "000660",
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21"
+  },
+  "provider": "KIS",
+  "operation_ref": "KIS-135",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "rights": "pending",
+  "instrument_association": "request_filter_only",
+  "completeness": "one_page_not_verified_complete",
+  "has_more": false,
+  "rows": [
+    {
+      "response_root": "output1",
+      "row_index": 0,
+      "raw_fields": {
+        "bsop_date": {
+          "raw_value": "20261020",
+          "state": "present_unverified"
+        },
+        "stck_prpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vrss_sign": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vrss": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_ctrt": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_vol": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "new_stcn": {
+          "raw_value": "30",
+          "state": "present_unverified"
+        },
+        "rdmp_stcn": {
+          "raw_value": "10",
+          "state": "present_unverified"
+        },
+        "prdy_rmnd_vrss": {
+          "raw_value": "-5",
+          "state": "present_unverified"
+        },
+        "rmnd_stcn": {
+          "raw_value": "200",
+          "state": "present_unverified"
+        },
+        "rmnd_amt": {
+          "raw_value": "500",
+          "state": "present_unverified"
+        }
+      },
+      "date_basis": {
+        "trade_date": null,
+        "settlement_date": null,
+        "business_date": "2026-10-20"
+      },
+      "unit_verified_quantities": {
+        "new_stcn": {
+          "value": "30",
+          "unit": "shares",
+          "scale": "1",
+          "source_field": "new_stcn",
+          "source_lexeme": "30",
+          "state": "unit_verified",
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/main/examples_llm/domestic_stock/daily_loan_trans/chk_daily_loan_trans.py"
+        },
+        "rdmp_stcn": {
+          "value": "10",
+          "unit": "shares",
+          "scale": "1",
+          "source_field": "rdmp_stcn",
+          "source_lexeme": "10",
+          "state": "unit_verified",
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/main/examples_llm/domestic_stock/daily_loan_trans/chk_daily_loan_trans.py"
+        },
+        "rmnd_stcn": {
+          "value": "200",
+          "unit": "shares",
+          "scale": "1",
+          "source_field": "rmnd_stcn",
+          "source_lexeme": "200",
+          "state": "unit_verified",
+          "evidence_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/main/examples_llm/domestic_stock/daily_loan_trans/chk_daily_loan_trans.py"
+        }
+      }
+    }
+  ],
+  "canonical_projection_status": "partial_units_only",
+  "canonical_blockers": [
+    "Amount currency/scale and ratio denominator are unresolved; these are raw-only, not canonical.",
+    "Short-sale quantities and lending balance-change semantics remain unmapped.",
+    "Returned identity and publication instant not established; request filter is not independent identity evidence.",
+    "Data rights, egress and corrections not cleared. One page is not complete history."
+  ]
+}

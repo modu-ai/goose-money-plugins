@@ -1,0 +1,631 @@
+{
+  "contract_id": "moai.stock.r01.consumer-supplier-registry-crosswalk.v1",
+  "version": "1.0.0-draft",
+  "generated_on": "2026-10-21",
+  "status": "MCP-owned crosswalk; consumer statuses unchanged; provider/parser readiness separate",
+  "ownership": {
+    "writer": "MCP/data-contract owner",
+    "consumer_source_files_modified": false,
+    "source_registry_modified": false
+  },
+  "sources": {
+    "runtime_contract": {
+      "path": "outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
+      "sha256": "c80608114b32cca4ce0682a9e4e47354deb0d248ffdfce8c05c52fb67745c17c",
+      "contract_id": "moai.stock.r01.chart-provider-runtime.v1",
+      "version": "1.1.0-draft"
+    },
+    "provider_mapping": {
+      "path": "outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
+      "sha256": "803477a62949c7186cf6d1c833ae37ed057af646df3f529e59f565623132081d",
+      "binding_id": "R01-chart-provider-binding-v1",
+      "version": "1.1.0-draft"
+    },
+    "supplier_registry": {
+      "path": "outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
+      "sha256": "21a79d2315af767b9d3684739cb248c089c7fbb8d0e43902c4537dee4724b71d",
+      "registry_id": "moai.stock.report-data-source-registry",
+      "version": "1.0.1-draft"
+    },
+    "consumer_contract_refs": [
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
+        "sha256": "9497207439e3916be39af7aa00e13100c7751c514d9497fb1394656c1717f008",
+        "contract_id": "goose.consumer-chart-requirements.v1",
+        "version": "0.1.0-design",
+        "modified_by_provider_owner": false
+      },
+      {
+        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
+        "sha256": "280f79c54b733dcade6deb06a5471901a63df2dde76f24de688dce521f427153",
+        "contract_id": "goose.consumer-chart-requirements.v1",
+        "version": "0.1.0-design",
+        "modified_by_provider_owner": false
+      }
+    ]
+  },
+  "counts": {
+    "supplier_registry_fields": 147,
+    "consumer_fields": 48,
+    "consumer_verification_pending": 39,
+    "consumer_derived": 9,
+    "same_semantics_links": 28,
+    "calculation_input_links": 4,
+    "unrepresented_or_non_equivalent": 15,
+    "previous_consumer_supplier_refs_checked": 22,
+    "invalid_registry_refs": 0,
+    "source_candidate_links": 1
+  },
+  "rules": [
+    "A supplier registry link documents semantic correspondence only; it does not promote consumer verification status or prove runtime support.",
+    "Calculation inputs are not aliases for the derived output.",
+    "Unrepresented or non-equivalent consumer fields stay explicit; no supplier field is inferred to fill a gap.",
+    "Registry status and R01 consumer status use separate completion meanings and must not be collapsed."
+  ],
+  "entries": [
+    {
+      "consumer_field_id": "actions.events",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "corporate_actions"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-039 corporate-action class candidate is incomplete code taxonomy; status remains pending."
+    },
+    {
+      "consumer_field_id": "analysis.claim_kind",
+      "consumer_status": "derived",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "claim_kind"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Local analytical classification; not a provider field."
+    },
+    {
+      "consumer_field_id": "analysis.next_check",
+      "consumer_status": "derived",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No exact supplier-registry field represents an operational next-check instruction."
+    },
+    {
+      "consumer_field_id": "assumption.multiple",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "multiple"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "User/model assumption; must be labeled as an assumption."
+    },
+    {
+      "consumer_field_id": "assumption.scenario",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "valuation_method"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Scenario method input; not a provider observation."
+    },
+    {
+      "consumer_field_id": "estimates.consensus",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "current_estimate",
+        "consensus_rights"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS broker estimates are not cross-broker consensus; consensus scope and rights remain gated."
+    },
+    {
+      "consumer_field_id": "estimates.guidance",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No separate guidance field exists; estimates and issuer guidance are not interchangeable."
+    },
+    {
+      "consumer_field_id": "evidence.business_facts",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "The registry carries evidence provenance/claims, not a generic business-fact payload."
+    },
+    {
+      "consumer_field_id": "filing.body_locator",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No filing-body locator field is present in the 147-field supplier registry."
+    },
+    {
+      "consumer_field_id": "filing.date",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No exact filing-date field is present; published_at is not assumed equivalent."
+    },
+    {
+      "consumer_field_id": "filing.receipt",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No receipt-number field is present; source_id is not silently treated as a receipt number."
+    },
+    {
+      "consumer_field_id": "filing.title",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No filing-title field is present in the supplier registry."
+    },
+    {
+      "consumer_field_id": "flow.category_tree",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "investor_category",
+        "parent_category"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Category hierarchy labels; do not flatten actor categories."
+    },
+    {
+      "consumer_field_id": "flow.coverage",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "aggregation_scope"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Aggregation scope must remain distinct by operation/security/market."
+    },
+    {
+      "consumer_field_id": "flow.foreign.net_value",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "currency × unverified scale",
+      "supplier_registry_fields": [
+        "net_buy_amount",
+        "investor_category"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-115 foreign net amount is documented in KRW millions; parser converts by exact decimal-string scaling, request remains blocked by parameter conflict."
+    },
+    {
+      "consumer_field_id": "flow.individual.net_value",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "currency × unverified scale",
+      "supplier_registry_fields": [
+        "net_buy_amount",
+        "investor_category"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-115 individual amount is documented in KRW millions; parser converts by exact decimal-string scaling, request remains blocked by parameter conflict."
+    },
+    {
+      "consumer_field_id": "flow.institution.net_value",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "currency × unverified scale",
+      "supplier_registry_fields": [
+        "net_buy_amount",
+        "investor_category"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-115 institution amount is documented in KRW millions; parser converts by exact decimal-string scaling, request remains blocked by parameter conflict."
+    },
+    {
+      "consumer_field_id": "frame.earnings_value",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "one chosen financial metric and currency/scale",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No general earnings value field is present; metric identity and unit must be explicit."
+    },
+    {
+      "consumer_field_id": "frame.estimate_role",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "category",
+      "supplier_registry_fields": [
+        "estimate_kind"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Estimate role requires a validated role taxonomy."
+    },
+    {
+      "consumer_field_id": "frame.event_date",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "date or ISO8601 with declared precision",
+      "supplier_registry_fields": [
+        "event_at"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Date extraction must preserve source timezone/time status; event timestamp remains source-specific."
+    },
+    {
+      "consumer_field_id": "frame.event_lane",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "category",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No validated event-lane taxonomy is present."
+    },
+    {
+      "consumer_field_id": "frame.flow_date",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "date/instant",
+      "supplier_registry_fields": [
+        "trade_date"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Provider business date is date-only; no publication time is inferred."
+    },
+    {
+      "consumer_field_id": "frame.period_label",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "fiscal period/scope",
+      "supplier_registry_fields": [
+        "fiscal_period",
+        "period_kind"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Fiscal period and period kind are separate dimensions."
+    },
+    {
+      "consumer_field_id": "frame.scenario",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "category",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No generic scenario label is present; valuation_method is not equivalent to bull/base/bear."
+    },
+    {
+      "consumer_field_id": "frame.scenario_value",
+      "consumer_status": "derived",
+      "consumer_unit": "currency/share or scenario-specific unit",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No scenario output field exists; this is a derived result, not a source field."
+    },
+    {
+      "consumer_field_id": "frame.segment",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "category",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No segment identity/name field is present."
+    },
+    {
+      "consumer_field_id": "frame.segment_revenue",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency × declared display scale",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No segment-revenue field is present."
+    },
+    {
+      "consumer_field_id": "history.adjustment",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "price_type",
+        "adjustment_basis",
+        "corporate_actions"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Only preserve adjustment request code and raw corporate-action hints; portal/sample code semantics conflict."
+    },
+    {
+      "consumer_field_id": "history.benchmark",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "The registry has benchmark_total_return_series, but the consumer benchmark definition and return basis are not specific enough to bind it."
+    },
+    {
+      "consumer_field_id": "history.close",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "price"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-039 raw close field is documented, but unit/currency are not; canonical projection is blocked."
+    },
+    {
+      "consumer_field_id": "history.date",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "trade_date"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-039 date is documented as String(8) YYYYMMDD; parser normalizes to ISO date only, not timestamp."
+    },
+    {
+      "consumer_field_id": "history.volume",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "volume"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "KIS-039 raw volume field is documented, but volume unit is not; canonical projection is blocked."
+    },
+    {
+      "consumer_field_id": "metric.eps",
+      "consumer_status": "derived",
+      "consumer_unit": "currency/share",
+      "supplier_registry_fields": [
+        "eps_basic"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "source_candidate_not_output_alias",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Registry eps_basic is a source candidate only; R01 output is derived and no formula/lineage is approved here."
+    },
+    {
+      "consumer_field_id": "metric.fcf",
+      "consumer_status": "derived",
+      "consumer_unit": "currency",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [
+        "cash_from_operations",
+        "cash_capex"
+      ],
+      "relationship": "calculation_inputs",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Derived calculation inputs only; do not label a source field as the computed result."
+    },
+    {
+      "consumer_field_id": "metric.flow_cumulative",
+      "consumer_status": "derived",
+      "consumer_unit": "currency",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [
+        "net_buy_amount",
+        "trade_date",
+        "investor_category",
+        "aggregation_scope"
+      ],
+      "relationship": "calculation_inputs",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Derived over dated flows only after actor/scope and request conflicts are cleared."
+    },
+    {
+      "consumer_field_id": "metric.ma20",
+      "consumer_status": "derived",
+      "consumer_unit": "quote currency",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [
+        "price",
+        "trade_date",
+        "adjustment_basis"
+      ],
+      "relationship": "calculation_inputs",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Derived from a complete, unit-resolved, consistent-basis price series; KIS-039 parser does not emit this calculation."
+    },
+    {
+      "consumer_field_id": "metric.price_rebased",
+      "consumer_status": "derived",
+      "consumer_unit": "index100",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [
+        "price",
+        "trade_date",
+        "adjustment_basis",
+        "corporate_actions"
+      ],
+      "relationship": "calculation_inputs",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Derived from adjustment-consistent canonical prices and corporate-action lineage; current KIS-039 mapping is blocked."
+    },
+    {
+      "consumer_field_id": "metric.scenario_valuation",
+      "consumer_status": "derived",
+      "consumer_unit": "currency/share",
+      "supplier_registry_fields": [],
+      "calculation_input_registry_fields": [],
+      "relationship": "not_represented_or_not_equivalent",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "No exact output field exists; calculation method, assumptions and lineage remain unspecified."
+    },
+    {
+      "consumer_field_id": "reported.capex",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "supplier_registry_fields": [
+        "cash_capex"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Financial-statement semantic candidate; period/scope and raw provider mapping still need validation."
+    },
+    {
+      "consumer_field_id": "reported.cfo",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "supplier_registry_fields": [
+        "cash_from_operations"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Financial-statement semantic candidate; period/scope and raw provider mapping still need validation."
+    },
+    {
+      "consumer_field_id": "reported.net_income_common",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "supplier_registry_fields": [
+        "net_income_common"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Financial-statement semantic candidate; period/scope and raw provider mapping still need validation."
+    },
+    {
+      "consumer_field_id": "reported.operating_profit",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "supplier_registry_fields": [
+        "operating_profit"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Financial-statement semantic candidate; period/scope and raw provider mapping still need validation."
+    },
+    {
+      "consumer_field_id": "reported.period",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "fiscal_period",
+        "period_kind"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Fiscal period and period kind remain distinct and source-scope checks apply."
+    },
+    {
+      "consumer_field_id": "reported.revenue",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "supplier_registry_fields": [
+        "revenue"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Financial-statement semantic candidate; period/scope and raw provider mapping still need validation."
+    },
+    {
+      "consumer_field_id": "reported.scope",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "consolidation_basis"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Separate vs consolidated statement scope remains explicit."
+    },
+    {
+      "consumer_field_id": "reported.shares_weighted",
+      "consumer_status": "verification_pending",
+      "consumer_unit": "source currency/scale or shares;verified XBRL context",
+      "supplier_registry_fields": [
+        "weighted_average_shares"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Financial-statement semantic candidate; period/scope and raw provider mapping still need validation."
+    },
+    {
+      "consumer_field_id": "time.published_at",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "published_at"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Publication timestamp needs a source-supplied time/zone and must not borrow local receive time."
+    },
+    {
+      "consumer_field_id": "time.source_at",
+      "consumer_status": "verification_pending",
+      "consumer_unit": null,
+      "supplier_registry_fields": [
+        "event_at"
+      ],
+      "calculation_input_registry_fields": [],
+      "relationship": "same_semantics",
+      "status_effect": "no_consumer_status_change",
+      "resolution_note": "Source event time; preserve timezone and do not substitute received_at."
+    }
+  ]
+}

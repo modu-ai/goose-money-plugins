@@ -1,0 +1,380 @@
+{
+  "contract_id": "moai.kis.benchmark-history-source-contract.v1",
+  "review_kind": "provided_review_snapshot_not_new_live_verification",
+  "original_reviewed_on": "2026-10-21",
+  "pinned_sample_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "source_snapshot_files": [
+    {
+      "path": "contracts/r01-kis-official-response-schemas-v1.json",
+      "sha256": "92ebd33bf4b4a0d07bc67b4c2da66ef5e5258d8674c2f64a3f77f9ffa4404803"
+    },
+    {
+      "path": "docs/r01-kis-official-field-review.md",
+      "sha256": "98c5e90a65c0716e18e283860a2368aa6bc582e95fff1f65e1281bc1a6acfe03"
+    }
+  ],
+  "operations": [
+    {
+      "operation_ref": "KIS-072",
+      "catalog_id": "kis.catalog.commit2077773a.row.104",
+      "title": "국내주식업종기간별시세(일/주/월/년)[v1_국내주식-021]",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice",
+      "method": "GET",
+      "tr_id": {
+        "real": "FHKUP03500100",
+        "paper": "FHKUP03500100"
+      },
+      "profile_id": "kis.domestic-index-period-chart",
+      "asset_scope": [
+        "A1",
+        "A2"
+      ],
+      "portal_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_daily_indexchartprice/inquire_daily_indexchartprice.py",
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "value": "U",
+          "meaning": "index/sector"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(2)",
+          "meaning": "industry code, e.g. 0001; not a six-digit stock code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        }
+      ],
+      "response_roots": [
+        {
+          "path": "$.output1",
+          "shape": "object",
+          "meaning": "snapshot/header"
+        },
+        {
+          "path": "$.output2[*]",
+          "shape": "array of index period rows"
+        }
+      ],
+      "response_fields": [
+        {
+          "provider_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "provider_type": "String",
+          "portal_max_length": 8,
+          "semantic": "business date",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "format": "YYYYMMDD"
+        },
+        {
+          "provider_field": "bstp_nmix_prpr",
+          "response_path": "$.output2[*].bstp_nmix_prpr",
+          "provider_type": "String",
+          "portal_max_length": 112,
+          "semantic": "sector/index value; portal-declared length retained verbatim; schema anomaly pending confirmation",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "bstp_nmix_oprc",
+          "response_path": "$.output2[*].bstp_nmix_oprc",
+          "provider_type": "String",
+          "portal_max_length": 112,
+          "semantic": "sector/index open value; portal-declared length retained verbatim; schema anomaly pending confirmation",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "bstp_nmix_hgpr",
+          "response_path": "$.output2[*].bstp_nmix_hgpr",
+          "provider_type": "String",
+          "portal_max_length": 112,
+          "semantic": "sector/index high value; portal-declared length retained verbatim; schema anomaly pending confirmation",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "bstp_nmix_lwpr",
+          "response_path": "$.output2[*].bstp_nmix_lwpr",
+          "provider_type": "String",
+          "portal_max_length": 112,
+          "semantic": "sector/index low value; portal-declared length retained verbatim; schema anomaly pending confirmation",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "aggregate index/sector volume",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "acml_tr_pbmn",
+          "response_path": "$.output2[*].acml_tr_pbmn",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "aggregate index/sector trade amount",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "mod_yn",
+          "response_path": "$.output2[*].mod_yn",
+          "provider_type": "String",
+          "portal_max_length": 1,
+          "semantic": "modified-data flag",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        }
+      ],
+      "limits": {
+        "max_rows_per_request": 50,
+        "pagination_status": "conflict_portal_vs_sample; portal marks continuation unavailable while pinned sample follows tr_cont M/F→N; block multi-page collection pending KIS confirmation"
+      },
+      "unresolved": [
+        "Index/sector values are not equity closes; keep distinct from stock-price fields.",
+        "Portal lengths 82/112 are unusually large; preserve exact documented limits and request correction rather than silently narrowing.",
+        "Unit/currency and timezone are not stated; date is date-only."
+      ]
+    },
+    {
+      "operation_ref": "KIS-264",
+      "catalog_id": "kis.catalog.commit2077773a.row.312",
+      "title": "해외주식 종목/지수/환율기간별시세(일/주/월/년)[v1_해외주식-012]",
+      "endpoint": "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+      "method": "GET",
+      "tr_id": {
+        "real": "FHKST03030100",
+        "paper": "FHKST03030100"
+      },
+      "profile_id": "kis.overseas-index-period-chart",
+      "asset_scope": [
+        "A4",
+        "A5"
+      ],
+      "portal_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+      "sample_url": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/inquire_daily_chartprice/inquire_daily_chartprice.py",
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "N",
+            "X",
+            "I",
+            "S"
+          ],
+          "meaning": "overseas index, FX, government bond, gold futures"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(12)",
+          "meaning": "instrument/index code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        }
+      ],
+      "response_roots": [
+        {
+          "path": "$.output1",
+          "shape": "optional object",
+          "meaning": "snapshot/header"
+        },
+        {
+          "path": "$.output2[*]",
+          "shape": "optional array",
+          "meaning": "period rows"
+        }
+      ],
+      "response_fields": [
+        {
+          "provider_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "provider_type": "String",
+          "portal_max_length": 8,
+          "semantic": "business date",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "format": "YYYYMMDD"
+        },
+        {
+          "provider_field": "ovrs_nmix_prpr",
+          "response_path": "$.output2[*].ovrs_nmix_prpr",
+          "provider_type": "String",
+          "portal_max_length": 16,
+          "semantic": "overseas index value; portal numeric format 11.4",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "ovrs_nmix_oprc",
+          "response_path": "$.output2[*].ovrs_nmix_oprc",
+          "provider_type": "String",
+          "portal_max_length": 16,
+          "semantic": "overseas index open value; portal numeric format 11.4",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "ovrs_nmix_hgpr",
+          "response_path": "$.output2[*].ovrs_nmix_hgpr",
+          "provider_type": "String",
+          "portal_max_length": 16,
+          "semantic": "overseas index high value; portal numeric format 11.4",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "ovrs_nmix_lwpr",
+          "response_path": "$.output2[*].ovrs_nmix_lwpr",
+          "provider_type": "String",
+          "portal_max_length": 16,
+          "semantic": "overseas index low value; portal numeric format 11.4",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "accumulated volume",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "mod_yn",
+          "response_path": "$.output2[*].mod_yn",
+          "provider_type": "String",
+          "portal_max_length": 1,
+          "semantic": "modified-data flag",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone"
+        },
+        {
+          "provider_field": "ovrs_nmix_prdy_clpr",
+          "response_path": "$.output1.ovrs_nmix_prdy_clpr",
+          "provider_type": "String",
+          "portal_max_length": 16,
+          "semantic": "previous close; portal numeric format 11.4",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "not_time_field"
+        },
+        {
+          "provider_field": "prdy_ctrt",
+          "response_path": "$.output1.prdy_ctrt",
+          "provider_type": "String",
+          "portal_max_length": 11,
+          "semantic": "previous-day percentage change; portal format 8.2",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "not_time_field"
+        },
+        {
+          "provider_field": "hts_kor_isnm",
+          "response_path": "$.output1.hts_kor_isnm",
+          "provider_type": "String",
+          "portal_max_length": 40,
+          "semantic": "Korean display name",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "not_time_field"
+        }
+      ],
+      "limits": {
+        "pagination_status": "conflict_portal_vs_sample; portal says no tr_cont continuation while sample follows M/F→N; block multi-page collection pending KIS confirmation",
+        "scope_limit": "US index scope for this route is limited to Dow 30, Nasdaq 100 and S&P 500 constituents per portal; use KIS-254 for broader US equities"
+      },
+      "unresolved": [
+        "Category-specific currency and index/FX/bond/gold units are not explicit in these response fields; resolve by FID_COND_MRKT_DIV_CODE and instrument metadata.",
+        "Numeric 11.4 is formatting precision, not an index unit or currency. Date is date-only; no timezone."
+      ]
+    }
+  ],
+  "implementation_scope": {
+    "raw_only": true,
+    "period_codes_implemented": [
+      "D"
+    ],
+    "period_codes_explicit_gap": [
+      "W",
+      "M",
+      "Y"
+    ],
+    "initial_page_only": true,
+    "transport_calls_per_request": 1,
+    "retry_count": 0,
+    "continuation_count": 0,
+    "row_limits": {
+      "KIS-072": {
+        "max": 50,
+        "basis": "documented"
+      },
+      "KIS-264": {
+        "max": 500,
+        "basis": "local_safety_budget_not_provider_cap"
+      }
+    },
+    "kis072_execution": "always blocked before transport/clock access: String(2) conflicts with example 0001",
+    "registration": "unregistered additive module; no server.ts or inventory mutation",
+    "identity": "request_context_only_not_response_verified",
+    "canonicals": "all null"
+  },
+  "snapshot_limitations": [
+    "No official Python sample files were found locally; links and portal/sample conflicts are evidence from the supplied review snapshots, not a new sample inspection.",
+    "No unit, currency, session, timezone, finality, live response, source authentication or redistribution-rights promotion.",
+    "Codes N/X/I/S remain request codes, not verified instrument classes.",
+    "KIS-072 112 row field lengths are preserved exactly. Documentation mentions 82/112 anomalies generally; no separate 82-length reviewed row field is invented.",
+    "Original body numeric tokens remain unconverted; projected raw strings are not validated as canonical numeric measurements."
+  ],
+  "source_snapshot_baseline": "RC14 frozen verified predecessor (rc14-verify-rzwcg_8l/server)"
+}

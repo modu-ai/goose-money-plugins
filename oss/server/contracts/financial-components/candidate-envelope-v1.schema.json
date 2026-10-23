@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.financial.component-derivation-candidate.v1"
+    },
+    "status": {
+      "type": "string",
+      "const": "raw_arithmetic_candidate_only"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "enum": [
+            "us-gaap.ppe-plus-intangibles.v1",
+            "ifrs-full.ppe-plus-intangibles.v1",
+            "us-gaap.short-plus-long-debt.v1",
+            "us-gaap.short-plus-current-plus-noncurrent-debt.v1",
+            "ifrs-full.current-plus-noncurrent-borrowings.v1"
+          ]
+        },
+        "destination_role": {
+          "type": "string",
+          "enum": [
+            "reported.capex",
+            "reported.debt"
+          ]
+        },
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "policy_id",
+        "destination_role",
+        "cutoff"
+      ],
+      "additionalProperties": false
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "input_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "leaves": {
+      "minItems": 2,
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "component_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z_]{0,63}$"
+          },
+          "candidate": {},
+          "candidate_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "component_id",
+          "candidate",
+          "candidate_sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "operation": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "sum"
+        },
+        "component_order": {
+          "minItems": 2,
+          "maxItems": 3,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z_]{0,63}$"
+          }
+        },
+        "sign_policy": {
+          "type": "string",
+          "const": "require_nonnegative_no_abs_or_sign_flip"
+        },
+        "missing_policy": {
+          "type": "string",
+          "const": "reject_no_implicit_zero"
+        },
+        "rounding": {
+          "type": "string",
+          "const": "none"
+        }
+      },
+      "required": [
+        "kind",
+        "component_order",
+        "sign_policy",
+        "missing_policy",
+        "rounding"
+      ],
+      "additionalProperties": false
+    },
+    "raw_arithmetic": {
+      "type": "object",
+      "properties": {
+        "decimal": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+        },
+        "unscaled_integer": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^(?:0|[1-9]\\d*)$"
+        },
+        "fractional_digits": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 254
+        },
+        "source_unit_label": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "unit_status": {
+          "type": "string",
+          "const": "source_label_equal_not_verified_canonical_unit"
+        },
+        "scale_policy": {
+          "type": "string",
+          "const": "source_numeric_lexemes_only_no_rescaling"
+        },
+        "representation": {
+          "type": "string",
+          "const": "max_input_fractional_digits_not_measurement_precision"
+        }
+      },
+      "required": [
+        "decimal",
+        "unscaled_integer",
+        "fractional_digits",
+        "source_unit_label",
+        "unit_status",
+        "scale_policy",
+        "representation"
+      ],
+      "additionalProperties": false
+    },
+    "source_context": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "const": "SEC"
+        },
+        "cik": {
+          "type": "string",
+          "pattern": "^\\d{10}$"
+        },
+        "accession_number": {
+          "type": "string",
+          "pattern": "^\\d{10}-\\d{2}-\\d{6}$"
+        },
+        "period_start": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "period_end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "period_kind": {
+          "type": "string",
+          "enum": [
+            "instant",
+            "duration"
+          ]
+        },
+        "filings_snapshot_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "constituent_receipt_latest": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        }
+      },
+      "required": [
+        "provider",
+        "cik",
+        "accession_number",
+        "period_start",
+        "period_end",
+        "period_kind",
+        "filings_snapshot_sha256",
+        "constituent_receipt_latest"
+      ],
+      "additionalProperties": false
+    },
+    "canonical_fact": {
+      "type": "null"
+    },
+    "metric_ready": {
+      "type": "boolean",
+      "const": false
+    },
+    "semantic_binding_verified": {
+      "type": "boolean",
+      "const": false
+    },
+    "unit_scale": {
+      "type": "null"
+    },
+    "accounting_basis": {
+      "type": "null"
+    },
+    "published_at": {
+      "type": "null"
+    },
+    "available_at": {
+      "type": "null"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "coverage_complete": {
+      "type": "boolean",
+      "const": false
+    },
+    "component_disjointness_verified": {
+      "type": "boolean",
+      "const": false
+    },
+    "unresolved": {
+      "minItems": 9,
+      "maxItems": 9,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 200
+      }
+    },
+    "warnings": {
+      "minItems": 5,
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 1000
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "status",
+    "request",
+    "origin",
+    "input_sha256",
+    "leaves",
+    "operation",
+    "raw_arithmetic",
+    "source_context",
+    "canonical_fact",
+    "metric_ready",
+    "semantic_binding_verified",
+    "unit_scale",
+    "accounting_basis",
+    "published_at",
+    "available_at",
+    "rights_status",
+    "coverage_complete",
+    "component_disjointness_verified",
+    "unresolved",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

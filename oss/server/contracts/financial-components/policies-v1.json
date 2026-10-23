@@ -1,0 +1,48 @@
+{
+  "us-gaap.ppe-plus-intangibles.v1": {
+    "role": "reported.capex",
+    "taxonomy": "us-gaap",
+    "period": "duration",
+    "components": {
+      "ppe": "PaymentsToAcquirePropertyPlantAndEquipment",
+      "intangibles": "PaymentsToAcquireIntangibleAssets"
+    }
+  },
+  "ifrs-full.ppe-plus-intangibles.v1": {
+    "role": "reported.capex",
+    "taxonomy": "ifrs-full",
+    "period": "duration",
+    "components": {
+      "ppe": "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+      "intangibles": "PurchaseOfIntangibleAssetsClassifiedAsInvestingActivities"
+    }
+  },
+  "us-gaap.short-plus-long-debt.v1": {
+    "role": "reported.debt",
+    "taxonomy": "us-gaap",
+    "period": "instant",
+    "components": {
+      "short_term": "ShortTermBorrowings",
+      "long_all_maturities": "LongTermDebt"
+    }
+  },
+  "us-gaap.short-plus-current-plus-noncurrent-debt.v1": {
+    "role": "reported.debt",
+    "taxonomy": "us-gaap",
+    "period": "instant",
+    "components": {
+      "short_term": "ShortTermBorrowings",
+      "long_current": "LongTermDebtCurrent",
+      "long_noncurrent": "LongTermDebtNoncurrent"
+    }
+  },
+  "ifrs-full.current-plus-noncurrent-borrowings.v1": {
+    "role": "reported.debt",
+    "taxonomy": "ifrs-full",
+    "period": "instant",
+    "components": {
+      "current_combined": "CurrentBorrowingsAndCurrentPortionOfNoncurrentBorrowings",
+      "noncurrent": "LongtermBorrowings"
+    }
+  }
+}

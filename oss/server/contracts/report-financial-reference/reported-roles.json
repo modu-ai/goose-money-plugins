@@ -1,0 +1,75 @@
+{
+  "runtime_version": "r01-semantics/1.0.1-exact-time",
+  "runtime_sha256": "02f307a1f159efc80a64542dd324b6c5fcc33a7169655328a65ff8d6b25aa180",
+  "role_count": 13,
+  "roles": {
+    "reported.revenue": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "revenue"
+    },
+    "reported.operating_profit": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "operating_profit"
+    },
+    "reported.net_income_total": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "net_income_total"
+    },
+    "reported.net_income_common": {
+      "unit": "money",
+      "attribution": "common",
+      "definition": "net_income_attributable_to_common"
+    },
+    "reported.cfo": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "net_cash_from_operating_activities"
+    },
+    "reported.capex": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "cash_purchase_ppe_and_intangibles"
+    },
+    "reported.debt": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "interest_bearing_debt"
+    },
+    "reported.cash": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "cash_and_cash_equivalents"
+    },
+    "reported.equity": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "total_equity"
+    },
+    "reported.liabilities": {
+      "unit": "money",
+      "attribution": "total",
+      "definition": "total_liabilities"
+    },
+    "reported.equity_common_open": {
+      "unit": "money",
+      "attribution": "common",
+      "definition": "equity_attributable_to_common"
+    },
+    "reported.equity_common_close": {
+      "unit": "money",
+      "attribution": "common",
+      "definition": "equity_attributable_to_common"
+    },
+    "reported.shares_weighted": {
+      "unit": "shares",
+      "attribution": "common",
+      "definition": "weighted_average_basic_common_shares"
+    }
+  },
+  "source_authenticated": false,
+  "verified_live_bindings": 0,
+  "schema_is_not_semantic_approval": true
+}

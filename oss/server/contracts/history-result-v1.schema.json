@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.price-history.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "operation_id": {
+      "type": "string",
+      "const": "KIS-039"
+    },
+    "instrument": {
+      "type": "object",
+      "properties": {
+        "market": {
+          "type": "string",
+          "const": "KR"
+        },
+        "symbol": {
+          "type": "string",
+          "pattern": "^\\d{6}$"
+        },
+        "board": {
+          "type": "string",
+          "enum": [
+            "J",
+            "NX",
+            "UN"
+          ]
+        }
+      },
+      "required": [
+        "market",
+        "symbol",
+        "board"
+      ],
+      "additionalProperties": false
+    },
+    "interval": {
+      "type": "string",
+      "const": "1d"
+    },
+    "requested_start": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "requested_end": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "completeness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "bars": {
+      "minItems": 1,
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "open": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "high": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "low": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "close": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "turnover": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "pattern": "^(?:0|[1-9]\\d*)(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "KRW"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "price_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "KRW/share"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "volume_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "shares"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "turnover_unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "KRW"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "adjusted": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mapping_status": {
+            "type": "string",
+            "enum": [
+              "verified",
+              "blocked"
+            ]
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "date",
+          "open",
+          "high",
+          "low",
+          "close",
+          "volume",
+          "turnover",
+          "currency",
+          "price_unit",
+          "volume_unit",
+          "turnover_unit",
+          "adjusted",
+          "source_ref",
+          "mapping_status",
+          "blockers"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "operation_id",
+    "instrument",
+    "interval",
+    "requested_start",
+    "requested_end",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "rights_status",
+    "completeness",
+    "bars",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,52 @@
+{
+  "policy": "us_quote_previous_close",
+  "cutoff": "2026-10-22T03:00:00.123456789124Z",
+  "requested_role": "market.previous_close",
+  "source_dto": {
+    "contract": "moai.stock.us-quote.v1",
+    "provider": "kis",
+    "origin": "synthetic",
+    "received_at": "2026-10-22T03:00:00.123456789123Z",
+    "source_as_of": null,
+    "source_time_status": "not_returned_by_reviewed_quote_contract",
+    "rights_status": "pending",
+    "validation_status": "provider_shape_checked_not_live_reconciled",
+    "canonical_projection_status": "blocked",
+    "mapping_blockers": [
+      "authoritative_instrument_master_binding_missing",
+      "currency_not_returned_by_quote",
+      "price_volume_turnover_units_not_reconciled",
+      "stock_or_etf_classification_not_verified"
+    ],
+    "warnings": [
+      "Request exchange and asset class are caller inputs, not verified classification.",
+      "rsym matching is a conservative request guard, not authoritative master-data reconciliation.",
+      "No live, delayed, session, timezone or freshness claim is inferred. Raw fields retain provider decimal strings."
+    ],
+    "symbol_from_request": "SYNTH",
+    "exchange_from_request": "NAS",
+    "asset_class_from_request": "stock",
+    "identity_status": "conservative_rsym_guard_matched_not_master_verified",
+    "raw": {
+      "rsym": "DNASSYNTH",
+      "zdiv": "4",
+      "base": "00099.0000000000000001",
+      "last": "101",
+      "diff": "2",
+      "rate": "2.02"
+    },
+    "canonical": {
+      "instrument_id": null,
+      "asset_class": null,
+      "currency": null,
+      "last_price": null,
+      "previous_close": null,
+      "change": null,
+      "change_percent": null,
+      "volume": null,
+      "turnover": null,
+      "price_unit": null,
+      "volume_unit": null
+    }
+  }
+}

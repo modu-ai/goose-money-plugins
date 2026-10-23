@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "type": "string",
+      "const": "kis.us_product_profile"
+    },
+    "method": {
+      "type": "string",
+      "const": "GET"
+    },
+    "path": {
+      "type": "string",
+      "const": "/uapi/overseas-price/v1/quotations/search-info"
+    },
+    "tr_id": {
+      "type": "string",
+      "const": "CTPF1702R"
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "PRDT_TYPE_CD": {
+          "type": "string",
+          "enum": [
+            "512",
+            "513",
+            "529"
+          ]
+        },
+        "PDNO": {
+          "type": "string",
+          "maxLength": 16,
+          "pattern": "^[A-Z][A-Z0-9]*(?:[.-][A-Z0-9]+)*$"
+        }
+      },
+      "required": [
+        "PRDT_TYPE_CD",
+        "PDNO"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "operation",
+    "method",
+    "path",
+    "tr_id",
+    "query"
+  ],
+  "additionalProperties": false
+}

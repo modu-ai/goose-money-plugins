@@ -1,0 +1,11 @@
+{
+  "rt_cd": "0",
+  "output1": {
+    "bidp1": "00099.9000",
+    "askp1": "00100.1000",
+    "aspr_acpt_hour": "123001",
+    "stck_shrn_iscd": "005930",
+    "new_mkop_cls_code": "unverified"
+  },
+  "output2": {}
+}

@@ -1,0 +1,1780 @@
+{
+  "type": "object",
+  "properties": {
+    "contract": {
+      "const": "canonical-history/1.0"
+    },
+    "cutoff": {
+      "type": "string",
+      "maxLength": 2048,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "format": "date"
+        },
+        "end_date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "format": "date"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "additionalProperties": false
+    },
+    "histories": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "contract": {
+                  "const": "canonical-history/1.0"
+                },
+                "history_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "data_kind": {
+                  "enum": [
+                    "synthetic",
+                    "actual"
+                  ]
+                },
+                "context": {
+                  "type": "object",
+                  "properties": {
+                    "identity": {
+                      "type": "object",
+                      "properties": {
+                        "instrument_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "issuer_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "venue": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "asset_class": {
+                          "enum": [
+                            "equity",
+                            "etf",
+                            "index",
+                            "futures"
+                          ]
+                        },
+                        "share_class": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "contract_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        }
+                      },
+                      "required": [
+                        "instrument_id",
+                        "issuer_id",
+                        "venue",
+                        "asset_class",
+                        "share_class",
+                        "contract_id"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "units": {
+                      "type": "object",
+                      "properties": {
+                        "price_unit": {
+                          "enum": [
+                            "money_per_share",
+                            "index_points",
+                            "quoted_price"
+                          ]
+                        },
+                        "currency": {
+                          "type": "string",
+                          "pattern": "^[A-Z]{3}$"
+                        },
+                        "price_scale": {
+                          "type": "string",
+                          "maxLength": 256,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                        },
+                        "volume_unit": {
+                          "enum": [
+                            "shares",
+                            "contracts",
+                            "not_applicable"
+                          ]
+                        },
+                        "volume_scale": {
+                          "type": "string",
+                          "maxLength": 256,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                        }
+                      },
+                      "required": [
+                        "price_unit",
+                        "currency",
+                        "price_scale",
+                        "volume_unit",
+                        "volume_scale"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "session": {
+                      "type": "object",
+                      "properties": {
+                        "calendar_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "timezone": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "session_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "interval": {
+                          "const": "daily"
+                        },
+                        "date_basis": {
+                          "const": "trade_date"
+                        },
+                        "calendar_verified": {
+                          "const": true
+                        },
+                        "calendar_evidence_ref": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "coverage_start": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "coverage_end": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "coverage_complete": {
+                          "const": true
+                        },
+                        "expected_sessions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                            "format": "date"
+                          },
+                          "maxItems": 10000,
+                          "minItems": 1
+                        }
+                      },
+                      "required": [
+                        "calendar_id",
+                        "timezone",
+                        "session_id",
+                        "interval",
+                        "date_basis",
+                        "calendar_verified",
+                        "calendar_evidence_ref",
+                        "coverage_start",
+                        "coverage_end",
+                        "coverage_complete",
+                        "expected_sessions"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "basis": {
+                      "type": "object",
+                      "properties": {
+                        "price_kind": {
+                          "enum": [
+                            "price_level",
+                            "total_return_index"
+                          ]
+                        },
+                        "return_policy": {
+                          "enum": [
+                            "price_return",
+                            "total_return"
+                          ]
+                        },
+                        "adjustment": {
+                          "enum": [
+                            "unadjusted",
+                            "split_adjusted",
+                            "total_return"
+                          ]
+                        },
+                        "adjustment_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "adjustment_asof": {
+                          "type": "string",
+                          "maxLength": 2048,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                        },
+                        "actions_coverage_verified": {
+                          "const": true
+                        },
+                        "actions_evidence_ref": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "volume_adjustment": {
+                          "enum": [
+                            "unadjusted",
+                            "split_adjusted",
+                            "not_applicable"
+                          ]
+                        },
+                        "revision_policy": {
+                          "const": "final_current_at_cutoff"
+                        },
+                        "price_definition": {
+                          "const": "official_close"
+                        },
+                        "allow_negative_prices": {
+                          "type": "boolean"
+                        },
+                        "roll_policy": {
+                          "enum": [
+                            "not_applicable",
+                            "single_contract"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "price_kind",
+                        "return_policy",
+                        "adjustment",
+                        "adjustment_id",
+                        "adjustment_asof",
+                        "actions_coverage_verified",
+                        "actions_evidence_ref",
+                        "volume_adjustment",
+                        "revision_policy",
+                        "price_definition",
+                        "allow_negative_prices",
+                        "roll_policy"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "identity",
+                    "units",
+                    "session",
+                    "basis"
+                  ],
+                  "additionalProperties": false
+                },
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fact_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2048
+                      },
+                      "trade_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "format": "date"
+                      },
+                      "context_sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "point_kind": {
+                        "enum": [
+                          "date",
+                          "instant"
+                        ]
+                      },
+                      "observed_at": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 2048,
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "session_close_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "published_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "received_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "available_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "finality": {
+                        "const": "final"
+                      },
+                      "revision": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "original",
+                              "unchanged",
+                              "revised"
+                            ]
+                          },
+                          "revision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "current_at_cutoff_verified": {
+                            "const": true
+                          },
+                          "evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "supersedes_revision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "revision_id",
+                          "current_at_cutoff_verified",
+                          "evidence_ref"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "properties": {
+                          "source_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "document_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "locator": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "revision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "source_sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "selector_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "data_kind": {
+                            "enum": [
+                              "synthetic",
+                              "actual"
+                            ]
+                          },
+                          "semantic_binding_verified": {
+                            "const": true
+                          },
+                          "semantic_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "identity_verified": {
+                            "const": true
+                          },
+                          "identity_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "unit_verified": {
+                            "const": true
+                          },
+                          "unit_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "currency_verified": {
+                            "const": true
+                          },
+                          "currency_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "scale_verified": {
+                            "const": true
+                          },
+                          "scale_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "time_verified": {
+                            "const": true
+                          },
+                          "time_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          }
+                        },
+                        "required": [
+                          "source_id",
+                          "document_id",
+                          "locator",
+                          "revision_id",
+                          "source_sha256",
+                          "selector_id",
+                          "data_kind",
+                          "semantic_binding_verified",
+                          "semantic_evidence_ref",
+                          "identity_verified",
+                          "identity_evidence_ref",
+                          "unit_verified",
+                          "unit_evidence_ref",
+                          "currency_verified",
+                          "currency_evidence_ref",
+                          "scale_verified",
+                          "scale_evidence_ref",
+                          "time_verified",
+                          "time_evidence_ref"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "rights": {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "const": "allowed"
+                          },
+                          "use": {
+                            "const": "local_report"
+                          },
+                          "evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "expires_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 2048,
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "use",
+                          "evidence_ref"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "values": {
+                        "type": "object",
+                        "properties": {
+                          "open": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "high": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "low": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "close": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "volume": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "open",
+                          "high",
+                          "low",
+                          "close",
+                          "volume"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "fact_id",
+                      "trade_date",
+                      "context_sha256",
+                      "point_kind",
+                      "observed_at",
+                      "session_close_at",
+                      "published_at",
+                      "received_at",
+                      "available_at",
+                      "finality",
+                      "revision",
+                      "provenance",
+                      "rights",
+                      "values"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 10000,
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "contract",
+                "history_id",
+                "data_kind",
+                "context",
+                "points"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "benchmark": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "contract": {
+                  "const": "canonical-history/1.0"
+                },
+                "history_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2048
+                },
+                "data_kind": {
+                  "enum": [
+                    "synthetic",
+                    "actual"
+                  ]
+                },
+                "context": {
+                  "type": "object",
+                  "properties": {
+                    "identity": {
+                      "type": "object",
+                      "properties": {
+                        "instrument_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "issuer_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "venue": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "asset_class": {
+                          "enum": [
+                            "equity",
+                            "etf",
+                            "index",
+                            "futures"
+                          ]
+                        },
+                        "share_class": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "contract_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        }
+                      },
+                      "required": [
+                        "instrument_id",
+                        "issuer_id",
+                        "venue",
+                        "asset_class",
+                        "share_class",
+                        "contract_id"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "units": {
+                      "type": "object",
+                      "properties": {
+                        "price_unit": {
+                          "enum": [
+                            "money_per_share",
+                            "index_points",
+                            "quoted_price"
+                          ]
+                        },
+                        "currency": {
+                          "type": "string",
+                          "pattern": "^[A-Z]{3}$"
+                        },
+                        "price_scale": {
+                          "type": "string",
+                          "maxLength": 256,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                        },
+                        "volume_unit": {
+                          "enum": [
+                            "shares",
+                            "contracts",
+                            "not_applicable"
+                          ]
+                        },
+                        "volume_scale": {
+                          "type": "string",
+                          "maxLength": 256,
+                          "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                        }
+                      },
+                      "required": [
+                        "price_unit",
+                        "currency",
+                        "price_scale",
+                        "volume_unit",
+                        "volume_scale"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "session": {
+                      "type": "object",
+                      "properties": {
+                        "calendar_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "timezone": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "session_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "interval": {
+                          "const": "daily"
+                        },
+                        "date_basis": {
+                          "const": "trade_date"
+                        },
+                        "calendar_verified": {
+                          "const": true
+                        },
+                        "calendar_evidence_ref": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "coverage_start": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "coverage_end": {
+                          "type": "string",
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                          "format": "date"
+                        },
+                        "coverage_complete": {
+                          "const": true
+                        },
+                        "expected_sessions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                            "format": "date"
+                          },
+                          "maxItems": 10000,
+                          "minItems": 1
+                        }
+                      },
+                      "required": [
+                        "calendar_id",
+                        "timezone",
+                        "session_id",
+                        "interval",
+                        "date_basis",
+                        "calendar_verified",
+                        "calendar_evidence_ref",
+                        "coverage_start",
+                        "coverage_end",
+                        "coverage_complete",
+                        "expected_sessions"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "basis": {
+                      "type": "object",
+                      "properties": {
+                        "price_kind": {
+                          "enum": [
+                            "price_level",
+                            "total_return_index"
+                          ]
+                        },
+                        "return_policy": {
+                          "enum": [
+                            "price_return",
+                            "total_return"
+                          ]
+                        },
+                        "adjustment": {
+                          "enum": [
+                            "unadjusted",
+                            "split_adjusted",
+                            "total_return"
+                          ]
+                        },
+                        "adjustment_id": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "adjustment_asof": {
+                          "type": "string",
+                          "maxLength": 2048,
+                          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                        },
+                        "actions_coverage_verified": {
+                          "const": true
+                        },
+                        "actions_evidence_ref": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 2048
+                        },
+                        "volume_adjustment": {
+                          "enum": [
+                            "unadjusted",
+                            "split_adjusted",
+                            "not_applicable"
+                          ]
+                        },
+                        "revision_policy": {
+                          "const": "final_current_at_cutoff"
+                        },
+                        "price_definition": {
+                          "const": "official_close"
+                        },
+                        "allow_negative_prices": {
+                          "type": "boolean"
+                        },
+                        "roll_policy": {
+                          "enum": [
+                            "not_applicable",
+                            "single_contract"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "price_kind",
+                        "return_policy",
+                        "adjustment",
+                        "adjustment_id",
+                        "adjustment_asof",
+                        "actions_coverage_verified",
+                        "actions_evidence_ref",
+                        "volume_adjustment",
+                        "revision_policy",
+                        "price_definition",
+                        "allow_negative_prices",
+                        "roll_policy"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "identity",
+                    "units",
+                    "session",
+                    "basis"
+                  ],
+                  "additionalProperties": false
+                },
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fact_id": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2048
+                      },
+                      "trade_date": {
+                        "type": "string",
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "format": "date"
+                      },
+                      "context_sha256": {
+                        "type": "string",
+                        "pattern": "^[a-f0-9]{64}$"
+                      },
+                      "point_kind": {
+                        "enum": [
+                          "date",
+                          "instant"
+                        ]
+                      },
+                      "observed_at": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 2048,
+                            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "session_close_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "published_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "received_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "available_at": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                      },
+                      "finality": {
+                        "const": "final"
+                      },
+                      "revision": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "enum": [
+                              "original",
+                              "unchanged",
+                              "revised"
+                            ]
+                          },
+                          "revision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "current_at_cutoff_verified": {
+                            "const": true
+                          },
+                          "evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "supersedes_revision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "revision_id",
+                          "current_at_cutoff_verified",
+                          "evidence_ref"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "provenance": {
+                        "type": "object",
+                        "properties": {
+                          "source_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "document_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "locator": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "revision_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "source_sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                          },
+                          "selector_id": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "data_kind": {
+                            "enum": [
+                              "synthetic",
+                              "actual"
+                            ]
+                          },
+                          "semantic_binding_verified": {
+                            "const": true
+                          },
+                          "semantic_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "identity_verified": {
+                            "const": true
+                          },
+                          "identity_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "unit_verified": {
+                            "const": true
+                          },
+                          "unit_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "currency_verified": {
+                            "const": true
+                          },
+                          "currency_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "scale_verified": {
+                            "const": true
+                          },
+                          "scale_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "time_verified": {
+                            "const": true
+                          },
+                          "time_evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          }
+                        },
+                        "required": [
+                          "source_id",
+                          "document_id",
+                          "locator",
+                          "revision_id",
+                          "source_sha256",
+                          "selector_id",
+                          "data_kind",
+                          "semantic_binding_verified",
+                          "semantic_evidence_ref",
+                          "identity_verified",
+                          "identity_evidence_ref",
+                          "unit_verified",
+                          "unit_evidence_ref",
+                          "currency_verified",
+                          "currency_evidence_ref",
+                          "scale_verified",
+                          "scale_evidence_ref",
+                          "time_verified",
+                          "time_evidence_ref"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "rights": {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "const": "allowed"
+                          },
+                          "use": {
+                            "const": "local_report"
+                          },
+                          "evidence_ref": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2048
+                          },
+                          "expires_at": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 2048,
+                                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "use",
+                          "evidence_ref"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "values": {
+                        "type": "object",
+                        "properties": {
+                          "open": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "high": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "low": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "close": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "volume": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "available"
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 256,
+                                    "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"
+                                  },
+                                  "missing_reason": {
+                                    "const": null
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "state": {
+                                    "const": "unavailable"
+                                  },
+                                  "value": {
+                                    "const": null
+                                  },
+                                  "missing_reason": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 2048
+                                  }
+                                },
+                                "required": [
+                                  "state",
+                                  "value",
+                                  "missing_reason"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "open",
+                          "high",
+                          "low",
+                          "close",
+                          "volume"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "fact_id",
+                      "trade_date",
+                      "context_sha256",
+                      "point_kind",
+                      "observed_at",
+                      "session_close_at",
+                      "published_at",
+                      "received_at",
+                      "available_at",
+                      "finality",
+                      "revision",
+                      "provenance",
+                      "rights",
+                      "values"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 10000,
+                  "minItems": 0
+                }
+              },
+              "required": [
+                "contract",
+                "history_id",
+                "data_kind",
+                "context",
+                "points"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "subject"
+      ],
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "sma_windows": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "maxItems": 16,
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "volume_direction": {
+          "type": "object",
+          "properties": {
+            "rule": {
+              "enum": [
+                "neutral",
+                "close_vs_open",
+                "close_vs_previous_session"
+              ]
+            },
+            "evidence_ref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            },
+            "disclosure": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048
+            }
+          },
+          "required": [
+            "rule",
+            "evidence_ref",
+            "disclosure"
+          ],
+          "additionalProperties": false
+        },
+        "aggregation_windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "window_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "kind": {
+                "enum": [
+                  "week",
+                  "month"
+                ]
+              },
+              "definition": {
+                "enum": [
+                  "ISO_MONDAY_SUNDAY",
+                  "GREGORIAN_MONTH"
+                ]
+              },
+              "start_date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "format": "date"
+              },
+              "end_date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                "format": "date"
+              },
+              "calendar_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "calendar_verified": {
+                "const": true
+              },
+              "complete": {
+                "const": true
+              },
+              "evidence_ref": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              },
+              "expected_sessions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                  "format": "date"
+                },
+                "maxItems": 10000,
+                "minItems": 1
+              }
+            },
+            "required": [
+              "window_id",
+              "kind",
+              "definition",
+              "start_date",
+              "end_date",
+              "calendar_id",
+              "calendar_verified",
+              "complete",
+              "evidence_ref",
+              "expected_sessions"
+            ],
+            "additionalProperties": false
+          },
+          "maxItems": 1000,
+          "minItems": 0
+        }
+      },
+      "required": [
+        "sma_windows",
+        "volume_direction",
+        "aggregation_windows"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "cutoff",
+    "request",
+    "histories",
+    "options"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:moai:canonical-history:1.0",
+  "title": "Conditional local canonical history contract; NOT a provider mapping",
+  "description": "Verified fields are upstream assertions only. This schema does not authenticate sources. RAW provider histories have no accepted ingestion route. Semantic/date/calendar/rights/point-in-time checks also run in Python."
+}

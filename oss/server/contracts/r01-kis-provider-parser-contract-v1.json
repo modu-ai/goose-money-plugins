@@ -1,0 +1,3625 @@
+{
+  "contract_id": "moai.stock.r01.kis-provider-parser-contract.v1",
+  "version": "1.1.0-draft",
+  "generated_on": "2026-10-21",
+  "status": "Offline synthetic and contract tests only. Read-only reconciliation now includes the v13.2/kis53 consumer manifest. KIS-039 and KIS-115 fixed-operation adapters remain uninvoked and not MCP-exposed; canonical projection remains blocked. No live provider response or consumer promotion.",
+  "ownership": {
+    "writer": "MCP/data-contract owner",
+    "report_consumer_sources_modified": false,
+    "original_python_prototype_modified": false
+  },
+  "provenance": {
+    "portal_schema_review": {
+      "path": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json",
+      "sha256": "92ebd33bf4b4a0d07bc67b4c2da66ef5e5258d8674c2f64a3f77f9ffa4404803",
+      "reviewed_on": "2026-10-21",
+      "scope": "ten official portal response schemas; this slice parses and has fixed-operation request adapters for KIS-039 and KIS-115, with no live request or response validation"
+    },
+    "pinned_official_sample_commit": "2077773a69a428daf63e148182511f068cc45de3",
+    "provider_mapping": {
+      "path": "outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
+      "sha256": "803477a62949c7186cf6d1c833ae37ed057af646df3f529e59f565623132081d"
+    },
+    "supplier_registry": {
+      "path": "outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
+      "sha256": "21a79d2315af767b9d3684739cb248c089c7fbb8d0e43902c4537dee4724b71d",
+      "version": "1.0.1-draft",
+      "field_count": 147
+    },
+    "consumer_supplier_crosswalk": {
+      "path": "outputs/kis-mcp-v8/contracts/r01-consumer-supplier-registry-crosswalk-v1.json",
+      "sha256": "7aab41f25e1c6a621fe2981fc8f4358b4afc4b9a6c665da1235a82bf64c66058"
+    },
+    "runtime_contract": {
+      "path": "outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
+      "sha256": "c80608114b32cca4ce0682a9e4e47354deb0d248ffdfce8c05c52fb67745c17c",
+      "contract_id": "moai.stock.r01.chart-provider-runtime.v1",
+      "version": "1.1.0-draft"
+    },
+    "pinned_official_sample_review": {
+      "commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "operation_refs": [
+        "KIS-110",
+        "KIS-134",
+        "KIS-135"
+      ],
+      "sources": "Official examples_llm domestic_stock helper and chk_*.py files, reviewed against their raw field labels and output-root handling.",
+      "reviewed_on": "2026-10-21",
+      "limit": "Not a dynamic portal response-schema review for these three flow endpoints; no actual response or rights conclusion."
+    },
+    "v13_2_consumer_manifest": {
+      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
+      "sha256": "678837533751fc1fdb7b2d4529551d3e12246ebbb782d930d576cd233d44bef3",
+      "manifest_id": "goose.r01.v13_2.consumer-provider-binding.kis53.v1",
+      "version": "0.1.0-integration",
+      "reviewed_on": "2026-10-21",
+      "scope": "Read-only report-consumer binding manifest for the v13.2 synthetic KIS adapter integration; it records candidate paths and pending fields, not live data."
+    },
+    "v13_2_consumer_handoff": {
+      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
+      "sha256": "10271792c7508ced679541257099a6789f35af39d96130178128034d8fe9f810",
+      "consumer_tests": {
+        "passed": 14,
+        "failed": 0,
+        "node": "24.22.1"
+      },
+      "network_attempts": 0,
+      "supplier_tests_reported": {
+        "reported": 53,
+        "rerun_here": false
+      },
+      "source_hashes_unchanged_at_consumer_build": true,
+      "provider_files_modified_by_consumer": false,
+      "warning": "Supplier contract hashes in the handoff refer to the pre-reconciliation snapshot. This supplier-side update intentionally changes the two supplier contract hashes; report-owned files remain untouched."
+    }
+  },
+  "run_evidence": {
+    "live_kis_requests": 0,
+    "live_provider_responses_verified": 0,
+    "synthetic_fixtures": 3,
+    "user_reported_live_quote_evidence_reused_as_fixture": false,
+    "credentials_read": false,
+    "offline_adapter_test_count": 9,
+    "offline_full_suite": {
+      "node": "24.22.1",
+      "tests": 54,
+      "passed": 54,
+      "failed": 0,
+      "live_network_requests": 0,
+      "command": "./.runtime/node-v24.22.1/bin/node node_modules/typescript/bin/tsc -p tsconfig.json && ./.runtime/node-v24.22.1/bin/node --test dist/test/*.test.js",
+      "scope": "Full supplier suite after adding the v13.2 consumer reconciliation guard; offline fixtures and mocked transports only."
+    },
+    "consumer_handoff": {
+      "consumer_tests_reported": 14,
+      "consumer_tests_passed": 14,
+      "consumer_tests_failed": 0,
+      "consumer_node": "24.22.1",
+      "browser_viewports_px": [
+        1440,
+        390
+      ],
+      "browser_scenarios": 6,
+      "render_errors": 0,
+      "external_requests": 0,
+      "network_attempts": 0,
+      "actual_kis_responses": 0,
+      "credentials_or_accounts_read": false,
+      "supplier_tests_at_consumer_build_reported": 53,
+      "supplier_tests_rerun_by_consumer": false,
+      "evidence_source": "read-only integration-kis53/handoff.json"
+    },
+    "supplier_post_reconciliation_validation": {
+      "date": "2026-10-21",
+      "contract_test_file": "test/r01-v13-2-reconciliation.test.ts",
+      "build": "passed",
+      "tests_added_since_handoff": 1,
+      "full_suite_tests": 54,
+      "passed": 54,
+      "failed": 0,
+      "network_calls": 0,
+      "credentials_read": false,
+      "account_reads": false,
+      "live_kis_responses": 0
+    }
+  },
+  "runtime_rules": {
+    "api_tools_exposed": false,
+    "arbitrary_endpoint_call": false,
+    "orders_or_transfers": false,
+    "account_scope": "none",
+    "source_as_of": "null unless a provider source timestamp/date field and meaning are verified; local received_at never substitutes",
+    "data_rights": "pending; code parser does not approve display, retention, model-host egress or redistribution",
+    "decimal_processing": "keep provider decimal strings; no binary floating point for price, money, flow or volume",
+    "unknowns": "block canonical projection with safe reason codes; do not fill from synthetic data",
+    "runtime_scope": "KIS-039 fixed daily and KIS-115 bounded investor-flow HTTP adapters can be called only through injected transports; this package slice has not invoked them or registered them in MCP tools/list.",
+    "flow_risk_tool_exposure": false
+  },
+  "operation_diagnostics": [
+    {
+      "operation_ref": "KIS-039",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "tr_id": {
+        "real": "FHKST03010100",
+        "paper": "FHKST03010100"
+      },
+      "parser_status": "implemented_shape_only",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "request_adapter_implemented_not_invoked_or_tool_exposed",
+      "blockers": [
+        "price_currency_scale_unknown",
+        "volume_unit_unknown",
+        "trade_amount_scale_unknown",
+        "adjustment_code_portal_sample_conflict",
+        "rights_not_cleared",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-254",
+      "endpoint": "/uapi/overseas-price/v1/quotations/dailyprice",
+      "tr_id": {
+        "real": "HHDFS76240000",
+        "paper": "HHDFS76240000"
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "pagination_portal_sample_conflict",
+        "price_currency_unknown",
+        "volume_and_trade_amount_units_unknown",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-303",
+      "endpoint": "/uapi/overseas-futureoption/v1/quotations/daily-ccnl",
+      "tr_id": {
+        "real": "HHDFC55020100",
+        "paper": null
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "contract_master_scaling_required",
+        "currency_multiplier_and_volume_unit_unresolved",
+        "exchange_timezone_unresolved",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-212",
+      "endpoint": "/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice",
+      "tr_id": {
+        "real": "FHKIF03020100",
+        "paper": "FHKIF03020100"
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "pagination_contract_not_tested",
+        "futures_contract_master_required",
+        "price_and_volume_units_unknown",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-072",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-indexchartprice",
+      "tr_id": {
+        "real": "FHKUP03500100",
+        "paper": "FHKUP03500100"
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "pagination_portal_sample_conflict",
+        "index_unit_currency_and_timezone_unknown",
+        "portal_field_length_anomaly",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-264",
+      "endpoint": "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+      "tr_id": {
+        "real": "FHKST03030100",
+        "paper": "FHKST03030100"
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "pagination_portal_sample_conflict",
+        "index_unit_currency_and_timezone_unknown",
+        "portal_field_length_anomaly",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-115",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+      "tr_id": {
+        "real": "FHPTJ04160001",
+        "paper": "FHPTJ04160001"
+      },
+      "parser_status": "implemented_shape_and_documented_amount_conversion",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "bounded_request_adapter_implemented_not_invoked_or_tool_exposed",
+      "blockers": [
+        "pinned_sample_request_differs_from_official_portal_FID_ETC_CLS_CODE_value",
+        "provider_page_count_and_total_rows_unavailable",
+        "request_date_to_response_row_relationship_not_confirmed",
+        "no_live_response",
+        "rights_not_cleared"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-113",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+      "tr_id": {
+        "real": "FHPTJ04040000",
+        "paper": null
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "amount_currency_and_scale_unknown",
+        "quantity_unit_unknown",
+        "market_scope_not_security_scope",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-109",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/estimate-perform",
+      "tr_id": {
+        "real": "HHKST668300C0",
+        "paper": "HHKST668300C0"
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "pagination_portal_sample_conflict",
+        "positional_metric_alignment_unverified",
+        "consensus_scope_and_rights_unresolved",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    },
+    {
+      "operation_ref": "KIS-280",
+      "endpoint": "/uapi/overseas-price/v1/quotations/rights-by-ice",
+      "tr_id": {
+        "real": "HHDFS78330900",
+        "paper": null
+      },
+      "parser_status": "not_implemented",
+      "canonical_projection_status": "blocked",
+      "live_request_status": "not_implemented_or_blocked",
+      "blockers": [
+        "event_codebook_incomplete",
+        "domestic_KSD_not_covered",
+        "event_time_and_timezone_unavailable",
+        "no_live_response"
+      ],
+      "provider_schema_reference": "outputs/kis-mcp-v8/typescript/contracts/r01-kis-official-response-schemas-v1.json"
+    }
+  ],
+  "implemented_parsers": [
+    {
+      "operation_ref": "KIS-039",
+      "mode": "official-schema-shaped parser and fixed daily GET request adapter; injected transport only in tests",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "tr_id": "FHKST03010100",
+      "request_contract": {
+        "board": [
+          "J",
+          "NX",
+          "UN"
+        ],
+        "instrument_code": "six digit code in local test contract",
+        "date": "YYYYMMDD start/end",
+        "period": "D only in this parser",
+        "adjustment_code": [
+          "0",
+          "1"
+        ],
+        "adjustment_interpretation": "literal code preserved; do not normalize because a pinned sample comment conflicts with portal semantics"
+      },
+      "response_contract": {
+        "roots": {
+          "output1": "object",
+          "output2": "array of rows"
+        },
+        "max_rows_per_request": 100,
+        "continuation": "adapter rejects tr_cont M/F; portal/sample do not establish a safe continuation contract for this daily endpoint; completeness remains unknown",
+        "parser_limit_is_local_safety_cap_not_provider_limit": true
+      },
+      "transformations": [
+        {
+          "field": "stck_bsop_date",
+          "transform": "validate calendar YYYYMMDD then render YYYY-MM-DD as date-only; no timezone or intraday time is added"
+        },
+        {
+          "fields": [
+            "stck_clpr",
+            "stck_oprc",
+            "stck_hgpr",
+            "stck_lwpr",
+            "acml_vol",
+            "acml_tr_pbmn",
+            "prtt_rate"
+          ],
+          "transform": "validate decimal-string syntax and preserve raw string; no unit/currency scaling"
+        },
+        {
+          "fields": [
+            "flng_cls_code",
+            "mod_yn",
+            "revl_issu_reas"
+          ],
+          "transform": "preserve literal provider code; no inferred taxonomy beyond official documented labels"
+        }
+      ],
+      "canonical_projection": "blocked: price currency/scale, volume unit, trade amount scale, adjustment basis conflict, rights and host egress unresolved",
+      "actual_response_status": "not verified; parser tests use synthetic fixture only",
+      "portal_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "J",
+            "NX",
+            "UN"
+          ],
+          "meaning": "KRX, NXT, integrated market"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "type": "String(12)",
+          "meaning": "equity code input; example is a six digit code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1 / FID_INPUT_DATE_2",
+          "type": "String(10)",
+          "meaning": "date range"
+        },
+        {
+          "name": "FID_PERIOD_DIV_CODE",
+          "type": "String(32)",
+          "values": [
+            "D",
+            "W",
+            "M",
+            "Y"
+          ],
+          "meaning": "daily/weekly/monthly/yearly"
+        },
+        {
+          "name": "FID_ORG_ADJ_PRC",
+          "type": "String(10)",
+          "values": [
+            "0",
+            "1"
+          ],
+          "meaning": "0 adjusted; 1 original, per portal (sample comment conflict resolved in favor of portal)"
+        }
+      ],
+      "r01_consumer_raw_field_candidates": [
+        {
+          "provider_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "r01_consumer_targets": [
+            "history.date"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "stck_clpr",
+          "response_path": "$.output2[*].stck_clpr",
+          "r01_consumer_targets": [
+            "history.close"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "r01_consumer_targets": [
+            "history.volume"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "flng_cls_code",
+          "response_path": "$.output2[*].flng_cls_code",
+          "r01_consumer_targets": [
+            "actions.events",
+            "history.adjustment"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prtt_rate",
+          "response_path": "$.output2[*].prtt_rate",
+          "r01_consumer_targets": [
+            "history.adjustment"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        }
+      ],
+      "raw_fields": [
+        {
+          "provider_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "provider_type": "String",
+          "portal_max_length": 8,
+          "semantic": "business date",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "stck_clpr",
+          "response_path": "$.output2[*].stck_clpr",
+          "provider_type": "String",
+          "portal_max_length": 10,
+          "semantic": "daily close price",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "stck_oprc",
+          "response_path": "$.output2[*].stck_oprc",
+          "provider_type": "String",
+          "portal_max_length": 10,
+          "semantic": "daily open price",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "stck_hgpr",
+          "response_path": "$.output2[*].stck_hgpr",
+          "provider_type": "String",
+          "portal_max_length": 10,
+          "semantic": "daily high price",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "stck_lwpr",
+          "response_path": "$.output2[*].stck_lwpr",
+          "provider_type": "String",
+          "portal_max_length": 10,
+          "semantic": "daily low price",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "accumulated/day volume",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "acml_tr_pbmn",
+          "response_path": "$.output2[*].acml_tr_pbmn",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "accumulated trade amount",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "flng_cls_code",
+          "response_path": "$.output2[*].flng_cls_code",
+          "provider_type": "String",
+          "portal_max_length": 2,
+          "semantic": "corporate-action/distribution class code; portal codebook distinguishes ex-rights, ex-dividend, distribution and mixed events",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "event code on business-date row",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prtt_rate",
+          "response_path": "$.output2[*].prtt_rate",
+          "provider_type": "String",
+          "portal_max_length": 11,
+          "semantic": "split ratio; portal describes as base price / previous close",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "mod_yn",
+          "response_path": "$.output2[*].mod_yn",
+          "provider_type": "String",
+          "portal_max_length": 1,
+          "semantic": "Y indicates no trade for current business date; chart rows may lack prices",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "revl_issu_reas",
+          "response_path": "$.output2[*].revl_issu_reas",
+          "provider_type": "String",
+          "portal_max_length": 2,
+          "semantic": "price revision reason code",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        }
+      ],
+      "request_adapter": {
+        "method": "GET",
+        "transport_scope": "fixed official KIS production/paper origin and this endpoint path only; no caller URL/method/TR_ID override",
+        "query_fields": [
+          "FID_COND_MRKT_DIV_CODE",
+          "FID_INPUT_ISCD",
+          "FID_INPUT_DATE_1",
+          "FID_INPUT_DATE_2",
+          "FID_PERIOD_DIV_CODE=D",
+          "FID_ORG_ADJ_PRC literal 0|1"
+        ],
+        "retry_policy": "none",
+        "timeout_ms": 10000,
+        "response_body_limit_bytes": 300000,
+        "canonical_projection": "blocked; raw provider fields and date-only values only"
+      }
+    },
+    {
+      "operation_ref": "KIS-115",
+      "mode": "schema-shaped parser, documented amount scaling and bounded request adapter; not invoked",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+      "request_blocker": "adapter emits the official portal FID_ETC_CLS_CODE=1 field; the pinned official sample sends blank, so this conflict remains unresolved and the adapter is not invoked or MCP-exposed.",
+      "unit_conversions": [
+        {
+          "fields": [
+            "acml_tr_pbmn",
+            "frgn_ntby_tr_pbmn",
+            "prsn_ntby_tr_pbmn",
+            "orgn_ntby_tr_pbmn"
+          ],
+          "source_unit": "KRW_million (백만원)",
+          "target_unit": "KRW",
+          "scale_factor_decimal_string": "1000000",
+          "method": "exact base-10 string decimal shift; no JS Number/binary float; no rounding"
+        },
+        {
+          "fields": [
+            "frgn_ntby_qty",
+            "prsn_ntby_qty",
+            "orgn_ntby_qty",
+            "frgn_reg_ntby_qty",
+            "frgn_nreg_ntby_qty"
+          ],
+          "source_unit": "shares (주)",
+          "target_unit": "shares",
+          "method": "preserve exact integer string"
+        }
+      ],
+      "time_and_finality": "business date only; source_as_of null; same-day provisional values and publication time are not inferred from the response",
+      "canonical_projection": "blocked by request conflict, live-response absence, rights and host-egress gates",
+      "actual_response_status": "not verified; parser tests use synthetic fixture only",
+      "tr_id": "FHPTJ04160001",
+      "portal_url": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+      "request_constraints": [
+        {
+          "name": "FID_COND_MRKT_DIV_CODE",
+          "type": "String(2)",
+          "values": [
+            "J",
+            "NX",
+            "UN"
+          ],
+          "meaning": "market board"
+        },
+        {
+          "name": "FID_INPUT_ISCD",
+          "meaning": "one stock code"
+        },
+        {
+          "name": "FID_INPUT_DATE_1",
+          "meaning": "business date; current-day values normally after close"
+        },
+        {
+          "name": "FID_ETC_CLS_CODE",
+          "portal_value": "1",
+          "meaning": "portal says 1; pinned sample sends blank; preserve conflict until confirmed"
+        }
+      ],
+      "r01_consumer_raw_field_candidates": [
+        {
+          "provider_field": "frgn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].frgn_ntby_tr_pbmn",
+          "r01_consumer_targets": [
+            "flow.foreign.net_value"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prsn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].prsn_ntby_tr_pbmn",
+          "r01_consumer_targets": [
+            "flow.individual.net_value"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "orgn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].orgn_ntby_tr_pbmn",
+          "r01_consumer_targets": [
+            "flow.institution.net_value"
+          ],
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        }
+      ],
+      "raw_fields": [
+        {
+          "provider_field": "stck_bsop_date",
+          "response_path": "$.output2[*].stck_bsop_date",
+          "provider_type": "String",
+          "portal_max_length": 8,
+          "semantic": "business date",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "stck_clpr",
+          "response_path": "$.output2[*].stck_clpr",
+          "provider_type": "String",
+          "portal_max_length": 10,
+          "semantic": "daily close price",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "acml_vol",
+          "response_path": "$.output2[*].acml_vol",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "accumulated volume",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "acml_tr_pbmn",
+          "response_path": "$.output2[*].acml_tr_pbmn",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "daily trade amount",
+          "unit": "KRW millions (백만원)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "frgn_ntby_qty",
+          "response_path": "$.output2[*].frgn_ntby_qty",
+          "provider_type": "String",
+          "portal_max_length": 12,
+          "semantic": "foreign investor net buy quantity",
+          "unit": "shares (주)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prsn_ntby_qty",
+          "response_path": "$.output2[*].prsn_ntby_qty",
+          "provider_type": "String",
+          "portal_max_length": 12,
+          "semantic": "individual investor net buy quantity",
+          "unit": "shares (주)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "orgn_ntby_qty",
+          "response_path": "$.output2[*].orgn_ntby_qty",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "institutional investor net buy quantity",
+          "unit": "shares (주)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "frgn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].frgn_ntby_tr_pbmn",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "foreign investor net trade amount",
+          "unit": "KRW millions (백만원)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prsn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].prsn_ntby_tr_pbmn",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "individual investor net trade amount",
+          "unit": "KRW millions (백만원)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "orgn_ntby_tr_pbmn",
+          "response_path": "$.output2[*].orgn_ntby_tr_pbmn",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "institutional investor net trade amount",
+          "unit": "KRW millions (백만원)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "frgn_reg_ntby_qty",
+          "response_path": "$.output2[*].frgn_reg_ntby_qty",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "registered foreign investor net buy quantity",
+          "unit": "shares (주)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "frgn_nreg_ntby_qty",
+          "response_path": "$.output2[*].frgn_nreg_ntby_qty",
+          "provider_type": "String",
+          "portal_max_length": 18,
+          "semantic": "non-registered foreign investor net buy quantity",
+          "unit": "shares (주)",
+          "unit_status": "explicit_in_endpoint_documentation",
+          "time_semantics": "date_only_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prdy_vrss_sign",
+          "response_path": "$.output2[*].prdy_vrss_sign",
+          "provider_type": "String",
+          "portal_max_length": 1,
+          "semantic": "previous-day price-difference sign code",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        },
+        {
+          "provider_field": "prdy_ctrt",
+          "response_path": "$.output2[*].prdy_ctrt",
+          "provider_type": "String",
+          "portal_max_length": 82,
+          "semantic": "previous-day percentage change; portal length is anomalous and retained",
+          "unit": null,
+          "unit_status": "not_stated_in_endpoint_schema",
+          "time_semantics": "date_only_record_context_no_time_or_timezone",
+          "provider_key_path_verified": true,
+          "canonical_mapping_verified": false
+        }
+      ],
+      "response_contract": {
+        "output1": "object",
+        "output2": "array of date rows",
+        "local_parser_max_rows": 1000,
+        "local_limit_is_not_a_provider_limit": true
+      },
+      "request_adapter": {
+        "method": "GET",
+        "transport_scope": "fixed official KIS production/paper origin and this endpoint path only; no caller URL/method/TR_ID override",
+        "query_fields": [
+          "FID_COND_MRKT_DIV_CODE",
+          "FID_INPUT_ISCD",
+          "FID_INPUT_DATE_1",
+          "FID_ETC_CLS_CODE=1 (official portal value; sample conflict retained)"
+        ],
+        "continuation": "pinned sample demonstrates response tr_cont M/F followed by request tr_cont N; implementation bounds chain to at most 10 pages and returns no partial result at the cap; portal continuation support remains unverified",
+        "max_pages": 10,
+        "local_row_limit_per_page": 1000,
+        "local_row_limit_is_provider_limit": false,
+        "retry_policy": "none",
+        "timeout_ms": 10000,
+        "response_body_limit_bytes": 300000,
+        "canonical_projection": "blocked; source_as_of null, received_at local and separate, request date-to-row relation unassumed"
+      }
+    }
+  ],
+  "crosswalk_summary": {
+    "supplier_registry_fields": 147,
+    "consumer_fields": 48,
+    "consumer_verification_pending": 39,
+    "consumer_derived": 9,
+    "same_semantics_links": 29,
+    "calculation_input_links": 4,
+    "unrepresented_or_non_equivalent": 15,
+    "previous_consumer_supplier_refs_checked": 22,
+    "invalid_registry_refs": 0
+  },
+  "minimum_next_live_validation": {
+    "status": "prepared_not_executed; requires a new explicit user approval for this daily-chart request",
+    "scope": "one KIS production OAuth request if no valid in-memory token exists, followed by exactly one KIS-039 GET for one daily business date and symbol 000660; no account identifiers or account data",
+    "oauth": {
+      "method": "POST",
+      "url": "https://openapi.koreainvestment.com:9443/oauth2/tokenP",
+      "request_count": 1,
+      "body_fields": [
+        "grant_type=client_credentials",
+        "appkey",
+        "appsecret"
+      ],
+      "recipient": "KIS official production OAuth endpoint only",
+      "purpose": "obtain one in-memory bearer token for the subsequent GET; no token persistence",
+      "sensitive_fields_sent": [
+        "appkey",
+        "appsecret"
+      ],
+      "account_number_sent": false
+    },
+    "daily_chart_get": {
+      "method": "GET",
+      "url": "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+      "tr_id": "FHKST03010100",
+      "request_count": 1,
+      "headers": [
+        "Authorization: Bearer <ephemeral token>",
+        "appkey",
+        "appsecret",
+        "tr_id=FHKST03010100",
+        "custtype=P"
+      ],
+      "query_fields": {
+        "FID_COND_MRKT_DIV_CODE": "J",
+        "FID_INPUT_ISCD": "000660",
+        "FID_INPUT_DATE_1": "one completed KRX business date selected for the approved test",
+        "FID_INPUT_DATE_2": "same date as FID_INPUT_DATE_1",
+        "FID_PERIOD_DIV_CODE": "D",
+        "FID_ORG_ADJ_PRC": "0 (documented enum; preserve literal code because pinned sample comment conflicts with portal meaning)"
+      },
+      "purpose": "reconcile a single provider JSON response with the official response schema and synthetic parser output; not to make a report or infer a canonical adjusted price series",
+      "account_number_sent": false,
+      "expected_raw_response_fields": [
+        "stck_bsop_date",
+        "stck_clpr",
+        "stck_oprc",
+        "stck_hgpr",
+        "stck_lwpr",
+        "acml_vol",
+        "acml_tr_pbmn",
+        "flng_cls_code",
+        "prtt_rate",
+        "mod_yn",
+        "revl_issu_reas"
+      ],
+      "recipient_after_kis": "the local MCP process; if values are returned into ChatGPT Work for interpretation, the active model host also receives them. Local-only model-host handling is not verified. MoAI authorization server does not receive the KIS payload.",
+      "automatic_retry": false
+    },
+    "not_included": [
+      "account balance or holdings",
+      "orders or transfers",
+      "WebSocket subscription",
+      "KIS-115 investor flow request because its portal/sample request parameter conflicts",
+      "data sharing or upload"
+    ],
+    "existing_quote_approval": "The earlier one-off user-run quote snapshot is not treated as approval for this new KIS-039 endpoint request; this plan has not used credentials or sent a request."
+  },
+  "raw_candidate_parsers": [
+    {
+      "operation_ref": "KIS-134",
+      "function": "parseKis134ShortSaleResponse",
+      "source": "typescript/src/r01-flow-risk-parsers.ts",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+      "tr_id": "FHPST04830000",
+      "response_shape": "output1 object and output2 array are retained separately; field-to-root binding is intentionally not guessed.",
+      "checked_fields": "Copied from the pinned chk_daily_short_sale.py label mapping; all candidate values remain raw strings or withheld states.",
+      "raw_type_policy": "String values are preserved; null/blank/missing/non-string have distinct states. No numeric conversion, ratio calculation, scale or currency assignment.",
+      "pagination": "not implemented; sample does not establish a bounded page contract.",
+      "tool_exposure": false,
+      "network_calls": false,
+      "canonical_projection": "blocked"
+    },
+    {
+      "operation_ref": "KIS-110",
+      "function": "parseKis110CreditBalanceResponse",
+      "source": "typescript/src/r01-flow-risk-parsers.ts",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+      "tr_id": "FHPST04760000",
+      "response_shape": "single-page output array; page size greater than the sample limit of 30 is rejected.",
+      "date_policy": "deal_date and stlm_date are kept as separate raw fields; request date is named requestedSettlementDate.",
+      "semantic_policy": "whol_loan_* and whol_stln_* remain separate; repayment is not interpreted as forced liquidation.",
+      "pagination": "not implemented; helper continuation behavior requires adapter review.",
+      "tool_exposure": false,
+      "network_calls": false,
+      "canonical_projection": "blocked"
+    },
+    {
+      "operation_ref": "KIS-135",
+      "function": "parseKis135StockLoanResponse",
+      "source": "typescript/src/r01-flow-risk-parsers.ts",
+      "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+      "tr_id": "HHPST074500C0",
+      "response_shape": "single-page output1 record array; page size greater than 100 is rejected.",
+      "field_policy": "Uses only checked sample labels; prdy_rmnd_vrss unit/sign remains unresolved; lending is not short-sale balance.",
+      "pagination": "not implemented; CTS/date range navigation is a future bounded adapter requirement.",
+      "tool_exposure": false,
+      "network_calls": false,
+      "canonical_projection": "blocked"
+    }
+  ],
+  "raw_parser_error_policy": {
+    "safe_codes": [
+      "invalid_input",
+      "upstream_rejected",
+      "provider_response_schema_drift",
+      "response_too_large"
+    ],
+    "details": "Never include provider response bodies, credentials, or upstream msg1 text in thrown error messages. Enforce 300000 UTF-8 byte payload cap before parsing; no retry or network call.",
+    "test_evidence": "Synthetic fixtures cover success-shaped roots, root separation, date separation, missing/blank/null/non-string states, row bounds, response byte bound, and safe error codes."
+  },
+  "unsupported_and_unexposed": {
+    "registered_mcp_tool_count": "The TypeScript stdio launcher registers only get_market_snapshot; it is deny-by-default. No KIS-110/134/135 tools were added.",
+    "daily_history": "KIS-039 parser accepts daily period code only; D/W/M endpoint modes are candidate mappings without the same parser contract.",
+    "intraday": "KIS-022 current-day and KIS-213 historical minute APIs remain unimplemented; exact minute interval/timezone/rights/paging are pending. No minute-to-5m/1h provider adapter exists.",
+    "other_unexposed": [
+      "KRX reported short-position API",
+      "DART event adapter",
+      "KIS WebSocket",
+      "account reads",
+      "orders",
+      "transfers",
+      "arbitrary endpoint dispatch"
+    ]
+  },
+  "consumer_v13_2_reconciliation": {
+    "reviewed_on": "2026-10-21",
+    "consumer_files_read_only": true,
+    "consumer_manifest_id": "goose.r01.v13_2.consumer-provider-binding.kis53.v1",
+    "consumer_manifest_version": "0.1.0-integration",
+    "consumer_manifest_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
+    "consumer_manifest_sha256": "678837533751fc1fdb7b2d4529551d3e12246ebbb782d930d576cd233d44bef3",
+    "consumer_handoff_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
+    "consumer_handoff_sha256": "10271792c7508ced679541257099a6789f35af39d96130178128034d8fe9f810",
+    "report_html_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/Goose-R01-v13.2-mock-adapter-integration.html",
+    "report_html_sha256": "b1d251163b7eb3ea3878afe5e535b9175564b522bb394f7cd06a812c072617c3",
+    "source_hash_audit": {
+      "all_manifest_provenance_hashes_matched_at_review": true,
+      "matched_files": [
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/src/r01-kis-http-adapters.ts",
+          "sha256": "44d9c5f8b672bc46eadbe31cebe77ab13f9b84b3e8676f38e9eb4d86c936443a",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/src/r01-kis-field-parsers.ts",
+          "sha256": "a530f80837340750ca622b9b0755e3c53406dba6d1a71e102a566a7edc2fb5dd",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/src/r01-flow-risk-parsers.ts",
+          "sha256": "132c7e08628484a253f9016c7daf0e8c0d7d659e28dfc4867690d29c50fc64fd",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/dist/src/r01-kis-http-adapters.js",
+          "sha256": "8a929a29306243ae45356364ce83cea303b56f25dc478e7e2ff9d4cc0ce5eb55",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-kis-provider-parser-contract-v1.json",
+          "sha256": "76f335282a83dae25b984371b7515548005e216f312df91da23445f929864e09",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-flow-risk-provider-extension-v1.json",
+          "sha256": "584e7e8d9cc75578f10810d3640f30db70a486395ce6516e061624a0955ccf7a",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
+          "sha256": "c80608114b32cca4ce0682a9e4e47354deb0d248ffdfce8c05c52fb67745c17c",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-1/r01-flow-risk-consumer-binding-v13-1.json",
+          "sha256": "98079b96ccdbcd96755ccccc3b3c302a15cdaef706b7a337a7e6f927f7683d4b",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/Goose-R01-v13.2.html",
+          "sha256": "4887f1ca5cb4aa682861b42335b429b97f4f574922f8db77454146504a9c9256",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/dist/src/r01-kis-field-parsers.js",
+          "sha256": "d5d464ede9fb3a57162f3de7906cc6c2087ab193343364e7679a6d414e815986",
+          "matched_at_review": true
+        },
+        {
+          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/dist/src/kis-http.js",
+          "sha256": "0d38691911d5865ca7887d1689936282ddad15394af979875abf876c27e85915",
+          "matched_at_review": true
+        }
+      ],
+      "historical_supplier_contract_hashes_at_handoff": [
+        {
+          "path": "contracts/r01-kis-provider-parser-contract-v1.json",
+          "sha256": "76f335282a83dae25b984371b7515548005e216f312df91da23445f929864e09"
+        },
+        {
+          "path": "contracts/r01-flow-risk-provider-extension-v1.json",
+          "sha256": "584e7e8d9cc75578f10810d3640f30db70a486395ce6516e061624a0955ccf7a"
+        }
+      ],
+      "post_handoff_supplier_changes": "This file and the additive R01 flow-risk extension are updated after confirming the exact pre-update hashes. The v13.2 report HTML, consumer manifest, render outputs and other consumer files were not modified."
+    },
+    "handoff_validation": {
+      "consumer_tests": {
+        "tests": 14,
+        "passed": 14,
+        "failed": 0,
+        "node": "24.22.1"
+      },
+      "render": {
+        "viewports_px": [
+          1440,
+          390
+        ],
+        "scenarios": 6,
+        "errors": 0,
+        "external_requests": 0
+      },
+      "reported_supplier_tests_at_handoff": {
+        "tests": 53,
+        "passed": 53,
+        "rerun_by_consumer": false
+      },
+      "network_attempts": 0,
+      "actual_kis_responses": 0,
+      "credentials_read": false,
+      "mock_only": true,
+      "publication": false
+    },
+    "summary": {
+      "flow_risk_field_count": 37,
+      "flow_risk_binding_counts": {
+        "raw_key_only": 8,
+        "unmapped": 4,
+        "raw_path_candidate": 22,
+        "derived_dependency": 2,
+        "transport_metadata_only": 1
+      },
+      "daily_field_binding_count": 11,
+      "investor_field_binding_count": 6,
+      "canonical_real_fields_completed": 0,
+      "all_consumer_values_null": true,
+      "all_consumer_canonical_mappings_unverified": true,
+      "flow_risk_measurement_count": 34,
+      "flow_risk_metadata_count": 3
+    },
+    "flow_risk_fields": [
+      {
+        "consumer_id": "R01.flow_risk.short_volume",
+        "provider_metric_id": "short_sale.volume",
+        "display_name": "공매도 체결 수량",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-short-flow",
+        "legacy_synthetic_fixture_field": "short_volume",
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "ssts_cntg_qty",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "sample label confirms quantity semantics; scale and raw type pending",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "trade date candidate; per-field root and date pairing pending"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_trade_ratio",
+        "provider_metric_id": "short_sale.volume_ratio",
+        "display_name": "공매도 거래량 비중",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-short-flow",
+        "legacy_synthetic_fixture_field": "short_trade_ratio",
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "ssts_vol_rlim",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_scale_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample; do not name a denominator or recompute ratio yet"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_amount_million",
+        "provider_metric_id": "short_sale.amount",
+        "display_name": "공매도 거래대금",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-short-flow",
+        "legacy_synthetic_fixture_field": "short_amount_million",
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "ssts_tr_pbmn",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "scale and currency not stated in checked sample",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_sale_amount_ratio",
+        "provider_metric_id": "short_sale.amount_ratio",
+        "display_name": "공매도 거래대금 비중",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "ssts_tr_pbmn_rlim",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_scale_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample; do not name a denominator or recompute ratio yet"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_sale_cumulative_volume",
+        "provider_metric_id": "short_sale.cumulative_volume",
+        "display_name": "누적 공매도 체결 수량",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "acml_ssts_cntg_qty",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_sale_cumulative_volume_ratio",
+        "provider_metric_id": "short_sale.cumulative_volume_ratio",
+        "display_name": "누적 공매도 체결 수량 비중",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "acml_ssts_cntg_qty_rlim",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_scale_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_sale_cumulative_amount",
+        "provider_metric_id": "short_sale.cumulative_amount",
+        "display_name": "누적 공매도 거래 대금",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "acml_ssts_tr_pbmn",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_sale_cumulative_amount_ratio",
+        "provider_metric_id": "short_sale.cumulative_amount_ratio",
+        "display_name": "누적 공매도 거래대금 비중",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_key_only",
+        "provider": "KIS",
+        "operation_ref": "KIS-134",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-short-sale",
+        "tr_id": "FHPST04830000",
+        "raw_field": "acml_ssts_tr_pbmn_rlim",
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis134ShortSaleResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "sample_label_confirmed_path_type_scale_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_balance",
+        "provider_metric_id": "short_position.reported_net_balance_shares",
+        "display_name": "공매도 신고기준 순보유잔고 수량",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-short-balance",
+        "legacy_synthetic_fixture_field": "short_balance",
+        "binding_class": "unmapped",
+        "provider": "KRX Data Marketplace candidate",
+        "operation_ref": "KRX-MDCSTAT305",
+        "endpoint": null,
+        "tr_id": null,
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": null,
+        "parser_implemented": false,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "official_display_semantics_confirmed_api_field_rights_and_schema_pending",
+        "raw_type": "not established",
+        "unit": {
+          "value": "shares candidate",
+          "status": "KRX page describes net-position balance and balance amount; exact machine fields not verified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.short_balance_ratio",
+        "provider_metric_id": "short_position.reported_net_balance_ratio",
+        "display_name": "공매도 신고기준 순보유잔고 비중",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-short-balance",
+        "legacy_synthetic_fixture_field": "short_balance_ratio",
+        "binding_class": "unmapped",
+        "provider": "KRX Data Marketplace candidate",
+        "operation_ref": "KRX-MDCSTAT305",
+        "endpoint": null,
+        "tr_id": null,
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": null,
+        "parser_implemented": false,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "official_aggregate_definition_found_response_field_mapping_pending",
+        "raw_type": "not established",
+        "unit": {
+          "value": "percent candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": "listed shares candidate, per KRX short-balance top-50 page definition; must verify same formula/fields in selected single-security response",
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": null,
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "raw_response_path_unmapped",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.stock_loan_new_shares",
+        "provider_metric_id": "stock_loan.new_shares",
+        "display_name": "대차 당일 증가 주수",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-135",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+        "tr_id": "HHPST074500C0",
+        "raw_field": "new_stcn",
+        "raw_response_path": "$.output1[*].new_stcn",
+        "parsed_output_path": "$[*].raw_fields.new_stcn.raw_value",
+        "parser_function": "parseKis135StockLoanResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.new_stcn.state",
+        "provider_mapping_status": "sample_output1_path_and_check_label_confirmed_type_sign_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output1[*].bsop_date",
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.stock_loan_repaid_shares",
+        "provider_metric_id": "stock_loan.repaid_shares",
+        "display_name": "대차 당일 감소 주수",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-135",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+        "tr_id": "HHPST074500C0",
+        "raw_field": "rdmp_stcn",
+        "raw_response_path": "$.output1[*].rdmp_stcn",
+        "parsed_output_path": "$[*].raw_fields.rdmp_stcn.raw_value",
+        "parser_function": "parseKis135StockLoanResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.rdmp_stcn.state",
+        "provider_mapping_status": "sample_output1_path_and_check_label_confirmed_type_sign_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output1[*].bsop_date",
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.lending_change",
+        "provider_metric_id": "stock_loan.balance_change_unresolved",
+        "display_name": "대차거래 증감 (단위·부호 미확인)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-lending",
+        "legacy_synthetic_fixture_field": "lending_change",
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-135",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+        "tr_id": "HHPST074500C0",
+        "raw_field": "prdy_rmnd_vrss",
+        "raw_response_path": "$.output1[*].prdy_rmnd_vrss",
+        "parsed_output_path": "$[*].raw_fields.prdy_rmnd_vrss.raw_value",
+        "parser_function": "parseKis135StockLoanResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.prdy_rmnd_vrss.state",
+        "provider_mapping_status": "sample_output1_path_and_check_label_confirmed_exact_semantics_type_unit_sign_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "The check-script label says 대차거래 증감; whether this is a share-count or amount and its sign convention are not established.",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output1[*].bsop_date",
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified",
+          "change_sign_and_quantity_vs_amount_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.lending_balance",
+        "provider_metric_id": "stock_loan.balance_shares",
+        "display_name": "대차 잔고 주수",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-lending",
+        "legacy_synthetic_fixture_field": "lending_balance",
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-135",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+        "tr_id": "HHPST074500C0",
+        "raw_field": "rmnd_stcn",
+        "raw_response_path": "$.output1[*].rmnd_stcn",
+        "parsed_output_path": "$[*].raw_fields.rmnd_stcn.raw_value",
+        "parser_function": "parseKis135StockLoanResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.rmnd_stcn.state",
+        "provider_mapping_status": "sample_output1_path_and_check_label_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output1[*].bsop_date",
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.stock_loan_balance_amount",
+        "provider_metric_id": "stock_loan.balance_amount",
+        "display_name": "대차 잔고 금액",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-135",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+        "tr_id": "HHPST074500C0",
+        "raw_field": "rmnd_amt",
+        "raw_response_path": "$.output1[*].rmnd_amt",
+        "parsed_output_path": "$[*].raw_fields.rmnd_amt.raw_value",
+        "parser_function": "parseKis135StockLoanResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.rmnd_amt.state",
+        "provider_mapping_status": "sample_output1_path_and_check_label_confirmed_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "amount scale and currency pending",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output1[*].bsop_date",
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_balance_shares",
+        "provider_metric_id": "credit_loan.balance_shares",
+        "display_name": "신용융자 잔고 주수",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-credit",
+        "legacy_synthetic_fixture_field": "credit_balance_shares",
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_rmnd_stcn",
+        "raw_response_path": "$.output[*].whol_loan_rmnd_stcn",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_rmnd_stcn.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_rmnd_stcn.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "settlement date; retain deal_date separately"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_balance_million",
+        "provider_metric_id": "credit_loan.balance_amount",
+        "display_name": "신용융자 잔고 금액",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-credit",
+        "legacy_synthetic_fixture_field": "credit_balance_million",
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_rmnd_amt",
+        "raw_response_path": "$.output[*].whol_loan_rmnd_amt",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_rmnd_amt.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_rmnd_amt.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "amount scale and currency pending",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_ratio",
+        "provider_metric_id": "credit_loan.balance_ratio",
+        "display_name": "신용융자 잔고 비율",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-credit",
+        "legacy_synthetic_fixture_field": "credit_ratio",
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_rmnd_rate",
+        "raw_response_path": "$.output[*].whol_loan_rmnd_rate",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_rmnd_rate.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_rmnd_rate.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined in checked sample; do not compare or recompute until official definition is confirmed"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_balance_change_shares",
+        "provider_metric_id": "credit_loan.balance_change_shares",
+        "display_name": "신용융자 잔고 증감",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "derived_dependency",
+        "provider": "local deterministic calculation from KIS-110",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "derived_candidate_requires_runtime_type_sign_and_revision_validation",
+        "raw_type": null,
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [
+          "whol_loan_rmnd_stcn",
+          "stlm_date"
+        ],
+        "formula": "current settlement-date balance shares minus previous available settlement-date balance shares for the same security and same provider basis; never substitute deal_date; block across gaps, corrections, or missing rows",
+        "value": null,
+        "status": "derived_inputs_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "derived_inputs_not_verified",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_repayment_shares",
+        "provider_metric_id": "credit_loan.repayment_shares",
+        "display_name": "신용융자 상환 주수",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_rdmp_stcn",
+        "raw_response_path": "$.output[*].whol_loan_rdmp_stcn",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_rdmp_stcn.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_rdmp_stcn.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_trade_date",
+        "provider_metric_id": "credit_loan.trade_date",
+        "display_name": "신용잔고 매매 일자",
+        "report_section": "R01/수급·위험/날짜·공개상태",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "deal_date",
+        "raw_response_path": "$.output[*].deal_date",
+        "parsed_output_path": "$[*].raw_fields.deal_date.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.deal_date.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed",
+        "raw_type": "date format/path not formally checked in portal schema",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "date_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_settlement_date",
+        "provider_metric_id": "credit_loan.settlement_date",
+        "display_name": "신용잔고 결제 일자",
+        "report_section": "R01/수급·위험/날짜·공개상태",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "stlm_date",
+        "raw_response_path": "$.output[*].stlm_date",
+        "parsed_output_path": "$[*].raw_fields.stlm_date.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.stlm_date.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed",
+        "raw_type": "date format/path not formally checked in portal schema",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "date_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_lending_balance_shares",
+        "provider_metric_id": "credit_lending.balance_shares",
+        "display_name": "대주 잔고 주수 (별도 KIS-110 계열)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_stln_rmnd_stcn",
+        "raw_response_path": "$.output[*].whol_stln_rmnd_stcn",
+        "parsed_output_path": "$[*].raw_fields.whol_stln_rmnd_stcn.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_stln_rmnd_stcn.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.stock_loan_trade_date",
+        "provider_metric_id": "stock_loan.trade_date",
+        "display_name": "대차거래 기준일",
+        "report_section": "R01/수급·위험/날짜·공개상태",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-135",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-loan-trans",
+        "tr_id": "HHPST074500C0",
+        "raw_field": "bsop_date",
+        "raw_response_path": "$.output1[*].bsop_date",
+        "parsed_output_path": "$[*].raw_fields.bsop_date.raw_value",
+        "parser_function": "parseKis135StockLoanResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.bsop_date.state",
+        "provider_mapping_status": "sample_output1_path_and_check_label_confirmed_format_pending",
+        "raw_type": "date-like string candidate; portal response schema pending",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output1[*].bsop_date",
+          "trade_date_path": null,
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "business-date label; timezone and settlement meaning not specified by checked sample"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "date_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_new_shares",
+        "provider_metric_id": "credit_loan.new_shares",
+        "display_name": "신용융자 신규 주수",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_new_stcn",
+        "raw_response_path": "$.output[*].whol_loan_new_stcn",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_new_stcn.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_new_stcn.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "settlement date; retain deal_date separately"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_new_amount",
+        "provider_metric_id": "credit_loan.new_amount",
+        "display_name": "신용융자 신규 금액",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_new_amt",
+        "raw_response_path": "$.output[*].whol_loan_new_amt",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_new_amt.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_new_amt.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "amount scale and currency pending",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "settlement date; retain deal_date separately"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_repayment_amount",
+        "provider_metric_id": "credit_loan.repayment_amount",
+        "display_name": "신용융자 상환 금액",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_rdmp_amt",
+        "raw_response_path": "$.output[*].whol_loan_rdmp_amt",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_rdmp_amt.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_rdmp_amt.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "amount scale and currency pending",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "settlement date; retain deal_date separately"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_loan_grant_ratio",
+        "provider_metric_id": "credit_loan.grant_ratio",
+        "display_name": "신용융자 공여율",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_loan_gvrt",
+        "raw_response_path": "$.output[*].whol_loan_gvrt",
+        "parsed_output_path": "$[*].raw_fields.whol_loan_gvrt.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_loan_gvrt.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_lending_new_shares",
+        "provider_metric_id": "credit_lending.new_shares",
+        "display_name": "대주 신규 주수 (별도 KIS-110 계열)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_stln_new_stcn",
+        "raw_response_path": "$.output[*].whol_stln_new_stcn",
+        "parsed_output_path": "$[*].raw_fields.whol_stln_new_stcn.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_stln_new_stcn.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_lending_repayment_shares",
+        "provider_metric_id": "credit_lending.repayment_shares",
+        "display_name": "대주 상환 주수 (별도 KIS-110 계열)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_stln_rdmp_stcn",
+        "raw_response_path": "$.output[*].whol_stln_rdmp_stcn",
+        "parsed_output_path": "$[*].raw_fields.whol_stln_rdmp_stcn.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_stln_rdmp_stcn.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_scale_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": "shares candidate",
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_lending_balance_amount",
+        "provider_metric_id": "credit_lending.balance_amount",
+        "display_name": "대주 잔고 금액 (별도 KIS-110 계열)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_stln_rmnd_amt",
+        "raw_response_path": "$.output[*].whol_stln_rmnd_amt",
+        "parsed_output_path": "$[*].raw_fields.whol_stln_rmnd_amt.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_stln_rmnd_amt.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_unit_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "amount scale and currency pending",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_lending_balance_ratio",
+        "provider_metric_id": "credit_lending.balance_ratio",
+        "display_name": "대주 잔고 비율 (별도 KIS-110 계열)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_stln_rmnd_rate",
+        "raw_response_path": "$.output[*].whol_stln_rmnd_rate",
+        "parsed_output_path": "$[*].raw_fields.whol_stln_rmnd_rate.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_stln_rmnd_rate.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_lending_grant_ratio",
+        "provider_metric_id": "credit_lending.grant_ratio",
+        "display_name": "대주 공여율 (별도 KIS-110 계열)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "raw_path_candidate",
+        "provider": "KIS",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": "whol_stln_gvrt",
+        "raw_response_path": "$.output[*].whol_stln_gvrt",
+        "parsed_output_path": "$[*].raw_fields.whol_stln_gvrt.raw_value",
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": "$[*].raw_fields.whol_stln_gvrt.state",
+        "provider_mapping_status": "sample_label_and_output_root_confirmed_type_denominator_pending",
+        "raw_type": "not specified by checked sample",
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not defined by checked sample"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [],
+        "formula": null,
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "unit_scale_or_currency_unverified",
+          "denominator_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.credit_change_million",
+        "provider_metric_id": "credit_loan.balance_change_amount",
+        "display_name": "신용융자 잔고 금액 증감 (계산 후보)",
+        "report_section": "R01/수급·위험",
+        "report_chart_slot": "risk-credit",
+        "legacy_synthetic_fixture_field": "credit_change_million",
+        "binding_class": "derived_dependency",
+        "provider": "local deterministic calculation from KIS-110",
+        "operation_ref": "KIS-110",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/daily-credit-balance",
+        "tr_id": "FHPST04760000",
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "parser_function": "parseKis110CreditBalanceResponse",
+        "parser_implemented": true,
+        "http_adapter_implemented": false,
+        "raw_field_state_path": null,
+        "provider_mapping_status": "derived_candidate_not_implemented; consumer-specific million-unit conversion pending",
+        "raw_type": null,
+        "unit": {
+          "value": null,
+          "status": "candidate_or_unverified",
+          "currency": null,
+          "canonical_unit": null
+        },
+        "denominator": {
+          "value": null,
+          "status": "not_applicable_or_unverified"
+        },
+        "time": {
+          "provider_date_path": "$.output[*].stlm_date",
+          "trade_date_path": "$.output[*].deal_date",
+          "source_as_of": null,
+          "timezone": null,
+          "received_at": null,
+          "publication_at": null,
+          "basis": "unverified"
+        },
+        "derived_dependencies": [
+          "whol_loan_rmnd_amt",
+          "stlm_date"
+        ],
+        "formula": "current settlement-date outstanding amount minus prior valid settlement-date outstanding amount for the same security and same source basis; only after both raw amount scales/currency and date alignment are verified; block on gaps, correction, missing row, or cutoff mismatch",
+        "value": null,
+        "status": "derived_inputs_pending",
+        "missing_reason": [
+          "no_mock_or_provider_payload_for_this_operation",
+          "canonical_projection_blocked",
+          "provider_publication_time_unmapped",
+          "rights_and_correction_pending",
+          "derived_inputs_not_verified",
+          "unit_scale_or_currency_unverified"
+        ],
+        "display_when_missing": "자료 미확보 · 사유 표시; no zero, no legacy synthetic fallback",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "decimal_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.report_publication_at",
+        "provider_metric_id": null,
+        "display_name": "report_publication_at",
+        "report_section": "R01/수급·위험/날짜·공개상태",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "unmapped",
+        "operation_ref": null,
+        "endpoint": null,
+        "tr_id": null,
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "type": "string|null",
+        "unit": {
+          "value": null,
+          "currency": null,
+          "canonical_unit": null,
+          "status": "not_applicable"
+        },
+        "time": {
+          "source_as_of": null,
+          "received_at": null,
+          "publication_at": null,
+          "timezone": null
+        },
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "provider report/publication timestamp separate from trade date; actual field not bound"
+        ],
+        "display_when_missing": "수집·공개·수정 시각은 별도 표시; 수신시각을 원천 기준시각으로 대체하지 않음",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "datetime_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.received_at",
+        "provider_metric_id": null,
+        "display_name": "received_at",
+        "report_section": "R01/수급·위험/날짜·공개상태",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "transport_metadata_only",
+        "operation_ref": null,
+        "endpoint": null,
+        "tr_id": null,
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": "$[*].received_at",
+        "type": "ISO8601 string|null",
+        "unit": {
+          "value": null,
+          "currency": null,
+          "canonical_unit": null,
+          "status": "not_applicable"
+        },
+        "time": {
+          "source_as_of": null,
+          "received_at": null,
+          "publication_at": null,
+          "timezone": "UTC local receipt only"
+        },
+        "value": null,
+        "status": "not_collected",
+        "missing_reason": [
+          "no_flow_risk_payload_collected"
+        ],
+        "display_when_missing": "수집·공개·수정 시각은 별도 표시; 수신시각을 원천 기준시각으로 대체하지 않음",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "datetime_string|null"
+      },
+      {
+        "consumer_id": "R01.flow_risk.revision_status",
+        "provider_metric_id": null,
+        "display_name": "revision_status",
+        "report_section": "R01/수급·위험/날짜·공개상태",
+        "report_chart_slot": null,
+        "legacy_synthetic_fixture_field": null,
+        "binding_class": "unmapped",
+        "operation_ref": null,
+        "endpoint": null,
+        "tr_id": null,
+        "raw_field": null,
+        "raw_response_path": null,
+        "parsed_output_path": null,
+        "type": "string|null",
+        "unit": {
+          "value": null,
+          "currency": null,
+          "canonical_unit": null,
+          "status": "not_applicable"
+        },
+        "time": {
+          "source_as_of": null,
+          "received_at": null,
+          "publication_at": null,
+          "timezone": null
+        },
+        "value": null,
+        "status": "verification_pending",
+        "missing_reason": [
+          "no actual revision lineage"
+        ],
+        "display_when_missing": "수집·공개·수정 시각은 별도 표시; 수신시각을 원천 기준시각으로 대체하지 않음",
+        "canonical_mapping_verified": false,
+        "consumer_value_type": "string|null"
+      }
+    ],
+    "daily_field_bindings": [
+      {
+        "consumer_id": "history.date",
+        "base48_field": true,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].stck_bsop_date",
+        "parsed_output_path": "$[*].provider_business_date",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "history.close",
+        "base48_field": true,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].stck_clpr",
+        "parsed_output_path": "$[*].raw_fields.stck_clpr.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.history.open",
+        "base48_field": false,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].stck_oprc",
+        "parsed_output_path": "$[*].raw_fields.stck_oprc.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.history.high",
+        "base48_field": false,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].stck_hgpr",
+        "parsed_output_path": "$[*].raw_fields.stck_hgpr.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.history.low",
+        "base48_field": false,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].stck_lwpr",
+        "parsed_output_path": "$[*].raw_fields.stck_lwpr.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "history.volume",
+        "base48_field": true,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].acml_vol",
+        "parsed_output_path": "$[*].raw_fields.acml_vol.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.history.trade_amount",
+        "base48_field": false,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].acml_tr_pbmn",
+        "parsed_output_path": "$[*].raw_fields.acml_tr_pbmn.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "actions.events",
+        "base48_field": true,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].flng_cls_code",
+        "parsed_output_path": "$[*].raw_fields.flng_cls_code.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "event code on business-date row",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "history.adjustment",
+        "base48_field": true,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].prtt_rate",
+        "parsed_output_path": "$[*].raw_fields.prtt_rate.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.history.no_trade_flag",
+        "base48_field": false,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].mod_yn",
+        "parsed_output_path": "$[*].raw_fields.mod_yn.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.history.revision_reason",
+        "base48_field": false,
+        "operation_ref": "KIS-039",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "raw_response_path": "$.output2[*].revl_issu_reas",
+        "parsed_output_path": "$[*].raw_fields.revl_issu_reas.value",
+        "provider_type": "String",
+        "unit": null,
+        "unit_status": "not_stated_in_endpoint_schema",
+        "time_semantics": "date_only_no_time_or_timezone",
+        "canonical_mapping_verified": false,
+        "value": null,
+        "missing_reason": [
+          "KIS039_canonical_projection_blocked",
+          "adjustment_and_unit_conflict_pending"
+        ]
+      }
+    ],
+    "investor_field_bindings": [
+      {
+        "consumer_id": "flow.foreign.net_value",
+        "base48_field": true,
+        "operation_ref": "KIS-115",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "raw_response_path": "$.output2[*].frgn_ntby_tr_pbmn",
+        "parsed_output_path": "$.rows[*].actor_flows.foreign.net_buy_amount.value_krw",
+        "raw_value_path": "$.rows[*].actor_flows.foreign.net_buy_amount.raw_value",
+        "state_path": "$.rows[*].actor_flows.foreign.net_buy_amount.state",
+        "raw_unit": "KRW_million",
+        "normalized_unit": "KRW",
+        "conversion": "exact decimal string × 1000000",
+        "date_path": "$.rows[*].provider_business_date",
+        "requested_date_path": "$.requested_input_date",
+        "source_as_of": null,
+        "received_at_path": "$.rows[*].received_at",
+        "value": null,
+        "canonical_mapping_verified": false,
+        "missing_reason": [
+          "FID_ETC_CLS_CODE_portal_1_vs_pinned_sample_blank",
+          "row_date_relationship_and_finality_unverified",
+          "rights_pending",
+          "no_live_response"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.flow.foreign.net_quantity",
+        "base48_field": false,
+        "operation_ref": "KIS-115",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "raw_response_path": "$.output2[*].frgn_ntby_qty",
+        "parsed_output_path": "$.rows[*].actor_flows.foreign.net_buy_quantity.value_shares",
+        "raw_value_path": "$.rows[*].actor_flows.foreign.net_buy_quantity.raw_value",
+        "state_path": "$.rows[*].actor_flows.foreign.net_buy_quantity.state",
+        "raw_unit": "shares",
+        "normalized_unit": "shares",
+        "conversion": "identity decimal string",
+        "date_path": "$.rows[*].provider_business_date",
+        "requested_date_path": "$.requested_input_date",
+        "source_as_of": null,
+        "received_at_path": "$.rows[*].received_at",
+        "value": null,
+        "canonical_mapping_verified": false,
+        "missing_reason": [
+          "FID_ETC_CLS_CODE_portal_1_vs_pinned_sample_blank",
+          "row_date_relationship_and_finality_unverified",
+          "rights_pending",
+          "no_live_response"
+        ]
+      },
+      {
+        "consumer_id": "flow.individual.net_value",
+        "base48_field": true,
+        "operation_ref": "KIS-115",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "raw_response_path": "$.output2[*].prsn_ntby_tr_pbmn",
+        "parsed_output_path": "$.rows[*].actor_flows.individual.net_buy_amount.value_krw",
+        "raw_value_path": "$.rows[*].actor_flows.individual.net_buy_amount.raw_value",
+        "state_path": "$.rows[*].actor_flows.individual.net_buy_amount.state",
+        "raw_unit": "KRW_million",
+        "normalized_unit": "KRW",
+        "conversion": "exact decimal string × 1000000",
+        "date_path": "$.rows[*].provider_business_date",
+        "requested_date_path": "$.requested_input_date",
+        "source_as_of": null,
+        "received_at_path": "$.rows[*].received_at",
+        "value": null,
+        "canonical_mapping_verified": false,
+        "missing_reason": [
+          "FID_ETC_CLS_CODE_portal_1_vs_pinned_sample_blank",
+          "row_date_relationship_and_finality_unverified",
+          "rights_pending",
+          "no_live_response"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.flow.individual.net_quantity",
+        "base48_field": false,
+        "operation_ref": "KIS-115",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "raw_response_path": "$.output2[*].prsn_ntby_qty",
+        "parsed_output_path": "$.rows[*].actor_flows.individual.net_buy_quantity.value_shares",
+        "raw_value_path": "$.rows[*].actor_flows.individual.net_buy_quantity.raw_value",
+        "state_path": "$.rows[*].actor_flows.individual.net_buy_quantity.state",
+        "raw_unit": "shares",
+        "normalized_unit": "shares",
+        "conversion": "identity decimal string",
+        "date_path": "$.rows[*].provider_business_date",
+        "requested_date_path": "$.requested_input_date",
+        "source_as_of": null,
+        "received_at_path": "$.rows[*].received_at",
+        "value": null,
+        "canonical_mapping_verified": false,
+        "missing_reason": [
+          "FID_ETC_CLS_CODE_portal_1_vs_pinned_sample_blank",
+          "row_date_relationship_and_finality_unverified",
+          "rights_pending",
+          "no_live_response"
+        ]
+      },
+      {
+        "consumer_id": "flow.institution.net_value",
+        "base48_field": true,
+        "operation_ref": "KIS-115",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "raw_response_path": "$.output2[*].orgn_ntby_tr_pbmn",
+        "parsed_output_path": "$.rows[*].actor_flows.institution.net_buy_amount.value_krw",
+        "raw_value_path": "$.rows[*].actor_flows.institution.net_buy_amount.raw_value",
+        "state_path": "$.rows[*].actor_flows.institution.net_buy_amount.state",
+        "raw_unit": "KRW_million",
+        "normalized_unit": "KRW",
+        "conversion": "exact decimal string × 1000000",
+        "date_path": "$.rows[*].provider_business_date",
+        "requested_date_path": "$.requested_input_date",
+        "source_as_of": null,
+        "received_at_path": "$.rows[*].received_at",
+        "value": null,
+        "canonical_mapping_verified": false,
+        "missing_reason": [
+          "FID_ETC_CLS_CODE_portal_1_vs_pinned_sample_blank",
+          "row_date_relationship_and_finality_unverified",
+          "rights_pending",
+          "no_live_response"
+        ]
+      },
+      {
+        "consumer_id": "v13_2.flow.institution.net_quantity",
+        "base48_field": false,
+        "operation_ref": "KIS-115",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "raw_response_path": "$.output2[*].orgn_ntby_qty",
+        "parsed_output_path": "$.rows[*].actor_flows.institution.net_buy_quantity.value_shares",
+        "raw_value_path": "$.rows[*].actor_flows.institution.net_buy_quantity.raw_value",
+        "state_path": "$.rows[*].actor_flows.institution.net_buy_quantity.state",
+        "raw_unit": "shares",
+        "normalized_unit": "shares",
+        "conversion": "identity decimal string",
+        "date_path": "$.rows[*].provider_business_date",
+        "requested_date_path": "$.requested_input_date",
+        "source_as_of": null,
+        "received_at_path": "$.rows[*].received_at",
+        "value": null,
+        "canonical_mapping_verified": false,
+        "missing_reason": [
+          "FID_ETC_CLS_CODE_portal_1_vs_pinned_sample_blank",
+          "row_date_relationship_and_finality_unverified",
+          "rights_pending",
+          "no_live_response"
+        ]
+      }
+    ],
+    "relationship_guard": "KIS-039 daily and KIS-115 investor flows do not supply the 37 short-sale/lending/credit metadata IDs; never alias them.",
+    "request_conflicts": [
+      {
+        "operation_ref": "KIS-115",
+        "field": "FID_ETC_CLS_CODE",
+        "portal_value": "1",
+        "pinned_sample_value": "",
+        "status": "unresolved_live_blocker",
+        "mock_encoding_only": "1"
+      }
+    ],
+    "operation_evidence_and_unresolved": {
+      "KIS-039": {
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "tr_id": "FHKST03010100",
+        "official_source": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+        "response_root": "$.output2[*]",
+        "rows_per_request_max": 100,
+        "pagination": "not available in reviewed portal/schema",
+        "fields": [
+          "stck_bsop_date",
+          "stck_clpr",
+          "stck_oprc",
+          "stck_hgpr",
+          "stck_lwpr",
+          "acml_vol",
+          "acml_tr_pbmn",
+          "flng_cls_code",
+          "prtt_rate",
+          "mod_yn",
+          "revl_issu_reas"
+        ],
+        "provider_type": "String for all 11 manifest paths",
+        "time": "business date only; no provider timestamp/timezone; local received_at is separate",
+        "unit_status": "not stated for prices, volume or trade amount in reviewed endpoint schema; no canonical price/volume/turnover projection",
+        "adjustment": "portal describes FID_ORG_ADJ_PRC 0=adjusted and 1=original; pinned helper comment conflicts; keep raw request choice and canonical adjustment basis blocked until resolved"
+      },
+      "KIS-115": {
+        "endpoint": "/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "tr_id": "FHPTJ04160001",
+        "portal_source": "https://apiportal.koreainvestment.com/apiservice-apiservice?/uapi/domestic-stock/v1/quotations/investor-trade-by-stock-daily",
+        "pinned_sample_source": "https://raw.githubusercontent.com/koreainvestment/open-trading-api/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/investor_trade_by_stock_daily/investor_trade_by_stock_daily.py",
+        "request_parameter_conflict": "FID_ETC_CLS_CODE: reviewed portal schema requires value 1; pinned official helper documents/sends empty string. Retained as an unresolved live blocker; mock encoding 1 does not resolve it.",
+        "documented_units": {
+          "amount_fields": [
+            "frgn_ntby_tr_pbmn",
+            "prsn_ntby_tr_pbmn",
+            "orgn_ntby_tr_pbmn"
+          ],
+          "amount_raw_unit": "KRW millions (백만원) per reviewed portal response schema",
+          "amount_normalization": "exact decimal-string multiplication by 1,000,000; no JS floating point",
+          "quantity_fields": [
+            "frgn_ntby_qty",
+            "prsn_ntby_qty",
+            "orgn_ntby_qty"
+          ],
+          "quantity_unit": "shares (주) per reviewed portal response schema; identity decimal-string representation"
+        },
+        "time_and_finality": "date-only business date, no timezone or per-row publication timestamp. The portal marks same-day values provisional and calculated after 15:40 with time varying. Request date is not assumed to equal each returned row date. Preserve source_as_of=null and local received_at separately.",
+        "pagination": "official helper demonstrates M/F to N continuation with a depth cap of 10; reviewed portal response page cap/total row contract is unresolved; adapter uses bounded behavior and is not called/exposed.",
+        "other_blockers": [
+          "rights not cleared",
+          "no live response",
+          "date/finality relation unverified"
+        ]
+      }
+    },
+    "promotion_rule": "All current consumer values stay null and canonical_mapping_verified stays false. Preserve each source status exactly (including verification_pending, derived_inputs_pending, and not_collected); mocked fixtures and tests do not establish provider field correctness, rights, freshness, or live responses."
+  }
+}

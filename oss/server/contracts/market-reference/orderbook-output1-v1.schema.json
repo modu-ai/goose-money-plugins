@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "askp1": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp1": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn1": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn1": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc1": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc1": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp2": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp2": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn2": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn2": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc2": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc2": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp3": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp3": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn3": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn3": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc3": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc3": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp4": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp4": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn4": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn4": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc4": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc4": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp5": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp5": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn5": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn5": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc5": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc5": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp6": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp6": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn6": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn6": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc6": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc6": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp7": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp7": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn7": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn7": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc7": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc7": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp8": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp8": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn8": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn8": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc8": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc8": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp9": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp9": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn9": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn9": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc9": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc9": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp10": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp10": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn10": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn10": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "askp_rsqn_icdc10": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "bidp_rsqn_icdc10": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "aspr_acpt_hour": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "total_askp_rsqn": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "total_bidp_rsqn": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "total_askp_rsqn_icdc": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "total_bidp_rsqn_icdc": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "ovtm_total_askp_icdc": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "ovtm_total_bidp_icdc": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "ovtm_total_askp_rsqn": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "ovtm_total_bidp_rsqn": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "ntby_aspr_rsqn": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "new_mkop_cls_code": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "antc_mkop_cls_code": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "stck_prpr": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "stck_oprc": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "stck_hgpr": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "stck_lwpr": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "stck_sdpr": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "antc_cnpr": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "antc_cntg_vrss_sign": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "antc_cntg_vrss": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "antc_cntg_prdy_ctrt": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "antc_vol": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "stck_shrn_iscd": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "vi_cls_code": {
+      "type": "string",
+      "maxLength": 200
+    }
+  },
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/market-reference/orderbook-output1-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime entrypoints additionally enforce inert bounded plain JSON, conservative private-data marker rejection, exact instants, echo and request consistency, source DTO reconstruction where available, deterministic full-candidate replay and integrity links. Shape validity is not source authentication, economic validity, rights clearance or metric readiness. The .invalid namespace is an identifier, not a hosted resource."
+}

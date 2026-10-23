@@ -1,0 +1,266 @@
+{
+  "contract": "moai.kis.kr-daily-raw-evidence.v1",
+  "provider": "KIS",
+  "operation_id": "KIS-039",
+  "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+  "tr_id": "FHKST03010100",
+  "request": {
+    "symbol": "000000",
+    "board": "J",
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21",
+    "interval": "1d",
+    "adjustment_code": "0"
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T00:00:00.12345678901234567890Z",
+    "body_sha256": "4afda554f9846fc9bb12437f1ba00c29b714c53f108d2a683328770ea8d59e72",
+    "body_byte_length": 886,
+    "hash_scope": "decoded_response_text_utf8",
+    "hash_algorithm": "sha256",
+    "provenance_status": "caller_supplied_capture_metadata",
+    "source_authentication": "not_established"
+  },
+  "cutoff": "2026-10-22T09:00:00.12345678901234567891+09:00",
+  "provider_success_status": "0",
+  "success_policy": "string_zero_only",
+  "identity_status": "request_context_only_not_response_verified",
+  "source_as_of": null,
+  "publication_at": null,
+  "receipt_cutoff_status": "receipt_not_after_cutoff_no_publication_inference",
+  "adjustment_code_interpretation": "blocked_portal_sample_conflict",
+  "row_order": "captured_output2_array_order",
+  "row_index_basis": "zero_based_output2_index",
+  "row_count": 3,
+  "response_status": "rows_preserved",
+  "rows": [
+    {
+      "source_row_index": 0,
+      "provider_business_date": "2026-10-21",
+      "raw_fields": {
+        "stck_bsop_date": {
+          "state": "present",
+          "value": "20261021"
+        },
+        "stck_clpr": {
+          "state": "present",
+          "value": "000123.00"
+        },
+        "stck_oprc": {
+          "state": "present",
+          "value": "-0.00"
+        },
+        "stck_hgpr": {
+          "state": "present",
+          "value": "123.4"
+        },
+        "stck_lwpr": {
+          "state": "present",
+          "value": "001.00"
+        },
+        "acml_vol": {
+          "state": "present",
+          "value": "999999999999999999"
+        },
+        "acml_tr_pbmn": {
+          "state": "present",
+          "value": "000000000000000001"
+        },
+        "flng_cls_code": {
+          "state": "present",
+          "value": "00"
+        },
+        "prtt_rate": {
+          "state": "present",
+          "value": "0001.000"
+        },
+        "mod_yn": {
+          "state": "present",
+          "value": "N"
+        },
+        "revl_issu_reas": {
+          "state": "present",
+          "value": "01"
+        }
+      },
+      "canonical": {
+        "instrument_id": null,
+        "date": null,
+        "open": null,
+        "high": null,
+        "low": null,
+        "close": null,
+        "volume": null,
+        "turnover": null,
+        "currency": null,
+        "price_unit": null,
+        "volume_unit": null,
+        "turnover_unit": null,
+        "adjusted": null,
+        "adjustment_factor": null,
+        "source_as_of": null,
+        "publication_at": null,
+        "session": null
+      }
+    },
+    {
+      "source_row_index": 1,
+      "provider_business_date": "2026-10-19",
+      "raw_fields": {
+        "stck_bsop_date": {
+          "state": "present",
+          "value": "20261019"
+        },
+        "stck_clpr": {
+          "state": "blank",
+          "value": ""
+        },
+        "stck_oprc": {
+          "state": "blank",
+          "value": ""
+        },
+        "stck_hgpr": {
+          "state": "blank",
+          "value": ""
+        },
+        "stck_lwpr": {
+          "state": "blank",
+          "value": ""
+        },
+        "acml_vol": {
+          "state": "blank",
+          "value": ""
+        },
+        "acml_tr_pbmn": {
+          "state": "blank",
+          "value": ""
+        },
+        "flng_cls_code": {
+          "state": "blank",
+          "value": ""
+        },
+        "prtt_rate": {
+          "state": "blank",
+          "value": ""
+        },
+        "mod_yn": {
+          "state": "blank",
+          "value": ""
+        },
+        "revl_issu_reas": {
+          "state": "blank",
+          "value": ""
+        }
+      },
+      "canonical": {
+        "instrument_id": null,
+        "date": null,
+        "open": null,
+        "high": null,
+        "low": null,
+        "close": null,
+        "volume": null,
+        "turnover": null,
+        "currency": null,
+        "price_unit": null,
+        "volume_unit": null,
+        "turnover_unit": null,
+        "adjusted": null,
+        "adjustment_factor": null,
+        "source_as_of": null,
+        "publication_at": null,
+        "session": null
+      }
+    },
+    {
+      "source_row_index": 2,
+      "provider_business_date": "2026-10-20",
+      "raw_fields": {
+        "stck_bsop_date": {
+          "state": "present",
+          "value": "20261020"
+        },
+        "stck_clpr": {
+          "state": "missing",
+          "value": null
+        },
+        "stck_oprc": {
+          "state": "missing",
+          "value": null
+        },
+        "stck_hgpr": {
+          "state": "missing",
+          "value": null
+        },
+        "stck_lwpr": {
+          "state": "missing",
+          "value": null
+        },
+        "acml_vol": {
+          "state": "missing",
+          "value": null
+        },
+        "acml_tr_pbmn": {
+          "state": "missing",
+          "value": null
+        },
+        "flng_cls_code": {
+          "state": "missing",
+          "value": null
+        },
+        "prtt_rate": {
+          "state": "missing",
+          "value": null
+        },
+        "mod_yn": {
+          "state": "missing",
+          "value": null
+        },
+        "revl_issu_reas": {
+          "state": "missing",
+          "value": null
+        }
+      },
+      "canonical": {
+        "instrument_id": null,
+        "date": null,
+        "open": null,
+        "high": null,
+        "low": null,
+        "close": null,
+        "volume": null,
+        "turnover": null,
+        "currency": null,
+        "price_unit": null,
+        "volume_unit": null,
+        "turnover_unit": null,
+        "adjusted": null,
+        "adjustment_factor": null,
+        "source_as_of": null,
+        "publication_at": null,
+        "session": null
+      }
+    }
+  ],
+  "response_range_completeness": "unknown_pagination_not_demonstrated",
+  "rights_status": "pending",
+  "source_time_status": "date_only_no_provider_time_or_timezone",
+  "canonical_projection_status": "blocked",
+  "blockers": [
+    "price_currency_and_scale_not_stated_in_endpoint_schema",
+    "volume_unit_not_stated_in_endpoint_schema",
+    "trade_amount_currency_and_scale_not_stated_in_endpoint_schema",
+    "adjustment_code_portal_sample_conflict",
+    "response_identity_not_independently_verified",
+    "date_only_no_provider_time_or_timezone",
+    "data_rights_and_host_egress_not_approved_by_this_contract"
+  ],
+  "warnings": [
+    "SHA256 binds original decoded response text encoded as UTF-8, not wire bytes or source authenticity. Original text must be retained separately.",
+    "Request, origin, receipt and cutoff are caller-supplied metadata, not authenticated transport observations or publication evidence.",
+    "Only the eleven documented output2 row fields are projected. Provider messages, output1, headers and arbitrary metadata are never public evidence fields.",
+    "Provider order and date labels are retained without sorting, deduplication, calendar-session inference, completeness claims or canonical chart/metric promotion.",
+    "Empty successful output2 is retained as empty capture evidence only, not proof of no trading or complete history. The existing price-history v1 contract is unchanged."
+  ]
+}

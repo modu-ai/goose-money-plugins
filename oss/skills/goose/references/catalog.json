@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "R01",
+      "title": "종목 심층 분석",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "equity_fundamentals",
+        "equity_estimates",
+        "market_flow",
+        "claims_events",
+        "macro_industry"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R02",
+      "title": "기업·상품 비교",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "equity_fundamentals",
+        "equity_estimates",
+        "etf_structure",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R03",
+      "title": "시장 수급·자금 흐름",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "market_flow",
+        "etf_structure",
+        "futures_contract"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R04",
+      "title": "내 자산·위험 진단",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "account_ledger",
+        "etf_structure",
+        "futures_contract"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R05",
+      "title": "투자 성과·거래비용",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "account_ledger",
+        "futures_contract"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R06",
+      "title": "국내·글로벌 마켓 브리핑",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "market_flow",
+        "macro_industry",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R07",
+      "title": "실적·공시 이벤트 리뷰",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "equity_fundamentals",
+        "equity_estimates",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R08",
+      "title": "거시·자산배분 브리핑",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "macro_industry",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R09",
+      "title": "투자논지·관심종목 점검",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "claims_events",
+        "market_flow"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R10",
+      "title": "마감 전 후보·거래조건 점검",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "market_flow",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R11",
+      "title": "산업·섹터 전망",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "macro_industry",
+        "equity_estimates",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R12",
+      "title": "ETF 구조·비교·보유 점검",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "etf_structure",
+        "market_flow",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R13",
+      "title": "선물 계약·시황·만기 위험",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "futures_contract",
+        "market_flow",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "R14",
+      "title": "전략 검증·백테스트",
+      "kind": "report",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "backtest_experiment",
+        "account_ledger",
+        "futures_contract"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "U01",
+      "title": "종목·상품 탐색 도구",
+      "kind": "utility",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "market_flow",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "U02",
+      "title": "관계·근거 탐색 도구",
+      "kind": "utility",
+      "public": true,
+      "required_groups": [
+        "identity_calendar",
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    },
+    {
+      "id": "U03",
+      "title": "공유 전 검수 게이트",
+      "kind": "internal_qa",
+      "public": false,
+      "required_groups": [
+        "claims_events"
+      ],
+      "end_to_end_status": "not_implemented",
+      "actual_data_complete": false
+    }
+  ]
+}

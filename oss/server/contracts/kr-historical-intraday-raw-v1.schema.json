@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "rt_cd": {
+      "type": "string",
+      "const": "0"
+    },
+    "msg_cd": {
+      "type": "string",
+      "maxLength": 40
+    },
+    "msg1": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "output1": {
+      "type": "object",
+      "properties": {
+        "prdy_vrss": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdy_vrss_sign": {
+          "type": "string",
+          "maxLength": 8
+        },
+        "prdy_ctrt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "stck_prdy_clpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "acml_vol": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 30,
+              "pattern": "^\\d+$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "acml_tr_pbmn": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "hts_kor_isnm": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "stck_prpr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        }
+      },
+      "required": [
+        "stck_prpr"
+      ],
+      "additionalProperties": false
+    },
+    "output2": {
+      "maxItems": 120,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stck_bsop_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{8}$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "stck_cntg_hour": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "stck_prpr": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^-?\\d+(?:\\.\\d+)?$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "stck_oprc": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^-?\\d+(?:\\.\\d+)?$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "stck_hgpr": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^-?\\d+(?:\\.\\d+)?$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "stck_lwpr": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^-?\\d+(?:\\.\\d+)?$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "cntg_vol": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30,
+                "pattern": "^\\d+$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          },
+          "acml_tr_pbmn": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 40,
+                "pattern": "^-?\\d+(?:\\.\\d+)?$"
+              },
+              {
+                "type": "string",
+                "const": ""
+              }
+            ]
+          }
+        },
+        "required": [
+          "stck_bsop_date",
+          "stck_cntg_hour",
+          "stck_prpr",
+          "stck_oprc",
+          "stck_hgpr",
+          "stck_lwpr",
+          "cntg_vol"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "rt_cd",
+    "output1",
+    "output2"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/kr-historical-intraday-raw-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime Zod additionally checks real calendar dates, exact receipt/availability equality, row counts/coverage, continuation provenance and duplicate/blank-label status. Entry point additionally snapshots and bounds hostile inputs and responses. The .invalid namespace is an identifier, not a hosted resource."
+}

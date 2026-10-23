@@ -1,0 +1,16 @@
+{
+  "request": {
+    "symbol": "999999",
+    "board": "J",
+    "start_date": "2026-10-16",
+    "end_date": "2026-10-22",
+    "interval": "1d",
+    "adjustment_code": "0"
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-21T08:00:00.123456789012345678901Z",
+    "expected_body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0"
+  },
+  "cutoff": "2026-10-22T00:00:00.123456789012345678903Z"
+}

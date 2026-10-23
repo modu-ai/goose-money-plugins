@@ -1,0 +1,145 @@
+{
+  "contract": "moai.market.observation-binding.v1",
+  "policy": "kr_equity_spread",
+  "entry_id": "synthetic-kr_equity_spread",
+  "candidate_sha256": "3b6e02f95add58c584160b81da2e0ffa5f7d539653e0b0d1c98c9a0bf618c3d5",
+  "instrument": {
+    "security_id": "SYNTHETIC:security:kr_equity_spread",
+    "symbol": "005930",
+    "instrument_kind": "equity",
+    "venue": "SYNTHETIC:XKRX",
+    "share_class": "SYNTHETIC:common",
+    "share_unit": "one_share",
+    "split_basis": "SYNTHETIC:current-share-unadjusted"
+  },
+  "identity": {
+    "issuer_id": "SYNTHETIC:issuer:kr_equity_spread",
+    "listing_id": "SYNTHETIC:listing:kr_equity_spread",
+    "provider_symbol": "005930",
+    "provider_market": "J"
+  },
+  "price_basis": "unadjusted_per_current_share",
+  "market_state": "regular_open",
+  "context": {
+    "session_id": "SYNTHETIC:2026-10-22",
+    "session_type": "regular",
+    "reference_id": "SYNTHETIC:unadjusted-reference",
+    "freshness_policy": {
+      "policy_id": "synthetic-private-report-freshness",
+      "max_age_seconds": {
+        "market.best_bid": "10",
+        "market.best_ask": "10"
+      }
+    }
+  },
+  "valuation_basis": "same_instant_firm_book",
+  "quote_pair": {
+    "firmness": "firm",
+    "simultaneity": "independently_verified_same_instant",
+    "evidence_ref": "review-record"
+  },
+  "source_artifact_id": "original-body",
+  "document_id": "SYNTHETIC:original-response",
+  "observations": [
+    {
+      "role": "market.best_bid",
+      "source_at": "2026-10-22T14:30:00.123456789123Z",
+      "published_at": "2026-10-22T14:30:00.123456789124Z",
+      "available_at": "2026-10-22T14:30:01.123456789124Z",
+      "observation_session_id": "SYNTHETIC:2026-10-22",
+      "unit": "money_per_share",
+      "scale": "1",
+      "currency": "KRW",
+      "numeric_semantics": "raw_decimal_times_explicit_scale",
+      "revision": {
+        "revision_id": "SYNTHETIC:original",
+        "status": "original",
+        "finality": "final_current_at_cutoff",
+        "evidence_ref": "review-record"
+      }
+    },
+    {
+      "role": "market.best_ask",
+      "source_at": "2026-10-22T14:30:00.123456789123Z",
+      "published_at": "2026-10-22T14:30:00.123456789124Z",
+      "available_at": "2026-10-22T14:30:01.123456789124Z",
+      "observation_session_id": "SYNTHETIC:2026-10-22",
+      "unit": "money_per_share",
+      "scale": "1",
+      "currency": "KRW",
+      "numeric_semantics": "raw_decimal_times_explicit_scale",
+      "revision": {
+        "revision_id": "SYNTHETIC:original",
+        "status": "original",
+        "finality": "final_current_at_cutoff",
+        "evidence_ref": "review-record"
+      }
+    }
+  ],
+  "rights": {
+    "purpose": "private_analysis",
+    "processing_allowed": true,
+    "portable_export_allowed": false,
+    "assertion_id": "synthetic-private-analysis-only",
+    "evidence_ref": "review-record",
+    "valid_from": "2026-10-21T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "evidence": {
+    "original_bytes_dto_linkage": [
+      "original-body",
+      "review-record"
+    ],
+    "identity": [
+      "review-record"
+    ],
+    "field_semantics": [
+      "review-record"
+    ],
+    "units_currency_scales": [
+      "review-record"
+    ],
+    "observation_reference_sessions": [
+      "review-record"
+    ],
+    "adjustment_basis": [
+      "review-record"
+    ],
+    "publication_availability": [
+      "review-record"
+    ],
+    "market_state": [
+      "review-record"
+    ],
+    "quote_firmness_simultaneity": [
+      "review-record"
+    ],
+    "finality_revision": [
+      "review-record"
+    ],
+    "rights": [
+      "review-record"
+    ]
+  },
+  "artifacts": [
+    {
+      "id": "original-body",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture",
+      "sha256": "179bb2f1448239111601d68e360a6419bb541b5630eecc2d63bbc616ab89b144",
+      "locator": "synthetic://market-observation/original-body",
+      "snapshot": {
+        "source_dto_sha256": "ee2aa3a566c5229b6cf8ad7f660cecb19217be73d0e11eaf1c06bf4fb236ab8a",
+        "received_at": "2026-10-22T14:30:01.123456789123Z"
+      }
+    },
+    {
+      "id": "review-record",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture",
+      "sha256": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+      "locator": "synthetic://market-observation/review-record",
+      "snapshot": null
+    }
+  ]
+}

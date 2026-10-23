@@ -1,0 +1,591 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.kr-historical-intraday.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "source_commit": {
+      "type": "string",
+      "const": "2077773a69a428daf63e148182511f068cc45de3"
+    },
+    "requested": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "pattern": "^\\d{6}$"
+        },
+        "board": {
+          "type": "string",
+          "enum": [
+            "J",
+            "NX",
+            "UN"
+          ]
+        },
+        "anchor_date": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "anchor_time": {
+          "type": "string",
+          "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+        },
+        "include_past_data": {
+          "type": "string",
+          "enum": [
+            "Y",
+            "N"
+          ]
+        }
+      },
+      "required": [
+        "symbol",
+        "board",
+        "anchor_date",
+        "anchor_time",
+        "include_past_data"
+      ],
+      "additionalProperties": false
+    },
+    "interval": {
+      "type": "string",
+      "const": "provider_minute_bars"
+    },
+    "scope": {
+      "type": "string",
+      "const": "historical_date_endpoint_single_page"
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "no_returned_instrument_code"
+    },
+    "received_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "available_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "event_time": {
+      "type": "null"
+    },
+    "published_at": {
+      "type": "null"
+    },
+    "source_timezone": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "provider_bar_labels_not_verified_instants"
+    },
+    "anchor_context_status": {
+      "type": "string",
+      "const": "request_anchor_not_verified_against_source_labels"
+    },
+    "fake_tick_status": {
+      "type": "string",
+      "const": "blank_request_flag_semantics_not_verified"
+    },
+    "adjustment_status": {
+      "type": "string",
+      "const": "not_specified_by_reviewed_intraday_contract"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "session": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "delay_state": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "finality": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "freshness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "completeness": {
+      "type": "string",
+      "const": "unknown"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "pagination": {
+      "type": "object",
+      "properties": {
+        "pages_fetched": {
+          "type": "number",
+          "const": 1
+        },
+        "tr_cont": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "",
+                "D",
+                "E",
+                "M",
+                "F"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "more_signaled_not_fetched",
+            "not_signaled_completeness_unknown"
+          ]
+        },
+        "automatic_continuation": {
+          "type": "boolean",
+          "const": false
+        },
+        "completeness": {
+          "type": "string",
+          "const": "unknown"
+        }
+      },
+      "required": [
+        "pages_fetched",
+        "tr_cont",
+        "status",
+        "automatic_continuation",
+        "completeness"
+      ],
+      "additionalProperties": false
+    },
+    "bars_returned": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 120
+    },
+    "coverage_status": {
+      "type": "string",
+      "enum": [
+        "empty_page_not_proof_of_absence",
+        "single_page_not_complete_history"
+      ]
+    },
+    "row_order_status": {
+      "type": "string",
+      "const": "provider_order_preserved_no_sort_dedup_or_resample"
+    },
+    "duplicate_label_status": {
+      "type": "string",
+      "enum": [
+        "duplicate_labels_retained",
+        "none_observed"
+      ]
+    },
+    "blank_label_status": {
+      "type": "string",
+      "enum": [
+        "blank_labels_retained",
+        "all_labels_present"
+      ]
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "asset_class": {
+          "type": "null"
+        },
+        "exchange": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "adjusted": {
+          "type": "null"
+        },
+        "timezone": {
+          "type": "null"
+        },
+        "finality": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "volume_unit": {
+          "type": "null"
+        },
+        "turnover_unit": {
+          "type": "null"
+        },
+        "bars": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "asset_class",
+        "exchange",
+        "currency",
+        "adjusted",
+        "timezone",
+        "finality",
+        "price_unit",
+        "volume_unit",
+        "turnover_unit",
+        "bars"
+      ],
+      "additionalProperties": false
+    },
+    "mapping_blockers": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "unimplemented_derivations": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "warnings": {
+      "minItems": 1,
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "rt_cd": {
+          "type": "string",
+          "const": "0"
+        },
+        "msg_cd": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "msg1": {
+          "type": "string",
+          "maxLength": 2000
+        },
+        "output1": {
+          "type": "object",
+          "properties": {
+            "prdy_vrss": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "prdy_vrss_sign": {
+              "type": "string",
+              "maxLength": 8
+            },
+            "prdy_ctrt": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "stck_prdy_clpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_vol": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 30,
+                  "pattern": "^\\d+$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "acml_tr_pbmn": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            },
+            "hts_kor_isnm": {
+              "type": "string",
+              "maxLength": 200
+            },
+            "stck_prpr": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                },
+                {
+                  "type": "string",
+                  "const": ""
+                }
+              ]
+            }
+          },
+          "required": [
+            "stck_prpr"
+          ],
+          "additionalProperties": false
+        },
+        "output2": {
+          "maxItems": 120,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stck_bsop_date": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stck_cntg_hour": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stck_prpr": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stck_oprc": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stck_hgpr": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "stck_lwpr": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "cntg_vol": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 30,
+                    "pattern": "^\\d+$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "acml_tr_pbmn": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 40,
+                    "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              }
+            },
+            "required": [
+              "stck_bsop_date",
+              "stck_cntg_hour",
+              "stck_prpr",
+              "stck_oprc",
+              "stck_hgpr",
+              "stck_lwpr",
+              "cntg_vol"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "rt_cd",
+        "output1",
+        "output2"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "source_commit",
+    "requested",
+    "interval",
+    "scope",
+    "identity_status",
+    "received_at",
+    "available_at",
+    "source_as_of",
+    "event_time",
+    "published_at",
+    "source_timezone",
+    "source_time_status",
+    "anchor_context_status",
+    "fake_tick_status",
+    "adjustment_status",
+    "rights_status",
+    "session",
+    "delay_state",
+    "finality",
+    "freshness",
+    "completeness",
+    "validation_status",
+    "pagination",
+    "bars_returned",
+    "coverage_status",
+    "row_order_status",
+    "duplicate_label_status",
+    "blank_label_status",
+    "canonical_projection_status",
+    "canonical",
+    "mapping_blockers",
+    "unimplemented_derivations",
+    "warnings",
+    "raw"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/kr-historical-intraday-result-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime Zod additionally checks real calendar dates, exact receipt/availability equality, row counts/coverage, continuation provenance and duplicate/blank-label status. Entry point additionally snapshots and bounds hostile inputs and responses. The .invalid namespace is an identifier, not a hosted resource."
+}

@@ -1,0 +1,598 @@
+{
+  "contract": "moai.us-daily.canonical-history-handoff.v1",
+  "status": "synthetic_history_ready",
+  "actual_source_authenticated": false,
+  "verified_live_provider_bindings": 0,
+  "actual_provider_calls": 0,
+  "cutoff": "2026-10-22T00:00:00.123456790Z",
+  "request": {
+    "start_date": "2026-10-20",
+    "end_date": "2026-10-21"
+  },
+  "history": {
+    "contract": "canonical-history/1.0",
+    "history_id": "synthetic:US-daily:1",
+    "data_kind": "synthetic",
+    "context": {
+      "identity": {
+        "instrument_id": "synthetic:equity:1",
+        "issuer_id": "synthetic:issuer:1",
+        "venue": "SYNTHETIC-NOT-A-VENUE",
+        "asset_class": "equity",
+        "share_class": "synthetic:common",
+        "contract_id": "not_applicable"
+      },
+      "units": {
+        "price_unit": "money_per_share",
+        "currency": "USD",
+        "price_scale": "1",
+        "volume_unit": "shares",
+        "volume_scale": "1"
+      },
+      "session": {
+        "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+        "timezone": "America/New_York",
+        "session_id": "synthetic:regular",
+        "interval": "daily",
+        "date_basis": "trade_date",
+        "calendar_verified": true,
+        "calendar_evidence_ref": "review",
+        "coverage_start": "2026-10-20",
+        "coverage_end": "2026-10-21",
+        "coverage_complete": true,
+        "expected_sessions": [
+          "2026-10-20",
+          "2026-10-21"
+        ]
+      },
+      "basis": {
+        "price_kind": "price_level",
+        "return_policy": "price_return",
+        "adjustment": "unadjusted",
+        "adjustment_id": "synthetic:unadjusted",
+        "adjustment_asof": "2026-10-21T20:00:00Z",
+        "actions_coverage_verified": true,
+        "actions_evidence_ref": "review",
+        "volume_adjustment": "unadjusted",
+        "revision_policy": "final_current_at_cutoff",
+        "price_definition": "official_close",
+        "allow_negative_prices": false,
+        "roll_policy": "not_applicable"
+      }
+    },
+    "points": [
+      {
+        "fact_id": "moai:us-daily:c78cc1f7a04d1131c131ce27548b279e696c3dee723a0059d9149db8b2325918",
+        "trade_date": "2026-10-20",
+        "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+        "point_kind": "date",
+        "observed_at": null,
+        "session_close_at": "2026-10-20T16:00:00-04:00",
+        "published_at": "2026-10-20T20:01:00Z",
+        "received_at": "2026-10-22T00:00:00.123456789Z",
+        "available_at": "2026-10-22T00:00:00.123456790Z",
+        "finality": "final",
+        "revision": {
+          "status": "original",
+          "revision_id": "synthetic:r1",
+          "evidence_ref": "review",
+          "current_at_cutoff_verified": true
+        },
+        "provenance": {
+          "source_id": "KIS",
+          "document_id": "synthetic:source-page:1",
+          "locator": "output2[1]:20261020",
+          "revision_id": "synthetic:r1",
+          "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+          "selector_id": "kis.us-daily.named-ohlcv/1",
+          "data_kind": "synthetic",
+          "semantic_binding_verified": true,
+          "semantic_evidence_ref": "review",
+          "identity_verified": true,
+          "identity_evidence_ref": "review",
+          "unit_verified": true,
+          "unit_evidence_ref": "review",
+          "currency_verified": true,
+          "currency_evidence_ref": "review",
+          "scale_verified": true,
+          "scale_evidence_ref": "review",
+          "time_verified": true,
+          "time_evidence_ref": "review"
+        },
+        "rights": {
+          "state": "allowed",
+          "use": "local_report",
+          "evidence_ref": "review",
+          "expires_at": "2026-10-23T00:00:00Z"
+        },
+        "values": {
+          "open": {
+            "state": "available",
+            "value": "99",
+            "missing_reason": null
+          },
+          "high": {
+            "state": "available",
+            "value": "101",
+            "missing_reason": null
+          },
+          "low": {
+            "state": "available",
+            "value": "98",
+            "missing_reason": null
+          },
+          "close": {
+            "state": "available",
+            "value": "100",
+            "missing_reason": null
+          },
+          "volume": {
+            "state": "available",
+            "value": "1000",
+            "missing_reason": null
+          }
+        }
+      },
+      {
+        "fact_id": "moai:us-daily:93ec8a4c3491ad339bcbe8cec268f02ae49a4ef4a868ba072a9f3f050f9a5436",
+        "trade_date": "2026-10-21",
+        "context_sha256": "12ccc64b8a2df35b366aa7533fc49d105a21ad4451f436ccd05b9c2241950138",
+        "point_kind": "date",
+        "observed_at": null,
+        "session_close_at": "2026-10-21T16:00:00-04:00",
+        "published_at": "2026-10-21T20:01:00Z",
+        "received_at": "2026-10-22T00:00:00.123456789Z",
+        "available_at": "2026-10-22T00:00:00.123456790Z",
+        "finality": "final",
+        "revision": {
+          "status": "original",
+          "revision_id": "synthetic:r1",
+          "evidence_ref": "review",
+          "current_at_cutoff_verified": true
+        },
+        "provenance": {
+          "source_id": "KIS",
+          "document_id": "synthetic:source-page:1",
+          "locator": "output2[0]:20261021",
+          "revision_id": "synthetic:r1",
+          "source_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+          "selector_id": "kis.us-daily.named-ohlcv/1",
+          "data_kind": "synthetic",
+          "semantic_binding_verified": true,
+          "semantic_evidence_ref": "review",
+          "identity_verified": true,
+          "identity_evidence_ref": "review",
+          "unit_verified": true,
+          "unit_evidence_ref": "review",
+          "currency_verified": true,
+          "currency_evidence_ref": "review",
+          "scale_verified": true,
+          "scale_evidence_ref": "review",
+          "time_verified": true,
+          "time_evidence_ref": "review"
+        },
+        "rights": {
+          "state": "allowed",
+          "use": "local_report",
+          "evidence_ref": "review",
+          "expires_at": "2026-10-23T00:00:00Z"
+        },
+        "values": {
+          "open": {
+            "state": "available",
+            "value": "100.000000000000000001",
+            "missing_reason": null
+          },
+          "high": {
+            "state": "available",
+            "value": "102",
+            "missing_reason": null
+          },
+          "low": {
+            "state": "available",
+            "value": "99",
+            "missing_reason": null
+          },
+          "close": {
+            "state": "available",
+            "value": "101",
+            "missing_reason": null
+          },
+          "volume": {
+            "state": "available",
+            "value": "9007199254740993000",
+            "missing_reason": null
+          }
+        }
+      }
+    ]
+  },
+  "verification": {
+    "input_sha256": "9932fcaf8086bc5129622906876e694e27d88233d920995332b35e8a903a1c1d",
+    "adapter_id": "test-only-invented-history-verifier",
+    "mode": "synthetic_test_only",
+    "verified_at": "2026-10-22T01:00:00.000000002Z",
+    "assurance": "trusted_adapter_attestation_not_independent_host_authentication",
+    "confirmed": {
+      "source_authenticity": [
+        "source-page"
+      ],
+      "identity": [
+        "review"
+      ],
+      "field_semantics": [
+        "review"
+      ],
+      "units": [
+        "review"
+      ],
+      "currency": [
+        "review"
+      ],
+      "scales": [
+        "review"
+      ],
+      "session_calendar": [
+        "review"
+      ],
+      "adjustment_actions": [
+        "review"
+      ],
+      "finality_revision": [
+        "review"
+      ],
+      "publication_availability": [
+        "review"
+      ],
+      "coverage": [
+        "review"
+      ],
+      "rights": [
+        "review"
+      ]
+    }
+  },
+  "lineage": {
+    "source_dto_sha256": "1fa3f30b27cc04af8104193e7e429e5ba3e0787d8426ea98fdfd9fa067efcc95",
+    "source_artifact_sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+    "artifacts": [
+      {
+        "id": "source-page",
+        "data_kind": "synthetic",
+        "digest_kind": "synthetic_fixture",
+        "sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+        "locator": "synthetic://invented/source-page",
+        "snapshot": {
+          "dto_sha256": "1fa3f30b27cc04af8104193e7e429e5ba3e0787d8426ea98fdfd9fa067efcc95",
+          "received_at": "2026-10-22T00:00:00.123456789Z"
+        }
+      },
+      {
+        "id": "review",
+        "data_kind": "synthetic",
+        "digest_kind": "review_record",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "locator": "synthetic://invented/all-independent-axis-assertions",
+        "snapshot": null
+      }
+    ],
+    "selector": {
+      "id": "kis.us-daily.named-ohlcv/1",
+      "date": "xymd",
+      "open": "open",
+      "high": "high",
+      "low": "low",
+      "close": "clos",
+      "volume": "tvol"
+    },
+    "raw_rows": [
+      {
+        "xymd": "20261021",
+        "clos": "101",
+        "open": "00100.000000000000000001",
+        "high": "102",
+        "low": "99",
+        "tvol": "9007199254740993000",
+        "tamt": "99999999999999999999.9"
+      },
+      {
+        "xymd": "20261020",
+        "clos": "100",
+        "open": "99",
+        "high": "101",
+        "low": "98",
+        "tvol": "1000",
+        "tamt": "88888888888888888888.8"
+      }
+    ]
+  },
+  "rights": {
+    "use": "local_report",
+    "evidence_ref": "review",
+    "valid_from": "2026-10-01T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "inputs": {
+    "source": {
+      "contract": "moai.stock.us-daily-history.v1",
+      "provider": "kis",
+      "origin": "synthetic",
+      "received_at": "2026-10-22T00:00:00.123456789Z",
+      "available_at": "2026-10-22T00:00:00.123456789Z",
+      "source_as_of": null,
+      "event_time": null,
+      "published_at": null,
+      "source_timezone": null,
+      "source_time_status": "provider_bar_labels_not_verified_instants",
+      "rights_status": "pending",
+      "session": "unknown",
+      "delay_state": "unknown",
+      "finality": "unknown",
+      "freshness": "unknown",
+      "validation_status": "provider_shape_checked_not_live_reconciled",
+      "completeness": "unknown",
+      "pagination": {
+        "pages_fetched": 1,
+        "tr_cont": "M",
+        "status": "more_signaled_not_fetched",
+        "automatic_continuation": false,
+        "completeness": "unknown"
+      },
+      "bars_returned": 2,
+      "coverage_status": "single_page_not_complete_history",
+      "canonical_projection_status": "blocked",
+      "canonical": {
+        "instrument_id": null,
+        "asset_class": null,
+        "currency": null,
+        "adjusted": null,
+        "price_unit": null,
+        "volume_unit": null,
+        "turnover_unit": null,
+        "bars": null
+      },
+      "mapping_blockers": [
+        "authoritative_instrument_binding_missing",
+        "currency_price_volume_turnover_units_not_reconciled",
+        "returned_adjustment_and_corporate_action_basis_not_verified",
+        "market_data_rights_pending"
+      ],
+      "unimplemented_derivations": [
+        "automatic_pagination",
+        "full_range_history",
+        "canonical_ohlcv",
+        "weekly_monthly_resampling",
+        "source_timestamp_attribution"
+      ],
+      "warnings": [
+        "Exactly one bounded page is retained in provider order; continuation signals never establish complete history.",
+        "MODP 0/1 is retained as the requested adjustment flag, not proof of returned corporate-action methodology.",
+        "nrec and zdiv remain uninterpreted provider strings. No count, previous-close, scaling or currency inference is made.",
+        "The rsym guard is not authoritative instrument, asset-class or exchange-master reconciliation. Business dates are not publication instants."
+      ],
+      "requested": {
+        "symbol": "SYNTH",
+        "exchange": "NAS",
+        "basis_date": "20261021",
+        "adjustment_code": "0",
+        "asset_class": "stock"
+      },
+      "interval": "1d",
+      "identity_status": "conservative_rsym_guard_matched_not_master_verified",
+      "adjustment_status": "request_flag_preserved_returned_basis_unverified",
+      "raw": {
+        "output1": {
+          "rsym": "DNASSYNTH",
+          "zdiv": "6",
+          "nrec": "99999"
+        },
+        "output2": [
+          {
+            "xymd": "20261021",
+            "clos": "101",
+            "open": "00100.000000000000000001",
+            "high": "102",
+            "low": "99",
+            "tvol": "9007199254740993000",
+            "tamt": "99999999999999999999.9"
+          },
+          {
+            "xymd": "20261020",
+            "clos": "100",
+            "open": "99",
+            "high": "101",
+            "low": "98",
+            "tvol": "1000",
+            "tamt": "88888888888888888888.8"
+          }
+        ]
+      }
+    },
+    "binding": {
+      "contract": "moai.us-daily.history-binding.v1",
+      "history_id": "synthetic:US-daily:1",
+      "cutoff": "2026-10-22T00:00:00.123456790Z",
+      "request": {
+        "start_date": "2026-10-20",
+        "end_date": "2026-10-21"
+      },
+      "provider_identity": {
+        "symbol": "SYNTH",
+        "exchange": "NAS"
+      },
+      "context": {
+        "identity": {
+          "instrument_id": "synthetic:equity:1",
+          "issuer_id": "synthetic:issuer:1",
+          "venue": "SYNTHETIC-NOT-A-VENUE",
+          "asset_class": "equity",
+          "share_class": "synthetic:common",
+          "contract_id": "not_applicable"
+        },
+        "units": {
+          "price_unit": "money_per_share",
+          "currency": "USD",
+          "price_scale": "1",
+          "volume_unit": "shares",
+          "volume_scale": "1"
+        },
+        "session": {
+          "calendar_id": "SYNTHETIC-NOT-EXCHANGE-CALENDAR",
+          "timezone": "America/New_York",
+          "session_id": "synthetic:regular",
+          "interval": "daily",
+          "date_basis": "trade_date",
+          "calendar_verified": true,
+          "calendar_evidence_ref": "review",
+          "coverage_start": "2026-10-20",
+          "coverage_end": "2026-10-21",
+          "coverage_complete": true,
+          "expected_sessions": [
+            "2026-10-20",
+            "2026-10-21"
+          ]
+        },
+        "basis": {
+          "price_kind": "price_level",
+          "return_policy": "price_return",
+          "adjustment": "unadjusted",
+          "adjustment_id": "synthetic:unadjusted",
+          "adjustment_asof": "2026-10-21T20:00:00Z",
+          "actions_coverage_verified": true,
+          "actions_evidence_ref": "review",
+          "volume_adjustment": "unadjusted",
+          "revision_policy": "final_current_at_cutoff",
+          "price_definition": "official_close",
+          "allow_negative_prices": false,
+          "roll_policy": "not_applicable"
+        }
+      },
+      "document_id": "synthetic:source-page:1",
+      "source_artifact_id": "source-page",
+      "selector": {
+        "id": "kis.us-daily.named-ohlcv/1",
+        "date": "xymd",
+        "open": "open",
+        "high": "high",
+        "low": "low",
+        "close": "clos",
+        "volume": "tvol"
+      },
+      "publication_basis": "explicit_publication_evidence_not_receipt_or_date_substitution",
+      "coverage": "selected_single_page_not_complete_provider_collection",
+      "rights": {
+        "use": "local_report",
+        "evidence_ref": "review",
+        "valid_from": "2026-10-01T00:00:00Z",
+        "valid_until": "2026-10-23T00:00:00Z"
+      },
+      "evidence": {
+        "source_authenticity": [
+          "source-page"
+        ],
+        "identity": [
+          "review"
+        ],
+        "field_semantics": [
+          "review"
+        ],
+        "units": [
+          "review"
+        ],
+        "currency": [
+          "review"
+        ],
+        "scales": [
+          "review"
+        ],
+        "session_calendar": [
+          "review"
+        ],
+        "adjustment_actions": [
+          "review"
+        ],
+        "finality_revision": [
+          "review"
+        ],
+        "publication_availability": [
+          "review"
+        ],
+        "coverage": [
+          "review"
+        ],
+        "rights": [
+          "review"
+        ]
+      },
+      "artifacts": [
+        {
+          "id": "source-page",
+          "data_kind": "synthetic",
+          "digest_kind": "synthetic_fixture",
+          "sha256": "efee951335ec01606100ee989fb156260e8849a9839b8dea4b2cfcdbb7d29b55",
+          "locator": "synthetic://invented/source-page",
+          "snapshot": {
+            "dto_sha256": "1fa3f30b27cc04af8104193e7e429e5ba3e0787d8426ea98fdfd9fa067efcc95",
+            "received_at": "2026-10-22T00:00:00.123456789Z"
+          }
+        },
+        {
+          "id": "review",
+          "data_kind": "synthetic",
+          "digest_kind": "review_record",
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "locator": "synthetic://invented/all-independent-axis-assertions",
+          "snapshot": null
+        }
+      ],
+      "points": [
+        {
+          "row_index": 0,
+          "trade_date": "2026-10-21",
+          "session_close_at": "2026-10-21T16:00:00-04:00",
+          "published_at": "2026-10-21T20:01:00Z",
+          "available_at": "2026-10-22T00:00:00.123456790Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "synthetic:r1",
+            "evidence_ref": "review"
+          }
+        },
+        {
+          "row_index": 1,
+          "trade_date": "2026-10-20",
+          "session_close_at": "2026-10-20T16:00:00-04:00",
+          "published_at": "2026-10-20T20:01:00Z",
+          "available_at": "2026-10-22T00:00:00.123456790Z",
+          "finality": "final",
+          "revision": {
+            "status": "original",
+            "revision_id": "synthetic:r1",
+            "evidence_ref": "review"
+          }
+        }
+      ]
+    }
+  },
+  "report_runtime": {
+    "contract": "canonical-history/1.0",
+    "runtime_version": "canonical-history-semantics/rc5.1",
+    "authority": "moai-atp-report/vm-history-semantics-rc5",
+    "files": {
+      "canonical-history.schema.json": "ac755724fc93442a50f38f3da4ff1749cafdb84221cc6b36efa448b562f55b4f",
+      "history_semantics.py": "55b7c1a0ab05b643d27bb27e072f00846b92d7f8bf749c479dcfedc8479318de",
+      "numeric_core.py": "02e3c646714eec8dca3ceffc9c9b9746f6d0670634a31b81fdb937f9f3656f37",
+      "README.md": "51155af56cd93dd3a405e0ebb26f7a8b4e849ba9443aa38206c6370129fe62ee",
+      "compatible-timezones.json": "2509c71686593efbc5f591b7938f48896bb94d9daf65586cdf9d1d15dc4b3c14"
+    },
+    "source_authentication_performed": false
+  },
+  "warnings": [
+    "No production verifier is supplied or configured; host trust must be established separately.",
+    "Original-source artifact hashes and DTO snapshot hashes serve different purposes; neither alone authenticates sources.",
+    "Verified flags are conditional assertions, not source authentication. The pinned report runtime must still validate the history.",
+    "No inferred units, scales, currency, issuer, session, calendar, adjustment, publication, finality, rights or source-page completeness.",
+    "Only finite US daily equity MODP 0 input is supported. The request flag does not prove unadjusted output. No intraday, ETF, KR, futures, adjusted or continuous history."
+  ]
+}

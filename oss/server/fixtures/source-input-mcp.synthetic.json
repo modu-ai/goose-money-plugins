@@ -1,0 +1,778 @@
+{
+  "contract": "moai.source-input-mcp.synthetic-fixtures.v1",
+  "synthetic_only": true,
+  "provider_calls": 0,
+  "fixtures": [
+    {
+      "name": "get_domestic_index_history",
+      "operation_ref": "KIS-072",
+      "input": {
+        "request": {
+          "market_code": "U",
+          "instrument_code": "0001",
+          "start_date": "2026-10-01",
+          "end_date": "2026-10-20",
+          "period_code": "D"
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z"
+      },
+      "result": null,
+      "error_code": "request_contract_conflict",
+      "synthetic_only": true
+    },
+    {
+      "name": "get_global_index_history",
+      "operation_ref": "KIS-264",
+      "input": {
+        "request": {
+          "market_code": "N",
+          "instrument_code": "SYNTH",
+          "start_date": "2026-10-01",
+          "end_date": "2026-10-20",
+          "period_code": "D"
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z"
+      },
+      "result": {
+        "contract": "moai.kis.benchmark-history-raw-evidence.v1",
+        "provider": "KIS",
+        "operation_id": "KIS-264",
+        "endpoint": "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+        "tr_id": "FHKST03030100",
+        "request": {
+          "instrument_code": "SYNTH",
+          "start_date": "2026-10-01",
+          "end_date": "2026-10-20",
+          "period_code": "D",
+          "market_code": "N"
+        },
+        "capture": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T08:00:00.123456789Z",
+          "body_sha256": "ded6fb756eb3c7f616b1b7986a76f5f94637302dd2465e736861b42791fbcb97",
+          "body_byte_length": 296,
+          "http_status": 200,
+          "tr_cont": "M",
+          "hash_scope": "original_decoded_response_text_utf8",
+          "provenance_status": "caller_supplied_capture_metadata",
+          "source_authentication": "not_established"
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z",
+        "receipt_cutoff_status": "receipt_not_after_cutoff_no_publication_inference",
+        "provider_success_status": "0",
+        "source_as_of": null,
+        "publication_at": null,
+        "identity_status": "request_context_only_not_response_verified",
+        "source_time_status": "date_only_no_time_or_timezone",
+        "rights_status": "pending",
+        "canonical_projection_status": "blocked",
+        "output1_state": "present",
+        "header_raw_fields": {
+          "ovrs_nmix_prdy_clpr": {
+            "state": "present",
+            "value": "+00012.3400"
+          },
+          "prdy_ctrt": {
+            "state": "present",
+            "value": "-0.20"
+          },
+          "hts_kor_isnm": {
+            "state": "present",
+            "value": "합성 지수"
+          }
+        },
+        "output2_state": "rows_present",
+        "row_count": 3,
+        "row_order": "captured_output2_array_order",
+        "row_index_basis": "zero_based_output2_index",
+        "rows": [
+          {
+            "source_row_index": 0,
+            "provider_business_date": "2026-10-20",
+            "raw_fields": {
+              "stck_bsop_date": {
+                "state": "present",
+                "value": "20261020"
+              },
+              "ovrs_nmix_prpr": {
+                "state": "present",
+                "value": "-000123.4500"
+              },
+              "ovrs_nmix_oprc": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_hgpr": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_lwpr": {
+                "state": "missing",
+                "value": null
+              },
+              "acml_vol": {
+                "state": "present",
+                "value": "000"
+              },
+              "mod_yn": {
+                "state": "present",
+                "value": "N"
+              }
+            },
+            "canonical": {
+              "instrument_id": null,
+              "asset_class": null,
+              "date": null,
+              "open": null,
+              "high": null,
+              "low": null,
+              "close": null,
+              "volume": null,
+              "turnover": null,
+              "currency": null,
+              "value_unit": null,
+              "volume_unit": null,
+              "turnover_unit": null,
+              "session": null,
+              "timezone": null,
+              "adjusted": null,
+              "source_as_of": null,
+              "publication_at": null
+            }
+          },
+          {
+            "source_row_index": 1,
+            "provider_business_date": "2026-10-19",
+            "raw_fields": {
+              "stck_bsop_date": {
+                "state": "present",
+                "value": "20261019"
+              },
+              "ovrs_nmix_prpr": {
+                "state": "blank",
+                "value": ""
+              },
+              "ovrs_nmix_oprc": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_hgpr": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_lwpr": {
+                "state": "missing",
+                "value": null
+              },
+              "acml_vol": {
+                "state": "missing",
+                "value": null
+              },
+              "mod_yn": {
+                "state": "missing",
+                "value": null
+              }
+            },
+            "canonical": {
+              "instrument_id": null,
+              "asset_class": null,
+              "date": null,
+              "open": null,
+              "high": null,
+              "low": null,
+              "close": null,
+              "volume": null,
+              "turnover": null,
+              "currency": null,
+              "value_unit": null,
+              "volume_unit": null,
+              "turnover_unit": null,
+              "session": null,
+              "timezone": null,
+              "adjusted": null,
+              "source_as_of": null,
+              "publication_at": null
+            }
+          },
+          {
+            "source_row_index": 2,
+            "provider_business_date": "2026-10-20",
+            "raw_fields": {
+              "stck_bsop_date": {
+                "state": "present",
+                "value": "20261020"
+              },
+              "ovrs_nmix_prpr": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_oprc": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_hgpr": {
+                "state": "missing",
+                "value": null
+              },
+              "ovrs_nmix_lwpr": {
+                "state": "missing",
+                "value": null
+              },
+              "acml_vol": {
+                "state": "missing",
+                "value": null
+              },
+              "mod_yn": {
+                "state": "missing",
+                "value": null
+              }
+            },
+            "canonical": {
+              "instrument_id": null,
+              "asset_class": null,
+              "date": null,
+              "open": null,
+              "high": null,
+              "low": null,
+              "close": null,
+              "volume": null,
+              "turnover": null,
+              "currency": null,
+              "value_unit": null,
+              "volume_unit": null,
+              "turnover_unit": null,
+              "session": null,
+              "timezone": null,
+              "adjusted": null,
+              "source_as_of": null,
+              "publication_at": null
+            }
+          }
+        ],
+        "row_limit": 500,
+        "row_limit_basis": "local_safety_budget_not_provider_cap",
+        "request_profile_status": "initial_page_only_execution_not_attested",
+        "page_origin_status": "not_independently_established",
+        "response_range_completeness": "unknown_continuation_conflict",
+        "continuation_action": "none",
+        "source_review": "provided_2026_10_21_snapshot_not_new_live_verification",
+        "blockers": [
+          "canonical_identity_units_currency_session_unverified",
+          "date_only_no_provider_publication_instant",
+          "continuation_portal_sample_conflict",
+          "rights_and_source_authentication_not_established",
+          "weekly_monthly_yearly_not_implemented"
+        ],
+        "warnings": [
+          "Raw field presence and SHA-256 do not establish source authenticity, rights, canonical semantics or completeness.",
+          "Request codes are caller context only, not verified asset classes or response identity.",
+          "Receipt and cutoff are caller supplied; receipt ordering does not establish provider publication or as-of time.",
+          "Snapshot header values are separate from historical rows and never fill missing row fields.",
+          "Only D rows are preserved in source order. The request profile permits initial-page input only; supplied page origin and execution are not attested.",
+          "Raw bounded provider strings are preserved without numerical conversion; numeric formatting does not establish units."
+        ]
+      },
+      "error_code": null,
+      "synthetic_only": true
+    },
+    {
+      "name": "get_market_industry_investor_aggregates",
+      "operation_ref": "KIS-113",
+      "input": {
+        "request": {
+          "operation_ref": "KIS-113",
+          "query": {
+            "FID_COND_MRKT_DIV_CODE": "U",
+            "FID_INPUT_ISCD": "0001",
+            "FID_INPUT_DATE_1": "20261021",
+            "FID_INPUT_DATE_2": "20261021",
+            "FID_INPUT_ISCD_1": "KSP",
+            "FID_INPUT_ISCD_2": ""
+          }
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z"
+      },
+      "result": {
+        "contract": "moai.kis.remaining-source-inputs.v1",
+        "provider": "KIS",
+        "operation_ref": "KIS-113",
+        "catalog_id": "kis.catalog.commit2077773a.row.145",
+        "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-investor-daily-by-market",
+        "tr_id": "FHPTJ04040000",
+        "request": {
+          "operation_ref": "KIS-113",
+          "query": {
+            "FID_COND_MRKT_DIV_CODE": "U",
+            "FID_INPUT_ISCD": "0001",
+            "FID_INPUT_DATE_1": "20261021",
+            "FID_INPUT_DATE_2": "20261021",
+            "FID_INPUT_ISCD_1": "KSP",
+            "FID_INPUT_ISCD_2": ""
+          }
+        },
+        "capture": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T08:00:00.123456789Z",
+          "body_sha256": "4572f69a1e18a9d1c02ca893a97143a0025f1cc16a5d2e1631a683803d184c24",
+          "body_byte_length": 306,
+          "hash_scope": "decoded_response_text_utf8",
+          "hash_algorithm": "sha256",
+          "provenance_status": "caller_supplied_unverified",
+          "source_authentication": "not_established"
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z",
+        "scope": "market_industry_one_day_aggregate_not_stock_flow",
+        "provider_success_status": "0",
+        "request_execution_status": "not_asserted",
+        "first_page_origin": "not_verified",
+        "identity_status": "request_context_only_not_response_verified",
+        "source_as_of": null,
+        "publication_at": null,
+        "receipt_policy": "receipt_not_after_cutoff_no_publication_inference",
+        "groups": [
+          {
+            "source_root": "output",
+            "row_count": 2,
+            "rows": [
+              {
+                "source_row_index": 0,
+                "raw_fields": {
+                  "stck_bsop_date": {
+                    "state": "present",
+                    "value": "20261021"
+                  },
+                  "frgn_ntby_qty": {
+                    "state": "present",
+                    "value": "000012"
+                  },
+                  "prsn_ntby_qty": {
+                    "state": "blank",
+                    "value": ""
+                  },
+                  "orgn_ntby_qty": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "frgn_ntby_tr_pbmn": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "prsn_ntby_tr_pbmn": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "orgn_ntby_tr_pbmn": {
+                    "state": "present",
+                    "value": "-00001.500"
+                  },
+                  "bstp_nmix_prpr": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "bstp_nmix_prdy_ctrt": {
+                    "state": "missing",
+                    "value": null
+                  }
+                },
+                "canonical": {
+                  "instrument_id": null,
+                  "market_id": null,
+                  "value": null,
+                  "unit": null,
+                  "currency": null,
+                  "period": null,
+                  "metric": null,
+                  "event_type": null,
+                  "date": null,
+                  "source_as_of": null,
+                  "publication_at": null
+                }
+              },
+              {
+                "source_row_index": 1,
+                "raw_fields": {
+                  "stck_bsop_date": {
+                    "state": "present",
+                    "value": "20261021"
+                  },
+                  "frgn_ntby_qty": {
+                    "state": "present",
+                    "value": "000012"
+                  },
+                  "prsn_ntby_qty": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "orgn_ntby_qty": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "frgn_ntby_tr_pbmn": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "prsn_ntby_tr_pbmn": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "orgn_ntby_tr_pbmn": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "bstp_nmix_prpr": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "bstp_nmix_prdy_ctrt": {
+                    "state": "missing",
+                    "value": null
+                  }
+                },
+                "canonical": {
+                  "instrument_id": null,
+                  "market_id": null,
+                  "value": null,
+                  "unit": null,
+                  "currency": null,
+                  "period": null,
+                  "metric": null,
+                  "event_type": null,
+                  "date": null,
+                  "source_as_of": null,
+                  "publication_at": null
+                }
+              }
+            ]
+          }
+        ],
+        "row_order": "captured_array_order_zero_based_indices",
+        "response_completeness": "not_established",
+        "rights_status": "pending",
+        "canonical_projection_status": "blocked",
+        "metric_ready": false,
+        "ambiguities": [
+          "currency_scale_quantity_unit_unknown_do_not_borrow_KIS_115",
+          "subgroup_code_semantics_not_verified",
+          "industry_and_market_identity_request_context_only"
+        ],
+        "blockers": [
+          "response_identity_not_independently_verified",
+          "publication_time_not_available",
+          "source_authenticity_not_established",
+          "rights_and_host_egress_not_approved",
+          "canonical_values_not_promoted"
+        ],
+        "warnings": [
+          "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity.",
+          "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified.",
+          "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text.",
+          "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data.",
+          "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+        ]
+      },
+      "error_code": null,
+      "synthetic_only": true
+    },
+    {
+      "name": "get_kis_house_estimates",
+      "operation_ref": "KIS-109",
+      "input": {
+        "request": {
+          "operation_ref": "KIS-109",
+          "query": {
+            "SHT_CD": "005930"
+          }
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z"
+      },
+      "result": null,
+      "error_code": "request_contract_conflict",
+      "synthetic_only": true
+    },
+    {
+      "name": "get_overseas_ice_actions",
+      "operation_ref": "KIS-280",
+      "input": {
+        "request": {
+          "operation_ref": "KIS-280",
+          "query": {
+            "NCOD": "US",
+            "SYMB": "SYNTH",
+            "ST_YMD": "20261001",
+            "ED_YMD": "20261031"
+          }
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z"
+      },
+      "result": {
+        "contract": "moai.kis.remaining-source-inputs.v1",
+        "provider": "KIS",
+        "operation_ref": "KIS-280",
+        "catalog_id": "kis.catalog.commit2077773a.row.328",
+        "endpoint": "/uapi/overseas-price/v1/quotations/rights-by-ice",
+        "tr_id": "HHDFS78330900",
+        "request": {
+          "operation_ref": "KIS-280",
+          "query": {
+            "NCOD": "US",
+            "SYMB": "SYNTH",
+            "ST_YMD": "20261001",
+            "ED_YMD": "20261031"
+          }
+        },
+        "capture": {
+          "origin": "synthetic",
+          "received_at": "2026-10-22T08:00:00.123456789Z",
+          "body_sha256": "b5b3ea3c0bbc12ec87aa699f763986fe5b1ef9bfd2aae7e3c7b71507d0e50e2d",
+          "body_byte_length": 282,
+          "hash_scope": "decoded_response_text_utf8",
+          "hash_algorithm": "sha256",
+          "provenance_status": "caller_supplied_unverified",
+          "source_authentication": "not_established"
+        },
+        "cutoff": "2026-10-22T08:00:00.123456790Z",
+        "scope": "overseas_ICE_A4_A5_not_domestic_KSD",
+        "provider_success_status": "0",
+        "request_execution_status": "not_asserted",
+        "first_page_origin": "not_verified",
+        "identity_status": "request_context_only_not_response_verified",
+        "source_as_of": null,
+        "publication_at": null,
+        "receipt_policy": "receipt_not_after_cutoff_no_publication_inference",
+        "groups": [
+          {
+            "source_root": "output1",
+            "row_count": 3,
+            "rows": [
+              {
+                "source_row_index": 0,
+                "raw_fields": {
+                  "anno_dt": {
+                    "state": "present",
+                    "value": "20250101"
+                  },
+                  "ca_title": {
+                    "state": "present",
+                    "value": "TickerChange"
+                  },
+                  "div_lock_dt": {
+                    "state": "blank",
+                    "value": ""
+                  },
+                  "pay_dt": {
+                    "state": "present",
+                    "value": "20280101"
+                  },
+                  "record_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "validity_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "local_end_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "lock_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "delist_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "redempt_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "early_redempt_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "effective_dt": {
+                    "state": "present",
+                    "value": "20261010"
+                  }
+                },
+                "canonical": {
+                  "instrument_id": null,
+                  "market_id": null,
+                  "value": null,
+                  "unit": null,
+                  "currency": null,
+                  "period": null,
+                  "metric": null,
+                  "event_type": null,
+                  "date": null,
+                  "source_as_of": null,
+                  "publication_at": null
+                }
+              },
+              {
+                "source_row_index": 1,
+                "raw_fields": {
+                  "anno_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "ca_title": {
+                    "state": "present",
+                    "value": "UNKNOWN"
+                  },
+                  "div_lock_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "pay_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "record_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "validity_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "local_end_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "lock_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "delist_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "redempt_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "early_redempt_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "effective_dt": {
+                    "state": "missing",
+                    "value": null
+                  }
+                },
+                "canonical": {
+                  "instrument_id": null,
+                  "market_id": null,
+                  "value": null,
+                  "unit": null,
+                  "currency": null,
+                  "period": null,
+                  "metric": null,
+                  "event_type": null,
+                  "date": null,
+                  "source_as_of": null,
+                  "publication_at": null
+                }
+              },
+              {
+                "source_row_index": 2,
+                "raw_fields": {
+                  "anno_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "ca_title": {
+                    "state": "present",
+                    "value": "UNKNOWN"
+                  },
+                  "div_lock_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "pay_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "record_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "validity_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "local_end_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "lock_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "delist_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "redempt_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "early_redempt_dt": {
+                    "state": "missing",
+                    "value": null
+                  },
+                  "effective_dt": {
+                    "state": "missing",
+                    "value": null
+                  }
+                },
+                "canonical": {
+                  "instrument_id": null,
+                  "market_id": null,
+                  "value": null,
+                  "unit": null,
+                  "currency": null,
+                  "period": null,
+                  "metric": null,
+                  "event_type": null,
+                  "date": null,
+                  "source_as_of": null,
+                  "publication_at": null
+                }
+              }
+            ]
+          }
+        ],
+        "row_order": "captured_array_order_zero_based_indices",
+        "response_completeness": "not_established",
+        "rights_status": "pending",
+        "canonical_projection_status": "blocked",
+        "metric_ready": false,
+        "ambiguities": [
+          "ca_title_taxonomy_incomplete_no_event_type_mapping",
+          "request_date_basis_varies_by_event_no_announcement_date_range_filter",
+          "future_payment_or_effective_dates_allowed",
+          "country_and_symbol_identity_request_context_only"
+        ],
+        "blockers": [
+          "response_identity_not_independently_verified",
+          "publication_time_not_available",
+          "source_authenticity_not_established",
+          "rights_and_host_egress_not_approved",
+          "canonical_values_not_promoted"
+        ],
+        "warnings": [
+          "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity.",
+          "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified.",
+          "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text.",
+          "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data.",
+          "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+        ]
+      },
+      "error_code": null,
+      "synthetic_only": true
+    }
+  ]
+}

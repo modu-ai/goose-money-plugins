@@ -1,0 +1,27 @@
+{
+  "request": {
+    "cik": "0000000001",
+    "taxonomy": "us-gaap",
+    "concept": "Assets"
+  },
+  "selection": {
+    "kind": "source_indices",
+    "indices": [
+      100,
+      110,
+      124,
+      125
+    ]
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T00:00:00.123456789Z",
+    "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/Assets.json",
+    "expected_body_sha256": "bf7afda17ea2d8f364ce10dc6f0a5e3e677eb505178dccf95fd6c8f2aec2ff37"
+  },
+  "cutoff": "2026-10-22T00:00:00.123456789Z",
+  "calendar_guard": {
+    "timezone": "UTC",
+    "cutoff_local_date": "2026-10-22"
+  }
+}

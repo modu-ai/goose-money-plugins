@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "object",
+      "properties": {
+        "instrument_code": {
+          "type": "string"
+        },
+        "start_date": {
+          "type": "string"
+        },
+        "end_date": {
+          "type": "string"
+        },
+        "period_code": {
+          "type": "string",
+          "const": "D"
+        },
+        "market_code": {
+          "type": "string",
+          "const": "U"
+        }
+      },
+      "required": [
+        "instrument_code",
+        "start_date",
+        "end_date",
+        "period_code",
+        "market_code"
+      ],
+      "additionalProperties": false
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "received_at": {
+          "type": "string"
+        },
+        "expected_body_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "http_status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "tr_cont": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "origin",
+        "received_at",
+        "expected_body_sha256",
+        "http_status",
+        "tr_cont"
+      ],
+      "additionalProperties": false
+    },
+    "cutoff": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "request",
+    "capture",
+    "cutoff"
+  ],
+  "additionalProperties": false,
+  "$id": "https://moai.local/contracts/kis072-history-input-v1.schema.json",
+  "$comment": "Shape contract only. Exact calendar/time/row invariants and provenance reconstruction require TypeScript APIs; JSON Schema validation alone is not evidence verification. This is raw evidence, not canonical history."
+}

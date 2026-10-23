@@ -1,0 +1,59 @@
+{
+  "contract": "moai.market.observation-synthetic-evidence.v1",
+  "synthetic_only": true,
+  "actual_source_authenticated": false,
+  "actual_provider_calls": 0,
+  "built_with": {
+    "node": "v24.22.1",
+    "python": "3.12.14"
+  },
+  "verified_at": "2026-10-22T14:30:02.000000000001Z",
+  "reverified_at": "2026-10-22T14:30:02.000000000002Z",
+  "report_runtime": {
+    "contract": "moai.market-observations/0.1-rc7",
+    "authority": "moai-atp-report/vm-market-metrics-rc7-packaging-fix",
+    "files": {
+      "market_metrics.py": "5b7ee095e5fb0f678a8d33e7c6fdee9638997be59997a7d277ecd1532f0f05a8",
+      "financial_core.py": "02f307a1f159efc80a64542dd324b6c5fcc33a7169655328a65ff8d6b25aa180",
+      "input.schema.json": "6ea5017f13ac18231e5b80d646d95419637dff5cd85a9dfad2b29912121a3fa2",
+      "requirements-crosswalk.json": "ab559688641cffa557a64a9eed0ad413765faa31289c6f9cbe0fa16938fb5ee5"
+    },
+    "dependency_closure": "market_metrics.py imports financial_core.py; remaining imports are Python standard library",
+    "source_authentication_performed": false
+  },
+  "cases": [
+    "us-change-with-percent",
+    "us-change-without-percent",
+    "kr-spread"
+  ],
+  "files": {
+    "kr-spread/SYNTHETIC-binding.json": "e657ddcde1339accbf8d308f8eabe9b6c8db661e56ce9b2492416a0c8fb4eaaf",
+    "kr-spread/SYNTHETIC-candidate.json": "c5beda913a8a669ac9f24fa73d5626fe4f930615648aa7ff1fd1653329b25389",
+    "kr-spread/SYNTHETIC-handoff.json": "5796ff229d2a1d0f72bce84375fc9a1d360bf2a2a24d29410635ab449977f403",
+    "kr-spread/SYNTHETIC-original-body.json": "179bb2f1448239111601d68e360a6419bb541b5630eecc2d63bbc616ab89b144",
+    "kr-spread/SYNTHETIC-report-input.json": "703e6f9fe2d78c6edb1136d963e761ff8267d8a862e15f3e2b9ac3a325101423",
+    "kr-spread/SYNTHETIC-report-result.json": "88af5bd68ee4129072ae3f1990540201541d558dd371566ba40f763ad0b82058",
+    "kr-spread/SYNTHETIC-reverified-handoff.json": "06bf2b0fd86754fabfd51f3e85277fff8cc12188c43d0e6db2c049499df4bbaa",
+    "kr-spread/SYNTHETIC-review-record.txt": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+    "kr-spread/SYNTHETIC-source-dto.json": "1472677689e1432d727384a3f72e73e941cc1b66e9060ce4827177c1b1f1ea38",
+    "SYNTHETIC-negative-cases.json": "4a5bf04a10ee0bc797b848309902b7600b0ed8dd47233ddf5d1c6ec699a2b09b",
+    "us-change-with-percent/SYNTHETIC-binding.json": "cc7ba42e9f2c1719b54b9d41e9cd5dca0cce1dc9e331d1b9f2a19ada7b94a2c8",
+    "us-change-with-percent/SYNTHETIC-candidate.json": "f912c9f9b1e02df28bd75beff15a09d056aae0a2612ed3fb0b15dcb735c7e419",
+    "us-change-with-percent/SYNTHETIC-handoff.json": "77808abe034469dea03c3f2170fac6b240c7376dc523904cef57a3e6d8bb2cc1",
+    "us-change-with-percent/SYNTHETIC-original-body.json": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+    "us-change-with-percent/SYNTHETIC-report-input.json": "d083c723ec82d8dfed46f93e2edb1f1c0235f4f79498a69e33501c437af772a1",
+    "us-change-with-percent/SYNTHETIC-report-result.json": "dfa1357e17c0fcabba1b456fb640c507632127b41ec47f07533cebb840e8a3f1",
+    "us-change-with-percent/SYNTHETIC-reverified-handoff.json": "2c6fdf04aaf98436131d071f419dcf085f807a56be02d183c99075cf81669064",
+    "us-change-with-percent/SYNTHETIC-review-record.txt": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+    "us-change-with-percent/SYNTHETIC-source-dto.json": "83ea6b051db521a33bc6fce4782c13845d8256cc123066636dc2009cf17f2039",
+    "us-change-without-percent/SYNTHETIC-binding.json": "d87bba9a79f78f071661cc64469f8db0a6388bafd3cd71f8f7376bcf1299b9f4",
+    "us-change-without-percent/SYNTHETIC-candidate.json": "f7d5e498f1aff2fee49186e3a9150d813b6119ae3f32a8ec24ed616bcc3e80bb",
+    "us-change-without-percent/SYNTHETIC-handoff.json": "040bef1b506a8853e8775de4465e2d33bad5b5d6cf2755c01f6f987b96dcba7c",
+    "us-change-without-percent/SYNTHETIC-original-body.json": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+    "us-change-without-percent/SYNTHETIC-report-input.json": "322afaa179dcf991e104d8ee586979c444fdf1eb4ab87d8a909c4f4cd5ec7952",
+    "us-change-without-percent/SYNTHETIC-report-result.json": "266c595caa51ac9456ef53006455d8d2bf4ba5c0abe891bdbff79c6394044efa",
+    "us-change-without-percent/SYNTHETIC-reverified-handoff.json": "fe3a60e7d3cbb50989faa98a86ea476f413c73888aeb8eac33f338eee7a2b17f",
+    "us-change-without-percent/SYNTHETIC-review-record.txt": "e5730d65ca1d1e570b69254828ecdb51b115b5d2e8fe07e8ff8a8d764a56899f",
+    "us-change-without-percent/SYNTHETIC-source-dto.json": "83ea6b051db521a33bc6fce4782c13845d8256cc123066636dc2009cf17f2039"
+  }
+}

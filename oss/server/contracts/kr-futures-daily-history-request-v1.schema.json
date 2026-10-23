@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "type": "string",
+      "const": "kis.kr_futures_daily_history"
+    },
+    "method": {
+      "type": "string",
+      "const": "GET"
+    },
+    "path": {
+      "type": "string",
+      "const": "/uapi/domestic-futureoption/v1/quotations/inquire-daily-fuopchartprice"
+    },
+    "tr_id": {
+      "type": "string",
+      "const": "FHKIF03020100"
+    },
+    "tr_cont": {
+      "type": "string",
+      "const": ""
+    },
+    "query": {
+      "type": "object",
+      "properties": {
+        "FID_COND_MRKT_DIV_CODE": {
+          "type": "string",
+          "const": "F"
+        },
+        "FID_INPUT_ISCD": {
+          "type": "string",
+          "pattern": "^1[0-9A-Z]{3}(?:0[1-9]|1[0-2])$"
+        },
+        "FID_INPUT_DATE_1": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "FID_INPUT_DATE_2": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "FID_PERIOD_DIV_CODE": {
+          "type": "string",
+          "const": "D"
+        }
+      },
+      "required": [
+        "FID_COND_MRKT_DIV_CODE",
+        "FID_INPUT_ISCD",
+        "FID_INPUT_DATE_1",
+        "FID_INPUT_DATE_2",
+        "FID_PERIOD_DIV_CODE"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "operation",
+    "method",
+    "path",
+    "tr_id",
+    "tr_cont",
+    "query"
+  ],
+  "additionalProperties": false,
+  "$id": "https://schemas.moai.invalid/stock/kr-futures-daily-history-request-v1.schema.json",
+  "$comment": "Offline JSON Schema projection. Runtime Zod schema additionally enforces actual calendar dates, exact receipt equality, row count/coverage/cursor provenance, identity and date-range guards. The .invalid namespace is an identifier, not a hosted resource."
+}

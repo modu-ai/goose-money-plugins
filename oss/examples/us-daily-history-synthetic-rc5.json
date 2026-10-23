@@ -1,0 +1,85 @@
+{
+  "contract": "moai.stock.us-daily-history.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T03:00:00.123456789Z",
+  "available_at": "2026-10-22T03:00:00.123456789Z",
+  "source_as_of": null,
+  "event_time": null,
+  "published_at": null,
+  "source_timezone": null,
+  "source_time_status": "provider_bar_labels_not_verified_instants",
+  "rights_status": "pending",
+  "session": "unknown",
+  "delay_state": "unknown",
+  "finality": "unknown",
+  "freshness": "unknown",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "completeness": "unknown",
+  "pagination": {
+    "pages_fetched": 1,
+    "tr_cont": "M",
+    "status": "more_signaled_not_fetched",
+    "automatic_continuation": false,
+    "completeness": "unknown"
+  },
+  "bars_returned": 1,
+  "coverage_status": "single_page_not_complete_history",
+  "canonical_projection_status": "blocked",
+  "canonical": {
+    "instrument_id": null,
+    "asset_class": null,
+    "currency": null,
+    "adjusted": null,
+    "price_unit": null,
+    "volume_unit": null,
+    "turnover_unit": null,
+    "bars": null
+  },
+  "mapping_blockers": [
+    "authoritative_instrument_binding_missing",
+    "currency_price_volume_turnover_units_not_reconciled",
+    "returned_adjustment_and_corporate_action_basis_not_verified",
+    "market_data_rights_pending"
+  ],
+  "unimplemented_derivations": [
+    "automatic_pagination",
+    "full_range_history",
+    "canonical_ohlcv",
+    "weekly_monthly_resampling",
+    "source_timestamp_attribution"
+  ],
+  "warnings": [
+    "Exactly one bounded page is retained in provider order; continuation signals never establish complete history.",
+    "MODP 0/1 is retained as the requested adjustment flag, not proof of returned corporate-action methodology.",
+    "nrec and zdiv remain uninterpreted provider strings. No count, previous-close, scaling or currency inference is made.",
+    "The rsym guard is not authoritative instrument, asset-class or exchange-master reconciliation. Business dates are not publication instants."
+  ],
+  "requested": {
+    "symbol": "AAPL",
+    "exchange": "NAS",
+    "basis_date": "20261021",
+    "adjustment_code": "1"
+  },
+  "interval": "1d",
+  "identity_status": "conservative_rsym_guard_matched_not_master_verified",
+  "adjustment_status": "request_flag_preserved_returned_basis_unverified",
+  "raw": {
+    "output1": {
+      "rsym": "DNASAAPL",
+      "zdiv": "4",
+      "nrec": "1"
+    },
+    "output2": [
+      {
+        "xymd": "20261021",
+        "clos": "124.1234",
+        "open": "120.0000",
+        "high": "125.0000",
+        "low": "119.0000",
+        "tvol": "900719925474099312345",
+        "tamt": "12345678901234567890.0001"
+      }
+    ]
+  }
+}

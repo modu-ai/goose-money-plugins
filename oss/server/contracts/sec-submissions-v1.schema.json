@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.sec.submissions.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "SEC"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "rights": {
+      "type": "string",
+      "const": "pending"
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "cik_matched"
+    },
+    "source_url": {
+      "type": "string",
+      "format": "uri"
+    },
+    "warnings": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "cik": {
+          "type": "string",
+          "pattern": "^\\d{10}$"
+        },
+        "max_filings": {
+          "default": 50,
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "cik",
+        "max_filings"
+      ],
+      "additionalProperties": false
+    },
+    "entity_name": {
+      "type": "string",
+      "maxLength": 1000
+    },
+    "tickers": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 30
+      }
+    },
+    "exchanges": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 100
+      }
+    },
+    "filings": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "accession_number": {
+            "type": "string",
+            "pattern": "^\\d{10}-\\d{2}-\\d{6}$"
+          },
+          "filing_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "report_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "acceptance_datetime": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "form": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          "primary_document": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "primary_doc_description": {
+            "type": "string",
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "accession_number",
+          "filing_date",
+          "report_date",
+          "acceptance_datetime",
+          "form",
+          "primary_document",
+          "primary_doc_description"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "recent_filing_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "omitted_recent_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "historical_file_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "completeness": {
+      "type": "string",
+      "const": "recent_subset_historical_files_not_fetched"
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "rights",
+    "identity_status",
+    "source_url",
+    "warnings",
+    "request",
+    "entity_name",
+    "tickers",
+    "exchanges",
+    "filings",
+    "recent_filing_count",
+    "omitted_recent_count",
+    "historical_file_count",
+    "completeness"
+  ],
+  "additionalProperties": false
+}

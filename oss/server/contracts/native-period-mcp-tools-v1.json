@@ -1,0 +1,41 @@
+{
+  "contract": "moai.native-period-mcp-registration.v1",
+  "total_registered_names": 34,
+  "default_policy": "deny",
+  "request_periods": [
+    "W",
+    "M",
+    "Y"
+  ],
+  "existing_daily_contracts_changed": false,
+  "source_feeds_added": 0,
+  "tool_result_payload_max_utf8_bytes": 300000,
+  "size_scope": "complete_serialized_tool_result_excluding_outer_JSON_RPC_envelope",
+  "oversize_action": "reject_without_truncation",
+  "production_transport_supplied": false,
+  "automatic_continuation": false,
+  "tools": [
+    {
+      "name": "get_domestic_index_period_history",
+      "operation_ref": "KIS-072",
+      "input_schema": "contracts/mcp-get-domestic-index-period-history.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "canonical_promotion": false,
+      "status": "hard_blocked_request_contract_conflict",
+      "role_grants": []
+    },
+    {
+      "name": "get_global_index_period_history",
+      "operation_ref": "KIS-264",
+      "input_schema": "contracts/mcp-get-global-index-period-history.input.schema.json",
+      "read_only": true,
+      "default_denied": true,
+      "canonical_promotion": false,
+      "status": "injected_host_transport_only",
+      "role_grants": [
+        "market-behavior"
+      ]
+    }
+  ]
+}

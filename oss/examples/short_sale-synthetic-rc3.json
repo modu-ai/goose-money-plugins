@@ -1,0 +1,235 @@
+{
+  "contract": "moai.stock.market-risk.v1",
+  "kind": "short_sale",
+  "request": {
+    "symbol": "000660",
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21"
+  },
+  "provider": "KIS",
+  "operation_ref": "KIS-134",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T01:00:00Z",
+  "source_as_of": null,
+  "rights": "pending",
+  "instrument_association": "request_filter_only",
+  "completeness": "one_page_not_verified_complete",
+  "has_more": false,
+  "rows": [
+    {
+      "response_root": "output1",
+      "row_index": 0,
+      "raw_fields": {
+        "stck_prpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vrss": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vrss_sign": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_ctrt": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_vol": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vol": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_bsop_date": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_clpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stnd_vol_smtn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_cntg_qty": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_vol_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_cntg_qty": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_cntg_qty_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_tr_pbmn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stnd_tr_pbmn_smtn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_tr_pbmn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_tr_pbmn_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_tr_pbmn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_tr_pbmn_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_oprc": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_hgpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_lwpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "avrg_prc": {
+          "raw_value": null,
+          "state": "missing"
+        }
+      },
+      "date_basis": {
+        "trade_date": null,
+        "settlement_date": null,
+        "business_date": null
+      },
+      "unit_verified_quantities": {}
+    },
+    {
+      "response_root": "output2",
+      "row_index": 0,
+      "raw_fields": {
+        "stck_prpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vrss": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vrss_sign": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_ctrt": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_vol": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "prdy_vol": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_bsop_date": {
+          "raw_value": "20261020",
+          "state": "present_unverified"
+        },
+        "stck_clpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stnd_vol_smtn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_cntg_qty": {
+          "raw_value": "10",
+          "state": "present_unverified"
+        },
+        "ssts_vol_rlim": {
+          "raw_value": "1.5",
+          "state": "present_unverified"
+        },
+        "acml_ssts_cntg_qty": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_cntg_qty_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_tr_pbmn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stnd_tr_pbmn_smtn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_tr_pbmn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "ssts_tr_pbmn_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_tr_pbmn": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "acml_ssts_tr_pbmn_rlim": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_oprc": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_hgpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "stck_lwpr": {
+          "raw_value": null,
+          "state": "missing"
+        },
+        "avrg_prc": {
+          "raw_value": null,
+          "state": "missing"
+        }
+      },
+      "date_basis": {
+        "trade_date": null,
+        "settlement_date": null,
+        "business_date": "2026-10-20"
+      },
+      "unit_verified_quantities": {}
+    }
+  ],
+  "canonical_projection_status": "blocked",
+  "canonical_blockers": [
+    "Amount currency/scale and ratio denominator are unresolved; these are raw-only, not canonical.",
+    "Short-sale quantities and lending balance-change semantics remain unmapped.",
+    "Returned identity and publication instant not established; request filter is not independent identity evidence.",
+    "Data rights, egress and corrections not cleared. One page is not complete history."
+  ]
+}

@@ -1,0 +1,267 @@
+{
+  "contract": "moai.kis.remaining-source-inputs.v1",
+  "provider": "KIS",
+  "operation_ref": "KIS-280",
+  "catalog_id": "kis.catalog.commit2077773a.row.328",
+  "endpoint": "/uapi/overseas-price/v1/quotations/rights-by-ice",
+  "tr_id": "HHDFS78330900",
+  "request": {
+    "operation_ref": "KIS-280",
+    "query": {
+      "NCOD": "US",
+      "SYMB": "SYNTH",
+      "ST_YMD": "20261001",
+      "ED_YMD": "20261031"
+    }
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T08:00:00.123456789Z",
+    "body_sha256": "b5b3ea3c0bbc12ec87aa699f763986fe5b1ef9bfd2aae7e3c7b71507d0e50e2d",
+    "body_byte_length": 282,
+    "hash_scope": "decoded_response_text_utf8",
+    "hash_algorithm": "sha256",
+    "provenance_status": "caller_supplied_unverified",
+    "source_authentication": "not_established"
+  },
+  "cutoff": "2026-10-22T08:00:00.123456789Z",
+  "scope": "overseas_ICE_A4_A5_not_domestic_KSD",
+  "provider_success_status": "0",
+  "request_execution_status": "not_asserted",
+  "first_page_origin": "not_verified",
+  "identity_status": "request_context_only_not_response_verified",
+  "source_as_of": null,
+  "publication_at": null,
+  "receipt_policy": "receipt_not_after_cutoff_no_publication_inference",
+  "groups": [
+    {
+      "source_root": "output1",
+      "row_count": 3,
+      "rows": [
+        {
+          "source_row_index": 0,
+          "raw_fields": {
+            "anno_dt": {
+              "state": "present",
+              "value": "20250101"
+            },
+            "ca_title": {
+              "state": "present",
+              "value": "TickerChange"
+            },
+            "div_lock_dt": {
+              "state": "blank",
+              "value": ""
+            },
+            "pay_dt": {
+              "state": "present",
+              "value": "20280101"
+            },
+            "record_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "validity_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "local_end_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "lock_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "delist_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "redempt_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "early_redempt_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "effective_dt": {
+              "state": "present",
+              "value": "20261010"
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "market_id": null,
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "metric": null,
+            "event_type": null,
+            "date": null,
+            "source_as_of": null,
+            "publication_at": null
+          }
+        },
+        {
+          "source_row_index": 1,
+          "raw_fields": {
+            "anno_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "ca_title": {
+              "state": "present",
+              "value": "UNKNOWN"
+            },
+            "div_lock_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "pay_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "record_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "validity_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "local_end_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "lock_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "delist_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "redempt_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "early_redempt_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "effective_dt": {
+              "state": "missing",
+              "value": null
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "market_id": null,
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "metric": null,
+            "event_type": null,
+            "date": null,
+            "source_as_of": null,
+            "publication_at": null
+          }
+        },
+        {
+          "source_row_index": 2,
+          "raw_fields": {
+            "anno_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "ca_title": {
+              "state": "present",
+              "value": "UNKNOWN"
+            },
+            "div_lock_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "pay_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "record_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "validity_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "local_end_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "lock_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "delist_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "redempt_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "early_redempt_dt": {
+              "state": "missing",
+              "value": null
+            },
+            "effective_dt": {
+              "state": "missing",
+              "value": null
+            }
+          },
+          "canonical": {
+            "instrument_id": null,
+            "market_id": null,
+            "value": null,
+            "unit": null,
+            "currency": null,
+            "period": null,
+            "metric": null,
+            "event_type": null,
+            "date": null,
+            "source_as_of": null,
+            "publication_at": null
+          }
+        }
+      ]
+    }
+  ],
+  "row_order": "captured_array_order_zero_based_indices",
+  "response_completeness": "not_established",
+  "rights_status": "pending",
+  "canonical_projection_status": "blocked",
+  "metric_ready": false,
+  "ambiguities": [
+    "ca_title_taxonomy_incomplete_no_event_type_mapping",
+    "request_date_basis_varies_by_event_no_announcement_date_range_filter",
+    "future_payment_or_effective_dates_allowed",
+    "country_and_symbol_identity_request_context_only"
+  ],
+  "blockers": [
+    "response_identity_not_independently_verified",
+    "publication_time_not_available",
+    "source_authenticity_not_established",
+    "rights_and_host_egress_not_approved",
+    "canonical_values_not_promoted"
+  ],
+  "warnings": [
+    "Hash binds decoded original response text encoded as UTF-8, not wire bytes or source authenticity.",
+    "Request, origin, receipt and cutoff are independent caller-supplied context. Pure normalization does not assert a request occurred or first-page origin was verified.",
+    "Only explicitly documented fields are projected; unreviewed envelope, message, output1 estimate data and output3 data3/data4 stay only in separately retained original text.",
+    "Source array order, duplicates, blank strings and missing fields are retained. Empty success does not prove completeness or absence of data.",
+    "Date-only fields and estimate-period labels are not publication timestamps. Canonical values, units and identities remain null."
+  ]
+}

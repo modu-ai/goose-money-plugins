@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.market-flows.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "operation_id": {
+      "type": "string",
+      "const": "KIS-115"
+    },
+    "symbol": {
+      "type": "string",
+      "pattern": "^\\d{6}$"
+    },
+    "board": {
+      "type": "string",
+      "enum": [
+        "J",
+        "NX",
+        "UN"
+      ]
+    },
+    "requested_input_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "origin": {
+      "type": "string",
+      "const": "synthetic"
+    },
+    "received_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "request_status": {
+      "type": "string",
+      "const": "blocked_official_parameter_conflict"
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "page_count": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "candidates": {
+      "maxItems": 30000,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "actor": {
+            "type": "string",
+            "enum": [
+              "foreign",
+              "individual",
+              "institution"
+            ]
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?\\d+$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quantity_unit": {
+            "type": "string",
+            "const": "shares"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?\\d+(?:\\.\\d+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "amount_unit": {
+            "type": "string",
+            "const": "KRW"
+          },
+          "quantity_state": {
+            "type": "string",
+            "enum": [
+              "present",
+              "blank",
+              "missing"
+            ]
+          },
+          "amount_state": {
+            "type": "string",
+            "enum": [
+              "present",
+              "blank",
+              "missing"
+            ]
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canonical_projection_status": {
+            "type": "string",
+            "const": "blocked"
+          }
+        },
+        "required": [
+          "date",
+          "actor",
+          "quantity",
+          "quantity_unit",
+          "amount",
+          "amount_unit",
+          "quantity_state",
+          "amount_state",
+          "source_ref",
+          "canonical_projection_status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "operation_id",
+    "symbol",
+    "board",
+    "requested_input_date",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "rights_status",
+    "request_status",
+    "canonical_projection_status",
+    "page_count",
+    "candidates",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

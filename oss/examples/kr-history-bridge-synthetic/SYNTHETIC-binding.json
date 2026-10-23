@@ -1,0 +1,265 @@
+{
+  "contract": "moai.kr-daily.synthetic-only-history-binding.v1",
+  "scope": "synthetic_fixture_demonstration_only",
+  "history_id": "SYNTHETIC-KR-DAILY",
+  "document_id": "SYNTHETIC-KR-ORIGINAL-TEXT",
+  "cutoff": "2026-10-22T00:00:00.123456789012345678903Z",
+  "request": {
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21"
+  },
+  "provider_identity": {
+    "symbol": "999999",
+    "board": "J"
+  },
+  "source_link": {
+    "original_body_sha256": "0b76049e798ba3e029b83cb6a941376952bd1e79737607a5356f69472afb65e0",
+    "raw_dto_sha256": "7451fefc4cb5c961dcc9c592b3de6ba31210c427b652404db9895241288fc3a7",
+    "raw_input_sha256": "9c47b48f03f88c733b214a220d44044988b315bdbaaa46a680f2bf706467fbeb"
+  },
+  "selector": {
+    "id": "kis.kr-daily.synthetic.named-ohlcv/1",
+    "date": "stck_bsop_date",
+    "open": "stck_oprc",
+    "high": "stck_hgpr",
+    "low": "stck_lwpr",
+    "close": "stck_clpr",
+    "volume": "acml_vol"
+  },
+  "adjustment_code_policy": "opaque_uninterpreted_portal_sample_conflict_remains",
+  "context": {
+    "identity": {
+      "instrument_id": "SYNTHETIC-KR-COMMON",
+      "issuer_id": "SYNTHETIC-KR-ISSUER",
+      "venue": "SYNTHETIC-KR-VENUE",
+      "asset_class": "equity",
+      "share_class": "common",
+      "contract_id": "not_applicable"
+    },
+    "units": {
+      "price_unit": "money_per_share",
+      "currency": "KRW",
+      "price_scale": "1",
+      "volume_unit": "shares",
+      "volume_scale": "1"
+    },
+    "session": {
+      "calendar_id": "SYNTHETIC-EXPLICIT-NOT-EXCHANGE-CALENDAR",
+      "timezone": "Asia/Seoul",
+      "session_id": "SYNTHETIC-REGULAR",
+      "interval": "daily",
+      "date_basis": "trade_date",
+      "calendar_verified": true,
+      "calendar_evidence_ref": "synthetic:session_calendar",
+      "coverage_start": "2026-10-16",
+      "coverage_end": "2026-10-22",
+      "coverage_complete": true,
+      "expected_sessions": [
+        "2026-10-16",
+        "2026-10-19",
+        "2026-10-20",
+        "2026-10-21"
+      ]
+    },
+    "basis": {
+      "price_kind": "price_level",
+      "return_policy": "price_return",
+      "adjustment": "unadjusted",
+      "adjustment_id": "SYNTHETIC-NO-ACTION-BASIS",
+      "adjustment_asof": "2026-10-21T09:00:00Z",
+      "actions_coverage_verified": true,
+      "actions_evidence_ref": "synthetic:no_actions",
+      "volume_adjustment": "unadjusted",
+      "revision_policy": "final_current_at_cutoff",
+      "price_definition": "official_close",
+      "allow_negative_prices": false,
+      "roll_policy": "not_applicable"
+    }
+  },
+  "no_actions": {
+    "policy": "no_adjustment_relevant_actions",
+    "coverage_complete": true,
+    "coverage_start": "2026-10-16",
+    "coverage_end": "2026-10-22",
+    "effective_from": "2026-10-16T00:00:00+09:00",
+    "effective_through": "2026-10-22T00:00:00.123456789012345678903Z",
+    "knowledge_asof": "2026-10-22T00:00:00.123456789012345678903Z",
+    "events": [],
+    "price_basis_changes": false,
+    "share_basis_changes": false,
+    "quantity_unit_changes": false,
+    "evidence_ref": "synthetic:no_actions"
+  },
+  "rights": {
+    "use": "local_report",
+    "scope": "synthetic_fixture_only",
+    "evidence_ref": "synthetic:rights",
+    "valid_from": "2026-10-01T00:00:00Z",
+    "valid_until": "2026-10-23T00:00:00Z"
+  },
+  "evidence": {
+    "fixture_lineage": "synthetic:fixture_lineage",
+    "identity": "synthetic:identity",
+    "field_semantics": "synthetic:field_semantics",
+    "units": "synthetic:units",
+    "currency": "synthetic:currency",
+    "scales": "synthetic:scales",
+    "session_calendar": "synthetic:session_calendar",
+    "unadjusted_basis": "synthetic:unadjusted_basis",
+    "no_actions": "synthetic:no_actions",
+    "finality_revision": "synthetic:finality_revision",
+    "publication_availability": "synthetic:publication_availability",
+    "rights": "synthetic:rights"
+  },
+  "artifacts": [
+    {
+      "id": "synthetic:fixture_lineage",
+      "axis": "fixture_lineage",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented JSON response and raw DTO linked by separately checked hashes. No provider call or source authentication.",
+      "sha256": "cdb1719fd3168a62aa0dcf595f22cd500e1320cb639b331caf4aa33845615eae",
+      "locator": "synthetic://kr-history-fixture/fixture_lineage"
+    },
+    {
+      "id": "synthetic:identity",
+      "axis": "identity",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Fictional symbol 999999 represents SYNTHETIC-KR-COMMON equity on SYNTHETIC-KR-VENUE, common share class, issuer SYNTHETIC-KR-ISSUER.",
+      "sha256": "e1d6a7f85b25ff4f152d7e07a52a4c65b274b63ea3242d2a8b9c69d61ea160b8",
+      "locator": "synthetic://kr-history-fixture/identity"
+    },
+    {
+      "id": "synthetic:field_semantics",
+      "axis": "field_semantics",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented stck_oprc, stck_hgpr, stck_lwpr, stck_clpr and acml_vol mean open, high, low, official close and daily share volume respectively.",
+      "sha256": "5e39035f4346cdebe17715e31e9f9996ec2c42cdcf7c154b231e1629f79ab4d3",
+      "locator": "synthetic://kr-history-fixture/field_semantics"
+    },
+    {
+      "id": "synthetic:units",
+      "axis": "units",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Fictional prices are money_per_share and fictional volume is shares. No endpoint unit inference.",
+      "sha256": "534e164ecb8110ef7adb13039292b958b270fbac957c17b6c7c09217683dc18f",
+      "locator": "synthetic://kr-history-fixture/units"
+    },
+    {
+      "id": "synthetic:currency",
+      "axis": "currency",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Fictional prices are explicitly KRW. No market-code currency inference.",
+      "sha256": "4d25e12523774110601b12b23170908c685b2651d79f6d87e8a51e873d2d84f8",
+      "locator": "synthetic://kr-history-fixture/currency"
+    },
+    {
+      "id": "synthetic:scales",
+      "axis": "scales",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Both fictional price and volume scales are explicitly 1.",
+      "sha256": "c75638a8883b78de1282d5091d862367812f76ad898bc2e939e880124d432459",
+      "locator": "synthetic://kr-history-fixture/scales"
+    },
+    {
+      "id": "synthetic:session_calendar",
+      "axis": "session_calendar",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented complete calendar covers 2026-10-16 through 2026-10-22. Exactly 16, 19, 20, 21 are sessions; includes all supplied warm-up rows. This is NOT a verified exchange calendar.",
+      "sha256": "d79d50ffd68f01d4e65c8940c099120520986428ce11b20aa5298d757f5c6b03",
+      "locator": "synthetic://kr-history-fixture/session_calendar"
+    },
+    {
+      "id": "synthetic:unadjusted_basis",
+      "axis": "unadjusted_basis",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented data are unadjusted final daily official-close price levels and unadjusted quantities. Adjustment codes 0 and 1 remain opaque and unresolved for actual data.",
+      "sha256": "e72bb63c1ca3b6fa301d59935f1e786bd7b7af0ece3a55e901c3de0003ffa6f5",
+      "locator": "synthetic://kr-history-fixture/unadjusted_basis"
+    },
+    {
+      "id": "synthetic:no_actions",
+      "axis": "no_actions",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented world has no adjustment-relevant actions or price/share/quantity-unit changes from 2026-10-16 local midnight through the exact cutoff, including all warm-up dates and capture/adjustment vintage. No events are supported.",
+      "sha256": "f55ca6b238bb57ee01f2befd719cf2fcb9e7a7cbf89ce52a91aca93098f628eb",
+      "locator": "synthetic://kr-history-fixture/no_actions"
+    },
+    {
+      "id": "synthetic:finality_revision",
+      "axis": "finality_revision",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented original revision r1 is final and current at the exact cutoff for every supplied row.",
+      "sha256": "ccac6e3c30f195508d65079503ad5febd6c3fdb768b85ecbb5fdc64602b4a5d0",
+      "locator": "synthetic://kr-history-fixture/finality_revision"
+    },
+    {
+      "id": "synthetic:publication_availability",
+      "axis": "publication_availability",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented dates use Asia/Seoul close-date trade dates with explicit close and publication instants. Date-only observations have no observed_at instant.",
+      "sha256": "84892dba00a33ece1f967d480c12d5536723b280abce952375ec2f36335eb9b1",
+      "locator": "synthetic://kr-history-fixture/publication_availability"
+    },
+    {
+      "id": "synthetic:rights",
+      "axis": "rights",
+      "data_kind": "synthetic",
+      "digest_kind": "synthetic_fixture_definition_utf8",
+      "content": "Invented fixtures alone permit local_report use from 2026-10-01T00:00:00Z through 2026-10-23T00:00:00Z. No real provider rights are established.",
+      "sha256": "aad2f1b4aaca8d0b4592ab1a55a656694153a4a8c723eb742183ae4c179b81d0",
+      "locator": "synthetic://kr-history-fixture/rights"
+    }
+  ],
+  "points": [
+    {
+      "source_row_index": 0,
+      "trade_date": "2026-10-21",
+      "session_close_at": "2026-10-21T15:30:00+09:00",
+      "published_at": "2026-10-21T15:31:00+09:00",
+      "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+      "finality": "final",
+      "revision": {
+        "status": "original",
+        "revision_id": "r1",
+        "evidence_ref": "synthetic:finality_revision"
+      }
+    },
+    {
+      "source_row_index": 1,
+      "trade_date": "2026-10-19",
+      "session_close_at": "2026-10-19T15:30:00+09:00",
+      "published_at": "2026-10-19T15:31:00+09:00",
+      "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+      "finality": "final",
+      "revision": {
+        "status": "original",
+        "revision_id": "r1",
+        "evidence_ref": "synthetic:finality_revision"
+      }
+    },
+    {
+      "source_row_index": 2,
+      "trade_date": "2026-10-16",
+      "session_close_at": "2026-10-16T15:30:00+09:00",
+      "published_at": "2026-10-16T15:31:00+09:00",
+      "available_at": "2026-10-21T08:00:00.123456789012345678902Z",
+      "finality": "final",
+      "revision": {
+        "status": "original",
+        "revision_id": "r1",
+        "evidence_ref": "synthetic:finality_revision"
+      }
+    }
+  ]
+}

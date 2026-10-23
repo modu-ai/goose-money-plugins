@@ -1,0 +1,711 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.stock.us-product-profile.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "kis"
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "actual",
+        "synthetic"
+      ]
+    },
+    "received_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "provider_timestamp_not_promoted_to_source_instant"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "validation_status": {
+      "type": "string",
+      "const": "provider_shape_checked_not_live_reconciled"
+    },
+    "source_authenticity": {
+      "type": "string",
+      "const": "unverified_injected_response"
+    },
+    "coverage": {
+      "type": "string",
+      "const": "single_provider_product_profile_not_fund_holdings"
+    },
+    "symbol_from_request": {
+      "type": "string",
+      "maxLength": 16,
+      "pattern": "^[A-Z][A-Z0-9]*(?:[.-][A-Z0-9]+)*$"
+    },
+    "exchange_from_request": {
+      "type": "string",
+      "enum": [
+        "NAS",
+        "NYS",
+        "AMS"
+      ]
+    },
+    "product_type_code_from_request": {
+      "type": "string",
+      "enum": [
+        "512",
+        "513",
+        "529"
+      ]
+    },
+    "expected_standard_product_number_from_request": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "allOf": [
+            {
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+            },
+            {
+              "pattern": "^[A-Z0-9.-]+$"
+            }
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "provider_standard_number_present_not_bound_to_request"
+    },
+    "expectation_status": {
+      "type": "string",
+      "enum": [
+        "not_requested",
+        "caller_standard_number_matched_not_verified"
+      ]
+    },
+    "provider_output_shape": {
+      "type": "string",
+      "enum": [
+        "object",
+        "singleton_array"
+      ]
+    },
+    "provider_metadata": {
+      "type": "object",
+      "properties": {
+        "http_status": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 299
+        },
+        "tr_cont": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "",
+                "D",
+                "E"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rt_cd": {
+          "type": "string",
+          "const": "0"
+        },
+        "msg_cd": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "msg1": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 500,
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "http_status",
+        "tr_cont",
+        "rt_cd",
+        "msg_cd",
+        "msg1"
+      ],
+      "additionalProperties": false
+    },
+    "raw": {
+      "type": "object",
+      "properties": {
+        "std_pdno": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "allOf": [
+            {
+              "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+            },
+            {
+              "pattern": "^[A-Z0-9.-]+$"
+            }
+          ]
+        },
+        "prdt_eng_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "natn_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "natn_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "tr_mket_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "tr_mket_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_excg_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_excg_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "tr_crcy_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_papr": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "crcy_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_stck_dvsn_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "prdt_clsf_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "prdt_clsf_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "sll_unit_qty": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "buy_unit_qty": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "tr_unit_amt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "lstg_stck_num": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "lstg_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "ovrs_stck_tr_stop_dvsn_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "lstg_abol_item_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_stck_prdt_grp_no": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "lstg_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "tax_levy_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_stck_erlm_rosn_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_stck_hist_rght_dvsn_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "chng_bf_pdno": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "prdt_type_cd_2": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_item_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "sedol_no": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "blbg_tckr_text": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_stck_etf_risk_drtp_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "etp_chas_erng_rt_dbnb": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "istt_usge_isin_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "mint_svc_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "mint_svc_yn_chng_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "prdt_name": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "lei_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_stck_stop_rson_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "lstg_abol_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "mini_stk_tr_stat_dvsn_cd": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "mint_frst_svc_erlm_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "mint_dcpt_trad_psbl_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "mint_fnum_trad_psbl_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "mint_cblc_cvsn_ipsb_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ptp_item_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ptp_item_trfx_exmt_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ptp_item_trfx_exmt_strt_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "ptp_item_trfx_exmt_end_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "dtm_tr_psbl_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "sdrf_stop_ecls_yn": {
+          "type": "string",
+          "maxLength": 40,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "sdrf_stop_ecls_erlm_dt": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "memo_text1": {
+          "type": "string",
+          "maxLength": 500,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        },
+        "ovrs_now_pric1": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 40,
+              "pattern": "^-?\\d+(?:\\.\\d+)?$"
+            },
+            {
+              "type": "string",
+              "const": ""
+            }
+          ]
+        },
+        "last_rcvg_dtime": {
+          "type": "string",
+          "maxLength": 80,
+          "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+        }
+      },
+      "required": [
+        "std_pdno"
+      ],
+      "additionalProperties": false
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "canonical": {
+      "type": "object",
+      "properties": {
+        "instrument_id": {
+          "type": "null"
+        },
+        "asset_class": {
+          "type": "null"
+        },
+        "exchange": {
+          "type": "null"
+        },
+        "domicile_country": {
+          "type": "null"
+        },
+        "currency": {
+          "type": "null"
+        },
+        "listing_date": {
+          "type": "null"
+        },
+        "delisting_date": {
+          "type": "null"
+        },
+        "price": {
+          "type": "null"
+        },
+        "shares_outstanding": {
+          "type": "null"
+        },
+        "trade_unit": {
+          "type": "null"
+        },
+        "price_unit": {
+          "type": "null"
+        },
+        "quantity_unit": {
+          "type": "null"
+        },
+        "leverage_multiple": {
+          "type": "null"
+        },
+        "expense_ratio": {
+          "type": "null"
+        },
+        "holdings": {
+          "type": "null"
+        },
+        "weights": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "instrument_id",
+        "asset_class",
+        "exchange",
+        "domicile_country",
+        "currency",
+        "listing_date",
+        "delisting_date",
+        "price",
+        "shares_outstanding",
+        "trade_unit",
+        "price_unit",
+        "quantity_unit",
+        "leverage_multiple",
+        "expense_ratio",
+        "holdings",
+        "weights"
+      ],
+      "additionalProperties": false
+    },
+    "mapping_blockers": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "returned_request_ticker_and_exchange_binding_not_verified"
+        },
+        {
+          "type": "string",
+          "const": "standard_product_number_not_reconciled_with_authoritative_master"
+        },
+        {
+          "type": "string",
+          "const": "stock_etf_etn_classification_codes_not_reconciled"
+        },
+        {
+          "type": "string",
+          "const": "monetary_quantity_units_and_scaling_not_reconciled"
+        },
+        {
+          "type": "string",
+          "const": "provider_timestamp_format_timezone_and_freshness_not_reconciled"
+        },
+        {
+          "type": "string",
+          "const": "redistribution_rights_not_verified"
+        }
+      ],
+      "items": false,
+      "minItems": 6,
+      "maxItems": 6
+    },
+    "warnings": {
+      "minItems": 1,
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 500,
+        "pattern": "^[^\\u0000-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069\\ufffd]*$"
+      }
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "origin",
+    "received_at",
+    "source_as_of",
+    "source_time_status",
+    "rights_status",
+    "validation_status",
+    "source_authenticity",
+    "coverage",
+    "symbol_from_request",
+    "exchange_from_request",
+    "product_type_code_from_request",
+    "expected_standard_product_number_from_request",
+    "identity_status",
+    "expectation_status",
+    "provider_output_shape",
+    "provider_metadata",
+    "raw",
+    "canonical_projection_status",
+    "canonical",
+    "mapping_blockers",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

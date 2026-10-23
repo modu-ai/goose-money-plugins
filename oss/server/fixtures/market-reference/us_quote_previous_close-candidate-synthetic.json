@@ -1,0 +1,128 @@
+{
+  "contract": "moai.market.selected-reference-evidence.v1",
+  "status": "selected_raw_evidence_candidate_only",
+  "policy": "us_quote_previous_close",
+  "cutoff": "2026-10-22T03:00:00.123456789124Z",
+  "requested_role": "market.previous_close",
+  "role_association_status": "requested_destination_label_not_semantic_binding",
+  "provider": "kis",
+  "origin": "synthetic",
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "source_request": {
+    "operation": "kis.us_quote",
+    "method": "GET",
+    "path": "/uapi/overseas-price/v1/quotations/price",
+    "tr_id": "HHDFS00000300",
+    "query": {
+      "AUTH": "",
+      "EXCD": "NAS",
+      "SYMB": "SYNTH"
+    }
+  },
+  "request_evidence_status": "reconstructed_from_existing_dto_not_original_http_receipt",
+  "selected": {
+    "dto_selector": "$.raw.base",
+    "provider_selector": "$.output.base",
+    "raw_lexeme": "00099.0000000000000001",
+    "raw_state": "decimal_text_candidate",
+    "lexical_profile": "ascii_unsigned_decimal_max_40_chars_no_whitespace_sign_exponent_or_grouping",
+    "lexical_status_note": "syntax_only_not_economic_validity_units_or_canonical_value"
+  },
+  "received_at": "2026-10-22T03:00:00.123456789123Z",
+  "receipt_status": "local_receipt_not_source_or_publication_time",
+  "source_at": null,
+  "published_at": null,
+  "available_at": null,
+  "session": null,
+  "previous_session_id": null,
+  "previous_session_close_at": null,
+  "currency": null,
+  "price_unit": null,
+  "split_basis": null,
+  "source_authenticated": false,
+  "identity_verified": false,
+  "semantic_binding_verified": false,
+  "simultaneous_quotes_verified": false,
+  "quote_firmness": "unverified",
+  "rights_status": "pending",
+  "canonical_observation": null,
+  "metric_ready": false,
+  "snapshot": {
+    "value": {
+      "contract": "moai.stock.us-quote.v1",
+      "provider": "kis",
+      "origin": "synthetic",
+      "received_at": "2026-10-22T03:00:00.123456789123Z",
+      "source_as_of": null,
+      "source_time_status": "not_returned_by_reviewed_quote_contract",
+      "rights_status": "pending",
+      "validation_status": "provider_shape_checked_not_live_reconciled",
+      "canonical_projection_status": "blocked",
+      "mapping_blockers": [
+        "authoritative_instrument_master_binding_missing",
+        "currency_not_returned_by_quote",
+        "price_volume_turnover_units_not_reconciled",
+        "stock_or_etf_classification_not_verified"
+      ],
+      "warnings": [
+        "Request exchange and asset class are caller inputs, not verified classification.",
+        "rsym matching is a conservative request guard, not authoritative master-data reconciliation.",
+        "No live, delayed, session, timezone or freshness claim is inferred. Raw fields retain provider decimal strings."
+      ],
+      "symbol_from_request": "SYNTH",
+      "exchange_from_request": "NAS",
+      "asset_class_from_request": "stock",
+      "identity_status": "conservative_rsym_guard_matched_not_master_verified",
+      "raw": {
+        "rsym": "DNASSYNTH",
+        "zdiv": "4",
+        "base": "00099.0000000000000001",
+        "last": "101",
+        "diff": "2",
+        "rate": "2.02"
+      },
+      "canonical": {
+        "instrument_id": null,
+        "asset_class": null,
+        "currency": null,
+        "last_price": null,
+        "previous_close": null,
+        "change": null,
+        "change_percent": null,
+        "volume": null,
+        "turnover": null,
+        "price_unit": null,
+        "volume_unit": null
+      }
+    },
+    "sha256": "1152e2f43dcd9a2a00b78bc3e7caadf53234638d56f39c756548bf2e813ac1d9",
+    "hash_algorithm": "sha256",
+    "serialization": "sorted_object_keys_json_utf8_v1",
+    "hash_scope": "whole_validated_provider_dto_snapshot",
+    "original_http_body_hash": null,
+    "source_authentication": false
+  },
+  "mapping_blockers": [
+    "source_authenticity_and_current_rights_unverified",
+    "security_class_venue_and_split_basis_unverified",
+    "currency_scale_and_one_share_price_unit_unverified",
+    "exact_source_publication_and_availability_instants_unverified",
+    "official_previous_session_reference_unverified",
+    "firm_regular_session_and_same_instant_book_unverified"
+  ],
+  "warnings": [
+    "Finite raw field selection only. Existing market.* names are requested destination labels, not verified report inputs.",
+    "Whole DTO and candidate SHA256 are deterministic integrity links, not original HTTP-body hashes, signatures or source authentication.",
+    "No last-minus-change, stck_sdpr substitution, output2 indicative promotion, zdiv scaling or currency inference occurs.",
+    "Receipt time and intraday bar dates/times never date an orderbook clock or an output1 prior-close header.",
+    "A decimal-text syntax candidate may be zero, stale, crossed or economically invalid. No canonical value or metric is computed.",
+    "This selector does not authorize acquisition, persistence, model-host egress, derived use, export or redistribution."
+  ],
+  "integrity": {
+    "sha256": "156b7fe09c7a3980af570268dbdedb36a967d2547ddd987d5d3ba0b8f21586f2",
+    "hash_algorithm": "sha256",
+    "serialization": "sorted_object_keys_json_utf8_v1",
+    "scope": "candidate_except_integrity",
+    "source_authentication": false
+  }
+}

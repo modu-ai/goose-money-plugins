@@ -1,0 +1,113 @@
+{
+  "requested_role": "reported.revenue",
+  "cutoff": "2026-10-22T00:00:00.123456789Z",
+  "calendar_guard": {
+    "timezone": "UTC",
+    "cutoff_local_date": "2026-10-22"
+  },
+  "concept_result": {
+    "contract": "moai.sec.company-concept.v1",
+    "provider": "SEC",
+    "origin": "synthetic",
+    "received_at": "2026-10-22T00:00:00.123456789Z",
+    "source_as_of": null,
+    "rights": "pending",
+    "identity_status": "cik_matched",
+    "source_url": "https://data.sec.gov/api/xbrl/companyconcept/CIK0000000001/us-gaap/Revenues.json",
+    "warnings": [
+      "Original JSON numeric lexemes retained exactly; raw transport must never reserialize previously parsed numeric data.",
+      "Units are source XBRL units, not an implicit currency conversion or inferred reporting scale.",
+      "All reported versions retained in provider order, not latest/restatement selection. No quarterly/cumulative or accounting-basis inference.",
+      "No complete company financial model, recommendation, rights clearance or live verification is implied."
+    ],
+    "request": {
+      "cik": "0000000001",
+      "taxonomy": "us-gaap",
+      "concept": "Revenues",
+      "max_facts": 10
+    },
+    "entity_name": "SYNTHETIC ONLY",
+    "taxonomy": "us-gaap",
+    "concept": "Revenues",
+    "label": "Synthetic revenue",
+    "facts": [
+      {
+        "unit_raw": "USD",
+        "numeric_lexeme": "9007199254740993.2500",
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "accession_number": "0000000001-26-000001",
+        "filed": "2026-02-10",
+        "fiscal_year": 2025,
+        "fiscal_period": "FY",
+        "form": "10-K",
+        "frame": "CY2025",
+        "period_kind": "duration",
+        "accounting_basis": null,
+        "canonical_metric": null
+      }
+    ],
+    "total_fact_count": 1,
+    "truncated": false,
+    "selection": "provider_unit_and_row_order_first_n"
+  },
+  "submissions_result": {
+    "contract": "moai.sec.submissions.v1",
+    "provider": "SEC",
+    "origin": "synthetic",
+    "received_at": "2026-10-22T00:00:00.123456789Z",
+    "source_as_of": null,
+    "rights": "pending",
+    "identity_status": "cik_matched",
+    "source_url": "https://data.sec.gov/submissions/CIK0000000001.json",
+    "warnings": [
+      "No historical files or linked primary documents fetched. Filing metadata is not article/report text.",
+      "CIK identifies reporting entity; ticker/exchange lists are not proven one-to-one or current security mappings.",
+      "Acceptance timestamps retained only with explicit timezone; filing/report dates are not publication instants.",
+      "User-agent/fair-access transport integration and data use review remain host responsibilities."
+    ],
+    "request": {
+      "cik": "0000000001",
+      "max_filings": 10
+    },
+    "entity_name": "SYNTHETIC ONLY",
+    "tickers": [],
+    "exchanges": [],
+    "filings": [
+      {
+        "accession_number": "0000000001-26-000001",
+        "filing_date": "2026-02-10",
+        "report_date": "2025-12-31",
+        "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+        "form": "10-K",
+        "primary_document": "synthetic.htm",
+        "primary_doc_description": "Synthetic fixture"
+      }
+    ],
+    "recent_filing_count": 1,
+    "omitted_recent_count": 0,
+    "historical_file_count": 1,
+    "completeness": "recent_subset_historical_files_not_fetched"
+  },
+  "selector": {
+    "cik": "0000000001",
+    "taxonomy": "us-gaap",
+    "concept": "Revenues",
+    "unit_raw": "USD",
+    "start": "2025-01-01",
+    "end": "2025-12-31",
+    "period_kind": "duration",
+    "accession_number": "0000000001-26-000001",
+    "filed": "2026-02-10",
+    "fiscal_year": 2025,
+    "fiscal_period": "FY",
+    "form": "10-K",
+    "frame": "CY2025",
+    "filing": {
+      "filing_date": "2026-02-10",
+      "report_date": "2025-12-31",
+      "acceptance_datetime": "2026-02-10T10:30:00.000000001-05:00",
+      "primary_document": "synthetic.htm"
+    }
+  }
+}

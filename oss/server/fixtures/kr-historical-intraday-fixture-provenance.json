@@ -1,0 +1,10 @@
+{
+  "origin": "synthetic",
+  "observed_market_data": false,
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "fixture_receipt": "2026-10-22T03:00:00.123456789123Z",
+  "purpose": "Offline contract fixtures only; all market values, names and timestamps are fabricated, not listing or market-history evidence.",
+  "live_financial_api_calls": 0,
+  "account_or_order_operations": 0,
+  "secrets_read": 0
+}

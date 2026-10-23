@@ -1,0 +1,20 @@
+{
+  "fixture_kind": "synthetic_only",
+  "not_market_observations": true,
+  "request_input": {
+    "symbol": "005930",
+    "board": "UN"
+  },
+  "response": {
+    "status": 200,
+    "tr_cont": "",
+    "body": {
+      "rt_cd": "0",
+      "output1": {
+        "askp1": "",
+        "aspr_acpt_hour": ""
+      },
+      "output2": []
+    }
+  }
+}

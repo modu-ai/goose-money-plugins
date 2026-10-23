@@ -1,0 +1,2926 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "policy": {
+          "type": "string",
+          "const": "kr_orderbook_best_bid"
+        },
+        "requested_role": {
+          "type": "string",
+          "const": "market.best_bid"
+        },
+        "source_dto": {
+          "type": "object",
+          "properties": {
+            "contract": {
+              "type": "string",
+              "const": "moai.stock.market-orderbook.v1"
+            },
+            "provider": {
+              "type": "string",
+              "const": "kis"
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "source_commit": {
+              "type": "string",
+              "const": "2077773a69a428daf63e148182511f068cc45de3"
+            },
+            "requested": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "pattern": "^\\d{6}$"
+                },
+                "board": {
+                  "type": "string",
+                  "enum": [
+                    "J",
+                    "NX",
+                    "UN"
+                  ]
+                }
+              },
+              "required": [
+                "symbol",
+                "board"
+              ],
+              "additionalProperties": false
+            },
+            "source_request": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "kis.market_orderbook"
+                },
+                "method": {
+                  "type": "string",
+                  "const": "GET"
+                },
+                "path": {
+                  "type": "string",
+                  "const": "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn"
+                },
+                "tr_id": {
+                  "type": "string",
+                  "const": "FHKST01010200"
+                },
+                "tr_cont": {
+                  "type": "string",
+                  "const": ""
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "FID_COND_MRKT_DIV_CODE": {
+                      "type": "string",
+                      "enum": [
+                        "J",
+                        "NX",
+                        "UN"
+                      ]
+                    },
+                    "FID_INPUT_ISCD": {
+                      "type": "string",
+                      "pattern": "^\\d{6}$"
+                    }
+                  },
+                  "required": [
+                    "FID_COND_MRKT_DIV_CODE",
+                    "FID_INPUT_ISCD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation",
+                "method",
+                "path",
+                "tr_id",
+                "tr_cont",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "source_at": {
+              "type": "null"
+            },
+            "published_at": {
+              "type": "null"
+            },
+            "available_at": {
+              "type": "null"
+            },
+            "source_timezone": {
+              "type": "null"
+            },
+            "session": {
+              "type": "null"
+            },
+            "source_time_status": {
+              "type": "string",
+              "const": "raw_clock_text_only_no_date_timezone_or_exact_instant"
+            },
+            "identity_status": {
+              "type": "string",
+              "enum": [
+                "no_nonblank_symbol_echo",
+                "conservative_symbol_echo_matched_not_master_verified"
+              ]
+            },
+            "market_identity_status": {
+              "type": "string",
+              "const": "requested_board_only_no_verified_market_echo"
+            },
+            "field_partition_status": {
+              "type": "string",
+              "const": "shared_dictionary_not_complete_per_object_partition"
+            },
+            "output2_status": {
+              "type": "string",
+              "const": "raw_json_shape_retained_cardinality_and_semantics_unverified"
+            },
+            "quote_firmness": {
+              "type": "string",
+              "const": "unverified"
+            },
+            "simultaneous_quotes_verified": {
+              "type": "boolean",
+              "const": false
+            },
+            "source_authenticated": {
+              "type": "boolean",
+              "const": false
+            },
+            "rights_status": {
+              "type": "string",
+              "const": "pending"
+            },
+            "validation_status": {
+              "type": "string",
+              "const": "bounded_raw_subset_not_live_reconciled"
+            },
+            "metric_ready": {
+              "type": "boolean",
+              "const": false
+            },
+            "canonical_observation": {
+              "type": "null"
+            },
+            "canonical_projection_status": {
+              "type": "string",
+              "const": "blocked"
+            },
+            "canonical": {
+              "type": "object",
+              "properties": {
+                "instrument_id": {
+                  "type": "null"
+                },
+                "asset_class": {
+                  "type": "null"
+                },
+                "exchange": {
+                  "type": "null"
+                },
+                "currency": {
+                  "type": "null"
+                },
+                "price_unit": {
+                  "type": "null"
+                },
+                "quantity_unit": {
+                  "type": "null"
+                },
+                "best_bid": {
+                  "type": "null"
+                },
+                "best_ask": {
+                  "type": "null"
+                },
+                "spread": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "instrument_id",
+                "asset_class",
+                "exchange",
+                "currency",
+                "price_unit",
+                "quantity_unit",
+                "best_bid",
+                "best_ask",
+                "spread"
+              ],
+              "additionalProperties": false
+            },
+            "pagination": {
+              "type": "object",
+              "properties": {
+                "responses_received": {
+                  "type": "number",
+                  "const": 1
+                },
+                "tr_cont": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "",
+                        "D",
+                        "E"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "automatic_continuation": {
+                  "type": "boolean",
+                  "const": false
+                }
+              },
+              "required": [
+                "responses_received",
+                "tr_cont",
+                "automatic_continuation"
+              ],
+              "additionalProperties": false
+            },
+            "raw": {
+              "type": "object",
+              "properties": {
+                "output1": {
+                  "type": "object",
+                  "properties": {
+                    "askp1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "aspr_acpt_hour": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_askp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_bidp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_askp_rsqn_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_bidp_rsqn_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_askp_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_bidp_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_askp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_bidp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ntby_aspr_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "new_mkop_cls_code": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_mkop_cls_code": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_prpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_oprc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_hgpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_lwpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_sdpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cnpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cntg_vrss_sign": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cntg_vrss": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cntg_prdy_ctrt": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_vol": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_shrn_iscd": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "vi_cls_code": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "output2": {
+                  "anyOf": [
+                    {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          {
+                            "maxItems": 100,
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          {
+                            "maxItems": 100,
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "output1",
+                "output2"
+              ],
+              "additionalProperties": false
+            },
+            "mapping_blockers": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "warnings": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          },
+          "required": [
+            "contract",
+            "provider",
+            "origin",
+            "source_commit",
+            "requested",
+            "source_request",
+            "received_at",
+            "source_at",
+            "published_at",
+            "available_at",
+            "source_timezone",
+            "session",
+            "source_time_status",
+            "identity_status",
+            "market_identity_status",
+            "field_partition_status",
+            "output2_status",
+            "quote_firmness",
+            "simultaneous_quotes_verified",
+            "source_authenticated",
+            "rights_status",
+            "validation_status",
+            "metric_ready",
+            "canonical_observation",
+            "canonical_projection_status",
+            "canonical",
+            "pagination",
+            "raw",
+            "mapping_blockers",
+            "warnings"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "cutoff",
+        "policy",
+        "requested_role",
+        "source_dto"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "policy": {
+          "type": "string",
+          "const": "kr_orderbook_best_ask"
+        },
+        "requested_role": {
+          "type": "string",
+          "const": "market.best_ask"
+        },
+        "source_dto": {
+          "type": "object",
+          "properties": {
+            "contract": {
+              "type": "string",
+              "const": "moai.stock.market-orderbook.v1"
+            },
+            "provider": {
+              "type": "string",
+              "const": "kis"
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "source_commit": {
+              "type": "string",
+              "const": "2077773a69a428daf63e148182511f068cc45de3"
+            },
+            "requested": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "pattern": "^\\d{6}$"
+                },
+                "board": {
+                  "type": "string",
+                  "enum": [
+                    "J",
+                    "NX",
+                    "UN"
+                  ]
+                }
+              },
+              "required": [
+                "symbol",
+                "board"
+              ],
+              "additionalProperties": false
+            },
+            "source_request": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string",
+                  "const": "kis.market_orderbook"
+                },
+                "method": {
+                  "type": "string",
+                  "const": "GET"
+                },
+                "path": {
+                  "type": "string",
+                  "const": "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn"
+                },
+                "tr_id": {
+                  "type": "string",
+                  "const": "FHKST01010200"
+                },
+                "tr_cont": {
+                  "type": "string",
+                  "const": ""
+                },
+                "query": {
+                  "type": "object",
+                  "properties": {
+                    "FID_COND_MRKT_DIV_CODE": {
+                      "type": "string",
+                      "enum": [
+                        "J",
+                        "NX",
+                        "UN"
+                      ]
+                    },
+                    "FID_INPUT_ISCD": {
+                      "type": "string",
+                      "pattern": "^\\d{6}$"
+                    }
+                  },
+                  "required": [
+                    "FID_COND_MRKT_DIV_CODE",
+                    "FID_INPUT_ISCD"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "operation",
+                "method",
+                "path",
+                "tr_id",
+                "tr_cont",
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "source_at": {
+              "type": "null"
+            },
+            "published_at": {
+              "type": "null"
+            },
+            "available_at": {
+              "type": "null"
+            },
+            "source_timezone": {
+              "type": "null"
+            },
+            "session": {
+              "type": "null"
+            },
+            "source_time_status": {
+              "type": "string",
+              "const": "raw_clock_text_only_no_date_timezone_or_exact_instant"
+            },
+            "identity_status": {
+              "type": "string",
+              "enum": [
+                "no_nonblank_symbol_echo",
+                "conservative_symbol_echo_matched_not_master_verified"
+              ]
+            },
+            "market_identity_status": {
+              "type": "string",
+              "const": "requested_board_only_no_verified_market_echo"
+            },
+            "field_partition_status": {
+              "type": "string",
+              "const": "shared_dictionary_not_complete_per_object_partition"
+            },
+            "output2_status": {
+              "type": "string",
+              "const": "raw_json_shape_retained_cardinality_and_semantics_unverified"
+            },
+            "quote_firmness": {
+              "type": "string",
+              "const": "unverified"
+            },
+            "simultaneous_quotes_verified": {
+              "type": "boolean",
+              "const": false
+            },
+            "source_authenticated": {
+              "type": "boolean",
+              "const": false
+            },
+            "rights_status": {
+              "type": "string",
+              "const": "pending"
+            },
+            "validation_status": {
+              "type": "string",
+              "const": "bounded_raw_subset_not_live_reconciled"
+            },
+            "metric_ready": {
+              "type": "boolean",
+              "const": false
+            },
+            "canonical_observation": {
+              "type": "null"
+            },
+            "canonical_projection_status": {
+              "type": "string",
+              "const": "blocked"
+            },
+            "canonical": {
+              "type": "object",
+              "properties": {
+                "instrument_id": {
+                  "type": "null"
+                },
+                "asset_class": {
+                  "type": "null"
+                },
+                "exchange": {
+                  "type": "null"
+                },
+                "currency": {
+                  "type": "null"
+                },
+                "price_unit": {
+                  "type": "null"
+                },
+                "quantity_unit": {
+                  "type": "null"
+                },
+                "best_bid": {
+                  "type": "null"
+                },
+                "best_ask": {
+                  "type": "null"
+                },
+                "spread": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "instrument_id",
+                "asset_class",
+                "exchange",
+                "currency",
+                "price_unit",
+                "quantity_unit",
+                "best_bid",
+                "best_ask",
+                "spread"
+              ],
+              "additionalProperties": false
+            },
+            "pagination": {
+              "type": "object",
+              "properties": {
+                "responses_received": {
+                  "type": "number",
+                  "const": 1
+                },
+                "tr_cont": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "",
+                        "D",
+                        "E"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "automatic_continuation": {
+                  "type": "boolean",
+                  "const": false
+                }
+              },
+              "required": [
+                "responses_received",
+                "tr_cont",
+                "automatic_continuation"
+              ],
+              "additionalProperties": false
+            },
+            "raw": {
+              "type": "object",
+              "properties": {
+                "output1": {
+                  "type": "object",
+                  "properties": {
+                    "askp1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc1": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc2": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc3": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc4": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc5": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc6": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc7": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc8": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc9": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "askp_rsqn_icdc10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "bidp_rsqn_icdc10": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "aspr_acpt_hour": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_askp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_bidp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_askp_rsqn_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "total_bidp_rsqn_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_askp_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_bidp_icdc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_askp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ovtm_total_bidp_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "ntby_aspr_rsqn": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "new_mkop_cls_code": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_mkop_cls_code": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_prpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_oprc": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_hgpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_lwpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_sdpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cnpr": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cntg_vrss_sign": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cntg_vrss": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_cntg_prdy_ctrt": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "antc_vol": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "stck_shrn_iscd": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "vi_cls_code": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "output2": {
+                  "anyOf": [
+                    {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          {
+                            "maxItems": 100,
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "maxLength": 2000
+                              },
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "boolean"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          {
+                            "maxItems": 100,
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "propertyNames": {
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "additionalProperties": {
+                              "anyOf": [
+                                {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "maxLength": 2000
+                                    },
+                                    {
+                                      "type": "number"
+                                    },
+                                    {
+                                      "type": "boolean"
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "maxItems": 100,
+                                  "type": "array",
+                                  "items": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "propertyNames": {
+                                    "type": "string",
+                                    "maxLength": 100
+                                  },
+                                  "additionalProperties": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "maxLength": 2000
+                                      },
+                                      {
+                                        "type": "number"
+                                      },
+                                      {
+                                        "type": "boolean"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "output1",
+                "output2"
+              ],
+              "additionalProperties": false
+            },
+            "mapping_blockers": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "warnings": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          },
+          "required": [
+            "contract",
+            "provider",
+            "origin",
+            "source_commit",
+            "requested",
+            "source_request",
+            "received_at",
+            "source_at",
+            "published_at",
+            "available_at",
+            "source_timezone",
+            "session",
+            "source_time_status",
+            "identity_status",
+            "market_identity_status",
+            "field_partition_status",
+            "output2_status",
+            "quote_firmness",
+            "simultaneous_quotes_verified",
+            "source_authenticated",
+            "rights_status",
+            "validation_status",
+            "metric_ready",
+            "canonical_observation",
+            "canonical_projection_status",
+            "canonical",
+            "pagination",
+            "raw",
+            "mapping_blockers",
+            "warnings"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "cutoff",
+        "policy",
+        "requested_role",
+        "source_dto"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "policy": {
+          "type": "string",
+          "const": "us_quote_previous_close"
+        },
+        "requested_role": {
+          "type": "string",
+          "const": "market.previous_close"
+        },
+        "source_dto": {
+          "type": "object",
+          "properties": {
+            "contract": {
+              "type": "string",
+              "const": "moai.stock.us-quote.v1"
+            },
+            "provider": {
+              "type": "string",
+              "const": "kis"
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "source_as_of": {
+              "type": "null"
+            },
+            "source_time_status": {
+              "type": "string",
+              "const": "not_returned_by_reviewed_quote_contract"
+            },
+            "rights_status": {
+              "type": "string",
+              "const": "pending"
+            },
+            "validation_status": {
+              "type": "string",
+              "const": "provider_shape_checked_not_live_reconciled"
+            },
+            "canonical_projection_status": {
+              "type": "string",
+              "const": "blocked"
+            },
+            "mapping_blockers": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "warnings": {
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "symbol_from_request": {
+              "type": "string",
+              "maxLength": 16,
+              "pattern": "^[A-Z][A-Z0-9]*(?:[.-][A-Z0-9]+)*$"
+            },
+            "exchange_from_request": {
+              "type": "string",
+              "enum": [
+                "NAS",
+                "NYS",
+                "AMS"
+              ]
+            },
+            "asset_class_from_request": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "stock",
+                    "etf"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "identity_status": {
+              "type": "string",
+              "const": "conservative_rsym_guard_matched_not_master_verified"
+            },
+            "raw": {
+              "type": "object",
+              "properties": {
+                "rsym": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 24,
+                  "pattern": "^[A-Z0-9.-]+$"
+                },
+                "zdiv": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^\\d{1,2}$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "base": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "pvol": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "last": {
+                  "type": "string",
+                  "maxLength": 40,
+                  "pattern": "^\\d+(?:\\.\\d+)?$"
+                },
+                "sign": {
+                  "type": "string",
+                  "maxLength": 4
+                },
+                "diff": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "rate": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "tvol": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 30,
+                      "pattern": "^\\d+$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "tamt": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "maxLength": 40,
+                      "pattern": "^\\d+(?:\\.\\d+)?$"
+                    },
+                    {
+                      "type": "string",
+                      "const": ""
+                    }
+                  ]
+                },
+                "ordy": {
+                  "type": "string",
+                  "maxLength": 8
+                }
+              },
+              "required": [
+                "rsym",
+                "last"
+              ],
+              "additionalProperties": false
+            },
+            "canonical": {
+              "type": "object",
+              "properties": {
+                "instrument_id": {
+                  "type": "null"
+                },
+                "asset_class": {
+                  "type": "null"
+                },
+                "currency": {
+                  "type": "null"
+                },
+                "last_price": {
+                  "type": "null"
+                },
+                "previous_close": {
+                  "type": "null"
+                },
+                "change": {
+                  "type": "null"
+                },
+                "change_percent": {
+                  "type": "null"
+                },
+                "volume": {
+                  "type": "null"
+                },
+                "turnover": {
+                  "type": "null"
+                },
+                "price_unit": {
+                  "type": "null"
+                },
+                "volume_unit": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "instrument_id",
+                "asset_class",
+                "currency",
+                "last_price",
+                "previous_close",
+                "change",
+                "change_percent",
+                "volume",
+                "turnover",
+                "price_unit",
+                "volume_unit"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "contract",
+            "provider",
+            "origin",
+            "received_at",
+            "source_as_of",
+            "source_time_status",
+            "rights_status",
+            "validation_status",
+            "canonical_projection_status",
+            "mapping_blockers",
+            "warnings",
+            "symbol_from_request",
+            "exchange_from_request",
+            "asset_class_from_request",
+            "identity_status",
+            "raw",
+            "canonical"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "cutoff",
+        "policy",
+        "requested_role",
+        "source_dto"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "cutoff": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "policy": {
+          "type": "string",
+          "const": "kr_intraday_previous_close"
+        },
+        "requested_role": {
+          "type": "string",
+          "const": "market.previous_close"
+        },
+        "source_dto": {
+          "type": "object",
+          "properties": {
+            "contract": {
+              "type": "string",
+              "const": "moai.stock.kr-intraday-history.v1"
+            },
+            "provider": {
+              "type": "string",
+              "const": "kis"
+            },
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "available_at": {
+              "type": "string",
+              "maxLength": 80,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            },
+            "source_as_of": {
+              "type": "null"
+            },
+            "event_time": {
+              "type": "null"
+            },
+            "published_at": {
+              "type": "null"
+            },
+            "source_timezone": {
+              "type": "null"
+            },
+            "source_time_status": {
+              "type": "string",
+              "const": "provider_bar_labels_not_verified_instants"
+            },
+            "rights_status": {
+              "type": "string",
+              "enum": [
+                "pending"
+              ]
+            },
+            "session": {
+              "type": "string",
+              "enum": [
+                "unknown"
+              ]
+            },
+            "delay_state": {
+              "type": "string",
+              "enum": [
+                "unknown"
+              ]
+            },
+            "finality": {
+              "type": "string",
+              "enum": [
+                "unknown"
+              ]
+            },
+            "freshness": {
+              "type": "string",
+              "enum": [
+                "unknown"
+              ]
+            },
+            "validation_status": {
+              "type": "string",
+              "const": "provider_shape_checked_not_live_reconciled"
+            },
+            "completeness": {
+              "type": "string",
+              "const": "unknown"
+            },
+            "pagination": {
+              "type": "object",
+              "properties": {
+                "pages_fetched": {
+                  "type": "number",
+                  "const": 1
+                },
+                "tr_cont": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "",
+                        "D",
+                        "E",
+                        "M",
+                        "F"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "more_signaled_not_fetched",
+                    "not_signaled_completeness_unknown"
+                  ]
+                },
+                "automatic_continuation": {
+                  "type": "boolean",
+                  "const": false
+                },
+                "completeness": {
+                  "type": "string",
+                  "const": "unknown"
+                }
+              },
+              "required": [
+                "pages_fetched",
+                "tr_cont",
+                "status",
+                "automatic_continuation",
+                "completeness"
+              ],
+              "additionalProperties": false
+            },
+            "bars_returned": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "coverage_status": {
+              "type": "string",
+              "enum": [
+                "empty_page_not_proof_of_absence",
+                "single_page_not_complete_history"
+              ]
+            },
+            "canonical_projection_status": {
+              "type": "string",
+              "const": "blocked"
+            },
+            "canonical": {
+              "type": "object",
+              "properties": {
+                "instrument_id": {
+                  "type": "null"
+                },
+                "asset_class": {
+                  "type": "null"
+                },
+                "currency": {
+                  "type": "null"
+                },
+                "adjusted": {
+                  "type": "null"
+                },
+                "price_unit": {
+                  "type": "null"
+                },
+                "volume_unit": {
+                  "type": "null"
+                },
+                "turnover_unit": {
+                  "type": "null"
+                },
+                "bars": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "instrument_id",
+                "asset_class",
+                "currency",
+                "adjusted",
+                "price_unit",
+                "volume_unit",
+                "turnover_unit",
+                "bars"
+              ],
+              "additionalProperties": false
+            },
+            "mapping_blockers": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              }
+            },
+            "unimplemented_derivations": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              }
+            },
+            "warnings": {
+              "minItems": 1,
+              "maxItems": 20,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "requested": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "pattern": "^\\d{6}$"
+                },
+                "board": {
+                  "default": "J",
+                  "type": "string",
+                  "enum": [
+                    "J",
+                    "NX",
+                    "UN"
+                  ]
+                },
+                "anchor_time": {
+                  "type": "string",
+                  "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+                },
+                "include_past_data": {
+                  "type": "string",
+                  "enum": [
+                    "Y",
+                    "N"
+                  ]
+                },
+                "expected_business_date": {
+                  "type": "string",
+                  "pattern": "^\\d{8}$"
+                }
+              },
+              "required": [
+                "symbol",
+                "board",
+                "anchor_time",
+                "include_past_data"
+              ],
+              "additionalProperties": false
+            },
+            "interval": {
+              "type": "string",
+              "const": "provider_minute_bars"
+            },
+            "scope": {
+              "type": "string",
+              "const": "current_day_endpoint_not_historical_intraday"
+            },
+            "identity_status": {
+              "type": "string",
+              "const": "no_returned_instrument_code"
+            },
+            "adjustment_status": {
+              "type": "string",
+              "const": "not_specified_by_reviewed_intraday_contract"
+            },
+            "first_row_volume_status": {
+              "type": "string",
+              "const": "may_belong_to_previous_bar_until_first_trade"
+            },
+            "raw": {
+              "type": "object",
+              "properties": {
+                "output1": {
+                  "type": "object",
+                  "properties": {
+                    "stck_prpr": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 40,
+                          "pattern": "^\\d+(?:\\.\\d+)?$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "prdy_vrss": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 40,
+                          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "prdy_vrss_sign": {
+                      "type": "string",
+                      "maxLength": 4
+                    },
+                    "prdy_ctrt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 40,
+                          "pattern": "^-?\\d+(?:\\.\\d+)?$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "stck_prdy_clpr": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 40,
+                          "pattern": "^\\d+(?:\\.\\d+)?$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "acml_vol": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 30,
+                          "pattern": "^\\d+$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "acml_tr_pbmn": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "maxLength": 40,
+                          "pattern": "^\\d+(?:\\.\\d+)?$"
+                        },
+                        {
+                          "type": "string",
+                          "const": ""
+                        }
+                      ]
+                    },
+                    "hts_kor_isnm": {
+                      "type": "string",
+                      "maxLength": 200
+                    }
+                  },
+                  "required": [
+                    "stck_prpr"
+                  ],
+                  "additionalProperties": false
+                },
+                "output2": {
+                  "maxItems": 30,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "stck_bsop_date": {
+                        "type": "string",
+                        "pattern": "^\\d{8}$"
+                      },
+                      "stck_cntg_hour": {
+                        "type": "string",
+                        "pattern": "^(?:[01]\\d|2[0-3])[0-5]\\d[0-5]\\d$"
+                      },
+                      "stck_prpr": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 40,
+                            "pattern": "^\\d+(?:\\.\\d+)?$"
+                          },
+                          {
+                            "type": "string",
+                            "const": ""
+                          }
+                        ]
+                      },
+                      "stck_oprc": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 40,
+                            "pattern": "^\\d+(?:\\.\\d+)?$"
+                          },
+                          {
+                            "type": "string",
+                            "const": ""
+                          }
+                        ]
+                      },
+                      "stck_hgpr": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 40,
+                            "pattern": "^\\d+(?:\\.\\d+)?$"
+                          },
+                          {
+                            "type": "string",
+                            "const": ""
+                          }
+                        ]
+                      },
+                      "stck_lwpr": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 40,
+                            "pattern": "^\\d+(?:\\.\\d+)?$"
+                          },
+                          {
+                            "type": "string",
+                            "const": ""
+                          }
+                        ]
+                      },
+                      "cntg_vol": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 30,
+                            "pattern": "^\\d+$"
+                          },
+                          {
+                            "type": "string",
+                            "const": ""
+                          }
+                        ]
+                      },
+                      "acml_tr_pbmn": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 40,
+                            "pattern": "^\\d+(?:\\.\\d+)?$"
+                          },
+                          {
+                            "type": "string",
+                            "const": ""
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "stck_bsop_date",
+                      "stck_cntg_hour",
+                      "stck_prpr",
+                      "stck_oprc",
+                      "stck_hgpr",
+                      "stck_lwpr",
+                      "cntg_vol"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "output1",
+                "output2"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "contract",
+            "provider",
+            "origin",
+            "received_at",
+            "available_at",
+            "source_as_of",
+            "event_time",
+            "published_at",
+            "source_timezone",
+            "source_time_status",
+            "rights_status",
+            "session",
+            "delay_state",
+            "finality",
+            "freshness",
+            "validation_status",
+            "completeness",
+            "pagination",
+            "bars_returned",
+            "coverage_status",
+            "canonical_projection_status",
+            "canonical",
+            "mapping_blockers",
+            "unimplemented_derivations",
+            "warnings",
+            "requested",
+            "interval",
+            "scope",
+            "identity_status",
+            "adjustment_status",
+            "first_row_volume_status",
+            "raw"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "cutoff",
+        "policy",
+        "requested_role",
+        "source_dto"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$id": "https://schemas.moai.invalid/market-reference/reference-evidence-input-v1.schema.json",
+  "$comment": "Offline shape projection only. Runtime entrypoints additionally enforce inert bounded plain JSON, conservative private-data marker rejection, exact instants, echo and request consistency, source DTO reconstruction where available, deterministic full-candidate replay and integrity links. Shape validity is not source authentication, economic validity, rights clearance or metric readiness. The .invalid namespace is an identifier, not a hosted resource."
+}

@@ -1,0 +1,18 @@
+{
+  "contract": "moai.financial.selected-evidence-candidate.v1",
+  "scope": "pure_offline_internal_library_not_mcp_or_canonical_fact",
+  "entrypoints": ["selectSecFinancialEvidence", "selectDartFinancialEvidence", "validateFinancialEvidenceCandidate"],
+  "existing_role_source": "R01 semantics.py DEFINITIONS reported.* keys; SPECS remain unchanged",
+  "input_boundary": {"max_bytes": 6000000, "max_nodes": 250000, "max_depth": 8, "max_array_entries": 10000, "max_own_keys": 10001, "proxy_getter_or_toJSON_execution": false},
+  "persisted_candidate_boundary": {"max_bytes": 12000000, "max_nodes": 500000, "max_depth": 8},
+  "selection": "Exactly one full caller-selector match within the supplied snapshot; zero and multiple matches reject. No latest, first-row fallback, de-duplication, restatement or completeness inference.",
+  "join": {"SEC": "Same origin and exact request CIK, accession, form and filing date; explicit expected report date, acceptance metadata and primary document.", "DART": "Same origin and exact corp_code, request year/report/fs_div, receipt, account/statement/detail/ordinal/currency/period label and amount kind; exact expected filing date/name/corporation class/stock code."},
+  "runtime_guards": ["immutable JSON-only snapshot before schema parsing", "revalidate original provider DTO guards", "DART raw-row and filing-payload reconstruction followed by original parsers and normalized DTO equality", "every constituent receipt <= cutoff with exact fractional seconds", "explicit caller timezone required and cutoff local date checked", "selected filing/report dates checked against cutoff and relevant receipt calendar dates", "SEC acceptance metadata never substituted for publication availability", "canonical fact always null and semantic binding always false", "persisted candidates fully reconstructed and compared including all hashes and caveats"],
+  "hash": {"algorithm": "sha256", "scope": "validated_provider_dto_snapshot", "serialization": "sorted_object_keys_json_utf8_v1", "original_http_body": false, "authenticates_source": false},
+  "canonical_mapping": {"canonical_fact": null, "semantic_binding_verified": false, "role_association_status": "unverified_caller_request", "rights_status": "pending", "coverage_complete": false},
+  "network": false,
+  "credentials": false,
+  "financial_api_requests": false,
+  "account_or_trading_actions": false,
+  "remaining_gates": ["source authentication", "security/issuer master reconciliation", "semantic role definition binding", "units/scale/currency and accounting basis", "publication availability", "complete component/page/history coverage", "finality and explicit revision choice", "data rights", "downstream canonical admission and metric computation"]
+}

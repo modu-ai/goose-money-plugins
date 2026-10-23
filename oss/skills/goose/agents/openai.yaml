@@ -1,0 +1,5 @@
+interface:
+  display_name: MoAI-ATP Goose
+  short_description: 근거와 한계를 보존하는 리서치 단일 작성자
+policy:
+  allow_implicit_invocation: false

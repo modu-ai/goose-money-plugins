@@ -1,0 +1,124 @@
+{
+  "contract_id": "moai.stock.plugin-goose-mcp.integration.v1",
+  "version": "0.1.0-draft",
+  "status": "design-only; not an installable plugin manifest",
+  "updated_at": "2026-10-21",
+  "existing_package_evidence": {
+    "source": "atp-download-0.3.0-rc.1/source/moai-stock-plugin (read-only inspection)",
+    "plugin_name": "moai-stock-plugin",
+    "package_version": "0.3.0-rc.1",
+    "installed_entry_skill": "goose",
+    "template_schema_version": "atp-report/2.0-review",
+    "existing_deep_template_id": "deep",
+    "existing_template_count": 23,
+    "distribution_metadata": {
+      "host_installation_verified": false,
+      "financial_provider_calls": 0,
+      "orders": false,
+      "code_oss_license": "unselected in inspected RC metadata"
+    },
+    "read_only_files": [
+      "plugin.json",
+      ".codex-plugin/plugin.json",
+      "DISTRIBUTION.json",
+      "INSTALL.md",
+      "skills/goose/SKILL.md",
+      "skills/goose/runtime/contract.json",
+      "skills/goose/runtime/distribution-policy.json",
+      "skills/goose/workflows/goose/GUIDE.md",
+      "skills/goose/workflows/goose/references/goose-agent.md",
+      "skills/goose/workflows/setup/GUIDE.md",
+      "skills/goose/workflows/stock-analyst/GUIDE.md",
+      "skills/goose/workflows/stock-report/GUIDE.md",
+      "skills/goose/workflows/report-templates/references/template-routing.json",
+      "skills/goose/workflows/report-templates/engine/src/contracts.py",
+      "skills/goose/workflows/report-templates/engine/schemas/deep.schema.json",
+      "skills/goose/workflows/stock-report/references/report-input.md",
+      "skills/goose/workflows/stock-report/references/research-contract.md"
+    ],
+    "preservation": "No source, ZIP, report body, template routing file, or generated artifact in the RC package was modified. Existing report owner remains sole writer of the renderer and canonical report assets."
+  },
+  "product_scope": {
+    "user_runtime": "user-owned ChatGPT desktop Work project and user environment; no MoAI analysis server",
+    "moai_server": ["OAuth membership", "course entitlement", "device/license metadata"],
+    "moai_server_prohibited_payload": ["KIS key/secret/token", "account identifiers/positions", "quotes", "financial data", "analysis results", "reports"],
+    "asset_categories": ["KR equities", "US equities", "KR ETFs", "US ETFs", "KR futures", "US futures"],
+    "free": {"capabilities": ["single-stock basic analysis", "company comparison", "market briefing"], "account_read": false, "kis_auth": false, "sources": ["user-authorized web search", "optional OpenDART"]},
+    "pro": {"includes_free": true, "account_read": "separately consented user-local only; not implemented in this vertical slice", "kis_market_read": "subject to provider/exchange rights clearance"},
+    "trade_actions": {"orders": false, "amend_cancel": false, "transfers": false, "auto_trading": false, "arbitrary_api_dispatch": false}
+  },
+  "component_responsibilities": {
+    "goose_entry_skill": "one installed coordinator skill; route user intent to only the necessary leaf workflow and produce an execution record",
+    "workflow_guides": "local guidance modules; not independently installed tools and not proof of host-native child agents",
+    "specialist_roles": "use host-native child-agent APIs only if the active ChatGPT Work host actually exposes them; otherwise execute sequentially and record execution_mode=sequential",
+    "mcp_server": "read and normalize only allowlisted typed provider facts; never write a report, store account data, choose a security, calculate a valuation, or execute an action",
+    "report_generator": "existing report owner consumes a versioned normalized evidence package and remains sole writer of HTML renderer, template schema and canonical report assets",
+    "local_storage": "user-approved project-local reports/data/history locations; no MoAI upload; no secrets in .goose, report files or general logs"
+  },
+  "runtime_contract": {
+    "existing_mcp_contract_ref": "kis-normalized-data-contract-v1.json",
+    "existing_mcp_contract_version": "moai.stock.data.v1 / 0.2.0-draft",
+    "report_contract_ref": "atp-report/2.0-review (existing RC schema; subject to report owner change)",
+    "transport": "user-local stdio only in prototype; ChatGPT Work host launch is unverified",
+    "currently_registered_mcp_tool": "get_market_snapshot",
+    "tool_input": {"symbol": "KR six-digit string", "board": "J|NX|UN, default J"},
+    "tool_result": ["typed QuoteSnapshot", "structuredContent", "decimal strings", "explicit units", "source/as-of and received/available times", "field_lineage", "null_reasons", "independent data-status dimensions"],
+    "errors": ["invalid_input", "rights_pending", "tier_denied", "consent_required", "credential_missing", "rate_limited", "auth_expired", "upstream_unavailable", "schema_drift", "upstream_rejected", "response_too_large"],
+    "mcp_constraints": ["no raw KIS payload in tool arguments", "no account identifier or credential in model-visible arguments", "no arbitrary URL/TR/endpoint", "no mutation operation", "default live rights deny", "no retry", "quote result cache disabled"]
+  },
+  "goose_execution_record": {
+    "required_fields": ["run_id", "role", "skill", "execution_mode", "phase", "requested_scope", "input_paths", "output_path", "data_class", "tool_operation_ids", "cutoff_at", "warnings", "validation_state"],
+    "allowed_execution_mode": ["host_native_parallel", "sequential", "single_role"],
+    "source_of_truth": "record only observed host execution; do not infer child agents from skill names or write a simulated child ID",
+    "sequential_fallback": "if the host lacks native child-agent support, the Goose coordinator executes the approved specialist procedures sequentially and labels the run accordingly"
+  },
+  "goose_workflow": [
+    {"phase": "setup", "behavior": "explain natural-language Goose setup; do not promise a slash command unless the host confirms it; collect only optional profile preferences; never accept KIS secrets or account number"},
+    {"phase": "route", "behavior": "classify common investor question, market, asset, requested report depth, cutoff and permitted source scope; ask only for ambiguous instrument/goal required to change output"},
+    {"phase": "permission_gate", "behavior": "check tier, local consent, provider/exchange rights, account scope and tool availability before any provider call; fail closed if unresolved"},
+    {"phase": "evidence_fetch", "behavior": "call only the selected typed MCP operation(s); preserve raw provider response inside local adapter; expose only bounded normalized fields and lineage"},
+    {"phase": "analysis", "behavior": "specialists consume the same versioned evidence package; keep facts, estimates, inferences, missing fields, counter-evidence and cutoff distinct; deterministic calculations are separate and versioned"},
+    {"phase": "compose", "behavior": "send a validated report-input contract to the report owner’s existing HTML generator; do not fill missing required fields with synthetic values"},
+    {"phase": "validate", "behavior": "run schema, provenance, rights, security/share, factual, calculation and render checks; status stays draft/limited if required evidence or visual checks are missing"},
+    {"phase": "save", "behavior": "write only into the user-approved local reports/<run_id>/ location; preserve source ledger, normalized input and validation record; never upload personal financial files to MoAI or Library"}
+  ],
+  "first_report_integration_gate": {
+    "candidate_family_label": "R01 심층 from earlier read-only master-plan review only",
+    "current_deep_template_id": "deep (verified only in the existing 0.3.0-rc.1 routing manifest)",
+    "current_schema": "atp-report/2.0-review",
+    "current_quote_adapter_is_sufficient_for_full_report": false,
+    "reason": "The existing deep schema also requires a bounded multi-point price_history and independent company, financial, thesis, business-mix, risk, scenario, source and claim inputs. One quote snapshot cannot satisfy those requirements.",
+    "current_adapter_mapping": {
+      "source_record": "one KIS quote source with sample mapping, date-only source_as_of, local received/available time and per-field lineage",
+      "price_history": "not mapped by the currently exposed tool; do not duplicate one snapshot into a multi-point series",
+      "company_financials": "must come from direct DART/SEC sources and carry period, scope, unit and revision lineage; not implemented here",
+      "theses_scenarios_risks": "must be evidence-linked analysis inputs; not inferred from the quote"
+    },
+    "blockers_before_real_render": [
+      "No current KIS credential profile or active provider connection is configured in this isolated prototype.",
+      "Market-data and exchange display/storage/derived-use permissions are not documented as cleared; current runtime default-denies live access.",
+      "KIS current portal schema and account-specific throttles have not been independently validated.",
+      "The active ChatGPT Work host has not been shown to launch this local stdio process or expose its tool.",
+      "The complete report input and report-owner generator path are separate from this one-tool MCP slice."
+    ],
+    "no_fabrication_rule": "Do not produce or label a full verified-source report from the synthetic fixture or quote snapshot alone. No live KIS call or financial report was performed in this task."
+  },
+  "distribution_security": {
+    "existing_rc_not_updated": true,
+    "free_source_license": "AGPLv3 approved direction for the future public free package; does not retroactively change the inspected RC metadata and does not grant market-data rights",
+    "pro_distribution": "private student ZIP direction; separate code and content boundary; preserve third-party notices",
+    "secret_policy": ".goose stores configuration and non-secret license references; recommend OS secure store for KIS credentials; no key/token/account identifier in this contract or any plugin manifest",
+    "rights_policy": "code license, provider data rights, host/model processing and user-local storage are separate gates",
+    "install_or_publish": false
+  },
+  "verification": {
+    "mcp_unit_and_stdio_tests": "16 passed on Python 3.13.11 using synthetic fixtures and mocked KIS HTTP; not host or live-service verification",
+    "plugin_manifest_read": "existing 0.3.0-rc.1 manifest and distribution metadata read only",
+    "plugin_setup_or_install": "not run",
+    "ChatGPT_Work_tool_invocation": "not verified",
+    "actual_KIS_call": "not run",
+    "account_read": "not run",
+    "report_HTML_generation_from_actual_data": "not run",
+    "new_integration_tests": "not implemented in this design artifact"
+  }
+}

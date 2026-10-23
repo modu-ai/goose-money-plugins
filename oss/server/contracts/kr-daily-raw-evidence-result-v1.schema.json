@@ -1,0 +1,996 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "contract": {
+      "type": "string",
+      "const": "moai.kis.kr-daily-raw-evidence.v1"
+    },
+    "provider": {
+      "type": "string",
+      "const": "KIS"
+    },
+    "operation_id": {
+      "type": "string",
+      "const": "KIS-039"
+    },
+    "endpoint": {
+      "type": "string",
+      "const": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice"
+    },
+    "tr_id": {
+      "type": "string",
+      "const": "FHKST03010100"
+    },
+    "request": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string",
+          "pattern": "^\\d{6}$"
+        },
+        "board": {
+          "type": "string",
+          "enum": [
+            "J",
+            "NX",
+            "UN"
+          ]
+        },
+        "start_date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end_date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "interval": {
+          "type": "string",
+          "const": "1d"
+        },
+        "adjustment_code": {
+          "type": "string",
+          "enum": [
+            "0",
+            "1"
+          ]
+        }
+      },
+      "required": [
+        "symbol",
+        "board",
+        "start_date",
+        "end_date",
+        "interval",
+        "adjustment_code"
+      ],
+      "additionalProperties": false
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "enum": [
+            "actual",
+            "synthetic"
+          ]
+        },
+        "received_at": {
+          "type": "string",
+          "maxLength": 80,
+          "format": "date-time",
+          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+        },
+        "body_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "body_byte_length": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 262144
+        },
+        "hash_scope": {
+          "type": "string",
+          "const": "decoded_response_text_utf8"
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "provenance_status": {
+          "type": "string",
+          "const": "caller_supplied_capture_metadata"
+        },
+        "source_authentication": {
+          "type": "string",
+          "const": "not_established"
+        }
+      },
+      "required": [
+        "origin",
+        "received_at",
+        "body_sha256",
+        "body_byte_length",
+        "hash_scope",
+        "hash_algorithm",
+        "provenance_status",
+        "source_authentication"
+      ],
+      "additionalProperties": false
+    },
+    "cutoff": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "provider_success_status": {
+      "type": "string",
+      "const": "0"
+    },
+    "success_policy": {
+      "type": "string",
+      "const": "string_zero_only"
+    },
+    "identity_status": {
+      "type": "string",
+      "const": "request_context_only_not_response_verified"
+    },
+    "source_as_of": {
+      "type": "null"
+    },
+    "publication_at": {
+      "type": "null"
+    },
+    "receipt_cutoff_status": {
+      "type": "string",
+      "const": "receipt_not_after_cutoff_no_publication_inference"
+    },
+    "adjustment_code_interpretation": {
+      "type": "string",
+      "const": "blocked_portal_sample_conflict"
+    },
+    "row_order": {
+      "type": "string",
+      "const": "captured_output2_array_order"
+    },
+    "row_index_basis": {
+      "type": "string",
+      "const": "zero_based_output2_index"
+    },
+    "row_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "response_status": {
+      "type": "string",
+      "enum": [
+        "rows_preserved",
+        "empty_success_capture"
+      ]
+    },
+    "rows": {
+      "maxItems": 100,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_row_index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 99
+          },
+          "provider_business_date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "raw_fields": {
+            "type": "object",
+            "properties": {
+              "stck_bsop_date": {
+                "type": "object",
+                "properties": {
+                  "state": {
+                    "type": "string",
+                    "const": "present"
+                  },
+                  "value": {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  }
+                },
+                "required": [
+                  "state",
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "stck_clpr": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "stck_oprc": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "stck_hgpr": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "stck_lwpr": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "acml_vol": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "acml_tr_pbmn": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "flng_cls_code": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "prtt_rate": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^-?\\d+(?:\\.\\d+)?(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "mod_yn": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              "revl_issu_reas": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "present"
+                      },
+                      "value": {
+                        "type": "string",
+                        "pattern": "^[^\\x00-\\x1f\\x7f-\\x9f]+(?![\\s\\S])"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "blank"
+                      },
+                      "value": {
+                        "type": "string",
+                        "const": ""
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "state": {
+                        "type": "string",
+                        "const": "missing"
+                      },
+                      "value": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "state",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "stck_bsop_date",
+              "stck_clpr",
+              "stck_oprc",
+              "stck_hgpr",
+              "stck_lwpr",
+              "acml_vol",
+              "acml_tr_pbmn",
+              "flng_cls_code",
+              "prtt_rate",
+              "mod_yn",
+              "revl_issu_reas"
+            ],
+            "additionalProperties": false
+          },
+          "canonical": {
+            "type": "object",
+            "properties": {
+              "instrument_id": {
+                "type": "null"
+              },
+              "date": {
+                "type": "null"
+              },
+              "open": {
+                "type": "null"
+              },
+              "high": {
+                "type": "null"
+              },
+              "low": {
+                "type": "null"
+              },
+              "close": {
+                "type": "null"
+              },
+              "volume": {
+                "type": "null"
+              },
+              "turnover": {
+                "type": "null"
+              },
+              "currency": {
+                "type": "null"
+              },
+              "price_unit": {
+                "type": "null"
+              },
+              "volume_unit": {
+                "type": "null"
+              },
+              "turnover_unit": {
+                "type": "null"
+              },
+              "adjusted": {
+                "type": "null"
+              },
+              "adjustment_factor": {
+                "type": "null"
+              },
+              "source_as_of": {
+                "type": "null"
+              },
+              "publication_at": {
+                "type": "null"
+              },
+              "session": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "instrument_id",
+              "date",
+              "open",
+              "high",
+              "low",
+              "close",
+              "volume",
+              "turnover",
+              "currency",
+              "price_unit",
+              "volume_unit",
+              "turnover_unit",
+              "adjusted",
+              "adjustment_factor",
+              "source_as_of",
+              "publication_at",
+              "session"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "source_row_index",
+          "provider_business_date",
+          "raw_fields",
+          "canonical"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "response_range_completeness": {
+      "type": "string",
+      "const": "unknown_pagination_not_demonstrated"
+    },
+    "rights_status": {
+      "type": "string",
+      "const": "pending"
+    },
+    "source_time_status": {
+      "type": "string",
+      "const": "date_only_no_provider_time_or_timezone"
+    },
+    "canonical_projection_status": {
+      "type": "string",
+      "const": "blocked"
+    },
+    "blockers": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "price_currency_and_scale_not_stated_in_endpoint_schema"
+        },
+        {
+          "type": "string",
+          "const": "volume_unit_not_stated_in_endpoint_schema"
+        },
+        {
+          "type": "string",
+          "const": "trade_amount_currency_and_scale_not_stated_in_endpoint_schema"
+        },
+        {
+          "type": "string",
+          "const": "adjustment_code_portal_sample_conflict"
+        },
+        {
+          "type": "string",
+          "const": "response_identity_not_independently_verified"
+        },
+        {
+          "type": "string",
+          "const": "date_only_no_provider_time_or_timezone"
+        },
+        {
+          "type": "string",
+          "const": "data_rights_and_host_egress_not_approved_by_this_contract"
+        }
+      ],
+      "items": false,
+      "minItems": 7,
+      "maxItems": 7
+    },
+    "warnings": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "string",
+          "const": "SHA256 binds original decoded response text encoded as UTF-8, not wire bytes or source authenticity. Original text must be retained separately."
+        },
+        {
+          "type": "string",
+          "const": "Request, origin, receipt and cutoff are caller-supplied metadata, not authenticated transport observations or publication evidence."
+        },
+        {
+          "type": "string",
+          "const": "Only the eleven documented output2 row fields are projected. Provider messages, output1, headers and arbitrary metadata are never public evidence fields."
+        },
+        {
+          "type": "string",
+          "const": "Provider order and date labels are retained without sorting, deduplication, calendar-session inference, completeness claims or canonical chart/metric promotion."
+        },
+        {
+          "type": "string",
+          "const": "Empty successful output2 is retained as empty capture evidence only, not proof of no trading or complete history. The existing price-history v1 contract is unchanged."
+        }
+      ],
+      "items": false,
+      "minItems": 5,
+      "maxItems": 5
+    }
+  },
+  "required": [
+    "contract",
+    "provider",
+    "operation_id",
+    "endpoint",
+    "tr_id",
+    "request",
+    "capture",
+    "cutoff",
+    "provider_success_status",
+    "success_policy",
+    "identity_status",
+    "source_as_of",
+    "publication_at",
+    "receipt_cutoff_status",
+    "adjustment_code_interpretation",
+    "row_order",
+    "row_index_basis",
+    "row_count",
+    "response_status",
+    "rows",
+    "response_range_completeness",
+    "rights_status",
+    "source_time_status",
+    "canonical_projection_status",
+    "blockers",
+    "warnings"
+  ],
+  "additionalProperties": false,
+  "$id": "urn:moai:kis:kr-daily-raw-evidence:result:v1",
+  "description": "Structural only. Runtime verification must reconstruct from independently supplied context and separately retained original body text. Calendar validity, receipt ordering, index/order/count and capture binding are runtime invariants."
+}

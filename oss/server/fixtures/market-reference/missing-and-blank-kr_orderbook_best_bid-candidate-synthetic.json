@@ -1,0 +1,160 @@
+{
+  "contract": "moai.market.selected-reference-evidence.v1",
+  "status": "selected_raw_evidence_candidate_only",
+  "policy": "kr_orderbook_best_bid",
+  "cutoff": "2026-10-22T03:00:00.123456789124Z",
+  "requested_role": "market.best_bid",
+  "role_association_status": "requested_destination_label_not_semantic_binding",
+  "provider": "kis",
+  "origin": "synthetic",
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "source_request": {
+    "operation": "kis.market_orderbook",
+    "method": "GET",
+    "path": "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn",
+    "tr_id": "FHKST01010200",
+    "tr_cont": "",
+    "query": {
+      "FID_COND_MRKT_DIV_CODE": "UN",
+      "FID_INPUT_ISCD": "005930"
+    }
+  },
+  "request_evidence_status": "retained_orderbook_request_not_authenticated_http_receipt",
+  "selected": {
+    "dto_selector": "$.raw.output1.bidp1",
+    "provider_selector": "$.output1.bidp1",
+    "raw_lexeme": null,
+    "raw_state": "missing",
+    "lexical_profile": "ascii_unsigned_decimal_max_40_chars_no_whitespace_sign_exponent_or_grouping",
+    "lexical_status_note": "syntax_only_not_economic_validity_units_or_canonical_value"
+  },
+  "received_at": "2026-10-22T03:00:00.123456789123Z",
+  "receipt_status": "local_receipt_not_source_or_publication_time",
+  "source_at": null,
+  "published_at": null,
+  "available_at": null,
+  "session": null,
+  "previous_session_id": null,
+  "previous_session_close_at": null,
+  "currency": null,
+  "price_unit": null,
+  "split_basis": null,
+  "source_authenticated": false,
+  "identity_verified": false,
+  "semantic_binding_verified": false,
+  "simultaneous_quotes_verified": false,
+  "quote_firmness": "unverified",
+  "rights_status": "pending",
+  "canonical_observation": null,
+  "metric_ready": false,
+  "snapshot": {
+    "value": {
+      "contract": "moai.stock.market-orderbook.v1",
+      "provider": "kis",
+      "origin": "synthetic",
+      "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+      "requested": {
+        "symbol": "005930",
+        "board": "UN"
+      },
+      "source_request": {
+        "operation": "kis.market_orderbook",
+        "method": "GET",
+        "path": "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn",
+        "tr_id": "FHKST01010200",
+        "tr_cont": "",
+        "query": {
+          "FID_COND_MRKT_DIV_CODE": "UN",
+          "FID_INPUT_ISCD": "005930"
+        }
+      },
+      "received_at": "2026-10-22T03:00:00.123456789123Z",
+      "source_at": null,
+      "published_at": null,
+      "available_at": null,
+      "source_timezone": null,
+      "session": null,
+      "source_time_status": "raw_clock_text_only_no_date_timezone_or_exact_instant",
+      "identity_status": "no_nonblank_symbol_echo",
+      "market_identity_status": "requested_board_only_no_verified_market_echo",
+      "field_partition_status": "shared_dictionary_not_complete_per_object_partition",
+      "output2_status": "raw_json_shape_retained_cardinality_and_semantics_unverified",
+      "quote_firmness": "unverified",
+      "simultaneous_quotes_verified": false,
+      "source_authenticated": false,
+      "rights_status": "pending",
+      "validation_status": "bounded_raw_subset_not_live_reconciled",
+      "metric_ready": false,
+      "canonical_observation": null,
+      "canonical_projection_status": "blocked",
+      "canonical": {
+        "instrument_id": null,
+        "asset_class": null,
+        "exchange": null,
+        "currency": null,
+        "price_unit": null,
+        "quantity_unit": null,
+        "best_bid": null,
+        "best_ask": null,
+        "spread": null
+      },
+      "pagination": {
+        "responses_received": 1,
+        "tr_cont": "",
+        "automatic_continuation": false
+      },
+      "raw": {
+        "output1": {
+          "askp1": "",
+          "aspr_acpt_hour": ""
+        },
+        "output2": []
+      },
+      "mapping_blockers": [
+        "source_authenticity_and_rights_unverified",
+        "complete_source_field_partition_and_cardinality_unverified",
+        "security_class_venue_listing_and_split_basis_unverified",
+        "currency_price_scale_and_quantity_units_unverified",
+        "source_date_timezone_and_exact_instant_unverified",
+        "firm_regular_session_atomic_book_unverified",
+        "publication_freshness_and_delay_unverified"
+      ],
+      "warnings": [
+        "Public source field labels and synthetic tests are not a live response contract or market-data permission.",
+        "output1 is a raw book candidate. output2 remains unchanged and is never flattened or promoted to firm bid/ask/last.",
+        "Matching symbol echoes are conservative guards, not issuer, class, listing or market verification. UN is not a verified single venue.",
+        "Receipt is local and post-response only. aspr_acpt_hour remains exact raw text, never combined with a date or timezone.",
+        "A shared response does not prove simultaneous or firm quotes. Blank, zero, malformed text and crossed raw prices are not repaired."
+      ]
+    },
+    "sha256": "9b58719d8b1ed5ed4f4e8fc647d0ba983342bf5223cd5a0d2b66ee6c296d6802",
+    "hash_algorithm": "sha256",
+    "serialization": "sorted_object_keys_json_utf8_v1",
+    "hash_scope": "whole_validated_provider_dto_snapshot",
+    "original_http_body_hash": null,
+    "source_authentication": false
+  },
+  "mapping_blockers": [
+    "source_authenticity_and_current_rights_unverified",
+    "security_class_venue_and_split_basis_unverified",
+    "currency_scale_and_one_share_price_unit_unverified",
+    "exact_source_publication_and_availability_instants_unverified",
+    "official_previous_session_reference_unverified",
+    "firm_regular_session_and_same_instant_book_unverified"
+  ],
+  "warnings": [
+    "Finite raw field selection only. Existing market.* names are requested destination labels, not verified report inputs.",
+    "Whole DTO and candidate SHA256 are deterministic integrity links, not original HTTP-body hashes, signatures or source authentication.",
+    "No last-minus-change, stck_sdpr substitution, output2 indicative promotion, zdiv scaling or currency inference occurs.",
+    "Receipt time and intraday bar dates/times never date an orderbook clock or an output1 prior-close header.",
+    "A decimal-text syntax candidate may be zero, stale, crossed or economically invalid. No canonical value or metric is computed.",
+    "This selector does not authorize acquisition, persistence, model-host egress, derived use, export or redistribution."
+  ],
+  "integrity": {
+    "sha256": "9be4074f2de3d43acc9d8e2118f0212d268003f4e65f6444de379a950171a4e8",
+    "hash_algorithm": "sha256",
+    "serialization": "sorted_object_keys_json_utf8_v1",
+    "scope": "candidate_except_integrity",
+    "source_authentication": false
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "requested_scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "roles": {
+      "minItems": 1,
+      "maxItems": 5,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "company-analysis",
+          "disclosure-event",
+          "market-behavior",
+          "valuation",
+          "fact-check-report-qa"
+        ]
+      }
+    },
+    "cutoff_at": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "evidence": {
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidence_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "pattern": "^[A-Za-z0-9_.:-]+$"
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "actual",
+              "synthetic"
+            ]
+          },
+          "received_at": {
+            "type": "string",
+            "maxLength": 80,
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+          },
+          "source_as_of": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "evidence_ref",
+          "origin",
+          "received_at",
+          "source_as_of"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "execution_preference": {
+      "default": "sequential",
+      "type": "string",
+      "enum": [
+        "sequential",
+        "parallel_if_available"
+      ]
+    },
+    "timeout_ms": {
+      "default": 30000,
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 60000
+    }
+  },
+  "required": [
+    "run_id",
+    "requested_scope",
+    "roles",
+    "cutoff_at",
+    "evidence",
+    "execution_preference",
+    "timeout_ms"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,1081 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "requested_role": {
+      "type": "string",
+      "enum": [
+        "reported.revenue",
+        "reported.operating_profit",
+        "reported.net_income_total",
+        "reported.net_income_common",
+        "reported.cfo",
+        "reported.capex",
+        "reported.debt",
+        "reported.cash",
+        "reported.equity",
+        "reported.liabilities",
+        "reported.equity_common_open",
+        "reported.equity_common_close",
+        "reported.shares_weighted"
+      ]
+    },
+    "cutoff": {
+      "type": "string",
+      "maxLength": 80,
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    },
+    "calendar_guard": {
+      "type": "object",
+      "properties": {
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "cutoff_local_date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      },
+      "required": [
+        "timezone",
+        "cutoff_local_date"
+      ],
+      "additionalProperties": false
+    },
+    "selector": {
+      "type": "object",
+      "properties": {
+        "corp_code": {
+          "type": "string",
+          "pattern": "^\\d{8}$"
+        },
+        "bsns_year": {
+          "type": "string",
+          "pattern": "^\\d{4}$"
+        },
+        "reprt_code": {
+          "type": "string",
+          "enum": [
+            "11011",
+            "11012",
+            "11013",
+            "11014"
+          ]
+        },
+        "fs_div": {
+          "type": "string",
+          "enum": [
+            "CFS",
+            "OFS"
+          ]
+        },
+        "rcept_no": {
+          "type": "string",
+          "pattern": "^\\d{14}$"
+        },
+        "sj_div": {
+          "type": "string",
+          "enum": [
+            "BS",
+            "IS",
+            "CIS",
+            "CF",
+            "SCE"
+          ]
+        },
+        "account_id": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "account_nm": {
+          "type": "string",
+          "maxLength": 2048
+        },
+        "account_detail": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 2048
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ord": {
+          "type": "string",
+          "maxLength": 20,
+          "pattern": "^\\d+$"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 32
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount_kind": {
+          "type": "string",
+          "enum": [
+            "current",
+            "current_cumulative",
+            "prior",
+            "prior_comparable",
+            "prior_cumulative",
+            "two_years_prior"
+          ]
+        },
+        "period_label": {
+          "anyOf": [
+            {
+              "type": "string",
+              "maxLength": 2048
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "filing": {
+          "type": "object",
+          "properties": {
+            "rcept_dt": {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            "report_nm": {
+              "type": "string",
+              "maxLength": 2048
+            },
+            "corp_cls": {
+              "type": "string",
+              "enum": [
+                "Y",
+                "K",
+                "N",
+                "E"
+              ]
+            },
+            "stock_code": {
+              "type": "string",
+              "pattern": "^(?:\\d{6})?$"
+            }
+          },
+          "required": [
+            "rcept_dt",
+            "report_nm",
+            "corp_cls",
+            "stock_code"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "corp_code",
+        "bsns_year",
+        "reprt_code",
+        "fs_div",
+        "rcept_no",
+        "sj_div",
+        "account_id",
+        "account_nm",
+        "account_detail",
+        "ord",
+        "currency",
+        "amount_kind",
+        "period_label",
+        "filing"
+      ],
+      "additionalProperties": false
+    },
+    "statement_result": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "no_data",
+            "rate_limited",
+            "error"
+          ]
+        },
+        "provider_status": {
+          "type": "string",
+          "pattern": "^\\d{3}$"
+        },
+        "error_code": {
+          "type": "string",
+          "enum": [
+            "provider_error"
+          ]
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "corp_code": {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            "bsns_year": {
+              "type": "string",
+              "pattern": "^\\d{4}$"
+            },
+            "reprt_code": {
+              "type": "string",
+              "enum": [
+                "11011",
+                "11012",
+                "11013",
+                "11014"
+              ]
+            },
+            "fs_div": {
+              "type": "string",
+              "enum": [
+                "CFS",
+                "OFS"
+              ]
+            }
+          },
+          "required": [
+            "corp_code",
+            "bsns_year",
+            "reprt_code",
+            "fs_div"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 40,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            }
+          },
+          "required": [
+            "origin",
+            "received_at"
+          ],
+          "additionalProperties": false
+        },
+        "source": {
+          "type": "string",
+          "const": "opendart"
+        },
+        "documentation": {
+          "type": "string",
+          "const": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS003&apiId=2019020"
+        },
+        "rows": {
+          "maxItems": 10000,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "raw": {
+                "type": "object",
+                "properties": {
+                  "rcept_no": {
+                    "type": "string",
+                    "pattern": "^\\d{14}$"
+                  },
+                  "reprt_code": {
+                    "type": "string",
+                    "enum": [
+                      "11011",
+                      "11012",
+                      "11013",
+                      "11014"
+                    ]
+                  },
+                  "bsns_year": {
+                    "type": "string",
+                    "pattern": "^\\d{4}$"
+                  },
+                  "corp_code": {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  "sj_div": {
+                    "type": "string",
+                    "enum": [
+                      "BS",
+                      "IS",
+                      "CIS",
+                      "CF",
+                      "SCE"
+                    ]
+                  },
+                  "sj_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "account_id": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "account_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "account_detail": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "thstrm_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "thstrm_amount": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "thstrm_add_amount": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "frmtrm_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "frmtrm_amount": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "frmtrm_q_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "frmtrm_q_amount": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "frmtrm_add_amount": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "bfefrmtrm_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "bfefrmtrm_amount": {
+                    "type": "string",
+                    "maxLength": 128
+                  },
+                  "ord": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "pattern": "^\\d+$"
+                  },
+                  "currency": {
+                    "type": "string",
+                    "maxLength": 32
+                  }
+                },
+                "required": [
+                  "rcept_no",
+                  "reprt_code",
+                  "bsns_year",
+                  "corp_code",
+                  "sj_div",
+                  "sj_nm",
+                  "account_id",
+                  "account_nm",
+                  "ord"
+                ],
+                "additionalProperties": false
+              },
+              "filing_url": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "fs_div": {
+                "type": "string",
+                "enum": [
+                  "CFS",
+                  "OFS"
+                ]
+              },
+              "current_period_kind": {
+                "type": "string",
+                "enum": [
+                  "three_months",
+                  "unspecified"
+                ]
+              },
+              "amounts": {
+                "type": "object",
+                "properties": {
+                  "current": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "missing"
+                          }
+                        },
+                        "required": [
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "blank"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "value"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "decimal": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[+-]?\\d+(?:\\.\\d+)?$"
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw",
+                          "decimal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "current_cumulative": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "missing"
+                          }
+                        },
+                        "required": [
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "blank"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "value"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "decimal": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[+-]?\\d+(?:\\.\\d+)?$"
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw",
+                          "decimal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "prior": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "missing"
+                          }
+                        },
+                        "required": [
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "blank"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "value"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "decimal": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[+-]?\\d+(?:\\.\\d+)?$"
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw",
+                          "decimal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "prior_comparable": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "missing"
+                          }
+                        },
+                        "required": [
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "blank"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "value"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "decimal": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[+-]?\\d+(?:\\.\\d+)?$"
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw",
+                          "decimal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "prior_cumulative": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "missing"
+                          }
+                        },
+                        "required": [
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "blank"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "value"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "decimal": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[+-]?\\d+(?:\\.\\d+)?$"
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw",
+                          "decimal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
+                  "two_years_prior": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "missing"
+                          }
+                        },
+                        "required": [
+                          "state"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "blank"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "state": {
+                            "type": "string",
+                            "const": "value"
+                          },
+                          "raw": {
+                            "type": "string",
+                            "maxLength": 128
+                          },
+                          "decimal": {
+                            "type": "string",
+                            "maxLength": 128,
+                            "pattern": "^[+-]?\\d+(?:\\.\\d+)?$"
+                          }
+                        },
+                        "required": [
+                          "state",
+                          "raw",
+                          "decimal"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "current",
+                  "current_cumulative",
+                  "prior",
+                  "prior_comparable",
+                  "prior_cumulative",
+                  "two_years_prior"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "raw",
+              "filing_url",
+              "fs_div",
+              "current_period_kind",
+              "amounts"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "status",
+        "provider_status",
+        "request",
+        "provenance",
+        "source",
+        "documentation",
+        "rows"
+      ],
+      "additionalProperties": false
+    },
+    "filings_result": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "opendart"
+        },
+        "documentation": {
+          "type": "string",
+          "const": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "no_data",
+            "rate_limited",
+            "error"
+          ]
+        },
+        "provider_status": {
+          "type": "string",
+          "pattern": "^\\d{3}$"
+        },
+        "error_code": {
+          "type": "string",
+          "const": "provider_error"
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "corp_code": {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            "bgn_de": {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            "end_de": {
+              "type": "string",
+              "pattern": "^\\d{8}$"
+            },
+            "last_reprt_at": {
+              "default": "N",
+              "type": "string",
+              "enum": [
+                "Y",
+                "N"
+              ]
+            },
+            "pblntf_ty": {
+              "type": "string",
+              "enum": [
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "G",
+                "H",
+                "I",
+                "J"
+              ]
+            },
+            "corp_cls": {
+              "type": "string",
+              "enum": [
+                "Y",
+                "K",
+                "N",
+                "E"
+              ]
+            },
+            "sort": {
+              "default": "date",
+              "type": "string",
+              "enum": [
+                "date",
+                "crp",
+                "rpt"
+              ]
+            },
+            "sort_mth": {
+              "default": "desc",
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            },
+            "page_no": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 99999
+            },
+            "page_count": {
+              "default": 100,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          "required": [
+            "corp_code",
+            "bgn_de",
+            "end_de",
+            "last_reprt_at",
+            "sort",
+            "sort_mth",
+            "page_no",
+            "page_count"
+          ],
+          "additionalProperties": false
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "origin": {
+              "type": "string",
+              "enum": [
+                "actual",
+                "synthetic"
+              ]
+            },
+            "received_at": {
+              "type": "string",
+              "maxLength": 40,
+              "format": "date-time",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+            }
+          },
+          "required": [
+            "origin",
+            "received_at"
+          ],
+          "additionalProperties": false
+        },
+        "total_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99999999
+        },
+        "total_page": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 99999999
+        },
+        "next_page_no": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 99999
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "rows": {
+          "maxItems": 100,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "raw": {
+                "type": "object",
+                "properties": {
+                  "corp_cls": {
+                    "type": "string",
+                    "enum": [
+                      "Y",
+                      "K",
+                      "N",
+                      "E"
+                    ]
+                  },
+                  "corp_name": {
+                    "type": "string",
+                    "maxLength": 1024
+                  },
+                  "corp_code": {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  "stock_code": {
+                    "type": "string",
+                    "pattern": "^(?:\\d{6})?$"
+                  },
+                  "report_nm": {
+                    "type": "string",
+                    "maxLength": 2048
+                  },
+                  "rcept_no": {
+                    "type": "string",
+                    "pattern": "^\\d{14}$"
+                  },
+                  "flr_nm": {
+                    "type": "string",
+                    "maxLength": 1024
+                  },
+                  "rcept_dt": {
+                    "type": "string",
+                    "pattern": "^\\d{8}$"
+                  },
+                  "rm": {
+                    "type": "string",
+                    "maxLength": 128
+                  }
+                },
+                "required": [
+                  "corp_cls",
+                  "corp_name",
+                  "corp_code",
+                  "stock_code",
+                  "report_nm",
+                  "rcept_no",
+                  "flr_nm",
+                  "rcept_dt",
+                  "rm"
+                ],
+                "additionalProperties": false
+              },
+              "filing_url": {
+                "type": "string",
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "raw",
+              "filing_url"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "source",
+        "documentation",
+        "status",
+        "provider_status",
+        "request",
+        "provenance",
+        "next_page_no",
+        "has_more",
+        "rows"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "requested_role",
+    "cutoff",
+    "calendar_guard",
+    "selector",
+    "statement_result",
+    "filings_result"
+  ],
+  "additionalProperties": false,
+  "$comment": "Structure only. JSON Schema omits runtime refinements, hostile-object guards, exact joins/calendar/receipt checks, DART reconstruction and snapshot hashes. Use selectSecFinancialEvidence/selectDartFinancialEvidence; persisted candidates MUST pass validateFinancialEvidenceCandidate."
+}

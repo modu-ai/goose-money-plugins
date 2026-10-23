@@ -1,0 +1,90 @@
+{
+  "contract": "moai.stock.kr-intraday-history.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "received_at": "2026-10-22T03:00:00.123456789Z",
+  "available_at": "2026-10-22T03:00:00.123456789Z",
+  "source_as_of": null,
+  "event_time": null,
+  "published_at": null,
+  "source_timezone": null,
+  "source_time_status": "provider_bar_labels_not_verified_instants",
+  "rights_status": "pending",
+  "session": "unknown",
+  "delay_state": "unknown",
+  "finality": "unknown",
+  "freshness": "unknown",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "completeness": "unknown",
+  "pagination": {
+    "pages_fetched": 1,
+    "tr_cont": "",
+    "status": "not_signaled_completeness_unknown",
+    "automatic_continuation": false,
+    "completeness": "unknown"
+  },
+  "bars_returned": 1,
+  "coverage_status": "single_page_not_complete_history",
+  "canonical_projection_status": "blocked",
+  "canonical": {
+    "instrument_id": null,
+    "asset_class": null,
+    "currency": null,
+    "adjusted": null,
+    "price_unit": null,
+    "volume_unit": null,
+    "turnover_unit": null,
+    "bars": null
+  },
+  "mapping_blockers": [
+    "returned_instrument_code_missing",
+    "currency_price_volume_turnover_units_not_reconciled",
+    "intraday_adjustment_and_bar_finality_unverified",
+    "market_data_rights_pending"
+  ],
+  "unimplemented_derivations": [
+    "historical_intraday",
+    "automatic_pagination",
+    "canonical_ohlcv",
+    "five_minute_aggregation",
+    "hourly_aggregation",
+    "source_timestamp_attribution"
+  ],
+  "warnings": [
+    "This current-day endpoint returns at most 30 rows per request, not complete historical intraday coverage.",
+    "The first output2 row may retain the previous bar volume until its first trade. No volume repair, deduplication or finality is inferred.",
+    "A future requested time can be populated with the current price; provider date/time labels are not verified trade or publication instants.",
+    "include_past_data does not authorize or imply previous-day coverage. The optional expected business date is a local guard, not a transmitted date filter.",
+    "acml_tr_pbmn is retained unchanged and is not relabeled as per-bar turnover. No timezone, exchange session or bar alignment is inferred."
+  ],
+  "requested": {
+    "symbol": "005930",
+    "board": "J",
+    "anchor_time": "103000",
+    "include_past_data": "Y",
+    "expected_business_date": "20261022"
+  },
+  "interval": "provider_minute_bars",
+  "scope": "current_day_endpoint_not_historical_intraday",
+  "identity_status": "no_returned_instrument_code",
+  "adjustment_status": "not_specified_by_reviewed_intraday_contract",
+  "first_row_volume_status": "may_belong_to_previous_bar_until_first_trade",
+  "raw": {
+    "output1": {
+      "stck_prpr": "98000",
+      "hts_kor_isnm": "SYNTHETIC"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261022",
+        "stck_cntg_hour": "103000",
+        "stck_prpr": "98000",
+        "stck_oprc": "97900",
+        "stck_hgpr": "98100",
+        "stck_lwpr": "97800",
+        "cntg_vol": "900719925474099312345",
+        "acml_tr_pbmn": "123456789012345678901"
+      }
+    ]
+  }
+}

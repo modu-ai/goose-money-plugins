@@ -1,0 +1,180 @@
+{
+  "contract": "moai.market-observations/0.1-rc7",
+  "request": {
+    "cutoff": "2026-10-22T14:30:01.123456789124Z",
+    "data_kind": "synthetic",
+    "purpose": "private_analysis"
+  },
+  "entries": [
+    {
+      "id": "synthetic-us_equity_change",
+      "metric_id": "metric.change_pct",
+      "observations": {
+        "market.last": {
+          "observation_id": "moai:market:556717649baecff3c5819a8ece1132d409016db8df40e5a036d05f244a58ee86",
+          "role": "market.last",
+          "data_kind": "synthetic",
+          "value": "101.2500",
+          "unit": "money_per_share",
+          "scale": "1",
+          "currency": "USD",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:us_equity_change",
+            "symbol": "SYNTH",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XNAS",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-22",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "regular_last_vs_official_previous_close",
+            "market_state": "regular_open",
+            "semantics": "last_trade"
+          },
+          "source_at": "2026-10-22T14:30:00.123456789123Z",
+          "published_at": "2026-10-22T14:30:00.123456789124Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.last",
+            "locator": "$.output.last",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          }
+        },
+        "market.previous_close": {
+          "observation_id": "moai:market:f043a690043a7c0792270f772408ae60c1cd878e164bcde50691a525e9bff10f",
+          "role": "market.previous_close",
+          "data_kind": "synthetic",
+          "value": "100.0000",
+          "unit": "money_per_share",
+          "scale": "1",
+          "currency": "USD",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:us_equity_change",
+            "symbol": "SYNTH",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XNAS",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-21",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "regular_last_vs_official_previous_close",
+            "market_state": "regular_open",
+            "semantics": "official_previous_session_close"
+          },
+          "source_at": "2026-10-21T20:00:00Z",
+          "published_at": "2026-10-21T20:00:00.000000000001Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.previous_close",
+            "locator": "$.output.base",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          }
+        },
+        "market.provider_change_pct": {
+          "observation_id": "moai:market:ffb03e63575da2831ca55edc8b5141f16bebb295870fe2a07bddc943c7828ec6",
+          "role": "market.provider_change_pct",
+          "data_kind": "synthetic",
+          "value": "1.25",
+          "unit": "percent",
+          "scale": "1",
+          "currency": "USD",
+          "instrument": {
+            "security_id": "SYNTHETIC:security:us_equity_change",
+            "symbol": "SYNTH",
+            "instrument_kind": "equity",
+            "venue": "SYNTHETIC:XNAS",
+            "share_class": "SYNTHETIC:common",
+            "share_unit": "one_share",
+            "split_basis": "SYNTHETIC:current-share-unadjusted"
+          },
+          "basis": {
+            "session_id": "SYNTHETIC:2026-10-22",
+            "observation_session_id": "SYNTHETIC:2026-10-22",
+            "session_type": "regular",
+            "reference_id": "SYNTHETIC:unadjusted-reference",
+            "price_basis": "unadjusted_per_current_share",
+            "valuation_basis": "regular_last_vs_official_previous_close",
+            "market_state": "regular_open",
+            "semantics": "provider_published_change_from_previous_close"
+          },
+          "source_at": "2026-10-22T14:30:00.123456789123Z",
+          "published_at": "2026-10-22T14:30:00.123456789124Z",
+          "available_at": "2026-10-22T14:30:01.123456789124Z",
+          "provenance": {
+            "source_id": "KIS",
+            "document_id": "SYNTHETIC:original-response",
+            "record_id": "direct:market.provider_change_pct",
+            "locator": "$.output.rate",
+            "revision_id": "SYNTHETIC:original",
+            "source_sha256": "3bd2ecf0729344710b275c9437eb6c1f9c2376b1a7edce558626451e3032b5ca",
+            "origin": "direct_observation",
+            "semantic_binding_asserted": true
+          },
+          "rights": {
+            "processing_allowed": true,
+            "portable_export_allowed": false,
+            "assertion_id": "synthetic-private-analysis-only"
+          }
+        }
+      },
+      "context": {
+        "session_id": "SYNTHETIC:2026-10-22",
+        "session_type": "regular",
+        "reference_id": "SYNTHETIC:unadjusted-reference",
+        "freshness_policy": {
+          "policy_id": "synthetic-private-report-freshness",
+          "max_age_seconds": {
+            "market.last": "10",
+            "market.previous_close": "172800",
+            "market.provider_change_pct": "10"
+          }
+        },
+        "previous_session_id": "SYNTHETIC:2026-10-21",
+        "previous_close_at": "2026-10-21T20:00:00Z",
+        "independent_percent_assertion": {
+          "assertion_id": "synthetic-percent-independence",
+          "provider_percent_independent_of_local_calculation": true,
+          "previous_close_independently_supplied": true
+        },
+        "provider_rounding_policy": {
+          "policy_id": "synthetic-pct-rounding",
+          "decimal_places": 2,
+          "mode": "half_even",
+          "scope": "percent_value_after_scale"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,455 @@
+{
+  "synthetic_only": true,
+  "purpose": "Native requested interval raw shape only; no authentic capture, period boundary, complete period or total-return evidence.",
+  "input": {
+    "request": {
+      "instrument_code": "SYNTH",
+      "market_code": "N",
+      "start_date": "2026-10-01",
+      "end_date": "2026-10-20",
+      "period_code": "W"
+    },
+    "capture": {
+      "origin": "synthetic",
+      "received_at": "2026-10-21T00:00:00.123456789012345678Z",
+      "expected_body_sha256": "8b92f45d5ec99b8f324f578b6b4e79c666c55dfb98d507d61b2d722f590b13ef",
+      "http_status": 200,
+      "tr_cont": "M"
+    },
+    "cutoff": "2026-10-21T00:00:00.123456789012345679Z"
+  },
+  "original_body_text": "{\n  \"rt_cd\": \"0\",\n  \"msg1\": \"SYNTHETIC ONLY\",\n  \"output1\": {\n    \"hts_kor_isnm\": \"합성 자료\",\n    \"prdy_ctrt\": \"\"\n  },\n  \"output2\": [\n    {\n      \"stck_bsop_date\": \"20261020\",\n      \"ovrs_nmix_prpr\": \"-000123.4500\",\n      \"acml_vol\": \"\",\n      \"mod_yn\": \"N\"\n    },\n    {\n      \"stck_bsop_date\": \"20261019\",\n      \"ovrs_nmix_prpr\": \"1e2\"\n    },\n    {\n      \"stck_bsop_date\": \"20261020\",\n      \"ovrs_nmix_prpr\": \"-0\"\n    },\n    {\n      \"stck_bsop_date\": \"\",\n      \"ovrs_nmix_prpr\": \"\"\n    },\n    {},\n    {\n      \"stck_bsop_date\": \"20260930\",\n      \"ovrs_nmix_prpr\": \"1\"\n    }\n  ]\n}\n",
+  "expected": {
+    "contract": "moai.kis.benchmark-period-raw-evidence.v1",
+    "provider": "KIS",
+    "operation_id": "KIS-264",
+    "endpoint": "/uapi/overseas-price/v1/quotations/inquire-daily-chartprice",
+    "tr_id": "FHKST03030100",
+    "request": {
+      "instrument_code": "SYNTH",
+      "start_date": "2026-10-01",
+      "end_date": "2026-10-20",
+      "period_code": "W",
+      "market_code": "N"
+    },
+    "requested_interval": "weekly",
+    "actual_interval_status": "not_verified",
+    "actual_period_coverage": "unknown",
+    "period_boundary_status": "unknown",
+    "period_completeness": "unknown",
+    "return_basis": "unknown_not_total_return_evidence",
+    "metric_ready": false,
+    "capture": {
+      "origin": "synthetic",
+      "received_at": "2026-10-21T00:00:00.123456789012345678Z",
+      "body_sha256": "8b92f45d5ec99b8f324f578b6b4e79c666c55dfb98d507d61b2d722f590b13ef",
+      "body_byte_length": 584,
+      "http_status": 200,
+      "tr_cont": "M",
+      "hash_scope": "original_decoded_response_text_utf8",
+      "provenance_status": "caller_supplied_capture_metadata",
+      "source_authentication": "not_established"
+    },
+    "cutoff": "2026-10-21T00:00:00.123456789012345679Z",
+    "receipt_cutoff_status": "receipt_not_after_cutoff_no_publication_inference",
+    "provider_success_status": "0",
+    "source_as_of": null,
+    "publication_at": null,
+    "identity_status": "request_context_only_not_response_verified",
+    "source_time_status": "date_only_no_time_or_timezone",
+    "rights_status": "pending",
+    "canonical_projection_status": "blocked",
+    "output1_state": "present",
+    "header_raw_fields": {
+      "ovrs_nmix_prdy_clpr": {
+        "state": "missing",
+        "value": null
+      },
+      "prdy_ctrt": {
+        "state": "blank",
+        "value": ""
+      },
+      "hts_kor_isnm": {
+        "state": "present",
+        "value": "합성 자료"
+      }
+    },
+    "output2_state": "rows_present",
+    "row_count": 6,
+    "row_order": "captured_output2_array_order",
+    "row_index_basis": "zero_based_output2_index",
+    "rows": [
+      {
+        "source_row_index": 0,
+        "provider_business_date_label": "2026-10-20",
+        "label_relation_to_request": "within_requested_range",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20261020"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "present",
+            "value": "-000123.4500"
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "blank",
+            "value": ""
+          },
+          "mod_yn": {
+            "state": "present",
+            "value": "N"
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null,
+          "period_start": null,
+          "period_end": null,
+          "total_return": null
+        }
+      },
+      {
+        "source_row_index": 1,
+        "provider_business_date_label": "2026-10-19",
+        "label_relation_to_request": "within_requested_range",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20261019"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "present",
+            "value": "1e2"
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null,
+          "period_start": null,
+          "period_end": null,
+          "total_return": null
+        }
+      },
+      {
+        "source_row_index": 2,
+        "provider_business_date_label": "2026-10-20",
+        "label_relation_to_request": "within_requested_range",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20261020"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "present",
+            "value": "-0"
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null,
+          "period_start": null,
+          "period_end": null,
+          "total_return": null
+        }
+      },
+      {
+        "source_row_index": 3,
+        "provider_business_date_label": null,
+        "label_relation_to_request": "unavailable",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "blank",
+            "value": ""
+          },
+          "ovrs_nmix_prpr": {
+            "state": "blank",
+            "value": ""
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null,
+          "period_start": null,
+          "period_end": null,
+          "total_return": null
+        }
+      },
+      {
+        "source_row_index": 4,
+        "provider_business_date_label": null,
+        "label_relation_to_request": "unavailable",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_prpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null,
+          "period_start": null,
+          "period_end": null,
+          "total_return": null
+        }
+      },
+      {
+        "source_row_index": 5,
+        "provider_business_date_label": "2026-09-30",
+        "label_relation_to_request": "outside_requested_range",
+        "raw_fields": {
+          "stck_bsop_date": {
+            "state": "present",
+            "value": "20260930"
+          },
+          "ovrs_nmix_prpr": {
+            "state": "present",
+            "value": "1"
+          },
+          "ovrs_nmix_oprc": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_hgpr": {
+            "state": "missing",
+            "value": null
+          },
+          "ovrs_nmix_lwpr": {
+            "state": "missing",
+            "value": null
+          },
+          "acml_vol": {
+            "state": "missing",
+            "value": null
+          },
+          "mod_yn": {
+            "state": "missing",
+            "value": null
+          }
+        },
+        "canonical": {
+          "instrument_id": null,
+          "asset_class": null,
+          "date": null,
+          "open": null,
+          "high": null,
+          "low": null,
+          "close": null,
+          "volume": null,
+          "turnover": null,
+          "currency": null,
+          "value_unit": null,
+          "volume_unit": null,
+          "turnover_unit": null,
+          "session": null,
+          "timezone": null,
+          "adjusted": null,
+          "source_as_of": null,
+          "publication_at": null,
+          "period_start": null,
+          "period_end": null,
+          "total_return": null
+        }
+      }
+    ],
+    "row_limit": 500,
+    "row_limit_basis": "local_safety_budget_not_provider_cap",
+    "request_profile_status": "initial_page_only_execution_not_attested",
+    "page_origin_status": "not_independently_established",
+    "response_range_completeness": "unknown_continuation_conflict",
+    "continuation_action": "none",
+    "source_review": "provided_2026_10_21_snapshot_not_new_live_verification",
+    "blockers": [
+      "canonical_identity_units_currency_session_unverified",
+      "date_only_no_provider_publication_instant",
+      "continuation_portal_sample_conflict",
+      "rights_and_source_authentication_not_established",
+      "actual_period_coverage_alignment_finality_and_return_basis_unverified"
+    ],
+    "warnings": [
+      "Raw field presence and SHA-256 do not establish source authenticity, rights, canonical semantics or completeness.",
+      "Request codes are caller context only, not verified asset classes or response identity.",
+      "Receipt and cutoff are caller supplied; receipt ordering does not establish provider publication or as-of time.",
+      "Snapshot header values are separate from historical rows and never fill missing row fields.",
+      "Native W/M/Y response rows are preserved in source order without resampling or daily-bar reconstruction. The request profile permits initial-page input only; supplied page origin and execution are not attested.",
+      "Raw bounded provider strings are preserved without numerical conversion; numeric formatting does not establish units.",
+      "Requested W/M/Y is caller context, not verified actual interval, period boundaries, completeness, finality, calendar or total-return evidence."
+    ]
+  }
+}

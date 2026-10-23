@@ -1,0 +1,305 @@
+{
+  "contract_id": "moai.stock.report.r01.consumer-wire.v1",
+  "version": "0.2.0-draft",
+  "status": "MCP-owner revision; report owner accepted 0.1.0 for partial quote input only; this 0.2.0 rights/schema clarification revision is not yet acknowledged",
+  "updated_on": "2026-10-21",
+  "purpose": "Bind the one current KIS public KR-equity quote snapshot to the report-owner R01 quote-section consumer without changing report-owned code or the existing normalized contract.",
+  "report_identity": {
+    "family_id": "R01",
+    "asset_id": "A1",
+    "asset_class": "KR listed equity",
+    "symbol": "000660",
+    "symbol_status": "requested target; must be matched to provider-verified issuer/security identity before report use",
+    "product_manifest_id": null,
+    "not_a_completed_deep_report": true,
+    "legacy_template_reference": {
+      "existing_rc_template_id": "deep",
+      "existing_schema": "atp-report/2.0-review",
+      "status": "verified historical template reference only; not a new R01 product manifest ID and no RC/ZIP/manifest was changed"
+    }
+  },
+  "input_requirements": {
+    "source_masterplan": "shared/research-design-basis-r1.json",
+    "consumer_requirements": "shared/report-data-requirements-v10.json",
+    "consumer_binding": "shared/mcp-report-consumer-binding-r1.json",
+    "first_slice": "R01/A1 public market quote only; does not satisfy the full R01 report requirements",
+    "required_report_groups": [
+      "identity_calendar",
+      "equity_fundamentals",
+      "equity_estimates",
+      "market_flow",
+      "claims_events",
+      "macro_industry"
+    ],
+    "orders_transfers": false,
+    "account_data_in_this_slice": false,
+    "external_share_allowed": false,
+    "full_evidence_package_status": {
+      "status": "not supplied; quote slice only",
+      "missing_families": [
+        "issuer/security identity history",
+        "price history and corporate actions",
+        "financial statements",
+        "guidance/consensus",
+        "investor flows/ownership",
+        "filings/revisions",
+        "news/events",
+        "industry/macro",
+        "claim counterevidence",
+        "deterministic R01 calculations"
+      ],
+      "rule": "do not fill missing families with fixtures, duplicate one quote, or label quote-only output as completed R01"
+    }
+  },
+  "canonical_contract": {
+    "id": "moai.stock.data.v1",
+    "version": "0.3.0-draft",
+    "mcp_tool": "get_market_snapshot",
+    "output": "QuoteSnapshot via MCP structuredContent",
+    "arguments": {
+      "symbol": "six-digit KR equity symbol; report target 000660",
+      "board": "J|NX|UN; J=KRX, NX=NXT, UN=integrated per pinned KIS sample; provider/current portal confirmation pending"
+    },
+    "operation_id": "kis.kr.quote.snapshot.v1",
+    "source_file_hashes": {
+      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/kis-normalized-data-contract-v1.json": "7ea01592afe7d9e21f376ae1217105293c4ad7d374ad036f0b690bb74ca7635b",
+      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/r01-stock-analysis-data-support-draft.json": "670da32bf6b90d64b6515777ece0addf38687ba0048ac590e11449c6e1509720",
+      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/src/moai_kis_mcp/server.py": "a9980707cca900c4d92882e30db6c349e85afe79f6e681883658a6ba69364da9",
+      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json": "3bb549099de0689f701cb8fd6ddec8f25bae0e6edfac38742b57e3e19c7b206b"
+    }
+  },
+  "value_bindings": [
+    {
+      "source": "data.last",
+      "consumer": "현재가",
+      "currency": "KRW",
+      "unit": "KRW/주",
+      "transform": "decimal string only"
+    },
+    {
+      "source": "data.open",
+      "consumer": "시가",
+      "currency": "KRW",
+      "unit": "KRW/주",
+      "transform": "decimal string only"
+    },
+    {
+      "source": "data.high",
+      "consumer": "고가",
+      "currency": "KRW",
+      "unit": "KRW/주",
+      "transform": "decimal string only"
+    },
+    {
+      "source": "data.low",
+      "consumer": "저가",
+      "currency": "KRW",
+      "unit": "KRW/주",
+      "transform": "decimal string only"
+    },
+    {
+      "source": "data.change",
+      "consumer": "전일 대비",
+      "currency": "KRW",
+      "unit": "KRW/주",
+      "transform": "provider sign code + magnitude map; no inference"
+    },
+    {
+      "source": "data.change_percent",
+      "consumer": "전일 대비율",
+      "currency": null,
+      "unit": "percent",
+      "transform": "percent string, not fraction"
+    },
+    {
+      "source": "data.volume",
+      "consumer": "누적 거래량",
+      "currency": null,
+      "unit": "shares",
+      "transform": "integral decimal string"
+    }
+  ],
+  "identity_binding": {
+    "required_by_handoff": [
+      "provider-verified symbol",
+      "issuer/security name",
+      "venue"
+    ],
+    "current_wire": [
+      "instrument_ref.symbol",
+      "instrument_ref.market",
+      "instrument_ref.asset_type",
+      "instrument_ref.source_market_division_code",
+      "instrument_ref.exchange"
+    ],
+    "current_implementation": "symbol is the requested input; exchange is currently unknown; name is not a normalized field. Therefore the required identity gate is not satisfied.",
+    "permitted_result": "keep quote input partial and block R01 publication until issuer/security name and venue mappings are verified against an official current provider contract or other approved authoritative source."
+  },
+  "time_and_status_bindings": {
+    "source_as_of": "provider business date only when supplied; preserve date-only precision; never substitute received_at",
+    "received_at_available_at_retrieved_at": "local observation timestamps in UTC; check each against report_cutoff",
+    "report_cutoff": "explicit consumer argument at/after the evidence capture cutoff; never rewrite provider times",
+    "freshness": "unknown until a provider/session-aware freshness budget is established; does not become fresh from successful HTTP status",
+    "validation_status": "provider_shape_checked is not independently_reconciled",
+    "origin": "actual or synthetic retained; synthetic blocks investment interpretation",
+    "rights_status": "pending/blocked/approved is passed through; a response field does not itself create provider permission",
+    "missing_values": "null plus reason code; never backfill with zero or an old price"
+  },
+  "minimization_and_publication": {
+    "consumer": "r01-public-quote-consumer/0.2 at report-owner v10 path (read-only for MCP task)",
+    "raw_provider_extensions": "may remain within in-memory MCP structuredContent; report projection does not copy or render them",
+    "warnings": "consumer does not render arbitrary provider warning strings",
+    "input_digest": "consumer computes SHA-256 of complete input envelope; it emits only the digest and selected normalized facts, not raw field values",
+    "external_share_allowed": false,
+    "finance_data_to_moai": false,
+    "scope": "this is a source/wire binding, not a general PII scanner or a full R01 data package"
+  },
+  "runtime_gates": {
+    "immediate_denial": "RuntimeConfig.market_rights_enabled defaults false; DenyByDefaultPolicy returns rights_pending before client creation or network access. This is a conservative prototype configuration, not evidence that KIS prohibits an individual own-account local quote.",
+    "personal_use_basis": "KIS Open API introduction says an individual account holder may use quote information only for investment in their own assets and may not provide it to third parties. KIS provider page distinguishes individual self-use from corporate third-party partnership; the partner-branded exchange agreement notice is framed for partner institutions.",
+    "personal_use_limits": "The official pages support the narrow individual own-asset use category but do not decide local report retention, derived outputs, active ChatGPT Work/model-host egress, or a multi-user student plugin distributed for per-user execution. External sharing remains disabled.",
+    "next_runtime_blocker": "The project-local profile file has not been configured and no Keychain lookup was run. main() now reads only the non-secret profile reference from .goose/moai-stock/kis-profile.json; market_rights_enabled remains false and blocks before credential lookup. If rights are separately enabled in a later approved runtime, a missing profile would return credential_missing before KIS.",
+    "current_network_calls": 0,
+    "current_credentials_read": false,
+    "single_user_local_quote_preconditions": "user-owned KIS Open API profile; explicit local non-secret credential_profile_ref; two OS Keychain records matching the fixed service names; active host data-result route reviewed; no external share. Do not request generic written partner clearance for this narrow case solely from rights_pending.",
+    "higher_distribution_scope": "Before a student multi-user product or third-party displayed service is enabled, resolve whether per-user local calls and ChatGPT model-host result flow remain within KIS personal-use terms; do not expose pooled data, public quote feeds, or third-party redistribution.",
+    "no_secret_rule": "No secret in chat, MCP args, .goose, report, environment variables, command line, or logs. .goose may hold a non-secret profile reference only.",
+    "rights_status_output": "server responses use rights_status=pending unless a purpose-specific rights basis is implemented; technical policy allow is not provider approval"
+  },
+  "completion_gates": [
+    "confirm current KIS portal response contract, source fields, units/sign, and market division behavior; pinned sample is static evidence only",
+    "verify issuer/security name and venue from an authoritative provider field before accepting 000660 identity",
+    "keep third-party export/share blocked; document the one-user own-asset personal-use purpose and active ChatGPT Work result-routing boundary; do not turn rights_pending into a claim of legal prohibition",
+    "after separate approval, the user may set the non-secret profile reference in the project-local .goose config and create the exact two Keychain items via local UI; never create/read credentials during mock review",
+    "produce one user-approved actual public quote snapshot with source/as-of/unit, reconciliation and full provenance evidence after the narrow secret-use authorization and profile setup",
+    "report owner consumes the exact structuredContent and produces the local quote section; full R01 still requires all six report groups and its deterministic QA gates"
+  ],
+  "official_library_selection": {
+    "checked_on": "2026-10-21",
+    "authoring_framework": {
+      "package": "fastmcp",
+      "selected_version": "4.1.3",
+      "license": "Apache-2.0",
+      "reason": "latest stable official/PyPI release verified on 2026-10-21; typed Python tool schemas and local stdio/in-memory test workflow fit current prototype"
+    },
+    "protocol_sdk": {
+      "package": "mcp",
+      "selected_version": "2.3.0",
+      "license": "MIT",
+      "reason": "latest stable release in official Python SDK release list; distinct from standalone FastMCP"
+    },
+    "protocol_spec": "2026-07-28 stable",
+    "python_requirement": "both package metadata pages list Python >=3.10; implementation tests previously ran on Python 3.13.11",
+    "security_note": "FastMCP 4.1.3 release notes require certifi >=2026.10.19 for certifi-backed dependencies and note OS/system trust-store updates. Current requirements file pins only direct packages; transitive lock/SBOM and trust-store packaging review remain before distribution.",
+    "host_compatibility": "ChatGPT desktop Work launch/install/call is not established by MCP spec, SDK or local stdio tests."
+  },
+  "official_sources": [
+    {
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28",
+      "supports": "MCP stable protocol version"
+    },
+    {
+      "url": "https://github.com/PrefectHQ/fastmcp/releases",
+      "supports": "FastMCP v4.1.3 latest release and security notes"
+    },
+    {
+      "url": "https://pypi.org/project/fastmcp/",
+      "supports": "FastMCP 4.1.3, Apache-2.0, Python requirement and release metadata"
+    },
+    {
+      "url": "https://github.com/modelcontextprotocol/python-sdk/releases",
+      "supports": "official Python SDK 2.3.0 release list"
+    },
+    {
+      "url": "https://pypi.org/project/mcp/",
+      "supports": "official Python SDK package version, MIT license and Python requirement"
+    },
+    {
+      "url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_price/inquire_price.py",
+      "supports": "pinned KIS quote endpoint/TR/request inputs/venue codes; not actual response or live validation"
+    },
+    {
+      "url": "https://apiportal.koreainvestment.com/provider",
+      "supports": "KIS provider and market-data rights guidance; does not resolve rights for this product"
+    }
+  ],
+  "unsupported_fields": {
+    "previous_close": "absent from the current QuoteData and MCP outputSchema; the current KIS mapping has no verified previous-close output field. Do not infer or calculate it from last and change.",
+    "issuer_security_name": "not provided by this tool",
+    "verified_venue": "not provided; exchange remains unknown",
+    "provider_event_time": "not provided; source_as_of is date-only when present",
+    "provider_realtime_delay_state": "unknown"
+  },
+  "report_consumer_acknowledgement": {
+    "source": "shared/r01-wire-ack-r2.json and evidence/r01-wire-ack-integration-r2.json",
+    "consumer_version": "r01-public-quote-consumer/0.2",
+    "acknowledged_binding_version": "0.1.0-draft (sha256 1c12cfa1561fc6e6849db8902ea2772f484b8e635ab928397b128919a7c91218)",
+    "accepted_scope": "seven quote fields; partial public quote input only; not full R01, not live provider validation",
+    "current_binding_version": "0.2.0-draft; report-owner acknowledgment pending",
+    "new_contract_changes": [
+      "previous_close explicitly absent from current outputSchema and not inferred",
+      "versioned operation mapping reference and unknown fields are listed",
+      "personal own-account rights interpretation and rights_status=pending behavior are clarified",
+      "full evidence package remains absent and legacy deep mapping remains historical only"
+    ]
+  },
+  "credential_profile": {
+    "status": "configuration bridge implemented; no local profile file configured; no Keychain lookup performed; no active provider connection",
+    "current_adapter": "macOS KeychainCredentialProvider, read-only lookup only; it cannot create or update items",
+    "keychain_services": [
+      "moai-kis-app-key",
+      "moai-kis-app-secret"
+    ],
+    "keychain_account": "the same opaque credential_profile_ref supplied by project config; no reference is set in current project",
+    "secret_contents": "KIS App Key in the first named generic-password item; KIS App Secret in the second. No account number or account product code is used by the market quote tool.",
+    "data_path": "local process reads the two Keychain values into memory; KIS OAuth client_credentials POST and allowlisted quote GET go directly to the official KIS endpoint; the KIS response is normalized in the local process; tool structuredContent returns to the active ChatGPT Work/model host. MoAI receives no financial payload by design.",
+    "persistence": "App Key and App Secret persist only in user OS Keychain if separately entered by the user; .goose stores only profile ref; access tokens and App Key/Secret runtime references are memory-only and cleared on client close; app writes no credentials",
+    "recipient_scope": "KIS receives credential data and request headers; local MCP runtime receives the market response; active model host receives tool output when invoked; MoAI authorization server does not receive it.",
+    "future_user_action": "After the separate action approval, set the project-local non-secret profile reference and create both generic-password entries directly in macOS Keychain Access using the exact service names and same account label. Never paste the values into chat or the project.",
+    "profile_config_file": ".goose/moai-stock/kis-profile.json relative to the server current working project root; app does not create it or search other locations",
+    "profile_config_schema": {
+      "version": 1,
+      "credential_profile_ref": "opaque non-secret identifier matching [A-Za-z0-9_-]{1,64}"
+    },
+    "profile_config_behavior": "missing file preserves deny-by-default; malformed, duplicate-key, symlinked, oversized or extra-field file fails with invalid_config; config cannot enable market rights or account access"
+  },
+  "personal_use_rights_review": {
+    "official_kis_personal_page": "https://apiportal.koreainvestment.com/about-open-api",
+    "official_kis_partner_page": "https://apiportal.koreainvestment.com/provider",
+    "checked_on": "2026-10-21",
+    "interpretation": "rights_pending is a conservative prototype setting; official public guidance supports an individual account holder using quote data for their own-asset investment and prohibits third-party provision. It does not answer model-host egress, local retention/derived-use terms, or student product distribution.",
+    "no_extra_blanket_approval": "do not require generic written partner approval for this narrow individual local use solely because the flag is false; do not clear the flag globally or enable export/share."
+  },
+  "operation_mapping_reference": {
+    "path": "contracts/kis-api-mapping-v1.json",
+    "version": "0.2.0-draft",
+    "sha256": "3bb549099de0689f701cb8fd6ddec8f25bae0e6edfac38742b57e3e19c7b206b",
+    "operation_id": "kis.kr.quote.snapshot.v1",
+    "mapping_columns": [
+      "method",
+      "endpoint",
+      "TR ID",
+      "request parameters",
+      "input schema",
+      "response path",
+      "mapped fields and units/sign/transforms",
+      "pagination",
+      "cache/freshness",
+      "authorization",
+      "errors",
+      "rate limit",
+      "time contract",
+      "purpose gates",
+      "fixture/test state"
+    ],
+    "provider_api_version": "unknown; pinned Code Assistant commit is source-code provenance only",
+    "omitted_or_unverified": [
+      "complete current provider response dictionary",
+      "issuer/security name",
+      "venue name",
+      "event timestamp",
+      "real-time/delay state",
+      "live portal schema and customer-specific quota"
+    ]
+  }
+}

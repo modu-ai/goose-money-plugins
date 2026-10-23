@@ -1,0 +1,2 @@
+# Only the cross-language contract test suite needs Python. Production MCP/bridge runtime is JavaScript.
+jsonschema==4.26.0

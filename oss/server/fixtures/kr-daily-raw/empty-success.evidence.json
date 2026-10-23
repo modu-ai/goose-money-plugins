@@ -1,0 +1,58 @@
+{
+  "contract": "moai.kis.kr-daily-raw-evidence.v1",
+  "provider": "KIS",
+  "operation_id": "KIS-039",
+  "endpoint": "/uapi/domestic-stock/v1/quotations/inquire-daily-itemchartprice",
+  "tr_id": "FHKST03010100",
+  "request": {
+    "symbol": "000000",
+    "board": "J",
+    "start_date": "2026-10-19",
+    "end_date": "2026-10-21",
+    "interval": "1d",
+    "adjustment_code": "0"
+  },
+  "capture": {
+    "origin": "synthetic",
+    "received_at": "2026-10-22T00:00:00.12345678901234567890Z",
+    "body_sha256": "8bf58a416b0a87d51090f96157bf4f8a22426be5bf444e2357cc0d930e6f7957",
+    "body_byte_length": 53,
+    "hash_scope": "decoded_response_text_utf8",
+    "hash_algorithm": "sha256",
+    "provenance_status": "caller_supplied_capture_metadata",
+    "source_authentication": "not_established"
+  },
+  "cutoff": "2026-10-22T09:00:00.12345678901234567891+09:00",
+  "provider_success_status": "0",
+  "success_policy": "string_zero_only",
+  "identity_status": "request_context_only_not_response_verified",
+  "source_as_of": null,
+  "publication_at": null,
+  "receipt_cutoff_status": "receipt_not_after_cutoff_no_publication_inference",
+  "adjustment_code_interpretation": "blocked_portal_sample_conflict",
+  "row_order": "captured_output2_array_order",
+  "row_index_basis": "zero_based_output2_index",
+  "row_count": 0,
+  "response_status": "empty_success_capture",
+  "rows": [],
+  "response_range_completeness": "unknown_pagination_not_demonstrated",
+  "rights_status": "pending",
+  "source_time_status": "date_only_no_provider_time_or_timezone",
+  "canonical_projection_status": "blocked",
+  "blockers": [
+    "price_currency_and_scale_not_stated_in_endpoint_schema",
+    "volume_unit_not_stated_in_endpoint_schema",
+    "trade_amount_currency_and_scale_not_stated_in_endpoint_schema",
+    "adjustment_code_portal_sample_conflict",
+    "response_identity_not_independently_verified",
+    "date_only_no_provider_time_or_timezone",
+    "data_rights_and_host_egress_not_approved_by_this_contract"
+  ],
+  "warnings": [
+    "SHA256 binds original decoded response text encoded as UTF-8, not wire bytes or source authenticity. Original text must be retained separately.",
+    "Request, origin, receipt and cutoff are caller-supplied metadata, not authenticated transport observations or publication evidence.",
+    "Only the eleven documented output2 row fields are projected. Provider messages, output1, headers and arbitrary metadata are never public evidence fields.",
+    "Provider order and date labels are retained without sorting, deduplication, calendar-session inference, completeness claims or canonical chart/metric promotion.",
+    "Empty successful output2 is retained as empty capture evidence only, not proof of no trading or complete history. The existing price-history v1 contract is unchanged."
+  ]
+}

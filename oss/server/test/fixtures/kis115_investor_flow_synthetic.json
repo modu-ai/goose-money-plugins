@@ -1,0 +1,32 @@
+{
+  "fixture_metadata": {
+    "origin": "synthetic_fixture",
+    "fixture_class": "official-schema-shaped-synthetic",
+    "not_a_kis_response": true,
+    "purpose": "test documented 백만원-to-KRW exact decimal scaling and actor quantity fields without executing the request"
+  },
+  "response": {
+    "rt_cd": "0",
+    "msg_cd": "00000",
+    "msg1": "synthetic fixture only",
+    "output1": {},
+    "output2": [
+      {
+        "stck_bsop_date": "20261020",
+        "stck_clpr": "12345",
+        "acml_vol": "1000",
+        "acml_tr_pbmn": "12345.67",
+        "frgn_ntby_qty": "100",
+        "prsn_ntby_qty": "-200",
+        "orgn_ntby_qty": "100",
+        "frgn_ntby_tr_pbmn": "12.3456",
+        "prsn_ntby_tr_pbmn": "-0.000001",
+        "orgn_ntby_tr_pbmn": "0",
+        "frgn_reg_ntby_qty": "40",
+        "frgn_nreg_ntby_qty": "60",
+        "prdy_vrss_sign": "2",
+        "prdy_ctrt": "0.25"
+      }
+    ]
+  }
+}

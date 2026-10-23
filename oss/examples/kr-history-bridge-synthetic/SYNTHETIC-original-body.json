@@ -1,0 +1,45 @@
+{
+  "rt_cd": "0",
+  "output1": {},
+  "output2": [
+    {
+      "stck_bsop_date": "20261021",
+      "stck_clpr": "103.125",
+      "stck_oprc": "102",
+      "stck_hgpr": "105",
+      "stck_lwpr": "101",
+      "acml_vol": "9007199254740993",
+      "acml_tr_pbmn": "",
+      "flng_cls_code": "",
+      "prtt_rate": "",
+      "mod_yn": "",
+      "revl_issu_reas": ""
+    },
+    {
+      "stck_bsop_date": "20261019",
+      "stck_clpr": "000101.125",
+      "stck_oprc": "",
+      "stck_hgpr": "103",
+      "stck_lwpr": "99",
+      "acml_vol": "2000",
+      "acml_tr_pbmn": "",
+      "flng_cls_code": "",
+      "prtt_rate": "",
+      "mod_yn": "",
+      "revl_issu_reas": ""
+    },
+    {
+      "stck_bsop_date": "20261016",
+      "stck_clpr": "100.125",
+      "stck_oprc": "100",
+      "stck_hgpr": "102",
+      "stck_lwpr": "98",
+      "acml_vol": "1000",
+      "acml_tr_pbmn": "",
+      "flng_cls_code": "",
+      "prtt_rate": "",
+      "mod_yn": "",
+      "revl_issu_reas": ""
+    }
+  ]
+}

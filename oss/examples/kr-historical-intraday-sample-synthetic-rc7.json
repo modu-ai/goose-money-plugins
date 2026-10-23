@@ -1,0 +1,118 @@
+{
+  "contract": "moai.stock.kr-historical-intraday.v1",
+  "provider": "kis",
+  "origin": "synthetic",
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "requested": {
+    "symbol": "005930",
+    "board": "J",
+    "anchor_date": "20261020",
+    "anchor_time": "130000",
+    "include_past_data": "N"
+  },
+  "interval": "provider_minute_bars",
+  "scope": "historical_date_endpoint_single_page",
+  "identity_status": "no_returned_instrument_code",
+  "received_at": "2026-10-22T03:00:00.123456789123Z",
+  "available_at": "2026-10-22T03:00:00.123456789123Z",
+  "source_as_of": null,
+  "event_time": null,
+  "published_at": null,
+  "source_timezone": null,
+  "source_time_status": "provider_bar_labels_not_verified_instants",
+  "anchor_context_status": "request_anchor_not_verified_against_source_labels",
+  "fake_tick_status": "blank_request_flag_semantics_not_verified",
+  "adjustment_status": "not_specified_by_reviewed_intraday_contract",
+  "rights_status": "pending",
+  "session": "unknown",
+  "delay_state": "unknown",
+  "finality": "unknown",
+  "freshness": "unknown",
+  "completeness": "unknown",
+  "validation_status": "provider_shape_checked_not_live_reconciled",
+  "pagination": {
+    "pages_fetched": 1,
+    "tr_cont": "",
+    "status": "not_signaled_completeness_unknown",
+    "automatic_continuation": false,
+    "completeness": "unknown"
+  },
+  "bars_returned": 2,
+  "coverage_status": "single_page_not_complete_history",
+  "row_order_status": "provider_order_preserved_no_sort_dedup_or_resample",
+  "duplicate_label_status": "none_observed",
+  "blank_label_status": "all_labels_present",
+  "canonical_projection_status": "blocked",
+  "canonical": {
+    "instrument_id": null,
+    "asset_class": null,
+    "exchange": null,
+    "currency": null,
+    "adjusted": null,
+    "timezone": null,
+    "finality": null,
+    "price_unit": null,
+    "volume_unit": null,
+    "turnover_unit": null,
+    "bars": null
+  },
+  "mapping_blockers": [
+    "authoritative_instrument_and_board_binding_missing",
+    "currency_and_price_quantity_units_not_reconciled",
+    "timezone_bar_alignment_finality_and_anchor_semantics_not_reconciled",
+    "adjustment_and_fake_tick_semantics_not_verified",
+    "market_data_rights_pending"
+  ],
+  "unimplemented_derivations": [
+    "automatic_pagination",
+    "canonical_ohlcv",
+    "corporate_action_adjustment",
+    "resampling",
+    "source_timestamp_attribution"
+  ],
+  "warnings": [
+    "Exactly one provider page is preserved in original order, including duplicates and blanks; it is not a complete session or history.",
+    "The official source describes up to 120 rows and up to one year of stored minute data. Actual retention and coverage were not tested; empty data does not prove absence.",
+    "Request anchor and provider business-date/time labels are not verified instants. Receipt time is sampled only after transport completion.",
+    "The official helper defaults include-past to N; its backtester supplies Y. The caller must choose explicitly. Blank fake-tick flag is preserved, not interpreted as exclusion.",
+    "No returned instrument code proves identity. Name, request board and request symbol are not a master binding; all canonical OHLCV, units, currency, adjustment and finality remain null.",
+    "Mixed-date labels and blank labels remain raw. No row filtering, sorting, deduplication, reanchoring, UTC conversion, turnover differencing or bar-close inference occurs."
+  ],
+  "raw": {
+    "rt_cd": "0",
+    "msg_cd": "SYNTHETIC_OK",
+    "msg1": "SYNTHETIC ONLY; not observed market data.",
+    "output1": {
+      "prdy_vrss": "-0001.00",
+      "prdy_vrss_sign": "5",
+      "prdy_ctrt": "-0.01",
+      "stck_prdy_clpr": "00070200",
+      "acml_vol": "000100",
+      "acml_tr_pbmn": "0007010000.00",
+      "hts_kor_isnm": "SYNTHETIC ONLY",
+      "stck_prpr": "00070100.00"
+    },
+    "output2": [
+      {
+        "stck_bsop_date": "20261020",
+        "stck_cntg_hour": "130000",
+        "stck_prpr": "00070100.00",
+        "stck_oprc": "00070000.00",
+        "stck_hgpr": "00070200.00",
+        "stck_lwpr": "00069900.00",
+        "cntg_vol": "000004",
+        "acml_tr_pbmn": "9007199254740993.10"
+      },
+      {
+        "stck_bsop_date": "20261020",
+        "stck_cntg_hour": "125900",
+        "stck_prpr": "",
+        "stck_oprc": "",
+        "stck_hgpr": "",
+        "stck_lwpr": "",
+        "cntg_vol": "",
+        "acml_tr_pbmn": ""
+      }
+    ]
+  }
+}

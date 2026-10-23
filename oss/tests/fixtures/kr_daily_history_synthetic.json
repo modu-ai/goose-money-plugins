@@ -1,0 +1,15 @@
+{
+  "fixture_status": "synthetic_not_live_KIS_data",
+  "rt_cd": "0",
+  "output": [
+    {
+      "stck_bsop_date": "20261020",
+      "stck_oprc": "69000",
+      "stck_hgpr": "70500",
+      "stck_lwpr": "68800",
+      "stck_clpr": "70000",
+      "acml_vol": "123456",
+      "extra_provider_field": "retained"
+    }
+  ]
+}

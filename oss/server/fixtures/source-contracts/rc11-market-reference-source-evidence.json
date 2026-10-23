@@ -1,0 +1,160 @@
+{
+  "source_commit": "2077773a69a428daf63e148182511f068cc45de3",
+  "all_15_sources_pinned_byte_equal": true,
+  "evidence": [
+    {
+      "file": "inquire_asking_price_exp_ccn.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_asking_price_exp_ccn/inquire_asking_price_exp_ccn.py#L20-L82",
+      "source_sha256": "fb905d8a19381594551083a27ab88ef0c54bbafa3cd442cdc9c1dece908bf2ac",
+      "range_inclusive": [
+        20,
+        82
+      ],
+      "line_range_bytes_sha256": "61bae34fac7b7e8702e53542c72df4b24ede79926db9857b4d6301192e8c1250",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "chk_inquire_asking_price_exp_ccn.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_asking_price_exp_ccn/chk_inquire_asking_price_exp_ccn.py#L20-L107",
+      "source_sha256": "b79183e75b055ad4b954edf29c821993580f91cacc3fa46e95ccea44ab5087d2",
+      "range_inclusive": [
+        20,
+        107
+      ],
+      "line_range_bytes_sha256": "820d93c9ef6276ef4624c54a6c32ac6b1267436aaf02ab5798b71e6cc9b4449a",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "examples_llm__kis_auth.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/kis_auth.py#L413-L446",
+      "source_sha256": "2c23617eb9829934dc14f530cfae126426676919b630a07aa2a4832682ffdb9f",
+      "range_inclusive": [
+        413,
+        446
+      ],
+      "line_range_bytes_sha256": "b238237b407f23bfe6093152cb0e7b9e869b32b75508ffac4b0ce1581fec3326",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "examples_llm__overseas_stock__price__chk_price.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/overseas_stock/price/chk_price.py#L20-L40",
+      "source_sha256": "93a41d8b29eed1ae53f0a2d730eb8210dc470abdc8a9523de9a99d7ef5814e18",
+      "range_inclusive": [
+        20,
+        40
+      ],
+      "line_range_bytes_sha256": "126701c6c4ac970a81e8247f48f0ccb550e33e3dc3b04b368af1fa753fa3f4f0",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "chk_inquire_time_itemchartprice.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_time_itemchartprice/chk_inquire_time_itemchartprice.py#L20-L39",
+      "source_sha256": "240a386d39a3a0b1f5f24a03a6653e6f539f8f6807908ef9d84e222381f05fd5",
+      "range_inclusive": [
+        20,
+        39
+      ],
+      "line_range_bytes_sha256": "8c3d086ecf20ed41148fe009b8cac3d40564805a1b004f762fd70f8d7fb657ca",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "examples_llm__domestic_stock__inquire_time_dailychartprice__chk_inquire_time_dailychartprice.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_time_dailychartprice/chk_inquire_time_dailychartprice.py#L20-L42",
+      "source_sha256": "157359fd007d4bab65be651f5f00796ed1f852f0ff6bc0bf01fc8b2b649dbc24",
+      "range_inclusive": [
+        20,
+        42
+      ],
+      "line_range_bytes_sha256": "52e6c21ac391d8c52b04134fa8744939af40db067907b9a4c95eeb3c47043fb6",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "examples_llm__etfetn__inquire_price__chk_inquire_price.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/etfetn/inquire_price/chk_inquire_price.py#L20-L50",
+      "source_sha256": "9df54e54790f3e031244eaaf46612a93beaff7e541e2a9065c945ca15144afc7",
+      "range_inclusive": [
+        20,
+        50
+      ],
+      "line_range_bytes_sha256": "e8623e72fd268a4392e3b7947edd22d77cb5c150b03affe9c2e44f63fcb8fb75",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    },
+    {
+      "file": "chk_inquire_price.py",
+      "github_url": "https://github.com/koreainvestment/open-trading-api/blob/2077773a69a428daf63e148182511f068cc45de3/examples_llm/domestic_stock/inquire_price/chk_inquire_price.py#L20-L55",
+      "source_sha256": "5929b44f3b77dce4f873ccfec39e8a4d8a45ec739f3a5efc9c9b0b9f16056318",
+      "range_inclusive": [
+        20,
+        55
+      ],
+      "line_range_bytes_sha256": "2c5e98b1db4b7d7bfc0317b342dc713363406d445a79e13b611d6278f0e1c8fe",
+      "hash_definition": "Exact UTF-8 source byte lines including original line endings, one-based inclusive range."
+    }
+  ],
+  "portal_field_table": "Not accessible via web tool; no complete table or authenticated market payload was obtained.",
+  "rights_reference": "https://apiportal.koreainvestment.com/provider",
+  "market_data_receipts_observed": 0,
+  "contract": "moai.market-reference.compact-source-evidence.v1",
+  "reviewed_contract_sha256": "a16003e25728007923d4854de9612330eac2825f6906e8e2472746994f056800",
+  "source_contract_status": "public-source-research_only_not_live_market_receipt",
+  "existing_report_authority": {
+    "artifact": "market-metrics-rc7",
+    "runtime": "market_metrics.py",
+    "runtime_sha256": "5b7ee095e5fb0f678a8d33e7c6fdee9638997be59997a7d277ecd1532f0f05a8",
+    "original_metric_registry_sha256": "c37b340e433ddc8009df2097a1f280dddf45b1132ffd1a78a169cdb53819d39a",
+    "requested_destination_labels": [
+      "market.best_bid",
+      "market.best_ask",
+      "market.previous_close"
+    ],
+    "metric_formulas_copied": false
+  },
+  "book": {
+    "method": "GET",
+    "path": "/uapi/domestic-stock/v1/quotations/inquire-asking-price-exp-ccn",
+    "tr_id": "FHKST01010200",
+    "query": [
+      "FID_COND_MRKT_DIV_CODE",
+      "FID_INPUT_ISCD"
+    ],
+    "board_subset": [
+      "J",
+      "NX",
+      "UN"
+    ],
+    "symbol_subset": "six ASCII digits, not authoritative identity",
+    "output1": "shared dictionary string-only accepted subset; unlisted keys rejected; no full partition claim",
+    "output2": "bounded plain object/array retained without flattening; cardinality unverified",
+    "source_at": null,
+    "published_at": null,
+    "session": null,
+    "currency": null,
+    "metric_ready": false
+  },
+  "policies": [
+    {
+      "id": "kr_orderbook_best_bid",
+      "dto_selector": "$.raw.output1.bidp1",
+      "provider_selector": "$.output1.bidp1",
+      "role": "market.best_bid"
+    },
+    {
+      "id": "kr_orderbook_best_ask",
+      "dto_selector": "$.raw.output1.askp1",
+      "provider_selector": "$.output1.askp1",
+      "role": "market.best_ask"
+    },
+    {
+      "id": "us_quote_previous_close",
+      "dto_selector": "$.raw.base",
+      "provider_selector": "$.output.base",
+      "role": "market.previous_close"
+    },
+    {
+      "id": "kr_intraday_previous_close",
+      "dto_selector": "$.raw.output1.stck_prdy_clpr",
+      "provider_selector": "$.output1.stck_prdy_clpr",
+      "role": "market.previous_close"
+    }
+  ]
+}
