@@ -70,18 +70,90 @@ async function runStdioCall(targetEntry: string, tool = "get_market_snapshot", a
 
 test("stdio success keeps JSON structuredContent and marks fixture data synthetic", async () => {
   const { listedTools, call } = await runStdioCall(syntheticEntry);
-  assert.deepEqual(listedTools, ["get_market_snapshot", "get_price_history", "get_market_flows", "get_instrument_profile", "get_market_headlines", "get_fundamentals", "get_public_filings", "get_credit_balances", "get_short_sale_activity", "get_stock_lending_activity", "get_us_market_snapshot", "get_index_futures_snapshot", "get_domestic_etf_snapshot", "get_sec_company_concept", "get_sec_submissions", "search_instruments", "resolve_instrument", "get_overseas_futures_snapshot", "get_us_price_history", "get_intraday_price_history", "get_us_product_profile", "get_domestic_futures_price_history", "get_domestic_futures_intraday_history", "get_overseas_futures_price_history", "get_overseas_futures_intraday_history", "get_historical_intraday_price_history", "get_market_orderbook", "get_domestic_index_history", "get_global_index_history", "get_market_industry_investor_aggregates", "get_kis_house_estimates", "get_overseas_ice_actions", "get_domestic_index_period_history", "get_global_index_period_history"]);
+  assert.deepEqual(listedTools, ["get_market_snapshot", "get_price_history", "get_market_flows", "get_instrument_profile", "get_market_headlines", "get_fundamentals", "get_public_filings", "get_credit_balances", "get_short_sale_activity", "get_stock_lending_activity", "get_us_market_snapshot", "get_index_futures_snapshot", "get_domestic_etf_snapshot", "get_sec_company_concept", "get_sec_submissions", "search_instruments", "resolve_instrument", "get_overseas_futures_snapshot", "get_us_price_history", "get_intraday_price_history", "get_us_product_profile", "get_domestic_futures_price_history", "get_domestic_futures_intraday_history", "get_overseas_futures_price_history", "get_overseas_futures_intraday_history", "get_historical_intraday_price_history", "get_market_orderbook", "build_report_input", "render_report_html", "get_domestic_index_history", "get_global_index_history", "get_market_industry_investor_aggregates", "get_kis_house_estimates", "get_overseas_ice_actions", "get_domestic_index_period_history", "get_global_index_period_history"]);
   assert.equal(call.result?.isError, undefined);
   assert.equal(call.result?.structuredContent?.provider, "kis");
   assert.equal(call.result?.structuredContent?.provenance && (call.result.structuredContent.provenance as Record<string, unknown>).origin, "synthetic");
   assert.equal((call.result?.structuredContent?.data as Record<string, unknown>).last, "70000");
 });
 
-test("stdio default policy returns a safe rights_pending error before a provider call", async () => {
+test("stdio authenticated synthetic fixture serves a protocol-level template-only call", async () => {
+  const args = {
+    report_id: "R01",
+    subject: { id: "KRX:000660", name: "합성 종목", venue: "KRX", currency: "KRW" },
+    cutoff: "2026-10-23T03:00:00.000Z",
+    display_timezone: "Asia/Seoul",
+  };
+  const { listedTools, call } = await runStdioCall(syntheticEntry, "build_report_input", args);
+  assert.equal(listedTools.length, 36);
+  assert.ok(listedTools.includes("build_report_input"));
+  assert.equal(call.result?.isError, undefined, JSON.stringify(call));
+  const document = call.result?.structuredContent;
+  assert.equal(document?.report_id, "R01");
+  assert.equal(document?.execution_status, "template_only");
+  assert.equal(document?.mode, "synthetic");
+  assert.equal((document?.sources as unknown[] | undefined)?.length, 0);
+  assert.doesNotMatch(JSON.stringify(document), /actual KIS data|실데이터 성공/i);
+});
+
+test("stdio MCP renders a synthetic report and reads the returned HTML resource", async () => {
+  const child = spawn(process.execPath, [syntheticEntry], { stdio: ["pipe", "pipe", "pipe"] });
+  const stdout = readline.createInterface({ input: child.stdout });
+  let stderr = "";
+  child.stderr.setEncoding("utf8").on("data", (chunk: string) => { stderr += chunk; });
+  async function rpc(id: number, method: string, params: Record<string, unknown>) {
+    const response = readJsonLine(stdout);
+    child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", id, method, params })}\n`);
+    return await response as any;
+  }
+  try {
+    const initialized = await rpc(1, "initialize", {
+      protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "html-resource-stdio-test", version: "1" },
+    });
+    assert.ok(initialized.result?.protocolVersion);
+    child.stdin.write(`${JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized" })}\n`);
+    const listed = await rpc(2, "tools/list", {});
+    assert.equal(listed.result.tools.length, 36);
+    assert.ok(listed.result.tools.some((tool: any) => tool.name === "render_report_html"));
+
+    const cutoff = "2026-10-23T03:00:00.000Z";
+    const quote = {
+      contract: "moai.stock.quote-snapshot.v1", provider: "kis", operation_id: "kis.kr.quote.snapshot.v1", origin: "synthetic",
+      provenance: { source_as_of: "2026-10-22", available_at: cutoff, origin: "synthetic", validation_status: "synthetic_fixture", provider_api_version: "fixture-v1" },
+      data: { last: "12345", open: "12000", high: "12500", low: "11900", previous_close: "12000", change: "345", change_percent: "2.87", volume: "1000" },
+    };
+    const built = await rpc(3, "tools/call", { name: "build_report_input", arguments: {
+      report_id: "R01", subject: { id: "KRX:000660", name: "합성 종목", venue: "KRX", currency: "KRW" },
+      cutoff, display_timezone: "Asia/Seoul", calls: [{ tool_name: "get_market_snapshot", result: { structuredContent: quote } }],
+    } });
+    assert.equal(built.result?.isError, undefined, JSON.stringify(built));
+    assert.equal(built.result.structuredContent.mode, "synthetic");
+    const rendered = await rpc(4, "tools/call", { name: "render_report_html", arguments: { report_input: built.result.structuredContent } });
+    assert.equal(rendered.result?.isError, undefined, JSON.stringify(rendered));
+    const link = rendered.result.content.find((item: any) => item.type === "resource_link");
+    assert.ok(link); assert.equal(link.mimeType, "text/html");
+    const fetched = await rpc(5, "resources/read", { uri: link.uri });
+    assert.equal(fetched.error, undefined, JSON.stringify(fetched));
+    assert.equal(fetched.result.contents[0].mimeType, "text/html");
+    assert.match(fetched.result.contents[0].text, /합성 fixture · 실제 자료 아님/);
+    assert.match(fetched.result.contents[0].text, /Content-Security-Policy/);
+    assert.equal(rendered.result.structuredContent.host_rendering, "not_observed");
+    assert.doesNotMatch(stderr, /key|secret|token/i);
+  } finally {
+    child.stdin.end(); stdout.close();
+    await new Promise<void>((resolve) => {
+      if (child.exitCode !== null) resolve();
+      else child.once("exit", () => resolve());
+      setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 1_000).unref();
+    });
+  }
+});
+
+test("stdio default policy returns a safe member_login_required error before a provider call", async () => {
   const { listedTools, call } = await runStdioCall(entry);
-  assert.deepEqual(listedTools, ["get_market_snapshot", "get_price_history", "get_market_flows", "get_instrument_profile", "get_market_headlines", "get_fundamentals", "get_public_filings", "get_credit_balances", "get_short_sale_activity", "get_stock_lending_activity", "get_us_market_snapshot", "get_index_futures_snapshot", "get_domestic_etf_snapshot", "get_sec_company_concept", "get_sec_submissions", "search_instruments", "resolve_instrument", "get_overseas_futures_snapshot", "get_us_price_history", "get_intraday_price_history", "get_us_product_profile", "get_domestic_futures_price_history", "get_domestic_futures_intraday_history", "get_overseas_futures_price_history", "get_overseas_futures_intraday_history", "get_historical_intraday_price_history", "get_market_orderbook", "get_domestic_index_history", "get_global_index_history", "get_market_industry_investor_aggregates", "get_kis_house_estimates", "get_overseas_ice_actions", "get_domestic_index_period_history", "get_global_index_period_history"]);
+  assert.deepEqual(listedTools, ["get_market_snapshot", "get_price_history", "get_market_flows", "get_instrument_profile", "get_market_headlines", "get_fundamentals", "get_public_filings", "get_credit_balances", "get_short_sale_activity", "get_stock_lending_activity", "get_us_market_snapshot", "get_index_futures_snapshot", "get_domestic_etf_snapshot", "get_sec_company_concept", "get_sec_submissions", "search_instruments", "resolve_instrument", "get_overseas_futures_snapshot", "get_us_price_history", "get_intraday_price_history", "get_us_product_profile", "get_domestic_futures_price_history", "get_domestic_futures_intraday_history", "get_overseas_futures_price_history", "get_overseas_futures_intraday_history", "get_historical_intraday_price_history", "get_market_orderbook", "build_report_input", "render_report_html", "get_domestic_index_history", "get_global_index_history", "get_market_industry_investor_aggregates", "get_kis_house_estimates", "get_overseas_ice_actions", "get_domestic_index_period_history", "get_global_index_period_history"]);
   assert.equal(call.result?.isError, true);
-  assert.match(call.result?.content?.[0]?.text ?? "", /rights_pending/);
+  assert.match(call.result?.content?.[0]?.text ?? "", /member_login_required/);
   assert.equal(call.result?.structuredContent, undefined);
 });
 
@@ -116,7 +188,8 @@ const operations: Array<[string, Record<string, unknown>]> = [
 ];
 for(const [name,args] of operations){
  test(`stdio ${name} remains denied by default`,async()=>{
-  const {call}=await runStdioCall(entry,name,args);assert.equal(call.result?.isError,true);assert.match(call.result?.content?.[0]?.text??"",/rights_pending|source_not_enabled/);
+  const {listedTools,call}=await runStdioCall(entry,name,args);
+  assert.equal(call.result?.isError,true);assert.match(call.result?.content?.[0]?.text??"",/member_login_required/);
  });
  test(`stdio ${name} returns typed synthetic injected response`,async()=>{
   const {call}=await runStdioCall(extendedEntry,name,args);assert.equal(call.result?.isError,undefined,JSON.stringify(call));const data=call.result?.structuredContent!;
@@ -137,8 +210,8 @@ const sourceInputEntry = fileURLToPath(new URL('./fixtures/source-input-main.js'
 for (const [name, args] of Object.entries(sourceInputs)) {
   test(`stdio source input ${name} remains denied by default`, async () => {
     const { listedTools, call } = await runStdioCall(entry, name, args);
-    assert.equal(listedTools.length, 34); assert.equal(call.result?.isError, true);
-    assert.match(call.result?.content?.[0]?.text ?? '', /^error_code=rights_pending$/);
+    assert.equal(listedTools.length, 36); assert.equal(call.result?.isError, true);
+    assert.match(call.result?.content?.[0]?.text ?? '', /^error_code=member_login_required$/);
   });
   test(`stdio source input ${name} rejects argument provenance or rights overrides`, async () => {
     for (const patch of [{}, { origin: 'actual' }, { rightsEnabled: true }]) {
@@ -169,7 +242,7 @@ const nativePeriodEntry = fileURLToPath(new URL('./fixtures/native-period-main.j
 for (const period of ['W', 'M', 'Y'] as const) {
   for (const [name, op] of [['get_domestic_index_period_history', '072'], ['get_global_index_period_history', '264']] as const) test(`stdio native ${name} ${period} default-denied`, async () => {
     const { listedTools, call } = await runStdioCall(entry, name, nativePeriodInput(period, op));
-    assert.equal(listedTools.length, 34); assert.equal(call.result?.content?.[0]?.text, 'error_code=rights_pending');
+    assert.equal(listedTools.length, 36); assert.equal(call.result?.content?.[0]?.text, 'error_code=member_login_required');
   });
   test(`stdio global native ${period} preserves synthetic raw-only state`, async () => {
     const { call } = await runStdioCall(nativePeriodEntry, 'get_global_index_period_history', nativePeriodInput(period));
@@ -191,4 +264,13 @@ test('stdio native response size rejection has no partial structured payload', a
   const args = nativePeriodInput(); args.request.instrument_code = 'OVERSIZE';
   const { call } = await runStdioCall(nativePeriodEntry, 'get_global_index_period_history', args);
   assert.equal(call.result?.content?.[0]?.text, 'error_code=response_too_large'); assert.equal(call.result?.structuredContent, undefined);
+});
+
+for (const name of ['get_domestic_etf_snapshot','get_overseas_futures_snapshot','get_overseas_futures_price_history','get_overseas_futures_intraday_history']) test(`public stdio exposes restored read tool but rejects missing inputs for ${name}`,async()=>{
+ const {listedTools,call}=await runStdioCall(entry,name,{});
+ assert.equal(listedTools.length,36);assert.equal(listedTools.includes(name),true);assert.ok(call.error||call.result?.isError);
+});
+test('authenticated synthetic stdio accepts explicit ETF report subject as partial input',async()=>{
+ const {call}=await runStdioCall(syntheticEntry,'build_report_input',{report_id:'R01',subject:{id:'ETF:TEST',name:'ETF',venue:'KRX',currency:'KRW'},cutoff:'2026-10-23T03:00:00.000Z',display_timezone:'Asia/Seoul'});
+ assert.ok(!call.result?.isError);assert.equal(call.result?.structuredContent?.execution_status,'template_only');
 });

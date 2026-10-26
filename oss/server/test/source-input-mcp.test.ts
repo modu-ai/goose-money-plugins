@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { InMemoryTransport, type McpServer } from '@modelcontextprotocol/server';
-import { createStockMcpServer } from '../src/server.js';
+import { createStockMcpServer } from './synthetic-member-access.js';
 import { PACKAGE_VERSION } from '../src/package-metadata.js';
 import { SOURCE_INPUT_MCP_NAMES } from '../src/source-input-mcp.js';
 import { MCP_RESPONSE_MAX_BYTES, safeResult, safeErrorCode } from '../src/mcp-result.js';
@@ -38,7 +38,7 @@ test('34 names are read only; defaults deny every new valid request without tran
   options.benchmarkHistoryTransport = { origin: 'synthetic', async send() { calls++; throw new Error('forbidden'); } };
   options.remainingSourceTransport = { origin: 'synthetic', async send() { calls++; throw new Error('forbidden'); } };
   const server = createStockMcpServer(options);
-  assert.equal(Object.keys((server as any)._registeredTools).length, 34);
+  assert.equal(Object.keys((server as any)._registeredTools).length, 36);
   for (const name of SOURCE_INPUT_MCP_NAMES) {
     assert.deepEqual(tool(server, name).annotations, { readOnlyHint: true, destructiveHint: false, openWorldHint: false });
     await assert.rejects(handler(server, name)(inputs[name]), /^Error: error_code=rights_pending$/);
@@ -151,12 +151,12 @@ test('expanded valid raw rows exceeding the response cap fail, never silently dr
   const options = injectedOptions(); options.benchmarkHistoryTransport = { origin: 'synthetic', async send() { return { http_status: 200, tr_cont: null, body_text: body }; } };
   await assert.rejects(handler(createStockMcpServer(options), 'get_global_index_history')(inputs.get_global_index_history), /error_code=response_too_large/);
 });
-test('in-memory MCP advertises 34 strict tools and package metadata version exactly', async () => {
+test('in-memory MCP advertises 36 tools and package metadata version exactly', async () => {
   const session = await connection(createStockMcpServer());
   try {
     const metadata = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
     assert.equal(PACKAGE_VERSION, metadata.version); assert.equal(session.initialize.result.serverInfo.version, metadata.version);
-    const listed = await session.rpc('tools/list', {}); assert.equal(listed.result.tools.length, 34);
+    const listed = await session.rpc('tools/list', {}); assert.equal(listed.result.tools.length, 36);
     for (const name of SOURCE_INPUT_MCP_NAMES) {
       const t = listed.result.tools.find((t: any) => t.name === name); assert.ok(t); assert.equal(t.inputSchema.additionalProperties, false);
       const denied = await session.rpc('tools/call', { name, arguments: inputs[name] });

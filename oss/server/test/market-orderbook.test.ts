@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { z } from 'zod';
 import { readFileSync } from 'node:fs';
-import { createStockMcpServer } from '../src/server.js';
+import { createStockMcpServer } from './synthetic-member-access.js';
 import * as f from '../src/market-orderbook.js';
 import * as fx from './market-reference-fixtures.js';
 const read = f.requestMarketOrderbook;

@@ -1,5 +1,5 @@
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import { createStockMcpServer } from '../../src/server.js';
+import { createStockMcpServer } from '../synthetic-member-access.js';
 import { injectedOptions } from '../source-input-fixtures.js';
 const options = injectedOptions();
 const send = options.benchmarkHistoryTransport!.send;

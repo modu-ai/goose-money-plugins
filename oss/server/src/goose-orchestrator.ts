@@ -68,6 +68,8 @@ finally {
         clearTimeout(timer);
 } }
 export async function executeGoosePlan(input: unknown, runner: SequentialRoleRunner, options: {
+    /** Public release narrows advertised role grants; the runner must still enforce actual capabilities. */
+    studentReleaseScope?: boolean;
     nativeExecutor?: NativeRoleExecutor;
     clock?: () => string;
 } = {}) {
@@ -79,8 +81,10 @@ export async function executeGoosePlan(input: unknown, runner: SequentialRoleRun
     const clock = options.clock ?? (() => new Date().toISOString());
     const ids = plan.evidence.map(e => e.evidence_ref);
     const data_class = plan.evidence.length > 0 && plan.evidence.every(e => e.origin === 'actual') ? 'public_actual' as const : plan.evidence.length > 0 && plan.evidence.every(e => e.origin === 'synthetic') ? 'synthetic' as const : 'mixed_or_empty' as const;
-    const tasks = Object.freeze(plan.roles.map(role_id => Object.freeze({ run_id: plan.run_id, role_id, requested_scope: plan.requested_scope, cutoff_at: plan.cutoff_at, evidence_refs: Object.freeze([...ids]), allowed_tool_operation_ids: Object.freeze([...allowed[role_id]]) })));
-    function validate(raw: unknown, role: RoleId) { boundedBody(raw); const r = GooseRoleResultSchema.safeParse(raw); if (!r.success || r.data.run_id !== plan.run_id || r.data.role_id !== role || r.data.findings.some(f => f.source_refs.some(id => !ids.includes(id))) || r.data.tool_operation_ids.some(op => !allowed[role].includes(op)))
+    const heldTools=new Set(['get_account_snapshot','place_order','transfer_funds']);
+    const roleAllowed=(role:RoleId)=>allowed[role].filter(op=>!options.studentReleaseScope||!heldTools.has(op));
+    const tasks = Object.freeze(plan.roles.map(role_id => Object.freeze({ run_id: plan.run_id, role_id, requested_scope: plan.requested_scope, cutoff_at: plan.cutoff_at, evidence_refs: Object.freeze([...ids]), allowed_tool_operation_ids: Object.freeze(roleAllowed(role_id)) })));
+    function validate(raw: unknown, role: RoleId) { boundedBody(raw); const r = GooseRoleResultSchema.safeParse(raw); if (!r.success || r.data.run_id !== plan.run_id || r.data.role_id !== role || r.data.findings.some(f => f.source_refs.some(id => !ids.includes(id))) || r.data.tool_operation_ids.some(op => !roleAllowed(role).includes(op)))
         throw new Error('role_result_invalid'); return r.data; }
     function record(role: RoleId, started_at: string, completed_at: string, result: z.infer<typeof GooseRoleResultSchema> | null, failure: 'role_failed' | 'role_result_invalid' | 'role_timeout' | null, child: string | null = null) { return { role_id: role, skill: `references/roles/${role}/PROCEDURE.md`, phase: 'analysis' as const, requested_scope: plan.requested_scope, input_refs: ids, output_path: null, data_class, tool_operation_ids: result?.tool_operation_ids ?? [], cutoff_at: plan.cutoff_at, started_at, completed_at, observed_child_id: child, validation_state: failure === 'role_timeout' ? 'timed_out' as const : failure ? 'failed' as const : 'schema_validated' as const, failure, completion_status: failure ? 'execution_unconfirmed' as const : 'response_observed' as const, result, warnings: ['Role text remains attributed evidence/analysis; Goose alone may compose the final report. No renderer or filesystem write is performed here.', ...(failure ? ['Failure/timeout is a coordinator observation, not proof the worker stopped. Abort is cooperative; no automatic retry.'] : [])] }; }
     let mode: 'single_role' | 'sequential' | 'host_native_parallel' | 'synthetic_parallel_test' | 'native_dispatch_unverified' = tasks.length === 1 ? 'single_role' : 'sequential';

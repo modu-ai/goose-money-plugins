@@ -108,7 +108,7 @@ test("concurrent first writes never overwrite another confirmed profile", async 
 test("CLI accepts only setup modes; canceled interview route and unknown arguments never execute or echo", async () => {
   const actions: string[] = [], errors = sink();
   for (const args of [["setup"], ["/goose", "setup", "--edit-profile"], ["setup", "--delete-profile"]]) {
-    assert.equal(await dispatchGooseCommand(args, async mode => { actions.push(mode); return 0; }, errors), 0);
+    assert.equal(await dispatchGooseCommand(args, async mode => { actions.push(mode); return 0; }, errors, async () => 0), 0);
   }
   assert.deepEqual(actions, ["reuse", "edit", "delete"]);
   for (const args of [["interview"], ["/goose", "interview"], ["setup", "SYNTHETIC_SECRET_ARGUMENT"]]) {
@@ -116,3 +116,47 @@ test("CLI accepts only setup modes; canceled interview route and unknown argumen
   }
   assert.doesNotMatch(errors.messages.join(""), /SYNTHETIC_SECRET_ARGUMENT/);
 });
+
+test("setup re-prompts invalid choices, stores only confirmed enums and uses the product display name", async () => fixture(async (home, first) => {
+  const answers = ["YES", "0", "4,4", "SYNTHETIC_INVALID_INPUT", "4", "99", "5", "1", "4", "4", "4", "1", "SAVE"];
+  let prompts = 0;
+  const output = sink();
+  await runSetupFlow(first, async () => { prompts++; return answers.shift() ?? "CANCEL"; }, output, home);
+  assert.equal(prompts, 13);
+  assert.deepEqual(answers, []);
+  assert.deepEqual((await readInvestorContext(first, home))?.answers, synthetic);
+  assert.match(output.messages.join(""), /모두의 주식 · MoAI ATP/);
+  assert.doesNotMatch(output.messages.join(""), /SYNTHETIC_INVALID_INPUT/);
+}));
+
+test("refusing final save leaves no profile and does not repeat onboarding in another project", async () => fixture(async (home, first, second) => {
+  const answers = questionnaire(); answers[answers.length - 1] = "NO";
+  await runSetupFlow(first, async () => answers.shift() ?? "CANCEL", sink(), home);
+  assert.equal(await readInvestorContext(first, home), undefined);
+  await runSetupFlow(second, async () => { throw new Error("no repeat"); }, sink(), home);
+}));
+
+test("one question at a time uses Korean labels and supports a Korean home with spaces; canceled edit preserves profile", async () => fixture(async (home, first) => {
+  const koreanHome = join(home, "사용자 이름"); await mkdir(koreanHome, { mode: 0o700 });
+  const prompts: string[] = [], inputs = questionnaire();
+  await runSetupFlow(first, async q => { prompts.push(q); return inputs.shift() ?? "CANCEL"; }, sink(), koreanHome);
+  const file = investorContextFilePath(koreanHome), before = await readFile(file);
+  assert.equal(prompts.length, 9);
+  assert.match(prompts[1]!, /장기 성장.*배당 수입.*학습/);
+  assert.doesNotMatch(prompts.join(""), /long_term_growth|domestic_equity|riskTolerance/);
+  const cancel = ["YES", "1", "CANCEL"];
+  await runSetupFlow(first, async () => cancel.shift() ?? "CANCEL", sink(), koreanHome, "edit");
+  assert.deepEqual(await readFile(file), before);
+}));
+
+test("normal setup finishes context before credential setup and does not continue after failure", async () => {
+  const calls: string[] = [];
+  assert.equal(await dispatchGooseCommand(["setup"], async () => { calls.push("context"); return 0; }, sink(), async () => { calls.push("credentials"); return 0; }), 0);
+  assert.deepEqual(calls, ["context", "credentials"]);
+  assert.equal(await dispatchGooseCommand(["setup"], async () => 2, sink(), async () => { throw Error("must not run"); }), 2);
+});
+test("direct non-secret Korean choices map to confirmed enums without storing arbitrary text", async () => fixture(async (home, first) => {
+  const actions = ["YES", "학습", "미정", "초보", "미정", "미정", "미정", "국내 주식", "SAVE"];
+  await runSetupFlow(first, async () => actions.shift() ?? "CANCEL", sink(), home);
+  assert.deepEqual((await readInvestorContext(first, home))?.answers, synthetic);
+}));

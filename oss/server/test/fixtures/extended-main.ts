@@ -1,7 +1,7 @@
 import {body as historicalStockBody} from '../historical-stock-bars-fixtures.js';
 import {dailyBody,minuteBody,overseasDailyBody,overseasMinuteBody} from '../futures-history-fixtures.js';
 import {serveStdio} from '@modelcontextprotocol/server/stdio';
-import {createStockMcpServer} from '../../src/server.js';
+import {createStockMcpServer} from '../synthetic-member-access.js';
 import daily from './kis039_daily_rows_synthetic.json' with {type:'json'};
 import flow from './kis115_investor_flow_synthetic.json' with {type:'json'};
 serveStdio(()=>createStockMcpServer({rightsEnabled:true,openDartEnabled:true,secEnabled:true,directoryEnabled:true,clock:()=> '2026-10-22T01:00:00Z',

@@ -1,4 +1,5 @@
 import { createInterface } from "node:readline/promises";
+import { readTerminalChoice } from "./terminal-choice.js";
 import { homedir } from "node:os";
 import { readInvestorContext, saveInvestorContext, deleteInvestorContext, setupWasPresented, markSetupPresented, UserContextError, type InvestorContextAnswers } from "./user-context.js";
 
@@ -18,7 +19,15 @@ const labels: Record<keyof InvestorContextAnswers, string> = {
   riskTolerance: "변동성을 감내할 의향", riskCapacity: "손실을 감당할 여력",
   liquidityNeed: "가까운 시기의 자금 필요", assetScope: "관심 자산군",
 };
-export async function runSetupFlow(projectRoot: string, ask: (question: string) => Promise<string>, output: Output, homeDir = homedir(), action: SetupAction = "reuse"): Promise<number> {
+const answerLabels: Record<string, string> = {
+  long_term_growth: "장기 성장", income: "배당 수입", capital_preservation: "원금 보전", learning: "학습",
+  under_1y: "1년 미만", "1_3y": "1~3년", "3_5y": "3~5년", "5y_plus": "5년 이상",
+  unspecified: "미정", new: "초보", some: "일부 경험", experienced: "풍부한 경험",
+  low: "낮음", medium: "보통", high: "높음", domestic_equity: "국내 주식", domestic_etf: "국내 ETF",
+  domestic_futures: "국내 선물", overseas_equity: "해외 주식", overseas_etf: "해외 ETF", overseas_futures: "해외 선물",
+};
+export async function runSetupFlow(projectRoot: string, ask: (question: string) => Promise<string>, output: Output, homeDir = homedir(), action: SetupAction = "reuse", select?: (question: string, options: readonly string[], multi: boolean) => Promise<string>): Promise<number> {
+  output.write("모두의 주식 · MoAI ATP — 로컬 공통 프로필 설정\n");
   const existing = await readInvestorContext(projectRoot, homeDir);
   if (action === "delete") {
     const confirmed = await ask("모든 프로젝트에서 공유하는 프로필을 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
@@ -41,9 +50,10 @@ export async function runSetupFlow(projectRoot: string, ask: (question: string) 
     const values: readonly string[] = choices[key];
     const multi = key === "objectives" || key === "assetScope";
     for (;;) {
-      const raw = await ask(`${labels[key]}: ${values.map((v, i) => `${i + 1}) ${v}`).join(" / ")}${multi ? " (복수: 쉼표)" : ""}\n번호 또는 CANCEL: `);
+      const raw = select ? await select(labels[key], values.map(v => answerLabels[v] ?? v), multi) : await ask(`${labels[key]}: ${values.map((v, i) => `${i + 1}) ${answerLabels[v] ?? v}`).join(" / ")}${multi ? " (복수: 쉼표)" : ""}\n번호 또는 CANCEL: `);
       if (raw === "CANCEL") { output.write("profile_saved=false\n"); return 0; }
-      const indices = raw.split(",").map(v => Number(v.trim()) - 1);
+      if (!raw.trim()) continue;
+      const indices = raw.split(",").map(v => { const text = v.trim(); return /^\d+$/.test(text) ? Number(text) - 1 : values.findIndex(value => (answerLabels[value] ?? value) === text); });
       if ((!multi && indices.length !== 1) || new Set(indices).size !== indices.length || indices.some(i => !Number.isInteger(i) || i < 0 || i >= values.length)) continue;
       answers[key] = multi ? indices.map(i => values[i]!) : values[indices[0]!]!; break;
     }
@@ -54,8 +64,17 @@ export async function runSetupFlow(projectRoot: string, ask: (question: string) 
 }
 export async function runSetup(action: SetupAction = "reuse"): Promise<number> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) { process.stderr.write("setup_requires_interactive_terminal\n"); return 2; }
-  const terminal = createInterface({ input: process.stdin, output: process.stdout });
-  try { return await runSetupFlow(process.cwd(), q => terminal.question(q), process.stdout, homedir(), action); }
+  const ask = async (question: string) => {
+    const terminal = createInterface({ input: process.stdin, output: process.stdout });
+    try { return await terminal.question(question); } finally { terminal.close(); }
+  };
+  const select = async (question: string, options: readonly string[], multi: boolean) => {
+    const result = await readTerminalChoice(process.stdin, process.stdout, question, options, multi);
+    if (result.kind === "cancelled") return "CANCEL";
+    if (result.kind === "selected") return result.values.map(index => String(index + 1)).join(",");
+    // Free input selects explicitly supported labels; arbitrary private notes are not stored.
+    return ask(`${question} — 항목 이름 또는 번호${multi ? " (복수: 쉼표)" : ""}, 중단은 CANCEL: `);
+  };
+  try { return await runSetupFlow(process.cwd(), ask, process.stdout, homedir(), action, select); }
   catch (e) { process.stderr.write(`${e instanceof UserContextError ? e.code : "setup_failed"}\n`); return 2; }
-  finally { terminal.close(); }
 }
