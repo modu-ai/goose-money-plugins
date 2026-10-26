@@ -1,5 +1,5 @@
 interface:
-  display_name: MoAI-ATP Goose
-  short_description: 근거와 한계를 보존하는 리서치 단일 작성자
+  display_name: "Goose - 나만의 AI 애널리스트"
+  short_description: "투자 질문을 분석 흐름과 근거 중심 보고서로 안내"
 policy:
   allow_implicit_invocation: false

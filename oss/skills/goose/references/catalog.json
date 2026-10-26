@@ -58,7 +58,10 @@
         "futures_contract"
       ],
       "end_to_end_status": "not_implemented",
-      "actual_data_complete": false
+      "actual_data_complete": false,
+      "availability": "planned",
+      "active": false,
+      "availability_note": "지원 예정: 계좌 연결·계좌 기반 보고서는 이번 버전에서 보류하며 기존 소스와 템플릿은 보존합니다."
     },
     {
       "id": "R05",
@@ -156,16 +159,16 @@
     },
     {
       "id": "R12",
-      "title": "ETF 구조·비교·보유 점검",
+      "title": "ETF 가격·NAV·위험 점검",
       "kind": "report",
       "public": true,
       "required_groups": [
         "identity_calendar",
+        "price_history",
         "etf_structure",
-        "market_flow",
-        "claims_events"
+        "analysis_narrative"
       ],
-      "end_to_end_status": "not_implemented",
+      "end_to_end_status": "partial_input_render_path_synthetic_verified_live_incomplete",
       "actual_data_complete": false
     },
     {
@@ -176,10 +179,10 @@
       "required_groups": [
         "identity_calendar",
         "futures_contract",
-        "market_flow",
-        "claims_events"
+        "price_history",
+        "analysis_narrative"
       ],
-      "end_to_end_status": "not_implemented",
+      "end_to_end_status": "partial_input_render_path_synthetic_verified_live_incomplete",
       "actual_data_complete": false
     },
     {

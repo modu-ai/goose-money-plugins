@@ -1,24 +1,24 @@
 ---
 name: portfolio-risk
-description: "유료 사용자 동의 후 본인 계좌의 보유·비중·손익·집중 위험을 읽기 전용으로 설명합니다. '내 계좌 분석', '보유종목 비중', '손익/위험 점검' 요청에 사용하세요."
+description: "계좌 위험 분석의 보존용 내부 설계입니다. 현재 공개 기능과 라우팅에는 포함하지 않습니다."
 metadata:
   version: "0.1.0"
 ---
 
-# Portfolio Risk (Paid, Consent-Gated)
+# Portfolio Risk — 보존용 내부 설계 · 현재 미지원
 
 ## Preconditions
 
-1. Paid entitlement valid for the current user.
+1. 현재 공개판은 계좌 기능을 제공하지 않습니다. 아래 절차는 실행하지 않는 보존용 설계이며, 유료 등급·강의 수강권·기기 라이선스를 요구하거나 수집하지 않습니다.
 2. KIS credentials are configured in user-owned local secure storage, never pasted into chat or stored by MoAI.
 3. User explicitly chooses account/product scope and consents to the read request.
 4. KIS account endpoint access and data rights are approved; if not, stop.
 
-If any precondition is absent, do not call account tools. Free tier has no KIS/account connection. A free public-data report may discuss general diversification concepts but cannot claim it analyzed personal holdings.
+계좌 기능은 현재 공개 도구·라우팅에서 제외합니다. 일반 분산투자 개념은 설명할 수 있으나 개인 보유자산을 조회·분석했다고 주장하지 않습니다.
 
 ## Allowed tools
 
-Only existing `get_account_snapshot` and `get_account_activity`, after tool schema review. No order, trade mutation, cancellation, transfer, account selection guess, or generic arbitrary API call.
+`get_account_snapshot`과 `get_account_activity`는 현재 등록된 공개 도구가 아닙니다. 향후 별도 승인·계약·도구 검증이 있기 전에는 호출하지 않습니다. No order, trade mutation, cancellation, transfer, account selection guess, or generic arbitrary API call.
 
 ## Workflow
 

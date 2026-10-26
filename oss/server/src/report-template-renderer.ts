@@ -1,0 +1,229 @@
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { ReportInput, ReportPlan } from './report-pipeline.js';
+import { renderMissingBlockText } from './report-presentation.js';
+
+const ASSET_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../../assets/report-runtime');
+const ECHARTS = readFileSync(resolve(ASSET_DIR, 'echarts-6.1.0.min.js'), 'utf8');
+const LWC = readFileSync(resolve(ASSET_DIR, 'lightweight-charts-5.2.1.js'), 'utf8');
+const ORIGINAL_TEMPLATE_CSS = readFileSync(resolve(ASSET_DIR, 'original-report-layout.css'), 'utf8');
+const STOCK_SAMPLE_CSS=readFileSync(resolve(ASSET_DIR,'stock-sample-report.css'),'utf8');
+const STOCK_SAMPLE_LOGO='data:image/png;base64,'+readFileSync(resolve(ASSET_DIR,'stock-sample-logo.png')).toString('base64');
+const THEME = readFileSync(resolve(ASSET_DIR, 'moai-report-theme.css'), 'utf8');
+const PELE_FLOW = readFileSync(resolve(ASSET_DIR, 'data-pipeline-pele.svg'), 'utf8');
+if (/<script\b|<foreignObject\b|\son[a-z]+\s*=|javascript:/i.test(PELE_FLOW)) throw new Error('unsafe_pele_asset');
+
+const SPECIAL_VISUAL_CSS = `.matrix-figure,.timeline-figure,.pele-figure{margin:18px 0 22px}.matrix-figure figcaption,.timeline-figure figcaption,.pele-figure figcaption{font:600 13px/1.6 Pretendard,sans-serif;color:#5C5E62;margin:0 0 8px}.matrix-table th,.matrix-table td{min-width:88px}.event-timeline{list-style:none;margin:12px 0;padding:0 0 0 18px;border-left:2px solid #D4D6D8}.timeline-item{position:relative;padding:2px 0 20px 16px}.timeline-item:before{content:'';position:absolute;left:-24px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--chart-1);border:2px solid #fff;box-shadow:0 0 0 1px #D4D6D8}.timeline-item time{display:block;font:600 12px/1.5 Pretendard,sans-serif;color:#5C5E62}.timeline-item strong{display:block;font:700 16px/1.5 Pretendard,sans-serif}.timeline-item p{margin:4px 0;font:15px/1.65 MaruBuri,AppleMyungjo,Batang,Georgia,serif}.pele-graph{display:block;width:100%;height:auto;max-width:760px;margin:8px auto 14px;overflow:visible}.pele-edge path{fill:none;stroke:var(--chart-1);stroke-width:2}.pele-edge marker path{fill:var(--chart-1)}.pele-edge text{font:12px Pretendard,sans-serif;fill:#393C41;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}.pele-node rect{fill:#F4F4F4;stroke:#D4D6D8;stroke-width:1.25}.pele-node-evidence rect{fill:#EEF1F4;stroke:var(--chart-2)}.pele-node-event rect{fill:#F1EFF5;stroke:var(--chart-4)}.pele-node-outcome rect{fill:#EEF3F0;stroke:var(--chart-3)}.pele-node text{font:600 13px Pretendard,sans-serif;fill:#171A20}.pele-figure .table-wrap{margin-top:12px}@media(max-width:760px){.pele-graph{min-width:660px}.pele-figure{overflow:hidden}.event-timeline{padding-left:14px}}`;
+
+const STOCK_ADAPTER_CSS=`
+main#report{min-width:0}.panel{border:0;padding:0;margin:0}.panel h2{font:700 30px/1.6 var(--serif);margin:64px 0 26px;padding-top:24px;border-top:1px solid var(--ink)}.panel h3{font:700 23px/1.6 var(--serif);margin:38px 0 18px}.panel p,.panel li{font:18px/1.75 var(--sans);color:var(--ink)}.section-id{display:none}.table-wrap{max-width:100%;overflow:auto}.table-wrap table{table-layout:auto;font-size:18px}.table-wrap th{font-size:17px}.table-wrap td{font-size:18px;padding:14px 18px;white-space:normal}.table-wrap td.numeric{font-weight:650;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}.table-wrap td:not(.numeric){text-align:left}.kpis{gap:0;padding:0;grid-template-columns:repeat(4,minmax(0,1fr))}.kpi{background:transparent;padding:24px 22px}.kpi small{display:inline}.kpi>small{display:block;margin:8px 0 0;font-size:13px}.lead-summary p{font-size:16px}.source-records{margin:28px 0}.source-records>summary{font:700 18px/1.6 var(--sans);cursor:pointer}.stock-footer{margin:0 48px 32px;font:14px/1.6 var(--sans)}.opinion{margin:28px 0}.moai-column>p strong{font-weight:750;text-decoration:none}.report-hero blockquote{font-size:20px}.logo-window{flex-shrink:0}.reading-rail nav{display:flex;flex-direction:column}.panel summary{font-size:15px}.status{font-family:var(--sans)}
+@media(max-width:800px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi{border:0;border-right:1px solid var(--line);padding:18px 12px!important}.panel h2{font-size:25px;margin-top:48px}.panel h3{font-size:21px}.panel p,.panel li{font-size:18px;line-height:1.7}.reading-rail nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stock-footer{margin:0 24px 24px}.table-wrap td{padding:12px 10px}.reading-layout{min-width:0}.report-hero blockquote{font-size:18px}}
+@media print{.panel h2{font-size:18pt}.panel p,.panel li{font-size:11pt}.stock-footer{margin:16px 0}.source-records:not([open]){display:none}}
+`;
+const BASE_CSS = `
+:root{color-scheme:light;--ink:#171A20;--muted:#5C5E62;--paper:#fff;--bg:#fff;--line:#D4D6D8;--soft:#F4F4F4;--accent:#B4141A;--chart-1:var(--color-chart-1);--chart-2:var(--color-chart-2);--chart-3:var(--color-chart-3);--chart-4:var(--color-chart-4);--chart-5:var(--color-chart-5)}
+*{box-sizing:border-box}html{scroll-behavior:auto}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 MaruBuri,AppleMyungjo,Batang,Georgia,serif}.shell{max-width:1120px;margin:auto;padding:36px 32px 64px}.topline{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:1px solid #E8E8E8;padding:0 0 18px}.brand,.eyebrow,.badge,h1,h2,h3,nav,table,button,.meta,.section-id,.status,.ui,figcaption,footer,summary{font-family:Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif}.brand{font-weight:800;letter-spacing:.02em}.badge{font-size:13px;font-weight:700;background:#F4F4F4;border:1px solid #D4D6D8;border-radius:4px;padding:5px 10px}.hero{padding:34px 0 22px}.eyebrow{font-size:13px;color:#B4141A;font-weight:700;letter-spacing:.06em}.hero h1{font-size:clamp(30px,4vw,44px);line-height:1.2;letter-spacing:-.035em;margin:12px 0}.lead{font-size:18px;color:#393C41;max-width:850px}.meta{display:flex;gap:10px 22px;flex-wrap:wrap;color:#5C5E62;font-size:13px}.notice{background:#F4F4F4;border-left:3px solid #D71920;padding:14px 18px;margin:18px 0 22px;color:#393C41}.layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:32px}.rail{position:sticky;top:14px;align-self:start;border-top:1px solid #E8E8E8;padding-top:14px}.rail a{display:block;color:#393C41;padding:5px 0;text-decoration:none;font:14px Pretendard,sans-serif}.content{min-width:0}.panel{border:0;border-top:1px solid #E8E8E8;padding:24px 0;margin:0;min-width:0}.panel h2{font:800 23px/1.4 Pretendard,sans-serif;letter-spacing:-.025em;margin:0 0 12px}.panel h3{font:700 17px/1.5 Pretendard,sans-serif}.panel p,.panel li{font:18px/1.85 MaruBuri,AppleMyungjo,Batang,Georgia,serif;color:#393C41}.muted,.caption,figcaption,small{color:#5C5E62;font:13px/1.6 Pretendard,sans-serif}.section-id{font-size:13px;font-weight:700;color:#5C5E62}.status{display:inline-block;font-size:12px;font-weight:700;color:#393C41;background:#F4F4F4;border:1px solid #D4D6D8;padding:3px 7px;border-radius:3px}.table-wrap{max-width:100%;overflow:auto;border-top:1px solid #D4D6D8;margin:12px 0 20px}table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #E8E8E8;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#F4F4F4;color:#171A20;font-weight:700}td{color:#393C41}.numeric{text-align:right;white-space:nowrap}.chart-box{margin:18px 0 8px;min-width:0}.chart-scroll{overflow-x:auto;max-width:100%}.echart{height:340px;min-width:300px}.lwc-chart{height:360px;min-width:300px}.chart-caption{margin-top:8px}.diagram{max-width:760px;margin:16px auto}.diagram svg{display:block;width:100%;height:auto;max-width:100%}.field-list{font:13px/1.7 Pretendard,sans-serif;overflow-wrap:anywhere}.block-missing{margin:16px 0;padding:12px 16px;background:#F7F7F7;border-left:3px solid #A8ADB4;color:#5C5E62;font:14px/1.7 Pretendard,sans-serif}.block-note{margin:10px 0;color:#5C5E62;font:13px/1.6 Pretendard,sans-serif}.actions{display:flex;flex-wrap:wrap;gap:10px}.skip{position:absolute;left:-1000px}.skip:focus{left:12px;top:12px;background:white;padding:10px;z-index:2}a{color:#244BBA;text-underline-offset:3px}button{border:1px solid #737780;background:white;color:#171A20;border-radius:4px;padding:9px 12px;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #3E6AE1;outline-offset:3px}details{border-top:1px solid #D4D6D8;margin-top:12px;padding-top:10px}summary{font-weight:700;cursor:pointer}.legend{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.legend button[aria-pressed=false]{opacity:.55}footer{border-top:1px solid #E8E8E8;padding-top:18px;margin-top:24px;color:#5C5E62;font-size:12px}
+${ORIGINAL_TEMPLATE_CSS}${SPECIAL_VISUAL_CSS}${THEME}
+@media(max-width:760px){.shell{padding:24px 20px 44px}.layout{grid-template-columns:1fr;gap:14px}.rail{position:static;display:flex;gap:4px 14px;flex-wrap:wrap;padding:12px 0}.rail strong{width:100%}.rail a{padding:3px 0}.hero{padding:26px 0 16px}.panel{padding:20px 0}.panel p,.panel li{font-size:17px}.echart,.lwc-chart{height:300px}}
+@media(max-width:420px){.shell{padding:20px 16px 36px}.topline{align-items:flex-start}.hero h1{font-size:30px}.meta{display:block}.meta span{display:block;margin:3px 0}.table-wrap{max-width:100%;margin-right:0;overflow-x:auto;overscroll-behavior-inline:contain}th,td{padding:10px 12px;font-size:inherit}table{font-size:18px}th{font-size:17px}td{font-size:18px}}
+@media print{.shell{max-width:none;padding:0}.layout{display:block}.rail,.actions{display:none}.panel{break-inside:auto;padding:16px 0}.hero{padding:16px 0}.chart-box,figure,.diagram{break-inside:avoid}.echart,.lwc-chart{height:300px}.table-wrap{overflow:visible}th,td{white-space:normal;font-size:9pt}.panel p,.panel li{font-size:11pt;line-height:1.6}}
+`;
+
+const E = (value: unknown): string => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+const jsonForScript = (value: unknown): string => JSON.stringify(value).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
+const STATUS_LABEL: Record<string, string> = { partial:'부분 입력', error:'오류', not_run:'미실행', rights_pending:'권리 확인 대기' };
+
+function sourceMayDisplay(doc: ReportInput, sourceId: string): boolean {
+  const source = doc.sources.find((item) => item.id === sourceId);
+  if (!source) return false;
+  if (doc.mode === 'synthetic') return source.kind === 'synthetic' && source.rights === 'synthetic_only' && source.validation_status === 'synthetic_fixture';
+  if (source.kind === 'user_supplied') return (doc.mode === 'supplied' || doc.mode === 'mixed') && source.rights === 'local_view' && source.validation_status === 'unverified';
+  return source.rights === 'local_view' && ['provider_shape_checked','independently_reconciled'].includes(source.validation_status ?? '');
+}
+function numericSeries(values: readonly (string | null)[]): number[] | null {
+  const result: number[] = [];
+  for (const value of values) {
+    if (value === null) return null;
+    const number = Number(value);
+    if (!Number.isFinite(number) || Math.abs(number) > Number.MAX_SAFE_INTEGER) return null;
+    result.push(number);
+  }
+  return result;
+}
+function reportTable(headers: string[], rows: Array<Array<string>>): string {
+  const head = headers.map((value) => `<th scope="col">${E(value)}</th>`).join('');
+  const body = rows.length
+    ? rows.map((row) => `<tr>${row.map((value) => `<td${/^[+-]?[0-9][0-9,]*(?:\.[0-9]+)?(?:%|원|주)?$/.test(value)?' class="numeric"':''}>${E(value)}</td>`).join('')}</tr>`).join('')
+    : `<tr><td colspan="${headers.length}">확인 가능한 입력이 없습니다.</td></tr>`;
+  return `<div class="table-wrap" tabindex="0" role="region" aria-label="가로 스크롤 표"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+}
+type RenderChart = {
+  id:string;section_id:string;kind:'bar'|'line'|'donut'|'scatter';title:string;source_id:string;unit?:string;
+  labels:string[];values?:number[];metric_ids:string[];x_values?:number[];y_values?:number[];x_unit?:string;y_unit?:string;
+};
+function makeChartSpecs(doc: ReportInput, plan: ReportPlan) {
+  const echart:RenderChart[]=[];
+  for(const [index,visual] of (doc.visuals??[]).entries()){
+    if(!sourceMayDisplay(doc,visual.source_id))continue;
+    if(visual.kind==='matrix'||visual.kind==='timeline'||visual.kind==='pele')continue;
+    if(visual.kind==='scatter'){
+      const x=numericSeries(visual.x_values),y=numericSeries(visual.y_values);if(!x||!y)continue;
+      echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:'scatter',title:visual.title,source_id:visual.source_id,labels:visual.labels,x_values:x,y_values:y,x_unit:visual.x_unit,y_unit:visual.y_unit,metric_ids:visual.metric_ids});
+    }else{
+      const values=numericSeries(visual.values);if(!values)continue;
+      echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:visual.kind,title:visual.title,source_id:visual.source_id,labels:visual.labels,values,unit:visual.unit,metric_ids:visual.metric_ids});
+    }
+  }
+  if(doc.chart&&sourceMayDisplay(doc,doc.chart.source_id)){
+    const values=numericSeries(doc.chart.values);
+    if(values)echart.push({id:'chart-echarts-legacy',section_id:doc.chart.section_id??(doc.report_id==='R01'?'R01.X01':'charts'),kind:'bar',title:doc.chart.title,source_id:doc.chart.source_id,labels:doc.chart.labels,values,unit:doc.chart.unit,metric_ids:doc.chart.metric_ids});
+  }
+  const timeSeriesSection=doc.report_id==='R01'?'R01.X01':doc.time_series?plan.sections.find(section=>{
+    const layout=plan.presentation?.sections.find(item=>item.id===section.id);
+    return layout?.blocks.includes('line')&&(section.field_ids.includes(doc.time_series!.series[0]!.field_id)||section.metric_ids.includes('metric.ma20'));
+  })?.id:undefined;
+  const lwc=doc.time_series&&timeSeriesSection&&sourceMayDisplay(doc,doc.time_series.source_id)
+    ?[{id:'chart-lwc',section_id:timeSeriesSection,title:doc.time_series.title,source_id:doc.time_series.source_id,dates:doc.time_series.dates,unit:doc.time_series.unit,adjustment:doc.time_series.adjustment,series:doc.time_series.series.map((series)=>({name:series.label,values:series.values}))}]
+    :[];
+  return {echart,lwc};
+}
+function chartFigure(spec:RenderChart,doc:ReportInput):string {
+  const source=doc.sources.find(item=>item.id===spec.source_id);
+  const xUnit=spec.x_unit??spec.unit??'';const yUnit=spec.y_unit??spec.unit??'';
+  const rows=spec.kind==='scatter'
+    ?spec.labels.map((label,index)=>[label,String(spec.x_values?.[index]??'—'),xUnit,String(spec.y_values?.[index]??'—'),yUnit])
+    :spec.labels.map((label,index)=>[label,String(spec.values?.[index]??'—'),spec.unit??'']);
+  const table=spec.kind==='scatter'
+    ?reportTable(['대상','X 원수치',xUnit,'Y 원수치',yUnit],rows)
+    :reportTable(['구분','원수치',spec.unit??'단위'],rows);
+  const caption=`${spec.kind==='scatter'?'Apache ECharts 6.1.0 · 산점도':'Apache ECharts 6.1.0 · '+spec.kind} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · 표의 원수치가 기준입니다.`;
+  return `<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="${E(spec.title)} 차트 가로 탐색"><div id="${E(spec.id)}" class="echart ${spec.kind==='scatter'?'wide-chart':''}" role="img" aria-label="${E(spec.title)} · ${E(doc.mode)}"></div></div><figcaption class="chart-caption">${caption}</figcaption></figure>${table}`;
+}
+function sourceCaption(doc:ReportInput,sourceId:string):string {
+  const source=doc.sources.find(item=>item.id===sourceId);
+  return `source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · ${E(source?.id??'출처 없음')}`;
+}
+function matrixVisualHtml(visual:Extract<NonNullable<ReportInput['visuals']>[number],{kind:'matrix'}>,doc:ReportInput):string {
+  const rows=visual.rows.map((label,row)=>[label,...visual.columns.map((_,column)=>visual.values[row*visual.columns.length+column]??'—')]);
+  return `<figure class="matrix-figure"><figcaption>${E(visual.title)} · ${E(visual.unit)} · ${sourceCaption(doc,visual.source_id)}</figcaption><div class="matrix-table">${reportTable(['비교축',...visual.columns],rows)}</div></figure>`;
+}
+function timelineVisualHtml(visual:Extract<NonNullable<ReportInput['visuals']>[number],{kind:'timeline'}>,doc:ReportInput):string {
+  const typeLabel={occurred:'발생',published:'공개',effective:'효력',observed:'관측'} as const;
+  const events=visual.events.map(event=>`<li class="timeline-item"><time datetime="${E(event.when)}">${E(typeLabel[event.time_kind])} · ${E(event.when)}</time><strong>${E(event.title)}</strong>${event.detail?`<p>${E(event.detail)}</p>`:''}</li>`).join('');
+  return `<figure class="timeline-figure"><figcaption>${E(visual.title)} · ${sourceCaption(doc,visual.source_id)}</figcaption><ol class="event-timeline">${events}</ol></figure>`;
+}
+function peleVisualHtml(visual:Extract<NonNullable<ReportInput['visuals']>[number],{kind:'pele'}>,doc:ReportInput):string {
+  const width=730,rowHeight=112,rows=Math.ceil(visual.nodes.length/3),height=Math.max(142,rows*rowHeight+28);
+  const positions=new Map(visual.nodes.map((node,index)=>[node.id,{x:24+(index%3)*238,y:22+Math.floor(index/3)*rowHeight}]));
+  const markerId=`pele-arrow-${visual.section_id.replace(/[^A-Za-z0-9_-]/g,'-')}`;
+  const edges=visual.edges.map(edge=>{
+    const from=positions.get(edge.from)!,to=positions.get(edge.to)!;
+    const x1=from.x+(to.x>=from.x?188:0),y1=from.y+30,x2=to.x+(to.x>=from.x?0:188),y2=to.y+30;
+    const evidence=edge.metric_ids.join(', ');
+    return `<g class="pele-edge"><path d="M ${x1} ${y1} L ${x2} ${y2}" marker-end="url(#${markerId})"/><text x="${(x1+x2)/2}" y="${(y1+y2)/2-7}">${E(edge.label)}</text><title>근거 필드 ${E(evidence)}</title></g>`;
+  }).join('');
+  const nodes=visual.nodes.map(node=>{const point=positions.get(node.id)!;return `<g class="pele-node pele-node-${E(node.role??'entity')}"><rect x="${point.x}" y="${point.y}" width="188" height="60" rx="5"/><text x="${point.x+94}" y="${point.y+35}" text-anchor="middle">${E(node.label)}</text></g>`;}).join('');
+  const evidenceRows=visual.edges.map(edge=>[visual.nodes.find(node=>node.id===edge.from)?.label??edge.from,edge.label,visual.nodes.find(node=>node.id===edge.to)?.label??edge.to,edge.metric_ids.join(', ')]);
+  const svg=`<svg class="pele-graph" viewBox="0 0 ${width} ${height}" role="img" aria-label="${E(visual.title)} 관계도"><title>${E(visual.title)}</title><desc>합성 또는 권리 확인된 근거에 연결된 관계 도식입니다.</desc><defs><marker id="${markerId}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z"/></marker></defs>${edges}${nodes}</svg>`;
+  return `<figure class="pele-figure"><figcaption>${E(visual.title)} · Pele-style inline SVG · ${sourceCaption(doc,visual.source_id)}</figcaption>${svg}${reportTable(['시작','관계','도착','근거 필드'],evidenceRows)}</figure>`;
+}
+function specialVisualSections(doc:ReportInput):Map<string,Map<string,string[]>> {
+  const bySection=new Map<string,Map<string,string[]>>();
+  const add=(sectionId:string,kind:string,html:string)=>{let kinds=bySection.get(sectionId);if(!kinds){kinds=new Map();bySection.set(sectionId,kinds);}const items=kinds.get(kind)??[];items.push(html);kinds.set(kind,items);};
+  for(const visual of doc.visuals??[]){if(!sourceMayDisplay(doc,visual.source_id))continue;if(visual.kind==='matrix')add(visual.section_id,'matrix',matrixVisualHtml(visual,doc));else if(visual.kind==='timeline')add(visual.section_id,'timeline',timelineVisualHtml(visual,doc));else if(visual.kind==='pele')add(visual.section_id,'pele',peleVisualHtml(visual,doc));}
+  return bySection;
+}
+
+function chartSections(specs:ReturnType<typeof makeChartSpecs>,doc:ReportInput):{bySection:Map<string,Map<string,string[]>>;count:number} {
+  const bySection=new Map<string,Map<string,string[]>>();
+  const add=(sectionId:string,kind:string,html:string)=>{let kinds=bySection.get(sectionId);if(!kinds){kinds=new Map();bySection.set(sectionId,kinds);}const items=kinds.get(kind)??[];items.push(html);kinds.set(kind,items);};
+  for(const spec of specs.echart)add(spec.section_id,spec.kind,chartFigure(spec,doc));
+  for(const spec of specs.lwc){
+    const source=doc.sources.find(item=>item.id===spec.source_id);
+    const rows=spec.dates.map((date,index)=>[date,...doc.time_series!.series.map(series=>series.values[index]??'—')]);
+    const html=`<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="Lightweight Charts 가격 시계열"><div id="${spec.id}" class="lwc-chart" role="img" aria-label="${E(spec.title)} · ${E(spec.unit)} · ${E(doc.mode)}"></div></div><figcaption class="chart-caption">Lightweight Charts 5.2.1 · ${E(spec.unit)} · ${E(spec.adjustment)} 가격 기준 · 거래일 기준축 · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')}.</figcaption><div class="legend" data-legend-for="${spec.id}"></div></figure>${reportTable(['거래일',...doc.time_series!.series.map(series=>series.label)],rows)}`;
+    add(spec.section_id,'line',html);
+  }
+  return {bySection,count:specs.echart.length+specs.lwc.length};
+}
+
+export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string {
+  const specs = makeChartSpecs(doc,plan);
+  const sourceMap = new Map(doc.sources.map((source)=>[source.id,source]));
+  const sourceRows = doc.sources.map((source)=>[
+    source.id,source.provider ?? source.kind,source.operation_ref ?? '',source.source_as_of ?? '미제공',source.received_at ?? source.observed_at,source.validation_status ?? '미검증',source.rights,
+  ]);
+  const metricsRows = doc.metrics.map((metric)=>{
+    const source = sourceMap.get(metric.source_id);
+    const authorized = sourceMayDisplay(doc,metric.source_id) && metric.status !== 'rights_pending' && metric.status !== 'error' && metric.status !== 'not_run' && metric.status !== 'missing';
+    return [metric.label,authorized ? metric.value ?? '—' : '—',metric.unit,metric.period,authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status),metric.missing_reason ?? ''];
+  });
+  const visualOutput = chartSections(specs,doc);
+  const specialOutput = specialVisualSections(doc);
+  const sectionHtml = doc.sections.map((section)=>{
+    const routeSection = plan.sections.find((entry)=>entry.id===section.id);
+    const layoutSection = plan.presentation?.sections.find((entry)=>entry.id===section.id);
+    const linkedMetrics = doc.metrics.filter((metric)=>section.required_fields.includes(metric.field_id) || section.metric_ids?.includes(metric.field_id));
+    const linkedSources = section.source_ids?.map((id)=>sourceMap.get(id)).filter((source)=>source!==undefined) ?? [];
+    const sourceLabel = linkedSources.length ? '근거 '+linkedSources.map((source)=>E(source.id)).join(', ') : '연결된 응답 없음';
+    const linkedTable = linkedMetrics.length
+      ? reportTable(['지표','표시값','단위','기간','상태','비고'],linkedMetrics.map((metric)=>{const visible=sourceMayDisplay(doc,metric.source_id)&&!['rights_pending','error','not_run','missing'].includes(metric.status);return [metric.label,visible?metric.value??'—':'—',metric.unit,metric.period,visible?metric.status:(sourceMap.get(metric.source_id)?.rights==='pending'?'rights_pending':metric.status),metric.missing_reason??''];}))
+      : '<p class="muted">이 섹션의 필수 원천 필드에 대응하는 구조화 지표가 아직 없습니다.</p>';
+    let blockHtml = linkedTable;
+    if(layoutSection){
+      let tableUsed=false;
+      blockHtml=layoutSection.blocks.map((kind)=>{
+        if(kind==='table'){
+          if(tableUsed)return '<p class="block-note">추가 표 슬롯입니다. 현재 계약은 섹션별 입력 행을 첫 표에 모아 표시합니다.</p>';
+          tableUsed=true;return linkedTable;
+        }
+        if(kind==='bar'||kind==='line'||kind==='donut'||kind==='scatter'){
+          const candidates=visualOutput.bySection.get(section.id)?.get(kind);
+          const chart=candidates?.shift();
+          return chart??`<div class="block-missing" role="note">${E(renderMissingBlockText(kind))}</div>`;
+        }
+        if(kind==='matrix'||kind==='timeline'||kind==='pele'){
+          const candidates=specialOutput.get(section.id)?.get(kind);
+          const visual=candidates?.shift();
+          return visual??`<div class="block-missing" role="note">${E(renderMissingBlockText(kind))}</div>`;
+        }
+        return `<div class="block-missing" role="note">${E(renderMissingBlockText(kind))}</div>`;
+      }).join('');
+    }
+    return `<section class="panel" id="${E(section.id)}"><span class="section-id">${E(section.id)} · ${E(routeSection?.title ?? '상세 섹션')}</span><h2>${E(routeSection?.title ?? section.id)}</h2><span class="status">${E(STATUS_LABEL[section.status] ?? section.status)}</span>${(section.body??section.missing_reason).split('\n\n').map((text,index)=>`<p>${index===0&&section.body?.includes('\n\n')?'<strong>'+E(text)+'</strong>':E(text)}</p>`).join('')}<p class="muted">${E(sourceLabel)} · 결측/차단: ${E(section.missing_reason)}</p>${blockHtml}<details><summary>필요 필드 보기</summary><p class="field-list">${E(section.required_fields.join(' · '))}</p></details></section>`;
+  }).join('');
+  const claims = doc.analysis_claims.filter(claim=>!claim.id.includes(".NARRATIVE.")&&!claim.id.includes(".GOOSE_OPINION.")).map((claim)=>`<li><strong>${E(claim.kind)} · ${E(claim.status)} · 신뢰도 ${E(claim.confidence)}</strong><p>${E(claim.text)}</p><small>출처: ${E(claim.source_ids.join(', ') || '없음')} · 필드: ${E(claim.metric_ids.join(', ') || '없음')}</small></li>`).join('');
+  const nav = plan.sections.map((section)=>`<a href="#${E(section.id)}">${E(section.title)}</a>`).join('');
+  const modeLabel = doc.mode==='synthetic'?'합성 fixture · 실제 자료 아님':doc.mode==='actual'?'실제 입력 · 검증 상태 표시':doc.mode==='mixed'?'혼합 입력 · 출처별 상태 표시':doc.sources.some(source=>source.kind==='user_supplied')?'사용자 제공 입력 · 외부 대사 전':'제공 입력 · 독립 검증 전';
+  const notice = doc.mode==='synthetic'
+    ? '이 문서는 합성 fixture로 생성했습니다. 실 KIS·DART 응답, 실제 시세 보고서 또는 투자 권고가 아닙니다.'
+    : doc.sources.some(source=>source.kind==='user_supplied')
+      ? '사용자가 이 보고서 생성에 직접 제공한 입력입니다. 외부 원장·가격·체결과 대사하지 않았으므로 제공 입력으로 표시하며, 계좌 조회나 주문은 수행하지 않습니다.'
+      : '원천 권리 또는 독립 대조가 확인되지 않은 값은 숨기거나 미확인으로 표시합니다. 이 문서는 주문을 실행하지 않습니다.';
+  const htmlCharts = plan.presentation
+    ? `<p class="block-note">차트와 표는 해당 보고서 섹션의 선언된 블록 순서에 배치했습니다. 전체 원수치와 출처는 아래 장부에서 확인할 수 있습니다. 차트 ${visualOutput.count}개가 입력됐습니다.</p>`
+    : [...visualOutput.bySection.values()].flatMap(byKind=>[...byKind.values()].flat()).join('');
+  const pipelineDiagram = doc.report_id==='R01' ? `<figure class="diagram"><figcaption>자료 처리 단계 설명 · 수치·기업 관계·분석 근거가 아닌 일반 흐름도 · Pele 1.7.0 선렌더 SVG</figcaption>${PELE_FLOW}</figure>` : '';
+  const chartJson = jsonForScript(specs);
+  const sourceRowsHtml = reportTable(['출처 ID','공급자','작업','source_as_of','received_at','검증','권리'],sourceRows);
+  const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고'],metricsRows);
+  const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records"><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows)}</details>`).join('');
+  const opinionClaims=doc.analysis_claims.filter(claim=>claim.id.includes('.GOOSE_OPINION.'));
+  const opinionLabels:Record<string,string>={conclusion:'종합 결론',rationale:'판단 이유',risks:'반대 신호와 한계',next_checks:'다음 확인'};
+  const opinionConclusion=opinionClaims.find(claim=>claim.id.includes('.conclusion.'))?.text;
+  const opinion=opinionClaims.length?`<section class="moai-column panel" id="goose-opinion"><h2>Goose 오피니언</h2><div class="opinion"><div class="opinion-label">종합 결론 <span>AI 해석 · 원천 사실과 구분</span></div><p class="decision-lead"><strong>${E(opinionConclusion??'판단에 필요한 근거를 확인하십시오.')}</strong></p></div>${['rationale','risks','next_checks'].map(group=>`<h3>${E(opinionLabels[group]??'분석 의견')}</h3>${opinionClaims.filter(claim=>claim.id.includes(`.${group}.`)).map(claim=>`<p>${E(claim.text)}</p>`).join('')}`).join('')}<p class="caption">모델이 작성한 해석은 독립 검증된 사실이 아닙니다. 자료가 부족한 부분은 전망을 확정하지 않습니다.</p></section>`:'';
+  const grouped=(value:string)=>value.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  const kpiCards=[['quote.last','수신 스냅샷 가격'],['quote.change_percent','스냅샷 전일 대비율'],['quote.volume','스냅샷 누적 거래량'],['metric.operating_margin','공시 연간 영업이익률']].flatMap(([field,label])=>{
+    const found=doc.metrics.filter(metric=>metric.field_id===field&&metric.value!==null&&['synthetic','provided','provided_unverified'].includes(metric.status)&&sourceMayDisplay(doc,metric.source_id));if(found.length!==1)return [];const metric=found[0]!;const unit=metric.unit==='KRW/share'?'원/주':metric.unit==='shares'?'주':metric.unit;
+    return [`<div class="kpi"><span>${E(label)}</span><strong>${E(grouped(metric.value!))}<small>${E(unit)}</small></strong><small>${field==='metric.operating_margin'?'동일 연간 손익 기준의 계산':'원천 기준일과 수집 시각은 출처 장부 참고'}</small></div>`];
+  });
+  const providers=[...new Set(doc.sources.map(source=>source.kind==='opendart'?'DART':source.kind==='kis'?'KIS':source.kind==='synthetic'?'합성 계약 자료':source.kind==='user_supplied'?'사용자 제공 자료':source.kind.toUpperCase()))].join(' · ');
+  const heroSummary=opinionConclusion??doc.sections[0]?.body??'자료의 출처와 확인 범위를 먼저 살펴보십시오.';
+  const body=`<a class="skip" href="#report-content">본문으로 이동</a><main id="report"><header class="masthead"><div class="brand-lockup"><span class="logo-window"><img src="${STOCK_SAMPLE_LOGO}" alt="모두의 주식 — Stock for Everyone"></span><div class="brand-description"><strong>모두의 주식 · MoAI ATP</strong>근거를 확인하는 투자 자료 분석</div></div><div class="edition"><strong>${E(plan.title)}</strong><span>${E(modeLabel)}</span></div></header><section class="report-hero"><div class="eyebrow">${E(doc.subject.venue)} · ${E(doc.subject.id)}</div><h1>${E(doc.subject.name)}</h1><h2>${E(plan.title)}</h2><p>보고서 기준시각 ${E(doc.cutoff)} · 표시 시간대 ${E(doc.display_timezone)}</p><blockquote><p>${E(heroSummary)}</p></blockquote>${kpiCards.length?`<div class="kpis">${kpiCards.join('')}</div>`:''}<p class="caption">${E(notice)}</p></section><div class="reading-layout"><aside class="reading-rail"><div class="rail-inner"><details open><summary>보고서 목차</summary><nav aria-label="보고서 목차">${nav}<a href="#charts">차트와 계산</a><a href="#sources">수신 자료와 출처</a>${opinion?'<a href="#goose-opinion">Goose 오피니언</a>':''}</nav></details><p class="rail-note">관측한 사실, 계산과 해석을 구분해 읽으십시오. 출처별 기준일·수집시각·자료 범위가 다를 수 있습니다.</p></div></aside><article id="report-content"><section class="lead-summary"><h3>먼저 확인할 자료 범위</h3><p><strong>자료 출처</strong> ${E(providers||'아직 연결된 자료가 없습니다.')}</p><p><strong>해석의 기준</strong> 기간·단위·회계 범위가 맞는 비교만 계산하고, 미확인 자료를 확정된 값으로 바꾸지 않습니다.</p><p>원문과 상세 검증 기록은 아래의 접힌 자료표에서 확인할 수 있습니다.</p></section>${sectionHtml}<section class="panel" id="charts"><h2>차트와 계산 근거</h2>${htmlCharts}${pipelineDiagram}</section><section class="panel" id="claims"><details class="source-records"><summary>계산 방법과 남은 불확실성</summary><ul>${claims||'<li>검증 가능한 근거가 입력되지 않았습니다.</li>'}</ul></details></section><section class="panel" id="sources"><h2>수신 자료와 출처</h2>${rawSourceTables}<details class="source-records"><summary>출처·시각·검증 장부</summary>${sourceRowsHtml}<h3>연결된 전체 지표</h3>${metricsHtml}</details></section>${opinion}</article></div><footer class="stock-footer">모두의 주식 · MoAI ATP · 근거와 해석을 구분한 보고서입니다. 제공되지 않거나 검증이 끝나지 않은 항목은 임의로 채우지 않았습니다. 주문·이체를 실행하지 않습니다.</footer></main>`;
+  const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">`;
+  const chartRuntime = `(()=>{const specs=JSON.parse(document.getElementById('chart-specs').textContent);const palette=['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5'].map((name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim());for(const b of specs.echart){const el=document.getElementById(b.id);if(!el||!window.echarts)continue;const chart=echarts.init(el,null,{renderer:'svg'});let option;if(b.kind==='scatter'){option={animation:false,color:[palette[0]],aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},grid:{left:70,right:24,top:36,bottom:54,containLabel:true},xAxis:{type:'value',name:b.x_unit||'',scale:true},yAxis:{type:'value',name:b.y_unit||'',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:'scatter',name:b.title,data:b.x_values.map((x,i)=>[x,b.y_values[i]]),symbolSize:10}]}}else if(b.kind==='donut'){option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},legend:{type:'scroll',bottom:0},series:[{type:'pie',name:b.title,radius:['42%','68%'],avoidLabelOverlap:true,label:{show:true,formatter:'{b}: {d}%'},data:b.labels.map((name,i)=>({name,value:b.values[i]}))}]}}else{option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'axis',renderMode:'richText',confine:true},grid:{left:60,right:24,top:24,bottom:54,containLabel:true},xAxis:{type:'category',data:b.labels,axisLabel:{interval:0,hideOverlap:true}},yAxis:{type:'value',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:b.kind,name:b.title,data:b.values,itemStyle:{borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:12}}]}}chart.setOption(option);new ResizeObserver(()=>chart.resize()).observe(el);window.__moaiEcharts??=[];window.__moaiEcharts.push(chart)}for(const b of specs.lwc){const el=document.getElementById(b.id);if(!el||!window.LightweightCharts)continue;const chart=LightweightCharts.createChart(el,{width:el.clientWidth,height:360,layout:{background:{type:'solid',color:'#FFFFFF'},textColor:'#393C41',fontFamily:'Pretendard',fontSize:12,attributionLogo:true},grid:{vertLines:{color:'#E8E8E8'},horzLines:{color:'#E8E8E8'}},timeScale:{borderColor:'#D4D6D8',timeVisible:false},rightPriceScale:{borderColor:'#D4D6D8'},handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},handleScale:{mouseWheel:false,pinch:true}});const colors=palette,lines=[];for(let i=0;i<b.series.length;i++){const s=b.series[i];const line=chart.addSeries(LightweightCharts.LineSeries,{title:s.name,color:colors[i%colors.length],lineWidth:2,lineStyle:/SMA/.test(s.name)?LightweightCharts.LineStyle.Dashed:LightweightCharts.LineStyle.Solid,priceLineVisible:false,lastValueVisible:true});line.setData(s.values.map((v,k)=>v===null?{time:b.dates[k]}:{time:b.dates[k],value:Number(v)}));lines.push({name:s.name,line})}const legend=el.closest('figure')?.querySelector('.legend');if(legend){for(const item of lines){const button=document.createElement('button');button.type='button';button.textContent=item.name;button.setAttribute('aria-pressed','true');button.addEventListener('click',()=>{const visible=button.getAttribute('aria-pressed')!=='true';item.line.applyOptions({visible});button.setAttribute('aria-pressed',String(visible))});legend.append(button)}}chart.timeScale().fitContent();new ResizeObserver(()=>chart.resize(el.clientWidth,360)).observe(el);el.dataset.rendered='lightweight-5.2.1';window.__moaiLwc??=[];window.__moaiLwc.push(chart)}})();`;
+  const chartAssets=`${specs.echart.length?`<script>${ECHARTS}</script>`:''}${specs.lwc.length?`<script>${LWC}</script>`:''}`;
+  const chartScripts=specs.echart.length||specs.lwc.length?`<script id="chart-specs" type="application/json">${chartJson}</script><script>${chartRuntime}</script>`:'';
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">${csp}<title>${E(plan.title)} · ${E(doc.subject.name)} · MoAI ATP</title><style>${BASE_CSS}${STOCK_SAMPLE_CSS}${STOCK_ADAPTER_CSS}</style></head><body>${body}${chartAssets}${chartScripts}</body></html>`;
+}

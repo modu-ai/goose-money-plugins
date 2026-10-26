@@ -27,7 +27,7 @@ function verify(execution) {
     assert.ok(info.size > 0 && info.size <= 65_536, 'procedure file must be bounded');
     const text = readFileSync(path, 'utf8');
     assert.ok(text.includes(`name: ${record.role_id}`));
-    assert.ok(text.includes('## Workflow') || record.role_id === 'fact-check-report-qa');
+    assert.ok(text.includes('## Workflow') || text.includes('## 진행 순서') || record.role_id === 'fact-check-report-qa');
     resolved.push(record.skill);
   }
   return resolved;

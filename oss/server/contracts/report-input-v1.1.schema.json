@@ -1,0 +1,881 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:moai-atp:template:1.1",
+  "title": "MoAI ATP offline report input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "report_id",
+    "mode",
+    "subject",
+    "cutoff",
+    "display_timezone",
+    "sources",
+    "metrics",
+    "sections",
+    "chart",
+    "execution_status",
+    "time_series"
+  ],
+  "properties": {
+    "contract_version": {
+      "enum": [
+        "atp.template/1.0",
+        "atp.template/1.1"
+      ]
+    },
+    "report_id": {
+      "enum": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "U01",
+        "U02"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "synthetic",
+        "supplied",
+        "actual",
+        "mixed"
+      ]
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "venue",
+        "currency"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "venue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    },
+    "cutoff": {
+      "$ref": "#/$defs/timestamp"
+    },
+    "display_timezone": {
+      "enum": [
+        "Asia/Seoul",
+        "UTC",
+        "America/New_York",
+        "Europe/London",
+        "Asia/Tokyo"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "$ref": "#/$defs/metric"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "$ref": "#/$defs/section"
+      }
+    },
+    "chart": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/chart"
+        }
+      ]
+    },
+    "execution_status": {
+      "enum": [
+        "template_only",
+        "not_run",
+        "provided_unverified",
+        "synthetic_fixture_rendered",
+        "actual_input_unvalidated",
+        "actual_data_partial"
+      ]
+    },
+    "analysis_claims": {
+      "type": "array",
+      "maxItems": 300,
+      "items": {
+        "$ref": "#/$defs/analysis_claim"
+      }
+    },
+    "time_series": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/time_series"
+        }
+      ]
+    },
+    "visuals": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "$ref": "#/$defs/report_visual"
+      }
+    },
+    "source_tables": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "title",
+          "columns",
+          "rows",
+          "coverage_note"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "columns": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "maxLength": 160
+            }
+          },
+          "rows": {
+            "type": "array",
+            "maxItems": 250,
+            "items": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "maxLength": 2048
+              }
+            }
+          },
+          "coverage_note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "(Z|[+-][0-9]{2}:[0-9]{2})$"
+    },
+    "decimal": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+      "maxLength": 32
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "url",
+        "observed_at",
+        "available_at",
+        "rights",
+        "revision"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "synthetic",
+            "user_supplied",
+            "kis",
+            "opendart",
+            "sec",
+            "public_web"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "available_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "rights": {
+          "enum": [
+            "synthetic_only",
+            "local_view",
+            "pending"
+          ]
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_as_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/timestamp"
+            },
+            {
+              "type": "string",
+              "format": "date",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "received_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "operation_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "validation_status": {
+          "enum": [
+            "synthetic_fixture",
+            "unverified",
+            "provider_shape_checked",
+            "independently_reconciled",
+            "rights_pending",
+            "stale"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "kis",
+                  "opendart",
+                  "sec",
+                  "public_web"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "provider",
+              "operation_ref",
+              "source_as_of",
+              "received_at",
+              "validation_status"
+            ]
+          }
+        }
+      ]
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_id",
+        "label",
+        "value",
+        "unit",
+        "currency",
+        "status",
+        "source_id",
+        "period",
+        "scale",
+        "period_kind",
+        "scope"
+      ],
+      "properties": {
+        "field_id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/decimal"
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "synthetic",
+            "provided",
+            "missing",
+            "stale",
+            "error",
+            "not_run",
+            "rights_pending",
+            "provided_unverified"
+          ]
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "period": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_reason": {
+          "type": "string"
+        },
+        "scale": {
+          "enum": [
+            "1",
+            "100",
+            "1000",
+            "1000000",
+            "100000000"
+          ]
+        },
+        "period_kind": {
+          "enum": [
+            "observation",
+            "quarter",
+            "FY",
+            "YTD"
+          ]
+        },
+        "scope": {
+          "enum": [
+            "consolidated",
+            "standalone",
+            "not_applicable"
+          ]
+        }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "status",
+        "required_fields",
+        "missing_reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^(R[0-9]{2}|U0[12])\\.[SX][0-9]{2}$"
+        },
+        "status": {
+          "enum": [
+            "partial",
+            "error",
+            "not_run",
+            "rights_pending"
+          ]
+        },
+        "required_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "missing_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "body": {
+          "type": "string"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metric_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "chart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "kind",
+        "labels",
+        "values",
+        "unit",
+        "source_id",
+        "metric_ids"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "kind": {
+          "const": "bar"
+        },
+        "labels": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "type": "string"
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/decimal"
+          }
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "metric_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 10,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "analysis_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "text",
+        "status",
+        "confidence",
+        "source_ids",
+        "metric_ids"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "kind": {
+          "enum": [
+            "fact",
+            "interpretation",
+            "counterevidence",
+            "uncertainty",
+            "condition",
+            "method"
+          ]
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "partial",
+            "missing",
+            "not_run",
+            "rights_pending",
+            "error"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unrated"
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string"
+          }
+        },
+        "metric_ids": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "time_series": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "renderer",
+        "dates",
+        "unit",
+        "source_id",
+        "adjustment",
+        "series"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "renderer": {
+          "const": "lightweight-charts"
+        },
+        "dates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          }
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "adjustment": {
+          "enum": [
+            "adjusted",
+            "unadjusted"
+          ]
+        },
+        "series": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "field_id",
+              "label",
+              "values"
+            ],
+            "properties": {
+              "field_id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "values": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 100,
+                "items": {
+                  "$ref": "#/$defs/decimal"
+                }
+              },
+              "derived_from": {
+                "type": "string"
+              },
+              "calculation_ref": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "report_visual": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/category_visual"
+        },
+        {
+          "$ref": "#/$defs/scatter_visual"
+        }
+      ]
+    },
+    "category_visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section_id",
+        "kind",
+        "title",
+        "labels",
+        "values",
+        "unit",
+        "source_id",
+        "metric_ids"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "pattern": "^(R[0-9]{2}|U0[12])\\.[SX][0-9]{2}$"
+        },
+        "kind": {
+          "enum": [
+            "bar",
+            "line",
+            "donut"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "labels": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 50,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/decimal"
+          }
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "metric_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 50,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "labels": {
+                "type": "array"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "values": {
+                "minItems": 2
+              }
+            }
+          }
+        }
+      ]
+    },
+    "scatter_visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section_id",
+        "kind",
+        "title",
+        "labels",
+        "x_values",
+        "y_values",
+        "x_unit",
+        "y_unit",
+        "source_id",
+        "metric_ids"
+      ],
+      "properties": {
+        "section_id": {
+          "type": "string",
+          "pattern": "^(R[0-9]{2}|U0[12])\\.[SX][0-9]{2}$"
+        },
+        "kind": {
+          "const": "scatter"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "labels": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 50,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          }
+        },
+        "x_values": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/decimal"
+          }
+        },
+        "y_values": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/decimal"
+          }
+        },
+        "x_unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "y_unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "source_id": {
+          "type": "string"
+        },
+        "metric_ids": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 100,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "actual",
+              "mixed"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "contract_version": {
+            "const": "atp.template/1.1"
+          },
+          "execution_status": {
+            "enum": [
+              "actual_input_unvalidated",
+              "actual_data_partial"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

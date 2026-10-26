@@ -1,0 +1,679 @@
+{
+  "contract_version": "moai.report-layout-profiles/1",
+  "layout_basis": "Per-report section and visual-block inventory aligned to the review templates; no example numeric values or sample prose copied. R01 retains its nine-section flow, price, business, financial, valuation, risk and event layout.",
+  "reports": {
+    "R01": {
+      "family": "single_instrument_deep_dive",
+      "narrative_boundary": "가격·사업·실적·가치·재무·수급·사건을 출처와 기준시점별로 확인합니다. 검증되지 않은 원천은 결측으로 남기며 투자 결론이나 주문 신호를 만들어내지 않습니다.",
+      "sections": [
+        {
+          "id": "R01.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R01.S02",
+          "blocks": [
+            "donut",
+            "pele",
+            "table"
+          ]
+        },
+        {
+          "id": "R01.S03",
+          "blocks": [
+            "line",
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R01.S04",
+          "blocks": [
+            "bar",
+            "matrix",
+            "table"
+          ]
+        },
+        {
+          "id": "R01.S05",
+          "blocks": [
+            "line",
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R01.S06",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R01.X01",
+          "blocks": [
+            "line",
+            "bar",
+            "line",
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R01.X02",
+          "blocks": [
+            "bar",
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R01.X03",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        }
+      ]
+    },
+    "R02": {
+      "family": "comparison",
+      "narrative_boundary": "동일 기간·통화·회계 범위가 확인된 값만 비교합니다. 대상군과 정규화 기준이 맞지 않으면 상대 순위를 만들지 않습니다.",
+      "sections": [
+        {
+          "id": "R02.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R02.S02",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R02.S03",
+          "blocks": [
+            "scatter",
+            "table"
+          ]
+        },
+        {
+          "id": "R02.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R02.S05",
+          "blocks": [
+            "matrix",
+            "table"
+          ]
+        },
+        {
+          "id": "R02.S06",
+          "blocks": [
+            "table"
+          ]
+        }
+      ]
+    },
+    "R03": {
+      "family": "market_flow",
+      "narrative_boundary": "순매수·누적·거래대금 대비 강도는 서로 다른 관측입니다. 공매도·대차·신용 자료를 가격 방향이나 강제청산의 확정 신호로 해석하지 않습니다.",
+      "sections": [
+        {
+          "id": "R03.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R03.S02",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R03.S03",
+          "blocks": [
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R03.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R03.S05",
+          "blocks": [
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R03.S06",
+          "blocks": [
+            "table",
+            "timeline"
+          ]
+        }
+      ]
+    },
+    "R04": {
+      "family": "portfolio_risk",
+      "narrative_boundary": "계좌 API를 호출하지 않습니다. 사용자 제공 원장만 입력된 경우 해당 입력 기준의 노출을 계산하며, 평가 통화·가격 시점·현금 대사가 없으면 합산을 중단합니다.",
+      "sections": [
+        {
+          "id": "R04.S01",
+          "blocks": [
+            "donut",
+            "table"
+          ]
+        },
+        {
+          "id": "R04.S02",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R04.S03",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R04.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R04.S05",
+          "blocks": [
+            "matrix",
+            "table"
+          ]
+        },
+        {
+          "id": "R04.S06",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        }
+      ]
+    },
+    "R05": {
+      "family": "performance_cost",
+      "narrative_boundary": "기간 수익률은 외부 입출금과 분리해야 합니다. 거래·세금·환전·롤 자료가 빠지면 순성과나 비용 기여를 추정하지 않습니다.",
+      "sections": [
+        {
+          "id": "R05.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R05.S02",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R05.S03",
+          "blocks": [
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R05.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R05.S05",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R05.S06",
+          "blocks": [
+            "line",
+            "table"
+          ]
+        }
+      ]
+    },
+    "R06": {
+      "family": "market_briefing",
+      "narrative_boundary": "한국과 해외 시장은 각 현지 세션, 거래일, 통화, 수신시각을 분리합니다. 지수 수익률만으로 거시 원인이나 자산 영향의 인과를 확정하지 않습니다.",
+      "sections": [
+        {
+          "id": "R06.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R06.S02",
+          "blocks": [
+            "matrix",
+            "table"
+          ]
+        },
+        {
+          "id": "R06.S03",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R06.S04",
+          "blocks": [
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R06.S05",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        },
+        {
+          "id": "R06.S06",
+          "blocks": [
+            "table"
+          ]
+        }
+      ]
+    },
+    "R07": {
+      "family": "event_review",
+      "narrative_boundary": "공시 접수·정정·발표·발효 시점을 구별합니다. 예상 대비 차이는 기간·회계 범위·단위가 일치할 때만 계산합니다.",
+      "sections": [
+        {
+          "id": "R07.S01",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        },
+        {
+          "id": "R07.S02",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R07.S03",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R07.S04",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R07.S05",
+          "blocks": [
+            "bar",
+            "matrix",
+            "table"
+          ]
+        },
+        {
+          "id": "R07.S06",
+          "blocks": [
+            "table",
+            "timeline"
+          ]
+        }
+      ]
+    },
+    "R08": {
+      "family": "macro_allocation",
+      "narrative_boundary": "거시 발표의 실제·예상·이전·수정 빈티지를 구분합니다. 전달 경로와 자산 시나리오는 가정 입력이 없으면 결론으로 출력하지 않습니다.",
+      "sections": [
+        {
+          "id": "R08.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R08.S02",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R08.S03",
+          "blocks": [
+            "pele",
+            "line"
+          ]
+        },
+        {
+          "id": "R08.S04",
+          "blocks": [
+            "matrix",
+            "donut",
+            "table"
+          ]
+        },
+        {
+          "id": "R08.S05",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R08.S06",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        }
+      ]
+    },
+    "R09": {
+      "family": "thesis_review",
+      "narrative_boundary": "주장·사실·해석·반대 근거를 분리합니다. 지지 자료의 수만으로 독립성이나 주장의 진위를 판단하지 않습니다.",
+      "sections": [
+        {
+          "id": "R09.S01",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        },
+        {
+          "id": "R09.S02",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R09.S03",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R09.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R09.S05",
+          "blocks": [
+            "table",
+            "timeline"
+          ]
+        },
+        {
+          "id": "R09.S06",
+          "blocks": [
+            "table",
+            "matrix"
+          ]
+        }
+      ]
+    },
+    "R10": {
+      "family": "candidate_review",
+      "narrative_boundary": "후보 필터는 분석 결과일 뿐 주문 지시가 아닙니다. 현재 호가·스프레드·거래상태가 없거나 오래되면 후보 통과 판정을 보류합니다.",
+      "sections": [
+        {
+          "id": "R10.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R10.S02",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R10.S03",
+          "blocks": [
+            "scatter",
+            "table"
+          ]
+        },
+        {
+          "id": "R10.S04",
+          "blocks": [
+            "table",
+            "matrix"
+          ]
+        },
+        {
+          "id": "R10.S05",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R10.S06",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        }
+      ]
+    },
+    "R11": {
+      "family": "industry_outlook",
+      "narrative_boundary": "산업 지표의 정의·단위·주기·출처를 먼저 맞춥니다. 밸류체인 관계와 기업 간 비교는 직접 근거가 없으면 표시하지 않습니다.",
+      "sections": [
+        {
+          "id": "R11.S01",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R11.S02",
+          "blocks": [
+            "line",
+            "table"
+          ]
+        },
+        {
+          "id": "R11.S03",
+          "blocks": [
+            "pele",
+            "table"
+          ]
+        },
+        {
+          "id": "R11.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R11.S05",
+          "blocks": [
+            "scatter",
+            "table"
+          ]
+        },
+        {
+          "id": "R11.S06",
+          "blocks": [
+            "timeline",
+            "matrix"
+          ]
+        }
+      ]
+    },
+    "R14": {
+      "family": "backtest",
+      "narrative_boundary": "기본 입력은 사용자가 제공한 가격·전략·비용 가정입니다. 미래정보·상폐 종목·기업행동·체결·선물 롤 자료가 검증되지 않으면 실전 성과나 재현성을 주장하지 않습니다.",
+      "sections": [
+        {
+          "id": "R14.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R14.S02",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R14.S03",
+          "blocks": [
+            "timeline",
+            "table"
+          ]
+        },
+        {
+          "id": "R14.S04",
+          "blocks": [
+            "bar",
+            "table"
+          ]
+        },
+        {
+          "id": "R14.S05",
+          "blocks": [
+            "table",
+            "matrix"
+          ]
+        },
+        {
+          "id": "R14.S06",
+          "blocks": [
+            "line",
+            "line",
+            "table"
+          ]
+        }
+      ]
+    },
+    "U01": {
+      "family": "instrument_discovery",
+      "narrative_boundary": "검색 후보는 동일 종목 확인 전 자동 확정하지 않습니다. 지원되지 않는 조건, 검색 범위, 자료 시점과 제외 사유를 함께 보여줍니다.",
+      "sections": [
+        {
+          "id": "U01.S01",
+          "blocks": [
+            "table",
+            "scatter",
+            "table",
+            "bar",
+            "table"
+          ]
+        }
+      ]
+    },
+    "R12": {
+      "family": "etf_readonly_review",
+      "narrative_boundary": "읽기 전용 원문과 검증 상태를 구분합니다. 상품 구성·비용·계약 승수·만기를 추정하지 않으며 거래나 수익을 보장하지 않습니다.",
+      "sections": [
+        {
+          "id": "R12.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R12.S02",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R12.S03",
+          "blocks": [
+            "table",
+            "line"
+          ]
+        },
+        {
+          "id": "R12.S04",
+          "blocks": [
+            "table",
+            "pele"
+          ]
+        }
+      ]
+    },
+    "R13": {
+      "family": "futures_readonly_review",
+      "narrative_boundary": "읽기 전용 원문과 검증 상태를 구분합니다. 상품 구성·비용·계약 승수·만기를 추정하지 않으며 거래나 수익을 보장하지 않습니다.",
+      "sections": [
+        {
+          "id": "R13.S01",
+          "blocks": [
+            "table"
+          ]
+        },
+        {
+          "id": "R13.S02",
+          "blocks": [
+            "table",
+            "bar"
+          ]
+        },
+        {
+          "id": "R13.S03",
+          "blocks": [
+            "table",
+            "line"
+          ]
+        },
+        {
+          "id": "R13.S04",
+          "blocks": [
+            "table",
+            "pele"
+          ]
+        }
+      ]
+    }
+  }
+}
