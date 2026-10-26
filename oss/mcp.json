@@ -7,7 +7,12 @@
       "args": [
         "${PLUGIN_ROOT}/server/dist/src/main.js"
       ],
-      "cwd": "${PLUGIN_ROOT}/server"
+      "cwd": "${PLUGIN_ROOT}/server",
+      "env": {
+        "GOOSE_KIS_READ_ENABLED": "1",
+        "GOOSE_OPENDART_READ_ENABLED": "1",
+        "GOOSE_LOCAL_REPORT_VIEW_ENABLED": "1"
+      }
     }
   }
 }

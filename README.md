@@ -1,6 +1,10 @@
-# MoAI ATP
+# 모두의 주식 · MoAI ATP
 
-Local research plugin development source. Public code is maintained in
+제품명은 **모두의 주식**, 닉네임은 **MoAI ATP**입니다. 투자 지표 참고·자료 분석·근거 중심 보고서·전략 검증 지원을 목표로 개발 중인 에이전틱 트레이딩 플러그인입니다. **자동 실주문과 수익 보장을 제공하지 않습니다.**
+
+현재 구현과 미구현 범위는 아래에 구분합니다. 소스 패키지는 직접 설치 가능한 런타임 ZIP이 아니며, 사용 전 의존성 설치와 빌드가 필요합니다. [패키지·설정 안내](oss/README.md)를 참고하세요.
+
+Local development source is maintained in
 [`oss/`](oss/); the existing Git repository remains at this project root.
 
 ```text
@@ -39,8 +43,29 @@ inferred from missing answers. Only explicitly confirmed answers are saved in
 repeated questioning. `setup --edit-profile` and `setup --delete-profile` are
 explicit actions. There is no separate `interview` command. Context is plaintext
 with private POSIX permissions, separate from `~/.goose/keystore`; Windows ACL
-support is not implemented. Setup does not read credentials or call providers.
+support is not implemented. Profile setup does not read credentials or call providers.
 Host `/goose setup` registration remains unverified.
+
+Optional key setup uses `node server/dist/src/cli.js setup --credentials` in a
+local interactive terminal. It hides key entry and requires an explicit SAVE
+before writing plaintext provider keys to `~/.goose/keystore/credentials.json`
+(directories 0700, file 0600). Blank values retain an existing provider; partial
+KIS pairs are rejected. Windows key-file storage fails closed pending ACL support.
+Runtime reads the same strict schema lazily, after the rights gate. Complete
+`KIS_APP_KEY`/`KIS_APP_SECRET` or `OPENDART_API_KEY` environment values take
+priority; incomplete/empty values fail closed instead of mixing sources.
+The default server still denies data requests, does not read keys at startup,
+and has no OAuth token adapter. Storing keys does not enable provider access.
+
+From `oss/` after building, the following creates a separate private runtime ZIP with compiled code and three
+locked production dependencies. Node 24.22.1 remains an external prerequisite.
+This artifact is distinct from the source ZIP and from actual host installation.
+
+```sh
+python3 scripts/build_runtime_bundle.py --output ../project-docs/packages/moai-atp-runtime-private.zip
+```
+
+Use a new output filename for each artifact.
 
 Full contract tests additionally require Python 3.11+ and
 `jsonschema==4.26.0`; see `oss/server/requirements-contract-tests.txt`.
@@ -52,7 +77,7 @@ Windows execution are pending and must not be claimed as validated.
 
 ## Implemented boundary
 
-The source includes 34 default-denied read-only MCP tool names, offline source
+The source includes 34 default-denied provider read-only MCP tool names plus a local report-input assembly tool, offline source
 parsers/contracts, a common-profile setup CLI and research workflow instructions.
 Instructions cover R01–R14, U01/U02 and internal U03 QA. End-to-end actual-data
 completed reports: **0**. Synthetic tests do not establish provider rights,

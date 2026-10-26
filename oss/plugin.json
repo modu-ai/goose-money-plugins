@@ -1,14 +1,17 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "moai-atp",
-  "version": "0.1.0-dev.1",
-  "description": "Local research workflow instructions and 34 default-denied read-only MCP tools. No accounts or orders. Development only.",
+  "version": "0.1.0-dev.3",
+  "description": "모두의 주식 · MoAI ATP는 투자 자료 분석과 근거 중심 보고서, 전략 검증을 돕는 에이전틱 트레이딩 플러그인입니다. 자동 주문과 수익을 보장하지 않습니다.",
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "MoAI-ATP",
-        "shortDescription": "근거 중심 주식 리서치와 보고서 검수",
-        "capabilities": []
+        "displayName": "모두의 주식 · MoAI ATP",
+        "shortDescription": "근거 기반 투자 분석과 보고서",
+        "capabilities": [],
+        "longDescription": "국내외 주식·ETF·선물의 가용 자료를 바탕으로 투자 지표 참고와 근거 중심 분석·보고서·전략 검증을 돕습니다. 출처와 기준 시각, 누락과 불확실성을 구분하며 계좌 조회·주문이나 수익을 보장하지 않습니다.",
+        "composerIcon": "./assets/modu-stock-plugin-icon-square.png",
+        "logo": "./assets/modu-stock-plugin-icon-square.png"
       },
       "requires_local_executor": true
     }

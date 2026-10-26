@@ -46,5 +46,23 @@
     "rule": "credential_url",
     "line_sha256": "f6bc4d2481a27889dcd8c6f08611b0e9772d956e4d02dcba483e0ad8b29fe6e9",
     "reason": "Reviewed fixed synthetic rejection fixture; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/server/test/kis-expanded-http.test.ts",
+    "rule": "account_literal",
+    "line_sha256": "d934bc9783430aaae7cbe1f45fdba86288cd3041722111b6a92496e69772a012",
+    "reason": "Reviewed fixed synthetic rejection fixture: an 8-digit sequential placeholder injected as a forbidden account query field, asserted to be rejected as invalid_input before credentials or fetch are touched; no provider input, user account or real credential."
+  },
+  {
+    "path": "oss/assets/modu-stock-plugin-icon-square.png",
+    "rule": "unexpected_binary",
+    "line_sha256": "",
+    "reason": "Reviewed plugin icon image (PNG 1254x1254 RGB, sha256 4157d9d6e094cdc6b2009e979002812fbea86a6414b477df388a13ca010a3125, pinned in build_runtime_bundle.py) referenced by plugin.json composerIcon/logo; chunks IHDR/caBX(C2PA provenance)/IDAT/IEND only, no text metadata; no user account or credential."
+  },
+  {
+    "path": "oss/server/assets/report-runtime/stock-sample-logo.png",
+    "rule": "unexpected_binary",
+    "line_sha256": "",
+    "reason": "Reviewed report logo image (PNG 2166x726 RGBA, sha256 9f859a9d720238dd4edd7f462ca00b16a144eec420b6ca8a6d7eaa5df3ece8af, pinned in build_runtime_bundle.py) embedded by report-template-renderer.ts; chunks IHDR/caBX(C2PA provenance)/IDAT/IEND only, no text metadata; no user account or credential."
   }
 ]

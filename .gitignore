@@ -19,3 +19,18 @@ credentials.json
 *.log
 *.zip
 *.tar.xz
+
+# Generated bundled install runtime (source remains in oss/server/src).
+/oss/server/runtime/
+/oss/server/.bundle-*/
+
+# Local agent harness and local archives (not product source)
+/.claude/
+/.moai/
+/.codex/
+/.mcp.json
+/.worktreeinclude
+/.claudeignore
+/.git_hooks/
+/.github/
+/.local/

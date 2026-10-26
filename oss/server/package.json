@@ -1,6 +1,6 @@
 {
   "name": "@moai-atp/server",
-  "version": "0.1.0-dev.1",
+  "version": "0.1.0-dev.3",
   "private": true,
   "type": "module",
   "engines": {
@@ -10,7 +10,8 @@
     "build": "tsc -p tsconfig.json",
     "test": "npm run build && node scripts/test-desktop.mjs",
     "test:stdio": "npm run build && node --test dist/test/stdio.integration.test.js",
-    "start": "node dist/src/main.js"
+    "start": "node dist/src/main.js",
+    "build:mjs": "node scripts/build-mjs.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.3.1",
@@ -18,10 +19,12 @@
   },
   "devDependencies": {
     "@types/node": "24.19.0",
+    "esbuild": "0.28.2",
     "typescript": "5.9.3"
   },
-  "license": "UNLICENSED",
+  "license": "LGPL-3.0-only",
   "bin": {
     "moai-atp": "dist/src/cli.js"
-  }
+  },
+  "description": "모두의 주식 · MoAI ATP 로컬 연구 MCP·설정 CLI 개발 소스. 도구는 기본 차단되며 자동 실주문·수익 보장을 제공하지 않습니다."
 }

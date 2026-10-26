@@ -1,0 +1,78 @@
+#!/usr/bin/env python3
+"""Create a credential-free MJS runtime ZIP. Requires developer build:mjs first.
+
+Installation needs Node 24.22.1, but no npm install or TypeScript build.
+No host installation, credential configuration, or API request is performed.
+"""
+import argparse, hashlib, json
+from pathlib import Path
+from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
+from check_secrets import findings_for
+
+FORBIDDEN={'.git','.goose','keystore','node_modules','.runtime','test','tests','__tests__','__pycache__','evidence'}
+def build(root, output):
+ root,output=root.resolve(),output.resolve()
+ if not output.is_relative_to(root.parent/'project-docs') or output.exists():raise ValueError('output_must_be_new_project_document_artifact')
+ files={}
+ def add_bytes(name,data):
+  relative=Path(name)
+  if relative.is_absolute() or '..' in relative.parts or any(part in FORBIDDEN for part in relative.parts) or relative.name.startswith('.env') or relative.name in {'credentials.json','secrets.json'}:raise ValueError('private_path_in_bundle')
+  approved_icon=({
+   'assets/modu-stock-plugin-icon-square.png':'4157d9d6e094cdc6b2009e979002812fbea86a6414b477df388a13ca010a3125',
+   'server/assets/report-runtime/stock-sample-logo.png':'9f859a9d720238dd4edd7f462ca00b16a144eec420b6ca8a6d7eaa5df3ece8af',
+  }.get(name)==hashlib.sha256(data).hexdigest() and data.startswith(b'\x89PNG\r\n\x1a\n'))
+  issues=[f for f in findings_for(name,data) if f['rule']!='excluded_path' and not(approved_icon and f['rule']=='unexpected_binary')]
+  if approved_icon:issues += [f for f in findings_for(name,data.replace(b'\0',b'')) if f['rule']!='excluded_path']
+  if issues:raise ValueError('bundle_content_scan_failed:'+name+':'+','.join(sorted({f['rule'] for f in issues})))
+  files[name]=data
+ def public_overlay(name,data):
+  if name=='skills/goose/references/catalog.json':
+   catalog=json.loads(data);catalog['entries']=[entry for entry in catalog['entries'] if entry['id'] in {'R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'}]
+   for entry in catalog['entries']:entry['required_groups']=[g for g in entry.get('required_groups',[]) if g not in {'account_ledger'}]
+   return (json.dumps(catalog,ensure_ascii=False,indent=2)+'\n').encode()
+  if name=='README.md':
+   data += '\n\n이번 공개판은 계좌 연결·계좌 분석을 제외합니다. ETF·국내외 선물은 검증된 읽기 전용 범위만 제공하며 미검증 필드로 손익·성과를 만들지 않습니다.\n'.encode()
+  if name=='CAPABILITIES.json':
+   excluded={'get_account_snapshot'}
+   def clean(v):
+    if isinstance(v,list):return [clean(x) for x in v if not isinstance(x,str) or x not in excluded]
+    if isinstance(v,dict):return {k:clean(x) for k,x in v.items() if k not in excluded}
+    return v
+   return (json.dumps(clean(json.loads(data)),ensure_ascii=False,indent=2)+'\n').encode()
+  if name.startswith('skills/') and name.endswith(('.md','.yaml')):
+   text=data.decode()
+   text+='\n이번 공개판은 계좌 연결·계좌 분석·주문·이체를 제공하지 않습니다. ETF·선물은 가용 도구와 실제 자료·계약 검증 상태를 확인한 읽기 전용 분석으로 연결합니다.\n' if name.endswith('SKILL.md') else ''
+   return text.encode()
+  if name=='skills/goose/SKILL.md':
+   return data.decode().replace('R01–R11/R14/U01','R01–R03/R05–R11/R14/U01').encode()
+  return data
+ def add(path):
+  if path.is_symlink() or not path.resolve().is_relative_to(root):raise ValueError('unsafe_bundle_source')
+  name=path.relative_to(root).as_posix()
+  add_bytes(name,public_overlay(name,path.read_bytes()))
+ runtime=root/'server/runtime'
+ manifest=json.loads((runtime/'runtime-manifest.json').read_text())
+ if manifest['format']!='moai-atp-generated-mjs-v1' or manifest['node_required']!='24.22.1':raise ValueError('runtime_manifest_invalid')
+ for name,digest in manifest['files'].items():
+  path=runtime/name
+  if path.is_symlink() or not path.resolve().is_relative_to(runtime) or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise ValueError('runtime_hash_mismatch')
+ if not {'src/main.mjs','src/cli.mjs'}<=manifest['files'].keys():raise ValueError('mjs_entrypoint_missing')
+ for name in ['CAPABILITIES.json','plugin.json','README.md','THIRD_PARTY_NOTICES.md','LICENSE','COPYING','COPYING.LESSER']:add(root/name)
+ mcp=json.loads((root/'mcp.json').read_text());mcp['mcpServers']['moai-kis-readonly']['args']=['${PLUGIN_ROOT}/server/runtime/src/main.mjs']
+ add_bytes('mcp.json',(json.dumps(mcp,indent=2)+'\n').encode())
+ package=json.loads((root/'package.json').read_text());package['scripts']={'setup':'node server/runtime/src/cli.mjs setup','start':'node server/runtime/src/main.mjs'}
+ add_bytes('package.json',(json.dumps(package,ensure_ascii=False,indent=2)+'\n').encode())
+ server=json.loads((root/'server/package.json').read_text());server.pop('devDependencies',None);server.pop('dependencies',None);server['scripts']={'start':'node runtime/src/main.mjs','setup':'node runtime/src/cli.mjs setup'};server['bin']={'moai-atp':'runtime/src/cli.mjs'}
+ add_bytes('server/package.json',(json.dumps(server,ensure_ascii=False,indent=2)+'\n').encode())
+ for tree in ['skills','assets','server/assets','server/runtime']:
+  for path in sorted((root/tree).rglob('*')):
+   if path.is_file() and path.name!='.generated' and 'portfolio-risk' not in path.parts:add(path)
+ receipt={'format':'moai-atp-mjs-runtime-v2','node_required':'24.22.1','dependencies':manifest['dependencies'],'files':{name:hashlib.sha256(data).hexdigest() for name,data in sorted(files.items())},'secret_findings':0,'limitations':'Heuristic secret scan. macOS subprocess validation only; Windows and host UI unverified; provider HTTP evidence is tracked separately, not included in this ZIP. No Node binary or user credentials.'}
+ files['runtime-bundle-manifest.json']=(json.dumps(receipt,indent=2)+'\n').encode()
+ output.parent.mkdir(parents=True,exist_ok=True)
+ with ZipFile(output,'x',compression=ZIP_DEFLATED) as archive:
+  for name,data in sorted(files.items()):
+   info=ZipInfo(name,date_time=(2026,10,24,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16;archive.writestr(info,data)
+ return {'artifact':str(output),'sha256':hashlib.sha256(output.read_bytes()).hexdigest(),'files':len(files),'bytes':output.stat().st_size,'secret_findings':0,'format':receipt['format']}
+if __name__=='__main__':
+ parser=argparse.ArgumentParser();parser.add_argument('--output',required=True,type=Path);args=parser.parse_args();print(json.dumps(build(Path(__file__).resolve().parents[1],args.output),indent=2))
