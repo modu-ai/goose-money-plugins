@@ -71,7 +71,11 @@ export const UsProductProfileRawSchema = z.object({
   mint_cblc_cvsn_ipsb_yn: Code.optional(), ptp_item_yn: Code.optional(), ptp_item_trfx_exmt_yn: Code.optional(),
   ptp_item_trfx_exmt_strt_dt: BlankDate.optional(), ptp_item_trfx_exmt_end_dt: BlankDate.optional(),
   dtm_tr_psbl_yn: Code.optional(), sdrf_stop_ecls_yn: Code.optional(),
-  sdrf_stop_ecls_erlm_dt: BlankDate.optional(), memo_text1: Text.optional(),
+  // Observed provider non-date placeholder; never treated as a calendar date.
+  sdrf_stop_ecls_erlm_dt: z.union([BlankDate,z.literal('00000000')]).optional(), memo_text1: Text.optional(),
+  // Observed bounded provider extensions; classification semantics remain unverified.
+  sgle_item_lvrg_etp_yn: Code.optional(), etp_bast_lcls_cd: Code.optional(),
+  etp_bast_mcls_cd: Code.optional(), etp_bast_scls_cd: Code.optional(),
   ovrs_now_pric1: BlankDecimal.optional(),
   // Format and timezone are not established. Preserve bounded raw text; do not parse as an instant.
   last_rcvg_dtime: Text.max(80).optional(),

@@ -5,7 +5,7 @@ export const GLOBAL_MARKET_MAX_RESPONSE_BYTES = 300_000;
 const OriginSchema = z.enum(['actual', 'synthetic']);
 const SymbolSchema = z.string().max(16).regex(/^[A-Z][A-Z0-9]*(?:[.-][A-Z0-9]+)*$/);
 const ExchangeSchema = z.enum(['NAS', 'NYS', 'AMS']);
-const ContractCodeSchema = z.string().regex(/^1[0-9A-Z]{3}(?:0[1-9]|1[0-2])$/);
+const ContractCodeSchema = z.string().regex(/^(?:1[0-9A-Z]{3}|A0[0-9A-Z]{2})(?:0[1-9]|1[0-2])$/);
 const DecimalSchema = z.string().max(40).regex(/^-?\d+(?:\.\d+)?$/);
 const NonnegativeDecimalSchema = z.string().max(40).regex(/^\d+(?:\.\d+)?$/);
 const IntegerSchema = z.string().max(30).regex(/^\d+$/);
@@ -191,7 +191,8 @@ export const DomesticEtfQuoteRawSchema = z.object({
   dprt: BlankDecimalSchema.optional(),
   mbcr_name: RawTextSchema.optional(),
   stck_lstn_date: z.union([DateSchema, z.literal('')]).optional(),
-  mtrt_date: z.union([DateSchema, z.literal('')]).optional(),
+  // Observed official raw response uses '0'; preserve it as a non-date placeholder, never an expiry.
+  mtrt_date: z.union([DateSchema, z.literal(''), z.literal('0')]).optional(),
   shrg_type_code: z.string().max(8).optional(),
   lp_hldn_rate: BlankDecimalSchema.optional(),
   etf_trgt_nmix_bstp_code: z.string().max(12).optional(),
@@ -395,6 +396,6 @@ export async function requestDomesticEtfQuote(input: unknown, transport?: Global
     coverage: 'dedicated_etf_etn_price_nav_not_holdings', raw: parsed.data,
     canonical: { instrument_id: null, asset_class: null, currency: null, last_price: null, nav: null, previous_nav: null, nav_change: null, nav_change_percent: null, tracking_error: null, premium_discount: null, net_assets: null, volume: null, price_unit: null, nav_unit: null, net_assets_unit: null },
     mapping_blockers: ['returned_instrument_code_missing', 'etf_versus_etn_classification_not_verified', 'price_nav_net_assets_currency_and_units_not_reconciled', 'nav_and_tracking_metric_methodology_not_verified'],
-    warnings: ['This is the dedicated ETF/ETN price and NAV endpoint, not a verified ETF holdings or composition feed.', 'The requested symbol and response classification strings are not an authoritative ETF identity binding.', 'crcd is preserved as a raw provider code; it is not assumed to denominate every price, NAV or asset-total field.', 'No live, delayed, session, timezone or freshness claim is inferred.'],
+    warnings: [...(parsed.data.mtrt_date==='0'?['mtrt_date raw zero placeholder is not a calendar date or verified maturity.']:[]), 'This is the dedicated ETF/ETN price and NAV endpoint, not a verified ETF holdings or composition feed.', 'The requested symbol and response classification strings are not an authoritative ETF identity binding.', 'crcd is preserved as a raw provider code; it is not assumed to denominate every price, NAV or asset-total field.', 'No live, delayed, session, timezone or freshness claim is inferred.'],
   });
 }

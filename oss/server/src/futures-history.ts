@@ -12,7 +12,7 @@ export const OVERSEAS_FUTURES_MINUTE_MAX_ROWS = 120; // Fixed reviewed example/l
 export const FUTURES_HISTORY_SOURCE_COMMIT = '2077773a69a428daf63e148182511f068cc45de3';
 const Origin = z.enum(['actual', 'synthetic']);
 // Local conservative outright-series policy, not proof of a master/listing identity.
-const KrSymbol = z.string().regex(/^1[0-9A-Z]{3}(?:0[1-9]|1[0-2])$/);
+const KrSymbol = z.string().regex(/^(?:1[0-9A-Z]{3}|A0[0-9A-Z]{2})(?:0[1-9]|1[0-2])$/);
 const OverseasSymbol = z.string().max(13).regex(/^[A-Z0-9]{1,10}[FGHJKMNQUVXZ]\d{2}$/);
 const Exchange = z.string().min(1).max(8).regex(/^[A-Z0-9]+$/);
 const Decimal = z.string().max(40).regex(/^-?\d+(?:\.\d+)?$/);

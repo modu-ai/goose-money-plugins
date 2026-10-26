@@ -322,3 +322,14 @@ test('boundedBody rejects huge sparse arrays before serialization and rejects hi
  for(const value of [sparse,extra,hidden])assert.throws(()=>boundedBody(value),(e:any)=>e.code==='schema_drift');
 });
 test('boundedBody rejects custom array prototypes and inherited serialization hooks',()=>{let touched=false;const array:any[]=[];Object.setPrototypeOf(array,{toJSON(){touched=true;return [];}});assert.throws(()=>boundedBody(array),(e:any)=>e.code==='schema_drift');assert.equal(touched,false);});
+
+
+test('domestic ETF raw maturity zero placeholder is preserved without canonical expiry inference', async()=>{
+ const body={...etfBody(),output:{...etfBody().output,mtrt_date:'0'}};const fixture=fake(body);
+ const result=await requestDomesticEtfQuote({symbol:'069500'},fixture.transport,()=>NOW);
+ assert.equal(result.raw.mtrt_date,'0');assert.equal(result.canonical.instrument_id,null);
+ assert.ok(result.warnings.some(w=>w.includes('zero placeholder')));
+ assert.equal(fixture.requests.length,1);
+});
+
+test('current official A0 domestic futures symbol shape is accepted without accepting stock symbols',()=>{assert.equal(FuturesQuoteInputSchema.safeParse({symbol:'A01612'}).success,true);assert.equal(FuturesQuoteInputSchema.safeParse({symbol:'005930'}).success,false);assert.equal(FuturesQuoteInputSchema.safeParse({symbol:'A01613'}).success,false);});

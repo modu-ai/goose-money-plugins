@@ -199,3 +199,5 @@ test('request schema cannot be relabeled as POST/order/other endpoint nor add he
 test('all JSON schemas can be exported; runtime remains authoritative for semantic refinements', () => {
   for (const r of readers) assert.equal(z.toJSONSchema(r.schema).type, 'object');
 });
+
+test('current official A0 domestic future shape reaches typed daily/minute input only',()=>{assert.equal(f.KrFuturesDailyHistoryInputSchema.safeParse({...fx.dailyInput,symbol:'A01612'}).success,true);assert.equal(f.KrFuturesMinuteHistoryInputSchema.safeParse({...fx.minuteInput,symbol:'A01612'}).success,true);assert.equal(f.KrFuturesDailyHistoryInputSchema.safeParse({...fx.dailyInput,symbol:'005930'}).success,false);});

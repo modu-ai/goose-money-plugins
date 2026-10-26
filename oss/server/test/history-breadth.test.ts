@@ -253,3 +253,11 @@ test('request schemas expose only bounded read paths and result schemas export J
     assert.ok(JSON.stringify(json).length > 100);
   }
 });
+
+
+test('US reported rate preserves explicit plus sign but rejects malformed numeric forms',async()=>{
+ const body=usBody();body.output2[0]!.rate='+0.25';
+ const r=await requestUsDailyHistory(usInput,fake(body).transport,()=>NOW);
+ assert.ok(Array.isArray(r.raw.output2));assert.equal(r.raw.output2[0]!.rate,'+0.25');assert.equal(r.canonical.bars,null);
+ body.output2[0]!.rate='+1e3';await errorCode(requestUsDailyHistory(usInput,fake(body).transport,()=>NOW),'schema_drift');
+});

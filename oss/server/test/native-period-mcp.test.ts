@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { createStockMcpServer, type ServerOptions } from '../src/server.js';
+import { createStockMcpServer, type ServerOptions } from './synthetic-member-access.js';
 import { NATIVE_PERIOD_MCP_NAMES } from '../src/native-period-mcp.js';
 import { executeGoosePlan } from '../src/goose-orchestrator.js';
 import { nativePeriodFixture, nativePeriodInput, nativePeriodOptions } from './native-period-mcp-fixtures.js';
@@ -49,7 +49,7 @@ for (const bad of [undefined, false, 1, 'true', null]) test(`rights require own 
 });
 test('new names are immutable, unique, read-only and added after the unchanged 32 names', () => {
   assert.ok(Object.isFrozen(NATIVE_PERIOD_MCP_NAMES)); assert.throws(() => (NATIVE_PERIOD_MCP_NAMES as any).push('forbidden'));
-  const all = (createStockMcpServer() as any)._registeredTools; assert.equal(Object.keys(all).length, 34);
+  const all = (createStockMcpServer() as any)._registeredTools; assert.equal(Object.keys(all).length, 36);
   assert.deepEqual(Object.keys(all).slice(-2), [...NATIVE_PERIOD_MCP_NAMES]);
   for (const name of NATIVE_PERIOD_MCP_NAMES) assert.deepEqual(all[name].annotations, { readOnlyHint: true, destructiveHint: false, openWorldHint: false });
 });

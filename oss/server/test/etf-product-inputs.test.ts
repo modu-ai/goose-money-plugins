@@ -171,8 +171,12 @@ test('blank and exact signed zero numeric strings are retained, never coerced', 
 });
 test('date fields are calendar-checked without inventing zero-date sentinel meaning', async () => {
   for (const field of ['lstg_dt', 'lstg_abol_dt', 'mint_svc_yn_chng_dt', 'mint_frst_svc_erlm_dt', 'ptp_item_trfx_exmt_strt_dt', 'ptp_item_trfx_exmt_end_dt', 'sdrf_stop_ecls_erlm_dt']) {
-    for (const value of ['20260229', '20260431', '20260001', '20261301', '20260100', '00000000', '2026-01-01'])
-      await code(requestUsProductProfile(input, fake({ ...body(), output: { ...raw(), [field]: value } }).transport, () => NOW), 'schema_drift');
+    for (const value of ['20260229', '20260431', '20260001', '20261301', '20260100', '00000000', '2026-01-01']) {
+      if(field==='sdrf_stop_ecls_erlm_dt'&&value==='00000000'){
+        const placeholder=await requestUsProductProfile(input,fake({...body(),output:{...raw(),[field]:value}}).transport,()=>NOW);
+        assert.equal(placeholder.raw.sdrf_stop_ecls_erlm_dt,'00000000');assert.equal(placeholder.canonical.listing_date,null);
+      }else await code(requestUsProductProfile(input, fake({ ...body(), output: { ...raw(), [field]: value } }).transport, () => NOW), 'schema_drift');
+    }
     const r = await requestUsProductProfile(input, fake({ ...body(), output: { ...raw(), [field]: '20240229' } }).transport, () => NOW);
     assert.equal(r.canonical.listing_date, null);
   }
@@ -248,4 +252,13 @@ test('schemas are JSON-schema exportable without broadening the request surface'
     const document = z.toJSONSchema(schema, { target: 'draft-2020-12' }); assert.ok(document);
   }
   assert.equal(UsProductProfileRequestSchema.safeParse({ operation: 'kis.us_product_profile', method: 'POST', path: '/order', tr_id: 'ORDER', query: {} }).success, false);
+});
+
+
+test('observed profile extensions and zero-date sentinel remain raw and grant no classification',async()=>{
+ const profile={...raw(),sdrf_stop_ecls_erlm_dt:'00000000',sgle_item_lvrg_etp_yn:'N',etp_bast_lcls_cd:'01',etp_bast_mcls_cd:'02',etp_bast_scls_cd:'03'};
+ const r=await requestUsProductProfile(input,fake({...body(),output:profile}).transport,()=>NOW);
+ assert.equal(r.raw.sdrf_stop_ecls_erlm_dt,'00000000');assert.equal(r.raw.sgle_item_lvrg_etp_yn,'N');assert.equal(r.canonical.asset_class,null);
+ assert.equal(UsProductProfileRawSchema.safeParse({...profile,sdrf_stop_ecls_erlm_dt:'20260230'}).success,false);
+ assert.equal(UsProductProfileRawSchema.safeParse({...profile,unreviewed_provider_extension:'x'}).success,false);
 });

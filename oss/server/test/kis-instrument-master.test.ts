@@ -321,3 +321,8 @@ test('accessor and non-enumerable context/source fields never execute', async ()
   await rejectsCode(new KisMasterDirectoryLoader('nas', { origin: 'synthetic', async read() { return accessor; } }, () => NOW).load(), 'schema_drift');
   assert.equal(calls, 0);
 });
+
+test('foreign listed equity ISIN country prefixes remain raw without assigning issuer nationality',()=>{
+ for(const isin of ['HK0000057197','KYG5307W1015']){const doc=parseKisKrStockMaster(krRow('kosdaq',{scrt_grp_cls_code:'FS',etp_prod_cls_code:'0'},'900110',isin),{...context,profile:'kosdaq'});assert.equal(doc.directory.entries[0]?.asset_class,'equity');assert.equal(doc.directory.entries[0]?.market,'KR');assert.ok(doc.directory.entries[0]?.aliases.includes(isin));}
+ code(()=>parseKisKrStockMaster(krRow('kospi',{},'005930','??0000057197'),{...context,profile:'kospi'}),'schema_drift');
+});

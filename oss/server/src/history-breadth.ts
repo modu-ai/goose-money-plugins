@@ -82,7 +82,9 @@ export const UsDailyHistoryHeaderRawSchema = z.object({
 export const UsDailyHistoryBarRawSchema = z.object({
   xymd: DateSchema, clos: BlankUnsigned, open: BlankUnsigned, high: BlankUnsigned, low: BlankUnsigned,
   tvol: BlankInteger, tamt: BlankUnsigned.optional(), sign: z.string().max(4).optional(),
-  diff: BlankDecimal.optional(), rate: BlankDecimal.optional(),
+  diff: BlankDecimal.optional(),
+  // Official raw US response includes an explicit plus sign; retain its lexeme, no canonical promotion.
+  rate: z.union([z.string().max(40).regex(/^[+-]?\d+(?:\.\d+)?$/),z.literal('')]).optional(),
   pbid: BlankUnsigned.optional(), vbid: BlankInteger.optional(),
   pask: BlankUnsigned.optional(), vask: BlankInteger.optional(),
 }).strict();

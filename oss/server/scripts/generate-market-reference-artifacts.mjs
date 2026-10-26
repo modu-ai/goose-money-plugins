@@ -1,9 +1,13 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { z } from 'zod';
 import * as book from '../dist/src/market-orderbook.js';
 import * as evidence from '../dist/src/market-reference-evidence.js';
 import * as fx from '../dist/test/market-reference-fixtures.js';
-const root = new URL('../', import.meta.url);
+const args = process.argv.slice(2);
+if (args.length && (args.length !== 2 || args[0] !== '--output-root' || !args[1])) throw new Error('invalid_generator_arguments');
+const root = args.length ? pathToFileURL(resolve(args[1]) + '/') : new URL('../', import.meta.url);
 const dump = (path, value) => writeFileSync(new URL(path, root), JSON.stringify(value, null, 2) + '\n');
 for (const path of ['contracts/market-reference/', 'fixtures/market-reference/']) mkdirSync(new URL(path, root), { recursive: true });
 const schemas = [

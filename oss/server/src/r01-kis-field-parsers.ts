@@ -68,6 +68,9 @@ const Kis039RowSchema = z.object({
   prtt_rate: z.string().max(11).optional(),
   mod_yn: z.string().max(1).optional(),
   revl_issu_reas: z.string().max(2).optional(),
+  // Official exact chart chk sample also enumerates these output2 fields.
+  prdy_vrss_sign: z.string().max(1).optional(),
+  prdy_vrss: z.string().max(10).optional(),
 }).strict();
 
 const KIS039_NUMERIC_FIELDS = [

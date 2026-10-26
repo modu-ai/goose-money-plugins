@@ -178,7 +178,11 @@ export async function collectRemainingSourceEvidence(request:unknown,context:unk
  const req=safe(()=>parsed(RemainingSourceRequestSchema,request));if(req.operation_ref==='KIS-109')fail('request_contract_conflict');
  const ctx=safe(()=>parsed(RemainingSourceCollectionContextSchema,context));const send=safe(()=>callback(dependencies,'send')),now=safe(()=>callback(dependencies,'now'));
  const s=Specs[req.operation_ref],wire=freeze({operation_ref:req.operation_ref,method:'GET' as const,endpoint:s.endpoint,tr_id:s.tr_id,query:req.query,pagination:'none' as const});
- let response:unknown;try{response=await send(wire);}catch{fail('transport_failed');}
+ let response:unknown;try{response=await send(wire);}catch(error){
+  // Preserve only the owned finite receive-limit error; never expose arbitrary transport text or run getters.
+  if(types.isNativeError(error)){const d=Object.getOwnPropertyDescriptor(error,'message');if(d&&'value'in d&&d.value==='response_too_large')fail('body_too_large');}
+  fail('transport_failed');
+ }
  const r=safe(()=>parsed(z.object({status:z.number().int(),tr_cont:z.union([z.string().max(8),z.null()]),body_text:z.string().max(REMAINING_SOURCE_LIMITS.body_bytes)}).strict(),response,REMAINING_SOURCE_LIMITS.body_bytes+4096));
  need(r.status===200,'unsupported_http_status');need(r.tr_cont===null||r.tr_cont==='','pagination_not_supported');let received:unknown;try{received=now();}catch{fail('clock_failed');}const receivedAt=safe(()=>parsed(Instant,received));
  return buildRemainingSourceEvidence({request:req,capture:{origin:ctx.origin,received_at:receivedAt,expected_body_sha256:createHash('sha256').update(r.body_text,'utf8').digest('hex')},cutoff:ctx.cutoff},r.body_text);

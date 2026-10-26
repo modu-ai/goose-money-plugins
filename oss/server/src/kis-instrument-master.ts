@@ -397,12 +397,13 @@ function fixedTail<const T extends readonly (readonly [string, number])[]>(specs
   const shape = Object.fromEntries(specs.map(([key, width]) => [key, z.string().length(width).regex(/^[ -~]*$/)])) as Record<Key, z.ZodString>;
   return z.object(shape).strict();
 }
-const KrIdentity = { mksc_shrn_iscd: z.string().regex(/^[A-Z0-9]{6,9}$/), stnd_iscd: z.string().regex(/^KR[A-Z0-9]{10}$/), hts_kor_isnm: Cell.min(1).max(100) };
+const KrIdentity = { mksc_shrn_iscd: z.string().regex(/^[A-Z0-9]{6,9}$/), stnd_iscd: z.string().regex(/^[A-Z]{2}[A-Z0-9]{10}$/), hts_kor_isnm: Cell.min(1).max(100) };
 const KisKrStockMasterRawBase = z.discriminatedUnion('board', [
   z.object({ board: z.literal('kospi'), ...KrIdentity, tail: fixedTail(KIS_KOSPI_MASTER_TAIL_FIELDS) }).strict(),
   z.object({ board: z.literal('kosdaq'), ...KrIdentity, tail: fixedTail(KIS_KOSDAQ_MASTER_TAIL_FIELDS) }).strict(),
 ]);
 function validateKrFormat(raw: z.infer<typeof KisKrStockMasterRawBase>): void {
+    if(raw.tail.scrt_grp_cls_code==='ST'&&!raw.stnd_iscd.startsWith('KR')) throw new KisMasterError('schema_drift');
     if (!/^[A-Z]{2}$/.test(raw.tail.scrt_grp_cls_code) || !/^[0-9 ]$/.test(raw.tail.etp_prod_cls_code)) throw new KisMasterError('schema_drift');
     const listing = raw.tail.stck_lstn_date.trim();
     if (listing && (!/^\d{8}$/.test(listing) || !z.string().date().safeParse(`${listing.slice(0, 4)}-${listing.slice(4, 6)}-${listing.slice(6)}`).success)) throw new KisMasterError('schema_drift');

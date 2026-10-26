@@ -25,6 +25,8 @@ export const HistoryResultSchema = z.object({
   interval:z.literal("1d"), requested_start:day,requested_end:day,
   origin:z.enum(["actual","synthetic"]),received_at:z.string().datetime({offset:true}),source_as_of:z.null(),
   rights_status:z.literal("pending"),completeness:z.literal("unknown"),
+  raw_rows:z.array(z.object({date:day,fields:z.record(z.string(),z.object({value:z.string().nullable(),state:z.enum(['present','blank','missing'])}).strict())}).strict()).max(100).optional(),
+  adjustment_definition:z.object({requested_code:z.enum(['0','1']),official_sample_meaning:z.enum(['adjusted','unadjusted']),independently_verified:z.literal(false),evidence_url:z.string().url()}).strict().optional(),
   bars:z.array(HistoryBarSchema).min(1).max(100),warnings:z.array(z.string()),
 }).strict().superRefine((v,ctx)=>{
   if(v.requested_start>v.requested_end)ctx.addIssue({code:"custom",message:"reversed_date_range"});
@@ -47,7 +49,9 @@ export function buildHistoryResult(input:unknown,rows:readonly ParsedKis039Daily
     requested_start:request.start_date,requested_end:request.end_date,
     origin:first.observed_payload_origin==="synthetic_fixture"?"synthetic":"actual",
     received_at:first.received_at,source_as_of:null,rights_status:"pending",completeness:"unknown",
+    raw_rows:rows.map(row=>({date:row.provider_business_date,fields:row.raw_fields})),
+    adjustment_definition:{requested_code:request.adjustment_code,official_sample_meaning:request.adjustment_code==='0'?'adjusted':'unadjusted',independently_verified:false,evidence_url:'https://github.com/koreainvestment/open-trading-api/blob/main/examples_llm/domestic_stock/inquire_daily_itemchartprice/inquire_daily_itemchartprice.py'},
     bars:rows.map(row=>({date:row.provider_business_date,open:null,high:null,low:null,close:null,volume:null,turnover:null,currency:null,price_unit:null,volume_unit:null,turnover_unit:null,adjusted:null,source_ref:`KIS-039:${request.symbol}:${row.provider_business_date}`,mapping_status:"blocked",blockers:row.canonical_blockers})).sort((a,b)=>a.date.localeCompare(b.date)),
-    warnings:["Canonical OHLCV withheld: endpoint units and adjustment semantics remain unresolved.","Business dates are not source publication timestamps; range completeness is unknown."],
+    warnings:["Canonical OHLCV withheld: exact endpoint units remain unresolved; adjustment meaning follows the official exact chart sample but is not independently verified.","Business dates are not source publication timestamps; range completeness is unknown."],
   });
 }

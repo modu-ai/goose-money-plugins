@@ -144,3 +144,10 @@ test('request-only exports accept exactly their operation with no capture metada
  for(const other of [market,estimates,ice])if(other.operation_ref!==request.operation_ref)assert.ok(!schema.safeParse(other).success);
  }
 });
+
+
+test('bounded receive size errors are diagnosed without exposing transport text or invoking getters',async()=>{
+ await rejectAsync(()=>collect(market,{origin:'synthetic',cutoff:at},{send:async()=>{throw Error('response_too_large')},now:()=>at}),'body_too_large');
+ let touches=0;const hostile=new Error();Object.defineProperty(hostile,'message',{get(){touches++;return 'PRIVATE_TOKEN'}});
+ await rejectAsync(()=>collect(market,{origin:'synthetic',cutoff:at},{send:async()=>{throw hostile},now:()=>at}),'transport_failed');assert.equal(touches,0);
+});
