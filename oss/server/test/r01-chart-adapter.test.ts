@@ -10,12 +10,13 @@ import {
   inspectKisChartResponse,
   isR01ChartFieldMapped,
 } from "../src/r01-chart-adapter.js";
+import { isRuntimeSupported } from "../src/runtime-guard.js";
 
 const sourceMappingUrl = new URL("../../../contracts/kis-api-mapping-v1.json", import.meta.url);
 const receivedAt = "2026-10-21T15:04:05.000Z";
 
-test("the test process is the project-pinned Node runtime", () => {
-  assert.equal(process.version, "v24.22.1");
+test("the test process satisfies the declared runtime range", () => {
+  assert.equal(isRuntimeSupported(process.versions.node), true);
 });
 
 function valueForShape(shape: "object" | "array" | "object_or_array"): Record<string, unknown> | unknown[] {

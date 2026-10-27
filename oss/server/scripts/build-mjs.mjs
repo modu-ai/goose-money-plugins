@@ -4,10 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join } from 'node:path';
 import { mkdir, mkdtemp, readFile, writeFile, cp, readdir, rm, rename, lstat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { bundleOptions, runtimeDeclaration } from './build-mjs-options.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const destination = join(root, 'runtime');
-if (process.versions.node !== '24.22.1' || esbuildVersion !== '0.28.2') throw Error('build_runtime_version_mismatch');
+// The build still needs exactly the declared build pin; the manifest also records the declared runtime range.
+const declaration = runtimeDeclaration(root);
+if (process.versions.node !== declaration.node_build_pin || esbuildVersion !== '0.28.2') throw Error('build_runtime_version_mismatch');
 const marker = 'moai-atp-generated-mjs-v1';
 try {
   const info = await lstat(destination);
@@ -18,13 +21,7 @@ let completed = false;
 let previous;
 let installed = false;
 try {
-  const result = await build({
-    absWorkingDir: root, entryPoints: { main:'src/main.ts', cli:'src/cli.ts' },
-    outdir:join(stage,'src'), outExtension:{'.js':'.mjs'},
-    bundle:true, platform:'node', target:'node24', format:'esm',
-    metafile:true, sourcemap:false, legalComments:'external', logLevel:'silent',
-    banner:{js:'import { createRequire as __moaiCreateRequire } from "node:module"; const require = __moaiCreateRequire(import.meta.url);'},
-  });
+  const result = await build({ ...bundleOptions, absWorkingDir: root, outdir: join(stage,'src') });
   const builtins = new Set(builtinModules.flatMap(name => [name, 'node:'+name]));
   const external = [...new Set(Object.values(result.metafile.outputs).flatMap(output => output.imports.filter(i=>i.external).map(i=>i.path)))].sort();
   if (external.some(name=>!builtins.has(name))) throw Error('unbundled_runtime_dependency');
@@ -56,7 +53,7 @@ try {
     }
   }
   await visit(stage);
-  await writeFile(join(stage,'runtime-manifest.json'),JSON.stringify({format:marker,node_required:'24.22.1',esbuild:esbuildVersion,external_modules:external,dependencies,files},null,2)+'\n');
+  await writeFile(join(stage,'runtime-manifest.json'),JSON.stringify({format:marker,node_required:declaration.node_required,node_runtime_range:declaration.node_runtime_range,node_build_pin:declaration.node_build_pin,esbuild:esbuildVersion,external_modules:external,dependencies,files},null,2)+'\n');
   await writeFile(join(stage,'.generated'),marker);
   // Only a previously marked generated directory may be replaced.
   try {
@@ -68,5 +65,5 @@ try {
   catch(error) { if(previous)await rename(join(previous,'runtime'),destination); throw error; }
   completed=true;
   if(previous)await rm(previous,{recursive:true});
-  console.log(JSON.stringify({runtime:'server/runtime',format:'esm-mjs',external_modules:external,dependencies_bundled:true,node_required:'24.22.1'}));
+  console.log(JSON.stringify({runtime:'server/runtime',format:'esm-mjs',external_modules:external,dependencies_bundled:true,node_required:declaration.node_required,node_runtime_range:declaration.node_runtime_range,node_build_pin:declaration.node_build_pin}));
 } finally { if(!completed&&!installed) await rm(stage,{recursive:true,force:true}); }

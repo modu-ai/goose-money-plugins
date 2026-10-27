@@ -11,7 +11,9 @@
 런타임 번들이 아닙니다. `dist`, `node_modules`, Node 실행 파일을 포함하지 않습니다.
 소스 검증과 빌드를 마친 후에만 `mcp.json`이 지정한 서버 진입점이 생성됩니다.
 
-macOS에서 Node **24.22.1**로 다음을 실행합니다.
+실행: Node 22.2.0 이상. 하한은 실측했다(zlib.crc32 가 Node 22.1.0 에는 없고 22.2.0 에는 있음). 서버 도구 목록과 entry 검사는 Node 22.2.0·22.22.3 에서 실행했고, 그 밖의 Node 22.x 릴리스는 실행하지 않았다. Node 22.0–22.1 은 제외한다. 빌드: Node 24.22.1.
+
+macOS에서 빌드용 Node **24.22.1**로 다음을 실행합니다.
 
 ```sh
 npm --prefix server ci --ignore-scripts
@@ -59,7 +61,7 @@ KIS App Key/Secret의 공식 client_credentials 토큰 어댑터는 구현되어
 소스 ZIP과 별도로, 빌드 후 아래 명령으로 내부 검증용 런타임 ZIP을 만듭니다.
 새 출력 파일명을 사용합니다. 컴파일 코드·고정된 운영 의존성 3개를 포함하고,
 Node 실행 파일·사용자 데이터·테스트·개발 의존성은 포함하지 않습니다.
-Node 24.22.1 설치는 별도입니다. ZIP 생성은 호스트 설치·공개 배포가 아닙니다.
+빌드용 Node 24.22.1 설치는 별도입니다. ZIP 생성은 호스트 설치·공개 배포가 아닙니다.
 
 ```sh
 npm --prefix server run build:mjs
@@ -101,7 +103,7 @@ npm test
 [제3자 의존성 고지](THIRD_PARTY_NOTICES.md)를 보존해야 하며, 회원 인증은 서비스
 접근 제어이고 향후 OSS 이용 권한·시세 데이터 사용권과 별개입니다.
 
-설치 ZIP은 `server/runtime/src/*.mjs`와 필요한 계약·차트 자산·라이선스를 포함합니다. 사용자는 Node 24.22.1이 필요하며 npm 설치나 TypeScript 빌드는 필요하지 않습니다. 개발용 소스의 mcp.json과 설치 ZIP의 MJS 진입점을 구분합니다. Windows 및 실제 호스트 설치는 별도 검증 대상입니다.
+설치 ZIP은 `server/runtime/src/*.mjs`와 필요한 계약·차트 자산·라이선스를 포함합니다. 실행에 필요한 Node 범위는 위 고지를 따르며, 사용자에게 npm 설치나 TypeScript 빌드는 필요하지 않습니다. 개발용 소스의 mcp.json과 설치 ZIP의 MJS 진입점을 구분합니다. Windows 및 실제 호스트 설치는 별도 검증 대상입니다.
 
 
 ## 개발본과 설치본 구분

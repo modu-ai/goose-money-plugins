@@ -12,6 +12,7 @@ import {
   parseKis115InvestorFlowResponse,
 } from "../src/r01-kis-field-parsers.js";
 import { R01_CHART_FIELD_REGISTRY } from "../src/r01-chart-adapter.js";
+import { isRuntimeSupported } from "../src/runtime-guard.js";
 
 const receivedAt = "2026-10-21T15:04:05.000Z";
 const dailyContext = {
@@ -33,8 +34,8 @@ function cloneMutableResponse(value: unknown): { [key: string]: unknown; output2
   return structuredClone(value) as { [key: string]: unknown; output2: Array<Record<string, unknown>> };
 }
 
-test("project-pinned Node.js is used for the KIS field parser tests", () => {
-  assert.equal(process.version, "v24.22.1");
+test("the KIS field parser tests run within the declared runtime range", () => {
+  assert.equal(isRuntimeSupported(process.versions.node), true);
 });
 
 test("KIS-039 parser keeps documented daily rows as provider strings and date-only values", () => {

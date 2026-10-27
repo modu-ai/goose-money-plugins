@@ -192,7 +192,8 @@
   "goose_execution": "injected_runner_and_native_receipt_adapter_only",
   "independent_host_verification": false,
   "tests_kind": "offline_synthetic_and_mock_fetch",
-  "runtime_node": "24.22.1",
+  "runtime_node": ">=22.2.0",
+  "build_node_pin": "24.22.1",
   "source_input_mcp": {
     "contract": "moai.source-input-mcp-registration.v1",
     "total_registered_names": 34,

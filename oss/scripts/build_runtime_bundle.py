@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a credential-free MJS runtime ZIP. Requires developer build:mjs first.
 
-Installation needs Node 24.22.1, but no npm install or TypeScript build.
+Installation needs the Node range stated in oss/README.md, but no npm install or TypeScript build.
 No host installation, credential configuration, or API request is performed.
 """
 import argparse, hashlib, json
@@ -10,6 +10,16 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from check_secrets import findings_for
 
 FORBIDDEN={'.git','.goose','keystore','node_modules','.runtime','test','tests','__tests__','__pycache__','evidence'}
+def declared_runtime(root):
+ # Single declaration source: server/package.json engines.node (run range) and devEngines.runtime.version (build pin).
+ manifest=json.loads((root/'server/package.json').read_text())
+ declared_range=(manifest.get('engines') or {}).get('node');pin=((manifest.get('devEngines') or {}).get('runtime') or {}).get('version')
+ if not isinstance(declared_range,str) or not isinstance(pin,str):raise ValueError('runtime_manifest_invalid')
+ return {'range':declared_range,'pin':pin}
+def validate_runtime_manifest(manifest,declared):
+ if not isinstance(manifest,dict) or manifest.get('format')!='moai-atp-generated-mjs-v1':raise ValueError('runtime_manifest_invalid')
+ if manifest.get('node_runtime_range')!=declared['range'] or manifest.get('node_build_pin')!=declared['pin']:raise ValueError('runtime_manifest_invalid')
+ if manifest.get('node_required')!=manifest.get('node_build_pin'):raise ValueError('runtime_manifest_invalid')
 def build(root, output):
  root,output=root.resolve(),output.resolve()
  if not output.is_relative_to(root.parent/'project-docs') or output.exists():raise ValueError('output_must_be_new_project_document_artifact')
@@ -51,8 +61,9 @@ def build(root, output):
   name=path.relative_to(root).as_posix()
   add_bytes(name,public_overlay(name,path.read_bytes()))
  runtime=root/'server/runtime'
+ declared=declared_runtime(root)
  manifest=json.loads((runtime/'runtime-manifest.json').read_text())
- if manifest['format']!='moai-atp-generated-mjs-v1' or manifest['node_required']!='24.22.1':raise ValueError('runtime_manifest_invalid')
+ validate_runtime_manifest(manifest,declared)
  for name,digest in manifest['files'].items():
   path=runtime/name
   if path.is_symlink() or not path.resolve().is_relative_to(runtime) or hashlib.sha256(path.read_bytes()).hexdigest()!=digest:raise ValueError('runtime_hash_mismatch')
@@ -60,14 +71,14 @@ def build(root, output):
  for name in ['CAPABILITIES.json','plugin.json','README.md','THIRD_PARTY_NOTICES.md','LICENSE','COPYING','COPYING.LESSER']:add(root/name)
  mcp=json.loads((root/'mcp.json').read_text());mcp['mcpServers']['moai-kis-readonly']['args']=['${PLUGIN_ROOT}/server/runtime/src/main.mjs']
  add_bytes('mcp.json',(json.dumps(mcp,indent=2)+'\n').encode())
- package=json.loads((root/'package.json').read_text());package['scripts']={'setup':'node server/runtime/src/cli.mjs setup','start':'node server/runtime/src/main.mjs'}
+ package=json.loads((root/'package.json').read_text());package.pop('devEngines',None);package['scripts']={'setup':'node server/runtime/src/cli.mjs setup','start':'node server/runtime/src/main.mjs'}
  add_bytes('package.json',(json.dumps(package,ensure_ascii=False,indent=2)+'\n').encode())
- server=json.loads((root/'server/package.json').read_text());server.pop('devDependencies',None);server.pop('dependencies',None);server['scripts']={'start':'node runtime/src/main.mjs','setup':'node runtime/src/cli.mjs setup'};server['bin']={'moai-atp':'runtime/src/cli.mjs'}
+ server=json.loads((root/'server/package.json').read_text());server.pop('devDependencies',None);server.pop('dependencies',None);server.pop('devEngines',None);server['scripts']={'start':'node runtime/src/main.mjs','setup':'node runtime/src/cli.mjs setup'};server['bin']={'moai-atp':'runtime/src/cli.mjs'}
  add_bytes('server/package.json',(json.dumps(server,ensure_ascii=False,indent=2)+'\n').encode())
  for tree in ['skills','assets','server/assets','server/runtime']:
   for path in sorted((root/tree).rglob('*')):
    if path.is_file() and path.name!='.generated' and 'portfolio-risk' not in path.parts:add(path)
- receipt={'format':'moai-atp-mjs-runtime-v2','node_required':'24.22.1','dependencies':manifest['dependencies'],'files':{name:hashlib.sha256(data).hexdigest() for name,data in sorted(files.items())},'secret_findings':0,'limitations':'Heuristic secret scan. macOS subprocess validation only; Windows and host UI unverified; provider HTTP evidence is tracked separately, not included in this ZIP. No Node binary or user credentials.'}
+ receipt={'format':'moai-atp-mjs-runtime-v2','node_required':declared['pin'],'node_runtime_range':declared['range'],'node_build_pin':declared['pin'],'dependencies':manifest['dependencies'],'files':{name:hashlib.sha256(data).hexdigest() for name,data in sorted(files.items())},'secret_findings':0,'limitations':'Declared Node run range '+declared['range']+'; the entry refuses older Node. Heuristic secret scan. macOS subprocess validation only; Windows and host UI unverified; provider HTTP evidence is tracked separately, not included in this ZIP. No Node binary or user credentials.'}
  files['runtime-bundle-manifest.json']=(json.dumps(receipt,indent=2)+'\n').encode()
  output.parent.mkdir(parents=True,exist_ok=True)
  with ZipFile(output,'x',compression=ZIP_DEFLATED) as archive:

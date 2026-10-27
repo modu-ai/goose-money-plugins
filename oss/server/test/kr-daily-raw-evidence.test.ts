@@ -11,6 +11,8 @@ import { buildKrDailyRawEvidence as build,verifyKrDailyRawEvidence as verify,KrD
   KrDailyEvidenceInputSchema,KrDailyEvidenceResultSchema } from '../src/kr-daily-raw-evidence.js';
 import { parseKis039DailyChartResponse } from '../src/r01-kis-field-parsers.js';
 import { buildHistoryResult } from '../src/history-contract.js';
+// BUILD-PIN tests: they exercise the evidence tooling that is pinned to the build Node. Anywhere else they are skipped, never passed.
+const buildPinSkip = process.version === 'v24.22.1' ? false : `requires the build pin Node 24.22.1 (running ${process.version})`;
 const hash=(s:string)=>createHash('sha256').update(s,'utf8').digest('hex');
 const body=()=>({rt_cd:'0',msg_cd:'PRIVATE_CODE',msg1:'PRIVATE_PROVIDER_MESSAGE',output1:{private_header:'PRIVATE_HEADER'},output2:[
   {stck_bsop_date:'20261021',stck_clpr:'000123.00',stck_oprc:'-0.00',stck_hgpr:'123.4',stck_lwpr:'001.00',acml_vol:'999999999999999999',acml_tr_pbmn:'000000000000000001',flng_cls_code:'00',prtt_rate:'0001.000',mod_yn:'N',revl_issu_reas:'01'},
@@ -24,7 +26,7 @@ function expectError(fn:()=>unknown,code?:string){assert.throws(fn,(e:unknown)=>
 function changeBody(fn:(b:ReturnType<typeof body>)=>void){const b=body();fn(b);const s=JSON.stringify(b);return ()=>build(input(s),s);}
 function reordered(v:unknown):unknown {if(v===null||typeof v!=='object')return v;if(Array.isArray(v))return v.map(reordered);return Object.fromEntries(Object.entries(v).reverse().map(([k,x])=>[k,reordered(x)]));}
 
-test('KIS daily evidence uses pinned Node and preserves all raw strings/states/order/indices',()=>{
+test('KIS daily evidence uses pinned Node and preserves all raw strings/states/order/indices',{skip:buildPinSkip},()=>{
   assert.equal(process.version,'v24.22.1');const r=build(input(),text);
   assert.equal(r.contract,'moai.kis.kr-daily-raw-evidence.v1');assert.equal(r.row_count,3);
   assert.deepEqual(r.rows.map(x=>x.provider_business_date),['2026-10-21','2026-10-19','2026-10-20']);assert.deepEqual(r.rows.map(x=>x.source_row_index),[0,1,2]);
@@ -151,7 +153,7 @@ test('deterministic retained fixtures reconstruct and schema files describe the 
   assert.equal(schema.properties.contract.const,'moai.kis.kr-daily-raw-evidence.v1');assert.equal(schema.additionalProperties,false);
 });
 
-test('desktop file replay rejects unsupported execution without exposing provider payloads',async()=>{
+test('desktop file replay rejects unsupported execution without exposing provider payloads',{skip:buildPinSkip},async()=>{
   const root=new URL('../../',import.meta.url),fixture=new URL('fixtures/kr-daily-raw/',root);
   const script=fileURLToPath(new URL('scripts/replay-kr-daily-raw-evidence.mjs',root));
   const q=fileURLToPath(new URL('mixed-order.input.json',fixture)),b=fileURLToPath(new URL('mixed-order.body.json',fixture));

@@ -1,13 +1,14 @@
-import { serveStdio } from "@modelcontextprotocol/server/stdio";
-import { createCredentialBackedServer, localReadSwitches } from "./credential-runtime.js";
+import { RUNTIME_RANGE, failClosed, isRuntimeSupported, runtimeUnsupportedMessage, serverLoadFailedMessage } from "./runtime-guard.js";
 
-// stdout is reserved for MCP protocol frames. Operational diagnostics must use
-// sanitized stderr and must never include provider bodies or credentials.
-const local=localReadSwitches(process.env);
-serveStdio(() => createCredentialBackedServer({studentReleaseScope:true,rightsEnabled:local.kis,openDartEnabled:local.opendart,localReportViewEnabled:local.local_view,...(local.opendart?{authorizeOpenDartRead:async()=>true}:{})}), {
-  legacy: "serve",
-  maxSubscriptions: 0,
-  onerror: () => {
-    process.stderr.write("mcp_transport_error\n");
-  },
-});
+// The only static import above is the guard: it has no imports of its own, so a Node outside the range
+// answers over MCP before any server-graph module is resolved, linked or evaluated. The server graph
+// (MCP SDK, credential runtime, built-ins that newer Node adds) is reached by dynamic import after the verdict.
+if (!isRuntimeSupported(process.versions.node, RUNTIME_RANGE)) {
+  failClosed(runtimeUnsupportedMessage(process.version));
+} else {
+  try {
+    await import("./server-main.js");
+  } catch (error) {
+    failClosed(serverLoadFailedMessage(error));
+  }
+}

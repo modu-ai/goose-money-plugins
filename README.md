@@ -24,7 +24,9 @@ excluded from this source tree's distribution boundary.
 
 ## Develop locally
 
-Use Node **24.22.1**. Install the locked dependencies without lifecycle scripts:
+Runtime: Node >=22.2.0. Measured floor: the zlib.crc32 boundary was measured (absent on Node 22.1.0, present on 22.2.0); the server tool list and entry check were run on Node 22.2.0 and 22.22.3; other Node 22.x releases were not run. Node 22.0-22.1 are excluded. Build: Node 24.22.1.
+
+Build with Node **24.22.1**. Install the locked dependencies without lifecycle scripts:
 
 ```sh
 cd oss
@@ -58,7 +60,7 @@ The default server still denies data requests, does not read keys at startup,
 and has no OAuth token adapter. Storing keys does not enable provider access.
 
 From `oss/` after building, the following creates a separate private runtime ZIP with compiled code and three
-locked production dependencies. Node 24.22.1 remains an external prerequisite.
+locked production dependencies. Node 24.22.1 remains an external build prerequisite.
 This artifact is distinct from the source ZIP and from actual host installation.
 
 ```sh
