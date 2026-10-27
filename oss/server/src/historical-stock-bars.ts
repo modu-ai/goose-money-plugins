@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { types } from 'node:util';
 import { ExactInstantSchema, compareInstants } from './exact-instant.js';
 import { boundedBody, GlobalMarketError } from './global-market-data.js';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 
 /** RC7 candidate: exactly one injected, read-only provider page; never a network fallback. */
 export const KR_HISTORICAL_INTRADAY_MAX_RESPONSE_BYTES = 300_000;
@@ -182,7 +183,7 @@ async function readPage(request: KrHistoricalIntradayRequest, transport: KrHisto
   const safe = KrHistoricalIntradayRequestSchema.parse(request);
   Object.freeze(safe.query); Object.freeze(safe);
   let response: unknown;
-  try { response = await transport.send(safe); } catch { throw new KrHistoricalIntradayError('upstream_unavailable'); }
+  try { response = await transport.send(safe); } catch (e) { throw sanitizedKisError(e) ?? new KrHistoricalIntradayError('upstream_unavailable'); }
   let receipt: unknown;
   try { receipt = clock(); } catch { throw new KrHistoricalIntradayError('invalid_input'); }
   const received = ExactInstantSchema.safeParse(receipt);

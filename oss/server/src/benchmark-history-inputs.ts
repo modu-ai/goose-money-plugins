@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { types } from 'node:util';
 import { z } from 'zod';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 
 /** Additive, unregistered raw evidence. No fetch, credentials, filesystem or canonical promotion. */
 export const BENCHMARK_HISTORY_LIMITS = Object.freeze({ body_bytes: 262_144, input_bytes: 32_768,
@@ -316,7 +317,7 @@ export async function requestKis264History(input: unknown, transport?: Benchmark
     query: { FID_COND_MRKT_DIV_CODE: q.request.market_code, FID_INPUT_ISCD: q.request.instrument_code,
       FID_INPUT_DATE_1: q.request.start_date.replaceAll('-', ''), FID_INPUT_DATE_2: q.request.end_date.replaceAll('-', ''), FID_PERIOD_DIV_CODE: 'D' } };
   freeze(request); let response: unknown;
-  try { response = await hook.send.call(transport, request); } catch { fail('upstream_unavailable'); }
+  try { response = await hook.send.call(transport, request); } catch (e) { throw sanitizedKisError(e) ?? new BenchmarkHistoryError('upstream_unavailable'); }
   return safe(() => {
     // Snapshot is byte bounded before schema parsing; this is a local decoded response budget, not provider row count evidence.
     const r = parsed(Response, response, BENCHMARK_HISTORY_LIMITS.body_bytes + 2048);

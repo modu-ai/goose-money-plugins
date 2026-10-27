@@ -3,6 +3,7 @@ import { constants, openSync, fstatSync, readSync, closeSync } from 'node:fs';
 import { types, TextDecoder } from 'node:util';
 import { resolve } from 'node:path';
 import { z } from 'zod';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 import { ExactInstantSchema, compareInstants } from './exact-instant.js';
 
 /** Offline, additive R01 source inputs. No network, credential, account, trade, route or metric dependency. */
@@ -179,7 +180,8 @@ export async function collectRemainingSourceEvidence(request:unknown,context:unk
  const ctx=safe(()=>parsed(RemainingSourceCollectionContextSchema,context));const send=safe(()=>callback(dependencies,'send')),now=safe(()=>callback(dependencies,'now'));
  const s=Specs[req.operation_ref],wire=freeze({operation_ref:req.operation_ref,method:'GET' as const,endpoint:s.endpoint,tr_id:s.tr_id,query:req.query,pagination:'none' as const});
  let response:unknown;try{response=await send(wire);}catch(error){
-  // Preserve only the owned finite receive-limit error; never expose arbitrary transport text or run getters.
+  // The server's own sanitized provider error keeps its code (the K4 tools return the same); otherwise preserve only the owned finite receive-limit error; never expose arbitrary transport text or run getters.
+  const kis=sanitizedKisError(error);if(kis)throw kis;
   if(types.isNativeError(error)){const d=Object.getOwnPropertyDescriptor(error,'message');if(d&&'value'in d&&d.value==='response_too_large')fail('body_too_large');}
   fail('transport_failed');
  }

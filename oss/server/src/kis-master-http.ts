@@ -1,8 +1,18 @@
 import {crc32,inflateRawSync} from 'node:zlib';
 import {createHash} from 'node:crypto';
+import {types} from 'node:util';
 import {InstrumentDirectorySchema,type InstrumentDirectoryLoader} from './instrument-directory.js';
 import {KIS_MASTER_PROFILES,parseKisKrStockMaster} from './kis-instrument-master.js';
 const LIMIT=5_000_000;
+/** The platform `DOMException` name getter, captured before any error arrives: it brand-checks its receiver, so it throws for a forged object. */
+const TIMEOUT_NAME=Object.getOwnPropertyDescriptor(DOMException.prototype,'name')?.get;
+/** A platform timeout: not a Proxy, DIRECT prototype `DOMException.prototype`, and the captured platform getter answers `TimeoutError`. Runs no code the error supplies; a throwing check means "no". */
+function platformTimeout(e:unknown):boolean {try{return e!==null&&typeof e==='object'&&!types.isProxy(e)&&Object.getPrototypeOf(e)===DOMException.prototype&&Reflect.apply(TIMEOUT_NAME!,e,[])==='TimeoutError';}catch{return false;}}
+/** An error the loader RECEIVED (fetch rejection, body read rejection) becomes one of two fixed codes; none of its own text is carried. */
+const receivedFailure=(e:unknown)=>Error(platformTimeout(e)?'upstream_timeout':'upstream_unavailable');
+const LOADER_CODES=new Set(['upstream_unavailable','upstream_timeout','upstream_rejected','rate_limited','response_too_large']);
+/** Carries only the codes the loader itself chose; every other failure inside archive and directory processing is a shape violation. */
+function loaderCode(e:unknown):string {try{if(e===null||typeof e!=='object'||types.isProxy(e)||!types.isNativeError(e))return 'schema_drift';const d=Object.getOwnPropertyDescriptor(e,'message');return d&&'value'in d&&typeof d.value==='string'&&LOADER_CODES.has(d.value)?d.value:'schema_drift';}catch{return 'schema_drift';}}
 /** Single fixed member only; no filesystem extraction, encrypted/ZIP64/multi-disk archives. */
 export function unpackKisMasterZip(bytes:Uint8Array,expected:string):Uint8Array {
  const b=Buffer.from(bytes);if(b.length<22||b.length>LIMIT)throw Error('master_archive_invalid');let end=-1;
@@ -18,18 +28,19 @@ export function unpackKisMasterZip(bytes:Uint8Array,expected:string):Uint8Array 
  if(raw.length!==size||crc32(raw)!==crc)throw Error('master_archive_invalid');return raw;
 }
 export async function readKisKrMaster(profile:'kospi'|'kosdaq',fetchImpl:typeof fetch=fetch){
- const source=KIS_MASTER_PROFILES[profile];let r:Response;try{r=await fetchImpl(source.source_url,{method:'GET',redirect:'error',headers:{'User-Agent':'MoAI-ATP/0.1 local-master-reader'},signal:AbortSignal.timeout(10000)});}catch{throw Error('source_unavailable');}
- if(r.status!==200||!r.body)throw Error('source_unavailable');const reader=r.body.getReader(),chunks:Uint8Array[]=[];let size=0;
- try{for(;;){const x=await reader.read();if(x.done)break;size+=x.value.byteLength;if(size>LIMIT){await reader.cancel();throw Error('master_too_large');}chunks.push(x.value);}}finally{reader.releaseLock();}
+ const source=KIS_MASTER_PROFILES[profile];let r:Response;try{r=await fetchImpl(source.source_url,{method:'GET',redirect:'error',headers:{'User-Agent':'MoAI-ATP/0.1 local-master-reader'},signal:AbortSignal.timeout(10000)});}catch(e){throw receivedFailure(e);}
+ if(r.status===429)throw Error('rate_limited');
+ if(r.status!==200||!r.body)throw Error('upstream_rejected');const reader=r.body.getReader(),chunks:Uint8Array[]=[];let size=0;
+ try{for(;;){const x=await reader.read().catch((e:unknown)=>{throw receivedFailure(e);});if(x.done)break;size+=x.value.byteLength;if(size>LIMIT){await reader.cancel().catch(()=>undefined);throw Error('response_too_large');}chunks.push(x.value);}}finally{reader.releaseLock();}
  const archive=Buffer.concat(chunks);return {raw:unpackKisMasterZip(archive,source.filename),sha256:createHash('sha256').update(archive).digest('hex'),received_at:new Date().toISOString()};
 }
 /** Lazy, credential-free master download; no background work or persistent cache. */
 export class OfficialKrEquityDirectoryLoader implements InstrumentDirectoryLoader {
  private current:Promise<unknown>|undefined;private until=0;
  constructor(private readonly fetchImpl:typeof fetch=fetch){}
- load():Promise<unknown>{if(this.current&&Date.now()<this.until)return this.current;this.until=Date.now()+300000;this.current=this.collect().catch(()=>{this.current=undefined;this.until=0;throw Error('source_unavailable');});return this.current;}
+ load():Promise<unknown>{if(this.current&&Date.now()<this.until)return this.current;this.until=Date.now()+300000;this.current=this.collect().catch((e:unknown)=>{this.current=undefined;this.until=0;throw Error(loaderCode(e));});return this.current;}
  private async collect(){const captures=await Promise.all((['kospi','kosdaq'] as const).map(async profile=>{const capture=await readKisKrMaster(profile,this.fetchImpl);return {profile,capture,parsed:parseKisKrStockMaster(capture.raw,{profile,origin:'actual',source_received_at:capture.received_at,header_mode:'none'})};}));
- const entries=captures.flatMap(c=>c.parsed.directory.entries.filter(e=>e.asset_class==='equity'||e.asset_class==='etf'));if(!entries.length)throw Error('source_unavailable');
+ const entries=captures.flatMap(c=>c.parsed.directory.entries.filter(e=>e.asset_class==='equity'||e.asset_class==='etf'));if(!entries.length)throw Error('schema_drift');
  return InstrumentDirectorySchema.parse({origin:'actual',source_received_at:captures.map(c=>c.capture.received_at).sort().at(-1),source_as_of:null,source_url:'https://new.real.download.dws.co.kr/common/master/',entries,coverage:'Official KOSPI/KOSDAQ master equity/ETF candidates only. ETN/unknown excluded. Current listing/authenticity/currency not confirmed. '+captures.map(c=>c.profile+' archive SHA256 '+c.capture.sha256).join('; ')});
  }
 }

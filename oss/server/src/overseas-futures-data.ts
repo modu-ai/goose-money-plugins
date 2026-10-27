@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 
 /** RC4-only, credential-free overseas futures research contract. No fetch fallback. */
 export const OVERSEAS_FUTURES_MAX_RESPONSE_BYTES = 300_000;
@@ -200,7 +201,7 @@ export async function requestOverseasFuturesQuote(
   });
   Object.freeze(request.query); Object.freeze(request);
   let response: unknown;
-  try { response = await transport.send(request); } catch { throw new OverseasFuturesError('upstream_unavailable'); }
+  try { response = await transport.send(request); } catch (e) { throw sanitizedKisError(e) ?? new OverseasFuturesError('upstream_unavailable'); }
   let receivedAt: unknown;
   try { receivedAt = clock(); } catch { throw new OverseasFuturesError('invalid_input'); }
   const time = ReceivedAtSchema.safeParse(receivedAt);

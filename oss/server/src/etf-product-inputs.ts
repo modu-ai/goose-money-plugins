@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { boundedBody, GlobalMarketError } from './global-market-data.js';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 import { ExactInstantSchema } from './exact-instant.js';
 
 /** RC5 research-only provider inputs. No credentials, default transport, fetch, or trading paths. */
@@ -198,7 +199,7 @@ export async function requestUsProductProfile(input: unknown, transport?: EtfPro
   Object.freeze(request.query); Object.freeze(request);
   let response: unknown;
   try { response = await send.call(transport, request); }
-  catch { throw new EtfProductError('upstream_unavailable'); }
+  catch (e) { throw sanitizedKisError(e) ?? new EtfProductError('upstream_unavailable'); }
   let receivedAt: string;
   try { receivedAt = ExactInstantSchema.parse(clock()); }
   catch { throw new EtfProductError('invalid_input'); }

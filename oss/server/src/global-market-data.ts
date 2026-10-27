@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 
 /** Credential-free, read-only research adapters. There is deliberately no fetch fallback. */
 export const GLOBAL_MARKET_MAX_RESPONSE_BYTES = 300_000;
@@ -325,7 +326,7 @@ async function readQuote(request: GlobalMarketRequest, transport: GlobalMarketTr
   if (!origin.success || typeof transport.send !== 'function' || typeof clock !== 'function') throw new GlobalMarketError('invalid_input');
   GlobalMarketRequestSchema.parse(request);
   let response: unknown;
-  try { response = await transport.send(request); } catch { throw new GlobalMarketError('upstream_unavailable'); }
+  try { response = await transport.send(request); } catch (e) { throw sanitizedKisError(e) ?? new GlobalMarketError('upstream_unavailable'); }
   // Called only AFTER the transport has supplied its complete response body.
   let receivedAt: unknown;
   try { receivedAt = clock(); } catch { throw new GlobalMarketError('invalid_input'); }

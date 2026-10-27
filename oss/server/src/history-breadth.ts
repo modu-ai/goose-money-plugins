@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { QuoteSnapshotSchema } from './domain.js';
 import { ExactInstantSchema, compareInstants } from './exact-instant.js';
 import { boundedBody, GlobalMarketError } from './global-market-data.js';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 
 /** RC5 proposal: credential-free, bounded, single-page history readers. No fetch fallback. */
 export const HISTORY_BREADTH_MAX_RESPONSE_BYTES = 300_000;
@@ -207,7 +208,7 @@ async function readPage(request: HistoryBreadthRequest, transport: HistoryBreadt
   const safeRequest = HistoryBreadthRequestSchema.parse(request);
   Object.freeze(safeRequest.query); Object.freeze(safeRequest);
   let response: unknown;
-  try { response = await transport.send(safeRequest); } catch { throw new HistoryBreadthError('upstream_unavailable'); }
+  try { response = await transport.send(safeRequest); } catch (e) { throw sanitizedKisError(e) ?? new HistoryBreadthError('upstream_unavailable'); }
   // The receipt is sampled once, strictly AFTER the awaited body has arrived.
   let receipt: unknown;
   try { receipt = clock(); } catch { throw new HistoryBreadthError('invalid_input'); }

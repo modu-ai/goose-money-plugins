@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ExactInstantSchema } from './exact-instant.js';
 import { GlobalMarketError } from './global-market-data.js';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 import { snapshotMarketJson, freezeMarket, marketCanonicalJson } from './market-reference-snapshot.js';
 
 /** A bounded raw-only REST subset, never a live/firm/atomic canonical book. */
@@ -149,7 +150,7 @@ export async function requestMarketOrderbook(input: unknown, transport?: MarketO
   const request = makeMarketOrderbookRequest(q);
   Object.freeze(request.query); Object.freeze(request);
   let response: unknown;
-  try { response = await transport.send(request); } catch { fail('upstream_unavailable'); }
+  try { response = await transport.send(request); } catch (e) { throw sanitizedKisError(e) ?? new MarketOrderbookError('upstream_unavailable'); }
   let receipt: unknown;
   try { receipt = clock(); } catch { fail('invalid_input'); }
   const received_at = checked(ExactInstantSchema, receipt, 'invalid_input');

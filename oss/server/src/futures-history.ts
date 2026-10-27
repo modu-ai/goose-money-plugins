@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { types } from 'node:util';
 import { ExactInstantSchema, compareInstants } from './exact-instant.js';
 import { boundedBody, GlobalMarketError } from './global-market-data.js';
+import { sanitizedKisError } from './kis-sanitized-error.js';
 
 /** RC6 additive, read-only research readers. No network, credentials, accounts or orders. */
 export const FUTURES_HISTORY_MAX_RESPONSE_BYTES = 300_000;
@@ -301,7 +302,7 @@ async function readPage(request: FuturesHistoryRequest, transport: FuturesHistor
   const safe = FuturesHistoryRequestSchema.parse(request);
   Object.freeze(safe.query); Object.freeze(safe);
   let response: unknown;
-  try { response = await transport.send(safe); } catch { throw new FuturesHistoryError('upstream_unavailable'); }
+  try { response = await transport.send(safe); } catch (e) { throw sanitizedKisError(e) ?? new FuturesHistoryError('upstream_unavailable'); }
   let receipt: unknown;
   try { receipt = clock(); } catch { throw new FuturesHistoryError('invalid_input'); }
   const received = ExactInstantSchema.safeParse(receipt);
