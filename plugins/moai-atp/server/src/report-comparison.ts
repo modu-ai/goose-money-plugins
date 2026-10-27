@@ -184,6 +184,39 @@ export function judgeFieldComparability(metrics:readonly (ComparableMetric|null|
   return {comparable:reasons.size===0,reasons:COMPARISON_REASONS.filter(reason=>reasons.has(reason))};
 }
 
+// The three pieces below derive a comparison's rows from its metrics, source bindings and sources. The build and
+// the contract-1.2 invariant both call them, so the invariant refuses exactly what the build would not have produced.
+type LineageMetric=ComparableMetric&{field_id:string;source_id:string};
+type LineageSource={id:string;source_as_of?:string|null|undefined;received_at?:string|undefined;observed_at?:string|undefined};
+
+/** The pipeline's own fallback, read back from the source: no `source_as_of` and a period equal to the receipt time. */
+const periodUndatedIn=(sources:readonly LineageSource[])=>{
+  const sourceOf=new Map(sources.map(source=>[source.id,source]));
+  return (metric:LineageMetric)=>{const source=sourceOf.get(metric.source_id);return source!==undefined&&(source.source_as_of===null||source.source_as_of===undefined)&&metric.period===(source.received_at??source.observed_at);};
+};
+
+/** The metrics in canonical source order (`sourceIds`, then document order) and the first one per subject and field: the lineage metric. `conflict`: a second source of one subject declares the field. */
+function canonicalMetrics<T extends LineageMetric>(metrics:readonly T[],sourceIds:readonly string[],ownerOf:(sourceId:string)=>string|undefined):{ordered:T[];first:Map<string,T>;conflict:boolean}{
+  const rank=new Map(sourceIds.map((id,index)=>[id,index]));
+  const ordered=[...metrics].sort((left,right)=>(rank.get(left.source_id)??rank.size)-(rank.get(right.source_id)??rank.size));
+  const first=new Map<string,T>();let conflict=false;
+  for(const metric of ordered){
+    const key=ownerOf(metric.source_id)+'\u0000'+metric.field_id;const held=first.get(key);
+    if(held===undefined)first.set(key,metric);
+    else if(held.source_id!==metric.source_id)conflict=true;
+  }
+  return {ordered,first,conflict};
+}
+
+/** Row order follows the subjects' input order, then each subject's metric order; never a value order. */
+const rowFieldIds=(subjectIds:readonly string[],ordered:readonly LineageMetric[],ownerOf:(sourceId:string)=>string|undefined)=>[...new Set(subjectIds.flatMap(id=>ordered.filter(metric=>ownerOf(metric.source_id)===id).map(metric=>metric.field_id)))];
+
+/** One row: each subject's lineage metric for the field (absent when it has none) and the verdict over them. */
+function deriveRow<T extends LineageMetric>(subjectIds:readonly string[],first:ReadonlyMap<string,T>,periodUndated:(metric:LineageMetric)=>boolean,fieldId:string):{found:(T|undefined)[];comparable:boolean;reasons:ComparisonReason[]}{
+  const found=subjectIds.map(id=>first.get(id+'\u0000'+fieldId));
+  return {found,...judgeFieldComparability(found.map(metric=>metric&&{...metric,period_undated:periodUndated(metric)}))};
+}
+
 export type ComparisonParts={sources:readonly Source[];metrics:readonly Metric[];source_tables:readonly SourceTable[];visuals:readonly Visual[]};
 /**
  * D6 and REQ-MAP-002 on the assembled parts: hide the DART values of unaccepted subjects (metrics, their period,
@@ -200,27 +233,17 @@ export function attributeComparison(subjects:readonly ComparisonSubject[],analys
   const sources=parts.sources.map(source=>({...source,title:prefix(source.id,source.title)}));
   const source_tables=parts.source_tables.filter(table=>!analysis.hiddenTables.has(table.source_id)).map(table=>({...table,title:prefix(table.source_id,table.title)}));
   const visuals=parts.visuals.map(visual=>({...visual,title:prefix(visual.source_id,visual.title)}));
-  const ownerOf=(metric:Metric)=>analysis.bindings.get(metric.source_id)?.id;
-  // The pipeline's own fallback, read back from the source: no `source_as_of` and a period equal to the receipt time.
-  const sourceOf=new Map(parts.sources.map(source=>[source.id,source]));
-  const periodUndated=(metric:Metric)=>{const source=sourceOf.get(metric.source_id);return source!==undefined&&(source.source_as_of===null||source.source_as_of===undefined)&&metric.period===(source.received_at??source.observed_at);};
+  const ownerOf=(sourceId:string)=>analysis.bindings.get(sourceId)?.id;
+  const subjectIds=subjects.map(subject=>subject.id);
   // Metrics in the canonical source order of the analysis (never the order of `calls`).
-  const rank=new Map([...analysis.bindings.keys()].map((id,index)=>[id,index]));
-  const ordered=[...metrics].sort((left,right)=>(rank.get(left.source_id)??rank.size)-(rank.get(right.source_id)??rank.size));
+  const {ordered,first,conflict}=canonicalMetrics(metrics,[...analysis.bindings.keys()],ownerOf);
   // A field has one source per subject: a second source declaring it would leave two competing values and the row would
   // pick one by position, so the comparison is refused instead (the same refusal as a second source per tool and subject).
-  const first=new Map<string,Metric>();
-  for(const metric of ordered){
-    const key=ownerOf(metric)+'\u0000'+metric.field_id;const held=first.get(key);
-    if(held===undefined)first.set(key,metric);
-    else if(held.source_id!==metric.source_id)return refuse('comparison_source_subject_mismatch');
-  }
-  // Row order follows the subjects' input order, then each subject's metric order; never a value order.
-  const fieldIds=[...new Set(subjects.flatMap(subject=>ordered.filter(metric=>ownerOf(metric)===subject.id).map(metric=>metric.field_id)))];
-  const rows=fieldIds.map(field_id=>{
-    const found=subjects.map(subject=>first.get(subject.id+'\u0000'+field_id));
-    const verdict=judgeFieldComparability(found.map(metric=>metric&&{...metric,period_undated:periodUndated(metric)}));
-    return {field_id,cells:subjects.map((subject,index)=>({subject_id:subject.id,value:found[index]?.value??null,source_id:found[index]?.source_id??null})),comparable:verdict.comparable,reasons:verdict.reasons};
+  if(conflict)return refuse('comparison_source_subject_mismatch');
+  const periodUndated=periodUndatedIn(parts.sources);
+  const rows=rowFieldIds(subjectIds,ordered,ownerOf).map(field_id=>{
+    const {found,comparable,reasons}=deriveRow(subjectIds,first,periodUndated,field_id);
+    return {field_id,cells:subjects.map((subject,index)=>({subject_id:subject.id,value:found[index]?.value??null,source_id:found[index]?.source_id??null})),comparable,reasons};
   });
   return {sources,metrics,source_tables,visuals,comparison:{
     subjects:subjects.map(subject=>({...subject})),
@@ -231,10 +254,16 @@ export function attributeComparison(subjects:readonly ComparisonSubject[],analys
   }};
 }
 
-export type ComparisonInvariantInput={contract_version:string;report_id:string;sources:readonly {id:string;kind:string;rights:string;validation_status?:string|undefined}[];comparison?:ComparisonBlock|undefined};
+export type ComparisonInvariantInput={contract_version:string;report_id:string;sources:readonly (LineageSource&{kind:string;rights:string;validation_status?:string|undefined})[];metrics:readonly LineageMetric[];comparison?:ComparisonBlock|undefined};
+// A metric the ledger shows as a dash: a comparison cell must not show a value over it.
+const HIDDEN_METRIC_STATUSES:readonly string[]=['missing','rights_pending','error','not_run'];
 /**
  * REQ-TRU-001 / D7: the issues of a contract-1.2 document, one message per clause, independent of each other.
  * The five clause messages are emitted by those five clauses only; the structure rules emit their own.
+ * SPEC-ATP-DEBT-F3F4-001: the comparison table is also checked against its own document, in every mode. Its rows must be
+ * the ones the build derives from the document's metrics, bindings and sources (field set and order, one cell per
+ * subject carrying the lineage metric's source and value, and the verdict); build output passes by construction.
+ * It proves internal consistency, not truth: a forger who changes metric, cell and verdict together passes.
  */
 export function comparisonInvariantIssues(doc:ComparisonInvariantInput):string[]{
   const issues=new Set<string>();
@@ -264,6 +293,25 @@ export function comparisonInvariantIssues(doc:ComparisonInvariantInput):string[]
     if(source.kind==='synthetic'||source.kind==='user_supplied')issues.add('label_source_kind_invalid');
     if(source.rights!=='local_view')issues.add('label_source_rights_invalid');
     if(source.validation_status!=='provider_shape_checked')issues.add('label_source_validation_invalid');
+  }
+  // Clauses row set, cell lineage, displayability and verdict: the table equals what the build derives from this document.
+  const ownerOf=new Map(block.source_bindings.map(binding=>[binding.source_id,binding.subject_id]));
+  const owner=(sourceId:string)=>ownerOf.get(sourceId);
+  const subjectOrder=block.subjects.map(subject=>subject.id);
+  const {ordered,first,conflict}=canonicalMetrics(doc.metrics,block.source_bindings.map(binding=>binding.source_id),owner);
+  if(conflict)issues.add('comparison_cell_missing_metric_lineage');
+  const expectedFields=rowFieldIds(subjectOrder,ordered,owner);
+  if(block.rows.length!==expectedFields.length||block.rows.some((row,index)=>row.field_id!==expectedFields[index]))issues.add('comparison_row_set_mismatch');
+  const periodUndated=periodUndatedIn(doc.sources);
+  for(const row of block.rows){
+    const derived=deriveRow(subjectOrder,first,periodUndated,row.field_id);
+    if(row.cells.length!==subjectOrder.length||row.cells.some((cell,index)=>cell.subject_id!==subjectOrder[index]))issues.add('comparison_cell_missing_metric_lineage');
+    else row.cells.forEach((cell,index)=>{
+      const lineage=derived.found[index];
+      if(cell.source_id!==(lineage?.source_id??null)||cell.value!==(lineage?.value??null))issues.add('comparison_cell_missing_metric_lineage');
+      else if(cell.value!==null&&lineage!==undefined&&HIDDEN_METRIC_STATUSES.includes(lineage.status))issues.add('comparison_cell_not_displayable');
+    });
+    if(row.comparable!==derived.comparable||row.reasons.join()!==derived.reasons.join())issues.add('comparison_row_verdict_mismatch');
   }
   return [...issues];
 }
