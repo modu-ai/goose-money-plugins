@@ -221,8 +221,12 @@ function cleanTimestamp(value:unknown,fallback:string):string {
 }
 function cleanSourceAsOf(value:unknown):string|null {
   if(value===null||value===undefined)return null;
-  if(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(value)&&!Number.isNaN(Date.parse(value)))return value;
-  if(typeof value==='string'&&Number.isFinite(Date.parse(value)))return new Date(value).toISOString();
+  if(typeof value!=='string')return null;
+  // Only the two forms the ReportInput source schema accepts count as dated: a real calendar day, or an RFC 3339
+  // instant with an explicit offset. Anything Date.parse happens to read ("1", "2026", offset-less) is undated.
+  const day=/^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if(day){const y=Number(day[1]),m=Number(day[2]),d=Number(day[3]);const t=new Date(Date.UTC(y,m-1,d));return y>=1&&t.getUTCFullYear()===y&&t.getUTCMonth()===m-1&&t.getUTCDate()===d?value:null;}
+  if(timestamp.safeParse(value).success&&Number.isFinite(Date.parse(value)))return new Date(value).toISOString();
   return null;
 }
 function decimalLexeme(value:unknown):string|null { return typeof value==='string'&&/^-?(0|[1-9]\d*)(\.\d+)?$/.test(value)?value:null; }
