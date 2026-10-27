@@ -29,7 +29,7 @@
         "etf_structure",
         "claims_events"
       ],
-      "end_to_end_status": "not_implemented",
+      "end_to_end_status": "partial_input_render_path_synthetic_verified_live_incomplete",
       "actual_data_complete": false
     },
     {

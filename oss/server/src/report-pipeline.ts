@@ -2,6 +2,7 @@ import { createRequire } from 'node:module';
 import { z } from 'zod';
 import { renderReportTemplate } from './report-template-renderer.js';
 import { getReportPresentation, type ReportPresentation } from './report-presentation.js';
+import { COMPARISON_PILOT_TOOLS, ComparisonBlockSchema, analyzeComparison, attributeComparison, comparisonHeaderSubject, comparisonInvariantIssues, validateComparisonSubjects, type ComparisonCall } from './report-comparison.js';
 
 const require = createRequire(import.meta.url);
 const routeDocument = require('../contracts/report-route-bindings.v1.json') as RouteBindingDocument;
@@ -159,12 +160,13 @@ const VisualPayloadSchema = z.discriminatedUnion('kind',[
 const TimeSeriesSchema = z.object({title:z.string(),renderer:z.literal('lightweight-charts'),dates:z.array(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).min(2).max(100),unit:z.string().min(1),source_id:z.string(),adjustment:z.enum(['adjusted','unadjusted']),series:z.array(z.object({field_id:z.string(),label:z.string(),values:z.array(z.union([DecimalValue,z.null()])).min(2).max(100),derived_from:z.string().optional(),calculation_ref:z.string().optional()}).strict()).min(1).max(5)}).strict().superRefine((v,c)=>{if(v.series.some(s=>s.values.length!==v.dates.length))c.addIssue({code:'custom',message:'time_series_dimension_mismatch'});if(new Set(v.dates).size!==v.dates.length||v.dates.some((d,i)=>i>0&&v.dates[i-1]!>=d))c.addIssue({code:'custom',message:'time_series_dates_not_strictly_increasing'});});
 const SourceTableSchema=z.object({source_id:z.string(),title:z.string().max(160),columns:z.array(z.string().max(160)).min(1).max(8),rows:z.array(z.array(z.string().max(2048)).max(8)).max(250),coverage_note:z.string().max(500)}).strict().superRefine((v,c)=>{if(v.rows.some(row=>row.length!==v.columns.length))c.addIssue({code:'custom',message:'source_table_dimensions'});});
 export const ReportInputSchema = z.object({
-  contract_version:z.literal('atp.template/1.1'),report_id:z.enum(REPORT_ROUTE_IDS),mode:z.enum(['synthetic','supplied','actual','mixed']),
+  contract_version:z.enum(['atp.template/1.1','atp.template/1.2']),report_id:z.enum(REPORT_ROUTE_IDS),mode:z.enum(['synthetic','supplied','actual','mixed']),
   subject:z.object({id:z.string().min(1).max(200),name:z.string().min(1).max(200),venue:z.string().min(1).max(200),currency:z.string().min(1).max(200)}).strict(),
   cutoff:timestamp,display_timezone:z.enum(['Asia/Seoul','UTC','America/New_York','Europe/London','Asia/Tokyo']),
   sources:z.array(SourceSchema).max(100),source_tables:z.array(SourceTableSchema).max(12).optional(),metrics:z.array(MetricSchema).max(500),sections:z.array(SectionSchema).min(1).max(30),
   visuals:z.array(ReportVisualSchema).max(40).optional(),chart:z.union([ChartSchema,z.null()]),time_series:z.union([TimeSeriesSchema,z.null()]),execution_status:z.enum(['template_only','not_run','provided_unverified','synthetic_fixture_rendered','actual_input_unvalidated','actual_data_partial']),
   analysis_claims:z.array(ClaimSchema).max(300),
+  comparison:ComparisonBlockSchema.optional(),
 }).strict().superRefine((v,c)=>{
   if((v.mode==='actual'||v.mode==='mixed')&&!['actual_input_unvalidated','actual_data_partial'].includes(v.execution_status))c.addIssue({code:'custom',message:'actual_mode_status_mismatch'});
   const allowed=(sourceId:string)=>{const source=v.sources.find(item=>item.id===sourceId);if(!source)return false;if(v.mode==='synthetic')return source.kind==='synthetic'&&source.rights==='synthetic_only'&&source.validation_status==='synthetic_fixture';if(source.kind==='user_supplied')return (v.mode==='supplied'||v.mode==='mixed')&&source.rights==='local_view'&&source.validation_status==='unverified';return source.rights==='local_view'&&['provider_shape_checked','independently_reconciled'].includes(source.validation_status??'');};
@@ -188,6 +190,7 @@ export const ReportInputSchema = z.object({
   const knownSources=new Set(v.sources.map(source=>source.id)),knownMetrics=new Set(v.metrics.map(metric=>metric.field_id));
   for(const claim of v.analysis_claims)if(claim.source_ids.some(id=>!knownSources.has(id))||claim.metric_ids.some(id=>!knownMetrics.has(id)))c.addIssue({code:'custom',message:'analysis_claim_reference_not_found'});
   if(v.time_series){if(!allowed(v.time_series.source_id))c.addIssue({code:'custom',message:'time_series_source_not_displayable'});const base=v.time_series.series[0];if(!base||base.field_id!=='history.close'||base.derived_from||base.calculation_ref)c.addIssue({code:'custom',message:'time_series_base_series_invalid'});for(const series of v.time_series.series.slice(1)){const match=series.field_id.match(/^history\.sma_(5|20|60|120)$/);if(!match||series.derived_from!=='history.close'||series.calculation_ref!==`sma.${match[1]}.v1`)c.addIssue({code:'custom',message:'time_series_derived_series_invalid'});}}
+  for(const message of comparisonInvariantIssues(v))c.addIssue({code:'custom',message});
 });
 export const ActiveReportInputSchema = ReportInputSchema.safeExtend({report_id:z.enum(ACTIVE_REPORT_ROUTE_IDS)});
 export type ReportInput = z.infer<typeof ReportInputSchema>;
@@ -620,7 +623,7 @@ export function getReportPlan(reportId:string):ReportPlan {
 }
 
 export type BuildReportInputArgs = {
-  report_id:string;subject:{id:string;name:string;venue:string;currency:string};cutoff:string;display_timezone:ReportInput['display_timezone'];
+  report_id:string;subject?:{id:string;name:string;venue:string;currency:string}|undefined;subjects?:readonly ComparisonSubjectInput[]|undefined;cutoff:string;display_timezone:ReportInput['display_timezone'];
   calls?:readonly {tool_name:string;result:unknown}[];received_at?:string;trustedLocalReceipts?:ReadonlyMap<number,{receivedAt:string}>;user_supplied?:z.infer<typeof UserSuppliedFinanceSchema>;
 };
 
@@ -628,10 +631,15 @@ const ReportPipelineCallSchema = z.object({
   tool_name:z.string().min(1).max(120),
   result:z.record(z.string(),z.unknown()),
 }).strict();
+// Explicit comparison subjects (report R02 only). Count, uniqueness, symbol shape and the single-`subject` exclusion
+// are judged in validateComparisonSubjects so that a violation is a coded refusal, not an input-validation error.
+const ComparisonSubjectInputSchema = z.object({id:z.string().min(1).max(200),name:z.string().min(1).max(200),venue:z.string().min(1).max(200),currency:z.string().min(1).max(200),kis_symbol:z.string().min(1).max(40),corp_code_candidate:z.string().min(1).max(40)}).strict();
+type ComparisonSubjectInput = z.infer<typeof ComparisonSubjectInputSchema>;
 /** Input schema for the local-only MCP report assembler. It accepts prior MCP results; it never invokes providers. */
 export const ReportPipelineToolInputSchema = z.object({
   report_id:z.enum(ACTIVE_REPORT_ROUTE_IDS),
-  subject:z.object({id:z.string().min(1).max(200),name:z.string().min(1).max(200),venue:z.string().min(1).max(200),currency:z.string().min(1).max(200)}).strict(),
+  subject:z.object({id:z.string().min(1).max(200),name:z.string().min(1).max(200),venue:z.string().min(1).max(200),currency:z.string().min(1).max(200)}).strict().optional(),
+  subjects:z.array(ComparisonSubjectInputSchema).max(100).optional(),
   cutoff:timestamp,
   display_timezone:z.enum(['Asia/Seoul','UTC','America/New_York','Europe/London','Asia/Tokyo']),
   calls:z.array(ReportPipelineCallSchema).max(100).default([]),
@@ -720,11 +728,25 @@ function sectionNarrative(plan:ReportPlan,section:RouteSection,status:ReportInpu
   const origins=sourceIds.length?`연결된 출처 ID: ${sourceIds.join(', ')}.`:'연결된 출처 응답이 없습니다.';
   return `${ROUTE_READOUT[plan.report_id]} ${boundary} ${section.title}: ${detail} ${reason} ${origins}`;
 }
+/** The structured payload of a successful tool result, read the way normalizeMcpToolResult reads it; null when there is none. */
+function comparisonPayload(resultValue:unknown):Record<string,unknown>|null {
+  const result=(isRecord(resultValue)?resultValue:{}) as ToolResultLike;
+  if(result.isError===true)return null;
+  let payload=result.structuredContent;
+  if(payload===undefined||payload===null){const text=payloadText(result);if(!text)return null;try{payload=parseJsonText(text);}catch{return null;}}
+  return isRecord(payload)?payload:null;
+}
 export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   const reportId=args.report_id as ReportRouteId;const plan=getReportPlan(reportId);
   const cutoff=timestamp.parse(args.cutoff);const receivedAt=args.received_at??new Date().toISOString();timestamp.parse(receivedAt);
+  // Explicit subjects select the comparison path (report R02); without them this function is the single-subject path.
+  const comparisonSubjects=args.subjects!==undefined?validateComparisonSubjects(args.report_id,args.subject,args.subjects):undefined;
+  if(comparisonSubjects===undefined&&args.subject===undefined)throw new Error('comparison_subjects_invalid');
+  if(comparisonSubjects)for(const call of args.calls??[])if(!(COMPARISON_PILOT_TOOLS as readonly string[]).includes(call.tool_name))throw new Error('comparison_tool_not_supported');
   const localUserData=buildLocalUserData(reportId,args.user_supplied,receivedAt);
   const allowed=new Set(plan.groups.flatMap(g=>g.tools.map(t=>t.name)));
+  // The filings list is identity evidence for the issuer mapping; it yields no metric, so the R02 field groups stay as they are.
+  if(comparisonSubjects)allowed.add('get_public_filings');
   const normalized=(args.calls??[]).map((call,i)=>{
     if(!allowed.has(call.tool_name))throw new Error('tool_not_required_by_report_route');
     const trusted=args.trustedLocalReceipts?.get(i);
@@ -737,7 +759,7 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   const normalizedMetrics=normalized.flatMap(c=>c.metrics.filter(item=>routeFields.has(item.field_id)));
   const allInputMetrics=[...normalizedMetrics,...(localUserData?.metrics??[])];
   if(allInputMetrics.some(item=>!routeFields.has(item.field_id)))throw new Error('field_not_required_by_report_route');
-  const metrics=deriveHistoryReportMetrics(reportId,normalized,deriveReportMetrics(reportId,allInputMetrics));
+  const derivedMetrics=deriveHistoryReportMetrics(reportId,normalized,deriveReportMetrics(reportId,allInputMetrics));
   const allowedVisualBlocks=new Map((plan.presentation?.sections??[]).map(section=>[section.id,new Set(section.blocks)]));
   const suppliedVisuals=[...normalized.flatMap(c=>c.visuals??[]),...(localUserData?.visuals??[])];
   const visuals=[...suppliedVisuals,...routeBarVisuals(reportId,allInputMetrics,sources,suppliedVisuals)].filter(visual=>{
@@ -748,6 +770,9 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
     if(referencedFields.some(field=>!section.field_ids.includes(field)&&!section.metric_ids.includes(field)))throw new Error('visual_field_not_required_by_report_section');
     return true;
   });
+  const analysis=comparisonSubjects?analyzeComparison(comparisonSubjects,normalized.map((call,i):ComparisonCall=>({tool_name:call.tool_name,outcome:call.outcome,source:call.source,origin:call.origin,trusted:Boolean(args.trustedLocalReceipts?.get(i)),payload:comparisonPayload(args.calls![i]!.result)}))):undefined;
+  const attributed=comparisonSubjects&&analysis?attributeComparison(comparisonSubjects,analysis,{sources,metrics:derivedMetrics,source_tables:normalized.flatMap(call=>call.source_tables??[]),visuals}):undefined;
+  const metrics=attributed?attributed.metrics:derivedMetrics;
   const origins=new Set(normalized.filter(c=>c.source).map(c=>c.origin));
   const mode:DataMode=localUserData?'supplied':origins.size===1&&origins.has('synthetic')?'synthetic':origins.size===1&&origins.has('actual')?'actual':origins.has('synthetic')||origins.has('actual')?'mixed':normalized.length?'supplied':'synthetic';
   const executionStatus:ReportInput['execution_status']=localUserData?'provided_unverified':mode==='synthetic'?(normalized.length?'synthetic_fixture_rendered':'template_only'):(mode==='actual'||mode==='mixed'?'actual_data_partial':normalized.length?'provided_unverified':'not_run');
@@ -781,7 +806,9 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   const rawChart=normalized.find(call=>call.chart)?.chart??null;
   const chartSection=rawChart?routeChartSectionId(reportId,rawChart.metric_ids):undefined;
   const chart=rawChart&&chartSection?{...rawChart,section_id:chartSection}:null;
-  return ReportInputSchema.parse({contract_version:'atp.template/1.1',report_id:reportId,mode,subject:args.subject,cutoff,display_timezone:args.display_timezone,sources,...(normalized.some(call=>call.source_tables?.length)?{source_tables:normalized.flatMap(call=>call.source_tables??[])}:{}),metrics,sections,visuals,chart,time_series:normalized.find(call=>call.time_series)?.time_series??null,execution_status:executionStatus,analysis_claims:claims});
+  // A comparison document names no single-subject chart or time series: those would carry one subject's data without saying which.
+  const tables=attributed?attributed.source_tables:normalized.flatMap(call=>call.source_tables??[]);
+  return ReportInputSchema.parse({contract_version:attributed?'atp.template/1.2':'atp.template/1.1',report_id:reportId,mode,subject:comparisonSubjects?comparisonHeaderSubject(comparisonSubjects):args.subject,cutoff,display_timezone:args.display_timezone,sources:attributed?attributed.sources:sources,...(tables.length?{source_tables:tables}:{}),metrics,sections,visuals:attributed?attributed.visuals:visuals,chart:attributed?null:chart,time_series:attributed?null:normalized.find(call=>call.time_series)?.time_series??null,execution_status:executionStatus,analysis_claims:claims,...(attributed?{comparison:attributed.comparison}:{})});
 }
 
 function routeChartSectionId(reportId:ReportRouteId,metricIds:string[]):string|undefined {
@@ -792,5 +819,7 @@ function routeChartSectionId(reportId:ReportRouteId,metricIds:string[]):string|u
 
 export function renderReportInputHtml(value:unknown):string {
   const doc=ReportInputSchema.parse(value);
+  // A comparison document (contract 1.2) takes no host narrative: free prose could name one subject's data as another's.
+  if(doc.contract_version==='atp.template/1.2'&&doc.analysis_claims.some(claim=>claim.id.includes('.NARRATIVE.')||claim.id.includes('.GOOSE_OPINION.')))throw new Error('comparison_narrative_not_supported');
   return renderReportTemplate(doc,getReportPlan(doc.report_id));
 }

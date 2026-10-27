@@ -1,0 +1,490 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:moai-atp:template:1.2",
+  "title": "MoAI ATP offline report input — R02 explicit-subjects comparison",
+  "description": "atp.template/1.2 is atp.template/1.1 plus the R02 comparison block. Shared definitions are those of urn:moai-atp:template:1.1. The source-trust clauses on the comparison block (no user_supplied source; every source labelled process_receipt and every verified_by_dart_filing evidence source must exist, be a provider-kind source, have rights local_view and validation_status provider_shape_checked) are enforced by the runtime ReportInputSchema and are not expressible in this file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "report_id",
+    "mode",
+    "subject",
+    "cutoff",
+    "display_timezone",
+    "sources",
+    "metrics",
+    "sections",
+    "chart",
+    "execution_status",
+    "time_series",
+    "comparison"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "atp.template/1.2"
+    },
+    "report_id": {
+      "const": "R02"
+    },
+    "mode": {
+      "enum": [
+        "synthetic",
+        "supplied",
+        "actual",
+        "mixed"
+      ]
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "venue",
+        "currency"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "venue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        }
+      }
+    },
+    "cutoff": {
+      "$ref": "urn:moai-atp:template:1.1#/$defs/timestamp"
+    },
+    "display_timezone": {
+      "enum": [
+        "Asia/Seoul",
+        "UTC",
+        "America/New_York",
+        "Europe/London",
+        "Asia/Tokyo"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$ref": "urn:moai-atp:template:1.1#/$defs/source"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "$ref": "urn:moai-atp:template:1.1#/$defs/metric"
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "$ref": "urn:moai-atp:template:1.1#/$defs/section"
+      }
+    },
+    "chart": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:moai-atp:template:1.1#/$defs/chart"
+        }
+      ]
+    },
+    "execution_status": {
+      "enum": [
+        "template_only",
+        "not_run",
+        "provided_unverified",
+        "synthetic_fixture_rendered",
+        "actual_input_unvalidated",
+        "actual_data_partial"
+      ]
+    },
+    "analysis_claims": {
+      "type": "array",
+      "maxItems": 300,
+      "items": {
+        "$ref": "urn:moai-atp:template:1.1#/$defs/analysis_claim"
+      }
+    },
+    "time_series": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "urn:moai-atp:template:1.1#/$defs/time_series"
+        }
+      ]
+    },
+    "visuals": {
+      "type": "array",
+      "maxItems": 40,
+      "items": {
+        "$ref": "urn:moai-atp:template:1.1#/$defs/report_visual"
+      }
+    },
+    "source_tables": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "title",
+          "columns",
+          "rows",
+          "coverage_note"
+        ],
+        "properties": {
+          "source_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "columns": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "type": "string",
+              "maxLength": 160
+            }
+          },
+          "rows": {
+            "type": "array",
+            "maxItems": 250,
+            "items": {
+              "type": "array",
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "maxLength": 2048
+              }
+            }
+          },
+          "coverage_note": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "comparison": {
+      "$ref": "#/$defs/comparison"
+    }
+  },
+  "$defs": {
+    "acquisition_kind": {
+      "enum": [
+        "process_receipt",
+        "caller_supplied_unverified",
+        "synthetic_fixture"
+      ]
+    },
+    "comparison_subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "venue",
+        "currency",
+        "kis_symbol",
+        "corp_code_candidate"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "venue": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "currency": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "kis_symbol": {
+          "type": "string",
+          "pattern": "^[0-9]{6}$"
+        },
+        "corp_code_candidate": {
+          "type": "string",
+          "pattern": "^[0-9]{8}$"
+        }
+      }
+    },
+    "issuer_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "status",
+        "kis_symbol",
+        "corp_code",
+        "evidence_source_id",
+        "matched_rcept_nos",
+        "corp_name",
+        "acquisition"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "verified_by_dart_filing",
+            "synthetic_fixture_match",
+            "unverified"
+          ]
+        },
+        "kis_symbol": {
+          "type": "string"
+        },
+        "corp_code": {
+          "type": "string"
+        },
+        "evidence_source_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "matched_rcept_nos": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "string"
+          }
+        },
+        "corp_name": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "acquisition": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/acquisition_kind"
+            }
+          ]
+        }
+      }
+    },
+    "comparison_cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject_id",
+        "value",
+        "source_id"
+      ],
+      "properties": {
+        "subject_id": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "urn:moai-atp:template:1.1#/$defs/decimal"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "comparison_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field_id",
+        "cells",
+        "comparable",
+        "reasons"
+      ],
+      "properties": {
+        "field_id": {
+          "type": "string"
+        },
+        "cells": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/comparison_cell"
+          }
+        },
+        "comparable": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "period_mismatch",
+              "period_unconfirmed",
+              "scope_mismatch",
+              "currency_mismatch",
+              "unit_mismatch",
+              "scale_mismatch",
+              "scale_unconfirmed",
+              "value_missing",
+              "rights_not_confirmed",
+              "issuer_mapping_unverified"
+            ]
+          }
+        }
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subjects",
+        "source_bindings",
+        "mappings",
+        "acquisitions",
+        "rows"
+      ],
+      "properties": {
+        "subjects": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/comparison_subject"
+          }
+        },
+        "source_bindings": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_id",
+              "subject_id"
+            ],
+            "properties": {
+              "source_id": {
+                "type": "string"
+              },
+              "subject_id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "mappings": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/issuer_mapping"
+          }
+        },
+        "acquisitions": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_id",
+              "kind"
+            ],
+            "properties": {
+              "source_id": {
+                "type": "string"
+              },
+              "kind": {
+                "$ref": "#/$defs/acquisition_kind"
+              }
+            }
+          }
+        },
+        "rows": {
+          "type": "array",
+          "maxItems": 500,
+          "items": {
+            "$ref": "#/$defs/comparison_row"
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "actual",
+              "mixed"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "execution_status": {
+            "enum": [
+              "actual_input_unvalidated",
+              "actual_data_partial"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
