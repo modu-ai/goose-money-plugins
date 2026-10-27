@@ -1,3 +1,4 @@
+import { types } from "node:util";
 import { z } from "zod";
 
 /** Official contract verified 2026-10-22. No live API or credential access. */
@@ -87,22 +88,17 @@ const HTTP_LAYER_CODES = new Map<string, SafeOpenDartError["code"]>([
   ["http_rejected", "upstream_rejected"], ["transport_failed", "upstream_unavailable"], ["request_timeout", "upstream_timeout"],
   ["invalid_response", "invalid_response"],
 ]);
-/** Prototype links inspected for a property; a genuine SafeOpenDartHttpError keeps both properties on the instance itself. */
-const MAX_PROTOTYPE_WALK = 8;
 /**
- * A string-valued DATA property of an injected error, found without running anything the error controls:
- * only Object.getOwnPropertyDescriptor (never a property read, so no getter and no Proxy `get` trap runs),
- * along at most MAX_PROTOTYPE_WALK prototype links. The first own descriptor found decides, as a read would:
- * an accessor, or a non-string value, means "not trusted" (undefined), never a call.
+ * A string-valued DATA property that the injected error OWNS, read without running anything the error controls:
+ * only Object.getOwnPropertyDescriptor (never a property read, so no getter and no Proxy `get` trap runs) and never
+ * a prototype link. A genuine SafeOpenDartHttpError keeps both `name` and `code` on the instance itself, so a value
+ * found only on a prototype (planted or inherited), an accessor, or a non-string value means "not trusted"
+ * (undefined). (Before t28 this walked the prototype chain: the thrown object plus 7 prototype links were
+ * inspected, and data planted on any of them was trusted.)
  */
-function inspectedDataString(error: object, key: "name" | "code"): string | undefined {
-  let holder: object | null = error;
-  for (let depth = 0; depth < MAX_PROTOTYPE_WALK && holder !== null; depth += 1) {
-    const descriptor = Object.getOwnPropertyDescriptor(holder, key);
-    if (descriptor !== undefined) return "value" in descriptor && typeof descriptor.value === "string" ? descriptor.value : undefined;
-    holder = Object.getPrototypeOf(holder);
-  }
-  return undefined;
+function ownDataString(error: object, key: "name" | "code"): string | undefined {
+  const descriptor = Object.getOwnPropertyDescriptor(error, key);
+  return descriptor !== undefined && "value" in descriptor && typeof descriptor.value === "string" ? descriptor.value : undefined;
 }
 /**
  * Whatever a provider/transport throws leaves as a SafeOpenDartError, always. The inspection can run hostile
@@ -111,8 +107,10 @@ function inspectedDataString(error: object, key: "name" | "code"): string | unde
  */
 export function openDartTransportError(error: unknown): SafeOpenDartError {
   try {
-    if (error instanceof Error && inspectedDataString(error, "name") === "SafeOpenDartHttpError") {
-      const code = inspectedDataString(error, "code");
+    // isProxy first: a Proxy is never trusted and `instanceof` on one would run its getPrototypeOf trap.
+    if (typeof error === "object" && error !== null && !types.isProxy(error) && types.isNativeError(error)
+        && ownDataString(error, "name") === "SafeOpenDartHttpError") {
+      const code = ownDataString(error, "code");
       const mapped = code === undefined ? undefined : HTTP_LAYER_CODES.get(code);
       if (mapped) return new SafeOpenDartError(mapped);
     }
