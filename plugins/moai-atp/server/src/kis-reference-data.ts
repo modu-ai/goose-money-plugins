@@ -14,7 +14,9 @@ async function response(transport:ReferenceTransport,request:ReferenceRequest){
  if(r.status===429)throw new Error('rate_limited');if(r.status===401||r.status===403)throw new Error('auth_expired');if(r.status<200||r.status>=300)throw new Error('upstream_unavailable');
  if(r.tr_cont==='M'||r.tr_cont==='F')throw new Error('pagination_not_supported');if(![null,'','D','E'].includes(r.tr_cont))throw new Error('schema_drift');
  let bytes;try{bytes=Buffer.byteLength(JSON.stringify(r.body),'utf8');}catch{throw new Error('schema_drift');}if(bytes>300000)throw new Error('response_too_large');
- const envelope=z.object({rt_cd:z.string(),output:z.unknown()}).safeParse(r.body);if(!envelope.success){const refusal=z.object({rt_cd:z.string()}).safeParse(r.body);throw new Error(refusal.success&&refusal.data.rt_cd!=='0'?'upstream_rejected':'schema_drift');}if(envelope.data.rt_cd!=='0')throw new Error('upstream_rejected');return envelope.data.output;
+ // A string or numeric non-"0" rt_cd is a provider refusal (same rule as isProviderRefusal in r01-kis-http-adapters.ts).
+ const refusal=z.object({rt_cd:z.union([z.string(),z.number()])}).safeParse(r.body);if(refusal.success&&String(refusal.data.rt_cd)!=='0')throw new Error('upstream_rejected');
+ const envelope=z.object({rt_cd:z.string(),output:z.unknown()}).safeParse(r.body);if(!envelope.success)throw new Error('schema_drift');return envelope.data.output;
 }
 export async function requestInstrumentProfile(input:unknown,transport:ReferenceTransport,receivedAt:string|(()=>string)){
  const q=ProfileInputSchema.parse(input);
