@@ -83,6 +83,8 @@ for(const [request,status,steps] of CONTROLS)test(`AC-005 positive control keeps
 for(const request of [
  '/goose 매수 해석 보고서','/goose 최근 3주 사이 삼성전자 실적 분석','/goose buy and hold 전략을 백테스트','/goose ETF 보유 종목 분석','/goose 퀀트 엔진이란 무엇인가요',
  '/goose 자동매매 시스템이란 무엇인가요','/goose 팀 에이전트가 뭔가요','/goose 매수 신호 규칙을 백테스트','/goose 삼성전자 매수해야 할까요 실적 분석',
+ // Separator-collapsed view must not stretch the baseline `.{0,N}` windows over unrelated words (found while tuning; baseline status is not blocked).
+ '/goose 주문 체결 구조 설명해줘','/goose 이체 수수료 구조를 설명해줘','/goose 매수 처리 현황 분석 보고서','/goose 퀀트 엔진 성능 설명 팀 에이전트 비교 개념 정리',
 ])test(`over-block guard (not a SPEC sentence): explanation, rule design and analysis stay unblocked: ${request}`,()=>{
  const p=planGooseRequest(request);assert.notEqual(p.status,'blocked',request);assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.blocked_actions,[]);assert.deepEqual(p.unsupported_actions,[]);
 });
