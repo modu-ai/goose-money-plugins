@@ -24,6 +24,11 @@ credentials.json
 /plugins/moai-atp/server/runtime/
 /plugins/moai-atp/server/.bundle-*/
 
+# Move transition (SPEC-ATP-MOVE-001): checkouts built before the oss/ -> plugins/moai-atp/ move
+# still hold generated output at the old paths; keep ignoring it so git add -A cannot pick it up.
+/oss/server/runtime/
+/oss/server/.bundle-*/
+
 # Local agent harness and local archives (not product source)
 /.claude/
 /.moai/
