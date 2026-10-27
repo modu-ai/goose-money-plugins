@@ -19,9 +19,11 @@
     },
     {
       "integration_path": "server/src/r01-kis-field-parsers.ts",
-      "source": "frozen provider RC18",
-      "sha256": "a530f80837340750ca622b9b0755e3c53406dba6d1a71e102a566a7edc2fb5dd",
-      "unchanged": true
+      "source": "frozen provider RC18, re-baselined after RC18",
+      "sha256": "5b3da5e123bc668c2f3dcf0d7b61bdf51e7e86bfa47419b8f05b570516aeec79",
+      "unchanged": false,
+      "rc18_sha256": "a530f80837340750ca622b9b0755e3c53406dba6d1a71e102a566a7edc2fb5dd",
+      "change_note": "output2 gained optional prdy_vrss_sign (max 1) and prdy_vrss (max 10); 3 lines added after RC18"
     },
     {
       "integration_path": "server/contracts/report-history-reference/canonical-history.schema.json",
