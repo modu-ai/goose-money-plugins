@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Synthetic probe for SPEC-ATP-RUNTIME-001: what build_runtime_bundle reads and writes.
 
-usage: python3 -I runtime_declaration_probe.py <oss root>
+usage: python3 -I runtime_declaration_probe.py <plugin root>
 Builds a throwaway tree from synthetic files only (no credentials, no network, no real runtime output),
-runs the bundle builder from <oss root>/scripts on it, and prints one JSON line with the declared runtime
+runs the bundle builder from <plugin root>/scripts on it, and prints one JSON line with the declared runtime
 and the values the receipt and the ZIP package copies carry. Also imported by the unit tests.
 """
 import hashlib
@@ -17,8 +17,8 @@ MARKER = 'moai-atp-generated-mjs-v1'
 
 
 def synthetic_root(parent, root_package, server_package, manifest_fields=None):
-    """Create <parent>/oss with the files build() reads; manifest_fields override (None removes) manifest keys."""
-    root = Path(parent) / 'oss'
+    """Create <parent>/plugins/moai-atp with the files build() reads; manifest_fields override (None removes) manifest keys."""
+    root = Path(parent) / 'plugins' / 'moai-atp'
     (root / 'server/runtime/src').mkdir(parents=True)
     files = {}
     for name in ('src/main.mjs', 'src/cli.mjs'):

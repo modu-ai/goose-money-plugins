@@ -2,13 +2,13 @@
 
 제품명은 **모두의 주식**, 닉네임은 **MoAI ATP**입니다. 투자 지표 참고·자료 분석·근거 중심 보고서·전략 검증 지원을 목표로 개발 중인 에이전틱 트레이딩 플러그인입니다. **자동 실주문과 수익 보장을 제공하지 않습니다.**
 
-현재 구현과 미구현 범위는 아래에 구분합니다. 소스 패키지는 직접 설치 가능한 런타임 ZIP이 아니며, 사용 전 의존성 설치와 빌드가 필요합니다. [패키지·설정 안내](oss/README.md)를 참고하세요.
+현재 구현과 미구현 범위는 아래에 구분합니다. 소스 패키지는 직접 설치 가능한 런타임 ZIP이 아니며, 사용 전 의존성 설치와 빌드가 필요합니다. [패키지·설정 안내](plugins/moai-atp/README.md)를 참고하세요.
 
 Local development source is maintained in
-[`oss/`](oss/); the existing Git repository remains at this project root.
+[`plugins/moai-atp/`](plugins/moai-atp/); the existing Git repository remains at this project root.
 
 ```text
-oss/
+plugins/moai-atp/
   plugin.json, mcp.json        Local stdio plugin configuration
   skills/                     Goose and four specialist workflow instructions
   server/src/                 TypeScript research libraries and setup CLI
@@ -29,7 +29,7 @@ Runtime: Node >=22.2.0. Measured floor: the zlib.crc32 boundary was measured (ab
 Build with Node **24.22.1**. Install the locked dependencies without lifecycle scripts:
 
 ```sh
-cd oss
+cd plugins/moai-atp
 npm --prefix server ci --ignore-scripts
 npm run build
 npm test
@@ -59,18 +59,18 @@ priority; incomplete/empty values fail closed instead of mixing sources.
 The default server still denies data requests, does not read keys at startup,
 and has no OAuth token adapter. Storing keys does not enable provider access.
 
-From `oss/` after building, the following creates a separate private runtime ZIP with compiled code and three
+From `plugins/moai-atp/` after building, the following creates a separate private runtime ZIP with compiled code and three
 locked production dependencies. Node 24.22.1 remains an external build prerequisite.
 This artifact is distinct from the source ZIP and from actual host installation.
 
 ```sh
-python3 scripts/build_runtime_bundle.py --output ../project-docs/packages/moai-atp-runtime-private.zip
+python3 scripts/build_runtime_bundle.py --output ../../project-docs/packages/moai-atp-runtime-private.zip
 ```
 
 Use a new output filename for each artifact.
 
 Full contract tests additionally require Python 3.11+ and
-`jsonschema==4.26.0`; see `oss/server/requirements-contract-tests.txt`.
+`jsonschema==4.26.0`; see `plugins/moai-atp/server/requirements-contract-tests.txt`.
 Tests target **Windows and macOS only**. Linux validation is outside scope.
 Inherited strict file-replay functions are unavailable on both desktop platforms;
 desktop regressions verify rejection, not successful replay. Common-profile
@@ -93,11 +93,9 @@ orders, transfers or automatic trading. UI and remote-hosting expansion are back
 
 ## License and release status
 
-LGPL 3.0 is the intended public-source direction. `LGPL-3.0-only` versus
-`LGPL-3.0-or-later`, source ownership and reference-export permissions remain
-under review; no final project license is granted yet. Package metadata remains
-`private: true` / `UNLICENSED` until that review is complete. Dependency notices
-are in [THIRD_PARTY_NOTICES.md](oss/THIRD_PARTY_NOTICES.md).
+The decided license is `LGPL-3.0-only`. Third-party notices and provenance must
+be checked before public release. Dependency notices are in
+[THIRD_PARTY_NOTICES.md](plugins/moai-atp/THIRD_PARTY_NOTICES.md).
 
 MoAI membership governs access to a service and is separate from future OSS use
 rights. A source-code license does not grant market-data rights. This repository

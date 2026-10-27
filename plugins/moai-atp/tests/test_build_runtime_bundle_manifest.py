@@ -1,6 +1,6 @@
 """SPEC-ATP-RUNTIME-001 AC-RT-12 / AC-RT-13 (REQ-RT-008, 011, 012): bundle manifest validation and receipt.
 
-Synthetic trees only; no credentials, no network. Run: python3 -m unittest oss/tests/test_build_runtime_bundle_manifest.py
+Synthetic trees only; no credentials, no network. Run: python3 -m unittest plugins/moai-atp/tests/test_build_runtime_bundle_manifest.py
 """
 import copy
 import json

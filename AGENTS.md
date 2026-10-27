@@ -12,7 +12,7 @@ the source workflow instructions; do not reconstruct private user history.
 - `report-templates/` belongs exclusively to the separate report-template writer.
   This OSS-core writer must not edit it; template work must not edit OSS core,
   root AGENTS.md or shared project instructions. Coordinate through file ownership.
-- Publishable source lives in `oss/`; local generated material lives in
+- Publishable source lives in `plugins/moai-atp/`; local generated material lives in
   `project-docs/`. Original `moai-atp-0.1.0-rc.23/`, `review/` and `tools/` are
   preserved local inputs, not distribution inputs. Do not delete or overwrite them.
 - Never commit secrets, account identifiers, actual account/quote payloads,
@@ -21,9 +21,8 @@ the source workflow instructions; do not reconstruct private user history.
 - Preserve the initial remote README commit and never force-push or change
   repository visibility. Check content secrets, licenses and dependencies before
   commit/push. No real credential reads, authentication grants or live API calls.
-- LGPL 3.0 is the intended public license direction, not a completed grant.
-  Resolve `only` versus `or-later`, provenance and third-party notices before
-  adding a final LICENSE or declaring public release readiness.
+- LGPL-3.0-only is the decided license. Third-party notices and provenance
+  must be checked before public release.
 - First `/goose setup` presents the interview once; users may decline, leave
   fields unspecified or cancel. Store only explicitly confirmed answers. Do not
   repeat questions in later projects after refusal/cancellation; reuse confirmed

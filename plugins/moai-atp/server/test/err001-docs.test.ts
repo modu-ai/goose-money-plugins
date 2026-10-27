@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-// dist/test/<this file>.js -> oss/ is three levels up.
+// dist/test/<this file>.js -> plugins/moai-atp/ is three levels up.
 const ossDir = fileURLToPath(new URL('../../../', import.meta.url));
 const readme = readFileSync(join(ossDir, 'README.md'), 'utf8');
 const skill = readFileSync(join(ossDir, 'skills', 'goose', 'SKILL.md'), 'utf8');

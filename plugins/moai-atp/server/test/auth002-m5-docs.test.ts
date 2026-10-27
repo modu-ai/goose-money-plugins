@@ -3,8 +3,8 @@
 // verification is required (REQ-DOC-001, REQ-RDY-004 document side).
 //
 // Every predicate below is the AC-006 predicate of acceptance.md, restated as a count or a parse over repository
-// files. The tests only read files under the repository tree (oss/README.md, oss/skills/goose/SKILL.md,
-// oss/skills/goose/references/**, oss/CAPABILITIES.json); no network, no HOME, no key is touched. The one child
+// files. The tests only read files under the repository tree (plugins/moai-atp/README.md, plugins/moai-atp/skills/goose/SKILL.md,
+// plugins/moai-atp/skills/goose/references/**, plugins/moai-atp/CAPABILITIES.json); no network, no HOME, no key is touched. The one child
 // process runs the acceptance.md CAPABILITIES predicate verbatim under `python3 -I`, with an environment that
 // carries PATH only.
 //
@@ -23,7 +23,7 @@
 //                 ruling asks to be written down (not an AC-006 predicate)
 //
 // Not covered here, on purpose: the CAPABILITIES test figures (source_tests, latest_validation.tests) belong to the
-// M6 measurement (acceptance.md E-52), and the host manifests (oss/plugin.json, oss/mcp.json) belong to card t12.
+// M6 measurement (acceptance.md E-52), and the host manifests (plugins/moai-atp/plugin.json, plugins/moai-atp/mcp.json) belong to card t12.
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -31,9 +31,9 @@ import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-// dist/test/<this file>.js -> oss/ is three levels up, the repository root four.
+// dist/test/<this file>.js -> plugins/moai-atp/ is three levels up, the repository root five.
 const ossDir = fileURLToPath(new URL('../../../', import.meta.url));
-const repoRoot = fileURLToPath(new URL('../../../../', import.meta.url));
+const repoRoot = fileURLToPath(new URL('../../../../../', import.meta.url));
 const readmePath = join(ossDir, 'README.md');
 const skillPath = join(ossDir, 'skills', 'goose', 'SKILL.md');
 const referencesDir = join(ossDir, 'skills', 'goose', 'references');
@@ -98,8 +98,9 @@ function capabilitiesViolations(d: Json): string[] {
 }
 
 // acceptance.md AC-006, "CAPABILITIES 회원 선언 — JSON 파싱 판정", copied byte for byte (E-55).
+// SPEC-ATP-AUTH-002 E-55 술어를 이동된 경로로 옮김(SPEC-ATP-MOVE-001): 저장소 루트 기준 plugins/moai-atp/CAPABILITIES.json.
 const ACCEPTANCE_PYTHON_PREDICATE =
-  "import json; d=json.load(open('oss/CAPABILITIES.json')); m=d.get('member_onboarding') or {}; v=[k+'.member_authentication_required' for k,x in d.items() if isinstance(x,dict) and x.get('member_authentication_required') is True]; v+=['latest_validation.current_default_tool_execution'] if (d.get('latest_validation') or {}).get('current_default_tool_execution')=='member_login_required' else []; v+=['member_onboarding.required_sequence'] if any(s in (m.get('required_sequence') or []) for s in ('moai_login','kis_and_opendart_connection_checks')) else []; v+=['member_onboarding.default'] if m.get('default')=='deny' else []; v+=['member_onboarding.common_tool_and_report_resource_guard'] if m.get('common_tool_and_report_resource_guard') is True else []; print(v)";
+  "import json; d=json.load(open('plugins/moai-atp/CAPABILITIES.json')); m=d.get('member_onboarding') or {}; v=[k+'.member_authentication_required' for k,x in d.items() if isinstance(x,dict) and x.get('member_authentication_required') is True]; v+=['latest_validation.current_default_tool_execution'] if (d.get('latest_validation') or {}).get('current_default_tool_execution')=='member_login_required' else []; v+=['member_onboarding.required_sequence'] if any(s in (m.get('required_sequence') or []) for s in ('moai_login','kis_and_opendart_connection_checks')) else []; v+=['member_onboarding.default'] if m.get('default')=='deny' else []; v+=['member_onboarding.common_tool_and_report_resource_guard'] if m.get('common_tool_and_report_resource_guard') is True else []; print(v)";
 
 const MEMBER_VOCABULARY = /member_login_required|provider_checks_required|로그인 연결|회원 인증/;
 const CONNECTED_STATUS_WORDING = /연결됨|연결 완료|검증됨|both connected/;

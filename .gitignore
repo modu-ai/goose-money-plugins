@@ -20,9 +20,9 @@ credentials.json
 *.zip
 *.tar.xz
 
-# Generated bundled install runtime (source remains in oss/server/src).
-/oss/server/runtime/
-/oss/server/.bundle-*/
+# Generated bundled install runtime (source remains in plugins/moai-atp/server/src).
+/plugins/moai-atp/server/runtime/
+/plugins/moai-atp/server/.bundle-*/
 
 # Local agent harness and local archives (not product source)
 /.claude/

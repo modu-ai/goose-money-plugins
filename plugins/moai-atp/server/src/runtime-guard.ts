@@ -2,7 +2,7 @@
 // it must stay free of imports, so it is resolved and evaluated before any server-graph module. It touches
 // only the `process` global and syntax that Node 18 and later parse, so a Node below the floor still reaches it.
 
-/** Execution range the server accepts. Same string as engines.node in oss/server/package.json. */
+/** Execution range the server accepts. Same string as engines.node in plugins/moai-atp/server/package.json. */
 export const RUNTIME_RANGE = ">=22.2.0";
 
 const RANGE_GRAMMAR = /^>=(\d{1,9})\.(\d{1,9})\.(\d{1,9})$/;

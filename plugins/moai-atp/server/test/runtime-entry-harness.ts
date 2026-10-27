@@ -10,7 +10,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build, type BuildOptions, type Metafile } from "esbuild";
 
-/** oss/server, derived from this file at dist/test/. */
+/** plugins/moai-atp/server, derived from this file at dist/test/. */
 export const SERVER_ROOT = fileURLToPath(new URL("../../", import.meta.url));
 export const COMPILED_ENTRY = join(SERVER_ROOT, "dist", "src", "main.js");
 export const OPTIONS_MODULE = join(SERVER_ROOT, "scripts", "build-mjs-options.mjs");

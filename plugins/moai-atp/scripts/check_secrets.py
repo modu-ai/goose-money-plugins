@@ -60,7 +60,7 @@ def main():
     args = parser.parse_args()
     root = Path(subprocess.check_output(['git', 'rev-parse', '--show-toplevel']).decode().strip())
     files = list(staged_files(root))
-    exceptions = json.loads(subprocess.check_output(['git', 'show', ':oss/scripts/synthetic-scan-exceptions.json'], cwd=root))
+    exceptions = json.loads(subprocess.check_output(['git', 'show', ':plugins/moai-atp/scripts/synthetic-scan-exceptions.json'], cwd=root))
     found, reviewed = [], []
     for path, data in files:
         lines = data.splitlines()

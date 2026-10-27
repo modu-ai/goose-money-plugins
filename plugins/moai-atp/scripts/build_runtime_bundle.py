@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Create a credential-free MJS runtime ZIP. Requires developer build:mjs first.
 
-Installation needs the Node range stated in oss/README.md, but no npm install or TypeScript build.
+Installation needs the Node range stated in plugins/moai-atp/README.md, but no npm install or TypeScript build.
 No host installation, credential configuration, or API request is performed.
 """
 import argparse, hashlib, json
@@ -22,7 +22,7 @@ def validate_runtime_manifest(manifest,declared):
  if manifest.get('node_required')!=manifest.get('node_build_pin'):raise ValueError('runtime_manifest_invalid')
 def build(root, output):
  root,output=root.resolve(),output.resolve()
- if not output.is_relative_to(root.parent/'project-docs') or output.exists():raise ValueError('output_must_be_new_project_document_artifact')
+ if not output.is_relative_to(root.parent.parent/'project-docs') or output.exists():raise ValueError('output_must_be_new_project_document_artifact')
  files={}
  def add_bytes(name,data):
   relative=Path(name)

@@ -460,7 +460,7 @@ test('AC-004g the Windows block is preserved: one exact line, first statement of
 test('AC-004h the injection point is open to no production call site: fsAdapter appears in local-credentials.ts and nowhere else under src', () => {
   const holders = readdirSync(srcDir, { recursive: true }).map(String).filter((name) => name.endsWith('.ts')).sort()
     .filter((name) => readFileSync(join(srcDir, name), 'utf8').includes('fsAdapter'));
-  assert.deepEqual(holders, ['local-credentials.ts'], 'grep -rln fsAdapter oss/server/src');
+  assert.deepEqual(holders, ['local-credentials.ts'], 'grep -rln fsAdapter plugins/moai-atp/server/src');
   const mentions = readSource('local-credentials.ts').split('\n').filter((l) => l.includes('fsAdapter'));
   assert.ok(mentions.length >= 1);
   for (const line of mentions) assert.doesNotMatch(line, /process\.(argv|env)/, 'no argv or environment path sets the adapter');

@@ -65,7 +65,7 @@ Node 실행 파일·사용자 데이터·테스트·개발 의존성은 포함�
 
 ```sh
 npm --prefix server run build:mjs
-python3 scripts/build_runtime_bundle.py --output ../project-docs/packages/moai-atp-runtime-private.zip
+python3 scripts/build_runtime_bundle.py --output ../../project-docs/packages/moai-atp-runtime-private.zip
 ```
 
 로컬 stdio 패키징 근거는 [OpenAI 플러그인 문서](https://developers.openai.com/plugins/build/plugins)와

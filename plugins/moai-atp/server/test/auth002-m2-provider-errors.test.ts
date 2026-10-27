@@ -199,7 +199,7 @@ test('AC-002l build_report_input and render_report_html send no request of any k
 test('AC-002j SAFE_CODES carries credential_environment_invalid and credential_rejected on exactly one line each', async () => {
   const source = await readFile(new URL('../../src/mcp-result.ts', import.meta.url), 'utf8');
   for (const code of ['credential_environment_invalid', 'credential_rejected']) {
-    assert.equal(source.split('\n').filter((line) => line.includes(code)).length, 1, `grep -c ${code} oss/server/src/mcp-result.ts`);
+    assert.equal(source.split('\n').filter((line) => line.includes(code)).length, 1, `grep -c ${code} plugins/moai-atp/server/src/mcp-result.ts`);
   }
   for (const code of ['credential_environment_invalid', 'credential_rejected', 'credential_missing', 'rate_limited', 'auth_expired', 'upstream_rejected', 'upstream_unavailable', 'upstream_timeout', 'request_cancelled', 'schema_drift', 'invalid_response', 'transport_error']) {
     assert.equal(mcpResult.safeErrorCode(new Error(code)), code, `${code} must pass the allow list unchanged`);

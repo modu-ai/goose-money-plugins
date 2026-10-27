@@ -9,7 +9,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-// dist/test/<this file>.js -> oss/server/test/ (the TypeScript sources)
+// dist/test/<this file>.js -> plugins/moai-atp/server/test/ (the TypeScript sources)
 const testSourceDir = fileURLToPath(new URL('../../test/', import.meta.url));
 const ENTRY_TOKEN = 'src/' + 'main.js';
 const SPAWN_TOKEN = 'spawn(' + 'process.execPath';

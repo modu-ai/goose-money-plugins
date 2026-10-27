@@ -1,5 +1,5 @@
 // SPEC-ATP-RUNTIME-001 AC-RT-09, 10, 11, 14 (REQ-RT-008..013): one declaration source
-// (oss/server/package.json: engines.node = runtime range, devEngines.runtime.version = build pin) and every
+// (plugins/moai-atp/server/package.json: engines.node = runtime range, devEngines.runtime.version = build pin) and every
 // value-carrying site equal to it. Each site is also mutated alone in a temp copy of the tree, and the same
 // check must then fail naming that site.
 import assert from "node:assert/strict";
@@ -12,7 +12,7 @@ import { SERVER_ROOT, loadOptionsModule, makeTempDir, removeDir } from "./runtim
 
 const OSS_ROOT = resolve(SERVER_ROOT, "..");
 
-// Files the check reads, relative to oss/. The same list is copied into a temp tree for each mutation.
+// Files the check reads, relative to plugins/moai-atp/. The same list is copied into a temp tree for each mutation.
 const TREE_FILES = [
   "package.json", "CAPABILITIES.json", "server/package.json", "server/package-lock.json", "server/.nvmrc",
   "server/scripts/build-mjs.mjs", "server/scripts/build-mjs-options.mjs",
@@ -31,7 +31,7 @@ interface Row {
   name: string;
   kind: Kind;
   vPrefixed?: boolean;
-  /** File (relative to oss/) whose text produces this site's value. */
+  /** File (relative to plugins/moai-atp/) whose text produces this site's value. */
   file: string;
   /** Returns the file text with only this site's value changed. */
   mutate(text: string): string;
@@ -101,7 +101,7 @@ function runProbe(root: string): Record<string, string | null> {
   try { return JSON.parse(run.stdout.trim().split("\n").pop() ?? "{}") as Record<string, string | null>; } catch { return {}; }
 }
 
-/** The value each row's site carries in the tree at `root` (an oss/ layout), null when it cannot be read. */
+/** The value each row's site carries in the tree at `root` (a plugins/moai-atp/ layout), null when it cannot be read. */
 async function readSites(root: string): Promise<{ source: Source; values: Record<string, string | null> }> {
   const server = await readJson(root, "server/package.json");
   const source: Source = { range: server?.engines?.node ?? null, pin: server?.devEngines?.runtime?.version ?? null };
@@ -160,7 +160,7 @@ async function materialize(): Promise<string> {
   const dir = await makeTempDir("moai-rt-tree-");
   try {
     for (const relative of TREE_FILES) {
-      const target = join(dir, "oss", relative);
+      const target = join(dir, "plugin", relative);
       await mkdir(dirname(target), { recursive: true });
       await writeFile(target, (await readFile(join(OSS_ROOT, relative))));
     }
@@ -197,7 +197,7 @@ test("REQ-RT-013 (a): every value-carrying site agrees with the declaration sour
   const read = await readSites(OSS_ROOT);
   assert.match(read.source.range ?? "", /^>=\d+\.\d+\.\d+$/);
   assert.notEqual(read.source.pin, null);
-  assert.deepEqual(disagreeing(read), [], "sites that disagree with oss/server/package.json");
+  assert.deepEqual(disagreeing(read), [], "sites that disagree with plugins/moai-atp/server/package.json");
 });
 
 test("REQ-RT-013 (a): changing any single site alone makes the same check fail and name that site", async (t) => {
@@ -208,14 +208,14 @@ test("REQ-RT-013 (a): changing any single site alone makes the same check fail a
   // Control: an unmodified temp copy must agree everywhere, so a mutant's report is caused by its mutation alone.
   const control = await materialize();
   try {
-    assert.deepEqual(disagreeing(await readSites(join(control, "oss"))), [], "the unmodified temp copy must agree with its source");
+    assert.deepEqual(disagreeing(await readSites(join(control, "plugin"))), [], "the unmodified temp copy must agree with its source");
   } finally {
     await removeDir(control);
   }
   for (const row of rows) {
     const dir = await materialize();
     try {
-      const root = join(dir, "oss");
+      const root = join(dir, "plugin");
       const original = await readFile(join(root, row.file), "utf8");
       const changed = row.mutate(original);
       assert.notEqual(changed, original, `${row.name}: the mutation must change ${row.file}`);
