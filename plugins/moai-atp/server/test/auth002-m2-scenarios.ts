@@ -275,8 +275,7 @@ export const INJECTIONS: readonly Injection[] = [
   { id: 'dart-500', row: '002g', cls: 'F6', text: 'OpenDART HTTP 500', setup: kis({ dart: httpStatus(500) }), runFor: DART2, expect: same('upstream_rejected', DART2) },
   { id: 'dart-400', row: '002g', cls: 'F6', text: 'OpenDART HTTP 400 (other non-200)', setup: kis({ dart: httpStatus(400) }), runFor: DART2, expect: same('upstream_rejected', DART2) },
   { id: 'data-rt-cd-nonzero', row: '002g', cls: 'F6', text: 'KIS data endpoint HTTP 200 with rt_cd != 0 and no data roots', setup: kis({ data: providerRefusal }), runFor: KIS4,
-    // K3 is not asserted: kis-reference-data.ts:17 turns this body into schema_drift (F7) today and that line is outside the card's edit scope (progress.md E.2, M2 pre-start measurement).
-    expect: { K1: 'upstream_unavailable', K2: 'upstream_rejected', K4: 'upstream_rejected' } },
+    expect: { K1: 'upstream_unavailable', K2: 'upstream_rejected', K3: 'upstream_rejected', K4: 'upstream_rejected' } },
   { id: 'data-too-large', row: '002g', cls: 'F6', text: 'KIS data endpoint declares a body over 300,000 bytes', setup: kis({ data: declaredTooLarge }), runFor: KIS4, expect: { K1: 'response_too_large', K2: 'response_too_large', K3: 'upstream_unavailable', K4: 'response_too_large' } },
   { id: 'data-duplicate-date', row: '002g', cls: 'F6', text: 'KIS daily-bar answer repeats a business date (K2 only; found by the M2 pre-start measurement)', setup: kis({ data: duplicateBusinessDate }), runFor: ['K2'], expect: { K2: 'duplicate_provider_business_date' } },
   { id: 'token-transport', row: '002g', cls: 'F6', text: 'token endpoint transport failure', setup: kis({ token: rejectsWith('Error') }), runFor: KIS4, expect: same('upstream_unavailable', KIS4) },
