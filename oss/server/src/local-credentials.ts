@@ -1,5 +1,5 @@
 import { constants, type Stats } from "node:fs";
-import { lstat, mkdir, open, realpath, rename, unlink } from "node:fs/promises";
+import { link, lstat, mkdir, open, realpath, rename, unlink } from "node:fs/promises";
 import { homedir } from "node:os";
 import { isAbsolute, join, relative } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -60,10 +60,13 @@ export async function loadLocalCredentials(projectRoot = process.cwd(), homeDir 
     throw new SafeCredentialError(["ELOOP", "ENOTDIR"].includes(errno(e) ?? "") ? "credential_file_unsafe" : "credential_file_invalid");
   } finally { await handle?.close(); }
 }
-export async function saveLocalCredentials(patch: CredentialProviders, projectRoot: string, options: { confirmed: boolean; homeDir?: string }): Promise<void> {
+/** Test-only fault-injection point for the atomic-write steps. Production call sites never pass it; a missing member is the node:fs/promises function. */
+export interface SaveFsAdapter { open: typeof open; rename: typeof rename; link: typeof link; unlink: typeof unlink }
+export async function saveLocalCredentials(patch: CredentialProviders, projectRoot: string, options: { confirmed: boolean; homeDir?: string; fsAdapter?: Partial<SaveFsAdapter> }): Promise<void> {
   if (!options.confirmed) throw new SafeCredentialError("credential_confirmation_required");
   const parsed = providersSchema.safeParse(patch);
   if (!parsed.success || !Object.keys(parsed.data).length) throw new SafeCredentialError("credential_file_invalid");
+  const fsx: SaveFsAdapter = { open, rename, link, unlink, ...options.fsAdapter };
   const home = options.homeDir ?? homedir();
   const previous = await loadLocalCredentials(projectRoot, home);
   let handle, temporary: string | undefined;
@@ -71,21 +74,19 @@ export async function saveLocalCredentials(patch: CredentialProviders, projectRo
     const parent = await directory(projectRoot, home, true);
     if (!parent) throw new SafeCredentialError("credential_io_failed");
     temporary = join(parent, `.credentials-${randomUUID()}.tmp`);
-    handle = await open(temporary, "wx", 0o600);
+    handle = await fsx.open(temporary, "wx", 0o600);
     await handle.writeFile(JSON.stringify({ schemaVersion: 1, providers: { ...previous?.providers, ...parsed.data } }) + "\n");
     await handle.sync(); await handle.close(); handle = undefined;
     // Revalidate an existing destination before replacing it. Never follow links.
     await loadLocalCredentials(projectRoot, home);
-    if (!previous) {
-      const { link } = await import("node:fs/promises");
-      await link(temporary, join(parent, "credentials.json"));
-    } else await rename(temporary, join(parent, "credentials.json"));
+    if (!previous) await fsx.link(temporary, join(parent, "credentials.json"));
+    else await fsx.rename(temporary, join(parent, "credentials.json"));
   } catch (e) {
     if (e instanceof SafeCredentialError) throw e;
     throw new SafeCredentialError("credential_io_failed");
   } finally {
     await handle?.close();
-    if (temporary) await unlink(temporary).catch((e: unknown) => { if (errno(e) !== "ENOENT") throw e; });
+    if (temporary) await fsx.unlink(temporary).catch((e: unknown) => { if (errno(e) !== "ENOENT") throw e; });
   }
 }
 /** Complete environment provider values override the file; partial values fail closed. */

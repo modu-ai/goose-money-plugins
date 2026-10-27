@@ -1,4 +1,3 @@
-import type {MemberAccess} from './member-access.js';
 import {type SecPublicTransport} from './sec-public-data.js';
 import {OfficialKrEquityDirectoryLoader} from './kis-master-http.js';
 import {createExpandedKisTransports} from './kis-expanded-http.js';
@@ -10,7 +9,6 @@ import { createOneShotOpenDartHttpTransport, type OpenDartHttpOptions } from "./
 import { resolveProviderCredentials, type CredentialProviders } from "./local-credentials.js";
 
 type RuntimeOptions = {
-  memberAccess?: MemberAccess;
   /** Explicit trusted host injection only; no SEC contact/env discovery or default activation. */
   secEnabled?: boolean;
   secTransport?: SecPublicTransport;
@@ -74,6 +72,7 @@ async function requestAccessToken(keys: NonNullable<CredentialProviders["kis"]>,
     throw new SafeKisError("upstream_unavailable");
   }
   if (response.status === 429) throw new SafeKisError("rate_limited");
+  if (response.status === 401 || response.status === 403) throw new SafeKisError("credential_rejected");
   if (!response.ok) throw new SafeKisError("upstream_rejected");
   const text = await readBoundedResponseText(response, 16_384);
   let payload: unknown;
@@ -136,7 +135,6 @@ export function createCredentialBackedServer(options: RuntimeOptions = {}) {
     }).send(request),
   }:undefined;
   return createStockMcpServer({
-    ...(options.memberAccess?{memberAccess:options.memberAccess}:{}),
     ...(options.secEnabled===true && options.secTransport ? {secEnabled:true,secTransport:options.secTransport} : {}),
     studentReleaseScope: options.studentReleaseScope === true,
     directoryEnabled: options.rightsEnabled === true,

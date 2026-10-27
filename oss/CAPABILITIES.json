@@ -356,7 +356,7 @@
     "synthetic_values": "explicitly labeled synthetic_fixture",
     "unreconciled_provider_values": "hidden; rights_pending",
     "actual_data_reports_complete": 0,
-    "member_authentication_required": true
+    "member_authentication_required": false
   },
   "local_html_report_renderer": {
     "name": "render_report_html",
@@ -371,7 +371,7 @@
     "retention": "process-memory only; 5-minute TTL; maximum 3 reports; maximum 6 MiB each",
     "host_rendering": "client-dependent; not verified",
     "actual_data_reports_complete": 0,
-    "member_authentication_required": true,
+    "member_authentication_required": false,
     "retention_scope": "local stdio process only; not MoAI authentication server; remote report hosting not configured"
   },
   "active_report_routes": [
@@ -447,44 +447,37 @@
     "actual_public_sec_fact_records_retained": 100,
     "source_tests": 2051
   },
-  "source_tests": 2258,
+  "source_tests": 2641,
   "latest_validation": {
-    "tests": 2258,
+    "tests": 2641,
     "failed": 0,
     "skipped": 0,
-    "log": "atp-token-bound-full.tap",
-    "focused_member_and_goose_e2e_tests": 12,
+    "log": "npm --prefix oss/server test on macOS with Node 24.22.1; console output is not retained in this package",
     "provider_http_this_followup": 0,
     "public_skills": 1,
     "public_tools": 36,
-    "actual_login": "NOT_RUN",
-    "current_default_tool_execution": "member_login_required",
+    "current_default_tool_execution": "gated_by_read_switches_and_local_provider_keys_only",
     "historical_provider_coverage": "27 composite evidence / 9 blocked or failed; not current authenticated runtime execution",
-    "complete_actual_reports": 0,
-    "focused_member_token_tests": 15
+    "complete_actual_reports": 0
   },
   "member_onboarding": {
-    "required_sequence": [
-      "install",
-      "moai_login",
-      "kis_and_opendart_connection_checks",
-      "goose"
-    ],
-    "default": "deny",
-    "common_tool_and_report_resource_guard": true,
-    "actual_login_adapter": "not_configured",
-    "provider_check_adapter": "trusted_host_injection_required",
-    "server_no_retention_verified": false,
-    "community_server_storage_exception": "unapproved",
-    "synthetic_fixture_is_not_membership_proof": true,
-    "local_token_verifier": {
-      "source_contract_only": true,
-      "algorithm": "ES256",
-      "token_type": "at+jwt",
-      "member_resource_scope_client_callback": "not_configured",
-      "network_connected": false,
-      "requires_current_revocation_evidence": true,
-      "verified_session_binding": true
+    "status": "member_feature_not_connected",
+    "analysis_and_report_prerequisite": "not_a_prerequisite; local KIS App Key/Secret and OpenDART API key are the only authentication, and only the provider a request needs is checked",
+    "disconnected_member_module": {
+      "actual_login_adapter": "not_configured",
+      "provider_check_adapter": "trusted_host_injection_required",
+      "server_no_retention_verified": false,
+      "community_server_storage_exception": "unapproved",
+      "synthetic_fixture_is_not_membership_proof": true,
+      "local_token_verifier": {
+        "source_contract_only": true,
+        "algorithm": "ES256",
+        "token_type": "at+jwt",
+        "member_resource_scope_client_callback": "not_configured",
+        "network_connected": false,
+        "requires_current_revocation_evidence": true,
+        "verified_session_binding": true
+      }
     }
   }
 }

@@ -8,7 +8,7 @@ import {FuturesHistoryRequestSchema} from './futures-history.js';
 import {KrHistoricalIntradayRequestSchema} from './historical-stock-bars.js';
 import {MarketOrderbookRequestSchema} from './market-orderbook.js';
 import {REMAINING_SOURCE_LIMITS,Kis113MarketInvestorRequestSchema,Kis280IceActionRequestSchema} from './remaining-source-inputs.js';
-import {KIS_BASE_URL,PROCESS_PACER,SafeKisError,readBoundedResponseText,type KisCredentialProvider,type RequestPacer} from './kis-http.js';
+import {KIS_BASE_URL,PROCESS_PACER,SafeKisError,kisCredentialError,readBoundedResponseText,type KisCredentialProvider,type RequestPacer} from './kis-http.js';
 const day=z.string().regex(/^\d{8}$/);
 const benchmark=z.object({operation_ref:z.literal('KIS-264'),method:z.literal('GET'),path:z.literal('/uapi/overseas-price/v1/quotations/inquire-daily-chartprice'),tr_id:z.literal('FHKST03030100'),query:z.object({FID_COND_MRKT_DIV_CODE:z.enum(['N','X','I','S']),FID_INPUT_ISCD:z.string().min(1).max(12).regex(/^[A-Za-z0-9.]+$/),FID_INPUT_DATE_1:day,FID_INPUT_DATE_2:day,FID_PERIOD_DIV_CODE:z.enum(['D','W','M','Y'])}).strict()}).strict();
 const remaining=z.union([
@@ -33,7 +33,7 @@ function snapshot(value:unknown,depth=0):unknown {
 export function createExpandedKisTransports(credentials:KisCredentialProvider,fetchImpl:typeof fetch=fetch,pacer:RequestPacer=PROCESS_PACER){
  async function text(request:unknown){
   const parsed=RequestSchema.safeParse(snapshot(request));if(!parsed.success)throw new SafeKisError('invalid_input');const q=parsed.data;
-  const keys=await credentials.getForMarketRead();if([keys.appKey,keys.appSecret,keys.accessToken].some(v=>!v||/[\r\n\0]/.test(v)))throw new SafeKisError('credential_missing');
+  const keys=await credentials.getForMarketRead().catch((e:unknown)=>{throw kisCredentialError(e);});if([keys.appKey,keys.appSecret,keys.accessToken].some(v=>!v||/[\r\n\0]/.test(v)))throw new SafeKisError('credential_missing');
   const url=new URL('path' in q?q.path:q.endpoint,KIS_BASE_URL.production);for(const [key,value]of Object.entries(q.query))url.searchParams.set(key,value);
   await pacer.reserve();let response:Response;
   try{response=await fetchImpl(url,{method:'GET',redirect:'error',signal:AbortSignal.timeout(10_000),headers:{'content-type':'application/json; charset=utf-8',authorization:`Bearer ${keys.accessToken}`,appkey:keys.appKey,appsecret:keys.appSecret,tr_id:q.tr_id,tr_cont:'tr_cont' in q?q.tr_cont:'',custtype:'P'}});}catch(error){if(error instanceof Error&&error.name==='TimeoutError')throw new SafeKisError('upstream_timeout');throw new SafeKisError('upstream_unavailable');}

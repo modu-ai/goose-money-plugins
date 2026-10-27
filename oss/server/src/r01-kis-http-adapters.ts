@@ -4,6 +4,7 @@ import {
   PROCESS_PACER,
   RequestPacer,
   SafeKisError,
+  kisCredentialError,
   readBoundedResponseText,
   type InMemoryKisCredentials,
   type KisCredentialProvider,
@@ -184,7 +185,7 @@ export class FetchKisR01Transport implements KisR01Transport {
   }
 
   private async getCredentials(): Promise<InMemoryKisCredentials> {
-    const value = await this.credentials.getForMarketRead().catch(() => { throw new SafeKisError("credential_missing"); });
+    const value = await this.credentials.getForMarketRead().catch((error: unknown) => { throw kisCredentialError(error); });
     if (!value.appKey || !value.appSecret || !value.accessToken) throw new SafeKisError("credential_missing");
     return value;
   }
@@ -232,6 +233,13 @@ function validateResponseContinuation(value: string | null): void {
   if (value !== null && !["", "D", "E", "F", "M"].includes(value)) throw new SafeKisError("schema_drift");
 }
 
+/** A KIS answer that reports failure (rt_cd other than "0") and carries no data roots is a provider refusal, not a schema change. */
+function isProviderRefusal(body: unknown): boolean {
+  if (typeof body !== "object" || body === null) return false;
+  const code = (body as Record<string, unknown>).rt_cd;
+  return (typeof code === "string" || typeof code === "number") && String(code) !== "0";
+}
+
 function hasRows(body: unknown): boolean {
   return typeof body === "object" && body !== null && Array.isArray((body as Record<string, unknown>).output2);
 }
@@ -258,7 +266,7 @@ export async function requestKis039DailyBars(
   }, signal);
   validateResponseContinuation(response.tr_cont);
   if (response.tr_cont === "F" || response.tr_cont === "M") throw new SafeKisError("pagination_not_supported");
-  if (!hasRows(response.body)) throw new SafeKisError("schema_drift");
+  if (!hasRows(response.body)) throw new SafeKisError(isProviderRefusal(response.body) ? "upstream_rejected" : "schema_drift");
   const rows = (response.body as { output2: unknown[] }).output2;
   if (rows.length === 0) throw new SafeKisError("empty_response");
   if (rows.length > MAX_DAILY_ROWS) throw new SafeKisError("pagination_not_supported");

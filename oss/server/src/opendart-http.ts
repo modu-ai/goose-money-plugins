@@ -7,7 +7,7 @@ import { OPENDART_FILINGS_ENDPOINT, openDartFilingsInputSchema, parseOpenDartFil
 import { ExactInstantSchema } from './exact-instant.js';
 
 export const OPENDART_HTTP_LIMITS = Object.freeze({ response_bytes: 300_000, depth: 12, nodes: 30_000, string_units: 8192, key_units: 128, timeout_ms: 10_000, read_iterations: 4096 });
-export const OPENDART_HTTP_ERRORS = Object.freeze(['invalid_configuration','invalid_input','already_attempted','authorization_denied','credential_unavailable','transport_failed','request_timeout','redirect_rejected','http_rejected','response_too_large','invalid_response','credential_reflection','invalid_clock'] as const);
+export const OPENDART_HTTP_ERRORS = Object.freeze(['invalid_configuration','invalid_input','already_attempted','authorization_denied','credential_unavailable','transport_failed','request_timeout','redirect_rejected','credential_rejected','rate_limited','http_rejected','response_too_large','invalid_response','credential_reflection','invalid_clock'] as const);
 export type OpenDartHttpErrorCode = typeof OPENDART_HTTP_ERRORS[number];
 const errorCodes = new WeakMap<object,OpenDartHttpErrorCode>();
 export class SafeOpenDartHttpError extends Error {
@@ -171,6 +171,8 @@ export function createOneShotOpenDartHttpTransport(options: OpenDartHttpOptions)
       try {
         active();
         if (response.redirected || response.status >= 300 && response.status < 400) return fail('redirect_rejected');
+        if (response.status === 401 || response.status === 403) return fail('credential_rejected');
+        if (response.status === 429) return fail('rate_limited');
         if (response.status !== 200) return fail('http_rejected');
         const responseUrl=response.url; active();
         if (typeof responseUrl !== 'string' || responseUrl.length > 2048 || (responseUrl !== '' && responseUrl !== expectedHref) || (origin === 'actual' && responseUrl === '')) return fail('invalid_response');

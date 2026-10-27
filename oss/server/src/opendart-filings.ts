@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { openDartProvenanceSchema, SafeOpenDartError, type OpenDartProvenance } from "./opendart.js";
+import { openDartProvenanceSchema, openDartTransportError, SafeOpenDartError, type OpenDartProvenance } from "./opendart.js";
 export const OPENDART_FILINGS_DOCUMENTATION = "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS001&apiId=2019001";
 export const OPENDART_FILINGS_ENDPOINT = "https://opendart.fss.or.kr/api/list.json";
 const dateSchema = z.string().regex(/^\d{8}$/).refine(value => {
@@ -90,7 +90,7 @@ export async function requestOpenDartFilings(input: unknown, transport: OpenDart
   let payload: unknown;
   try {
     payload = await transport.send(Object.freeze({ operation: "opendart.public_filings", method: "GET", endpoint: OPENDART_FILINGS_ENDPOINT, params: Object.freeze({ ...validated.request }) }));
-  } catch { throw new SafeOpenDartError("transport_error"); }
+  } catch (error) { throw openDartTransportError(error); }
   const receivedEvidence = validate(input, provenanceFactory()).provenance;
   if (transport.origin !== receivedEvidence.origin) throw new SafeOpenDartError("invalid_provenance");
   return parseOpenDartFilings(validated.request, payload, receivedEvidence);

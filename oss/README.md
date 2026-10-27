@@ -54,7 +54,7 @@ MCP는 같은 엄격한 파일 규격을 지연 읽기합니다. 완전한 환�
 `KIS_APP_KEY`/`KIS_APP_SECRET`, 또는 `OPENDART_API_KEY`가 파일보다 우선합니다.
 빈 값·일부 값만 있는 환경변수는 파일과 섞지 않고 거부합니다.
 기본 권리 차단은 그대로이며 서버 시작·차단된 요청은 키를 읽지 않습니다.
-KIS App Key/Secret의 공식 client_credentials 토큰 어댑터는 구현되어 있습니다. 이는 모두의AI 회원 로그인과 별개입니다. 키 저장만으로 회원 인증이나 KIS/DART 연결 확인이 완료되지는 않습니다.
+KIS App Key/Secret의 공식 client_credentials 토큰 어댑터는 구현되어 있습니다. 분석·보고서 기능의 인증은 이 로컬 키뿐이며 별도 계정 절차는 없습니다. 키를 저장했다고 공급자가 그 키를 받아들였다는 뜻은 아니며, 요청이 공급자의 응답을 받았을 때에만 그 공급자를 확인한 것으로 봅니다.
 
 소스 ZIP과 별도로, 빌드 후 아래 명령으로 내부 검증용 런타임 ZIP을 만듭니다.
 새 출력 파일명을 사용합니다. 컴파일 코드·고정된 운영 의존성 3개를 포함하고,
@@ -123,8 +123,15 @@ npm test
 이전 전문 스킬 호출은 `/goose <모드> ...`로 옮깁니다. 실제 호스트 slash 등록/모델 라우팅은 별도 검증입니다.
 
 
-## 로그인과 연결 확인
+## KIS·OpenDART 키 연결 확인
 
-사용 순서는 설치 → 모두의AI 로그인 → KIS/DART 각각 연결 확인 → Goose 사용입니다. 로그인이나 두 연결 확인이 끝나지 않으면 분석·보고서 실행을 진행하지 않습니다. 키는 사용자 로컬 설정에 두며 채팅이나 모두의AI 서버로 보내지 않습니다.
+분석·보고서 기능에 쓰는 인증은 사용자 로컬에 둔 KIS App Key/Secret과 OpenDART API 키뿐이며, 별도 계정 절차는 없습니다. 사용 순서는 설치 → 필요한 공급자의 키 저장(`setup --credentials`) → Goose 사용입니다. 키는 사용자 로컬 설정에 두며 채팅이나 모두의AI 서버로 보내지 않습니다.
 
-현재 검토본에는 공통 차단 가드가 있고 실제 로그인 연결은 아직 제공되지 않습니다. `member_login_required` 또는 `provider_checks_required`이면 준비 완료가 아닙니다. 임의 플래그나 지침으로 통과시키지 않습니다. 사용자가 직접 실행 가능한 정식 인증 연결이 제공되기 전까지 이 검토본을 최종 사용 가능 버전으로 안내하지 않습니다.
+요청마다 그 요청에 필요한 공급자만 확인합니다. KIS 자료만 필요한 요청은 OpenDART의 키를 확인하거나 OpenDART로 요청을 보내지 않고, OpenDART 자료만 필요한 요청도 마찬가지입니다. 다른 공급자의 키가 없거나 꺼져 있어도 그 요청의 결과는 달라지지 않습니다.
+
+기본 설치(`mcp.json`의 읽기 스위치 `"1"`)에서는 해당 공급자의 키만 있으면 KIS·OpenDART 읽기가 동작합니다. 로컬 도구 `build_report_input`·`render_report_html`과 보고서 자원은 읽기 스위치 없이도 열립니다.
+
+공급자 오류는 코드로 구분합니다. KIS 토큰 요청이나 OpenDART가 HTTP 401/403으로 거부하면 `credential_rejected`, OpenDART가 HTTP 429로 거부하면 `rate_limited`입니다. 다만 이 구분이 모든 도구에 적용되지는 않습니다.
+
+- `get_instrument_profile`·`get_market_headlines`·`get_market_flows`는 KIS 키를 일부만 설정했거나 KIS 토큰 요청이 401/403으로 거부된 경우에도 `credential_rejected`가 아니라 `upstream_unavailable`로 나옵니다. 이 세 도구의 내부 오류 필터가 아직 정리되지 않았기 때문이며, 이때 `upstream_unavailable`을 공급자 장애로 단정하지 말고 키 설정과 키 거부 여부를 함께 확인합니다.
+- 종목 디렉터리 도구 `search_instruments`·`resolve_instrument`는 공급자 실패가 `schema_drift`로, 일부 확장 KIS 조회 도구(예: `get_us_market_snapshot`, `get_domestic_etf_snapshot`)는 키 미설정·401·429가 모두 `upstream_unavailable`로 보일 수 있습니다.

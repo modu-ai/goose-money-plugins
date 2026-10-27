@@ -6,9 +6,28 @@ import { spawn } from "node:child_process";
 import readline from "node:readline";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { assertRecorderCount, hermeticChildEnv, makeProfileDir, recorderImportArgs, removeProfileDir } from "./default-entry-env.js";
+import { MEMBER_GUARD_CODE, expectedSwitchOffCode } from "./default-server-harness.js";
 
 const entry = fileURLToPath(new URL("../src/main.js", import.meta.url));
 const syntheticEntry = fileURLToPath(new URL("./fixtures/success-main.js", import.meta.url));
+
+// Every child below gets an explicit hermetic environment (default-entry-env.ts): PATH and a mkdtemp
+// profile directory, never the parent's read switches, provider keys or real HOME. Only the default
+// entry point carries the fetch-recorder preload; fixture entries inject their own transport.
+const childArgs = (target: string): string[] => target === entry ? [...recorderImportArgs(), target] : [target];
+
+type StdioCall = { listedTools: string[]; call: { result?: { isError?: boolean; content?: Array<{ text?: string }>; structuredContent?: Record<string, unknown> }; error?: unknown }; stderr: string };
+
+// Default policy after the member gate is gone: the local read switches are off in the hermetic env,
+// so a gated tool answers with the baseline switch-off code (m0-baseline.md section 3), never a member code.
+function assertSwitchBlocked(name: string, call: StdioCall["call"]): void {
+  const text = call.result?.content?.[0]?.text ?? "";
+  assert.equal(call.result?.isError, true, JSON.stringify(call));
+  assert.doesNotMatch(text, MEMBER_GUARD_CODE);
+  assert.equal(text, `error_code=${expectedSwitchOffCode(name)}`);
+  assert.equal(call.result?.structuredContent, undefined);
+}
 
 function readJsonLine(reader: readline.Interface, timeoutMs = 5_000): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -25,11 +44,14 @@ function readJsonLine(reader: readline.Interface, timeoutMs = 5_000): Promise<un
   });
 }
 
-async function runStdioCall(targetEntry: string, tool = "get_market_snapshot", args: Record<string, unknown> = { symbol: "000660", board: "J" }): Promise<{ listedTools: string[]; call: { result?: { isError?: boolean; content?: Array<{ text?: string }>; structuredContent?: Record<string, unknown> }; error?: unknown }; stderr: string }> {
-  const child = spawn(process.execPath, [targetEntry], { stdio: ["pipe", "pipe", "pipe"] });
+async function runStdioCall(targetEntry: string, tool = "get_market_snapshot", args: Record<string, unknown> = { symbol: "000660", board: "J" }): Promise<StdioCall> {
+  const profileDir = await makeProfileDir();
+  const child = spawn(process.execPath, [...childArgs(targetEntry)], { env: hermeticChildEnv(profileDir), stdio: ["pipe", "pipe", "pipe"] });
+  const closed = new Promise<void>((resolve) => { child.once("close", () => resolve()); });
   const stdout = readline.createInterface({ input: child.stdout });
   let stderr = "";
   child.stderr.setEncoding("utf8").on("data", (chunk: string) => { stderr += chunk; });
+  let result: StdioCall | undefined;
   try {
     const initializeResponse = readJsonLine(stdout);
     child.stdin.write(`${JSON.stringify({
@@ -56,16 +78,19 @@ async function runStdioCall(targetEntry: string, tool = "get_market_snapshot", a
     const called = await callResponse as { id?: number; result?: { isError?: boolean; content?: Array<{ text?: string }>; structuredContent?: Record<string, unknown> }; error?: unknown };
     assert.equal(called.id, 3);
     assert.doesNotMatch(stderr, /key|secret|token/i);
-    return { listedTools, call: called, stderr };
+    result = { listedTools, call: called, stderr };
   } finally {
     child.stdin.end();
     stdout.close();
-    await new Promise<void>((resolve) => {
-      if (child.exitCode !== null) resolve();
-      else child.once("exit", () => resolve());
-      setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 1_000).unref();
-    });
+    // A clean stdin close ends the server on its own; SIGKILL is only the stuck-child fallback and
+    // leaves no recorder line, which the check below then reports as a failure.
+    await Promise.race([closed, new Promise<void>((resolve) => {
+      setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 5_000).unref();
+    })]);
+    await removeProfileDir(profileDir);
   }
+  if (targetEntry === entry) assertRecorderCount(stderr, 0, "default entry");
+  return { ...result, stderr };
 }
 
 test("stdio success keeps JSON structuredContent and marks fixture data synthetic", async () => {
@@ -97,7 +122,8 @@ test("stdio authenticated synthetic fixture serves a protocol-level template-onl
 });
 
 test("stdio MCP renders a synthetic report and reads the returned HTML resource", async () => {
-  const child = spawn(process.execPath, [syntheticEntry], { stdio: ["pipe", "pipe", "pipe"] });
+  const profileDir = await makeProfileDir();
+  const child = spawn(process.execPath, [...childArgs(syntheticEntry)], { env: hermeticChildEnv(profileDir), stdio: ["pipe", "pipe", "pipe"] });
   const stdout = readline.createInterface({ input: child.stdout });
   let stderr = "";
   child.stderr.setEncoding("utf8").on("data", (chunk: string) => { stderr += chunk; });
@@ -146,15 +172,31 @@ test("stdio MCP renders a synthetic report and reads the returned HTML resource"
       else child.once("exit", () => resolve());
       setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 1_000).unref();
     });
+    await removeProfileDir(profileDir);
   }
 });
 
-test("stdio default policy returns a safe member_login_required error before a provider call", async () => {
+test("stdio default policy runs tools without member verification and blocks a read-switch-off tool with rights_pending", async () => {
   const { listedTools, call } = await runStdioCall(entry);
   assert.deepEqual(listedTools, ["get_market_snapshot", "get_price_history", "get_market_flows", "get_instrument_profile", "get_market_headlines", "get_fundamentals", "get_public_filings", "get_credit_balances", "get_short_sale_activity", "get_stock_lending_activity", "get_us_market_snapshot", "get_index_futures_snapshot", "get_domestic_etf_snapshot", "get_sec_company_concept", "get_sec_submissions", "search_instruments", "resolve_instrument", "get_overseas_futures_snapshot", "get_us_price_history", "get_intraday_price_history", "get_us_product_profile", "get_domestic_futures_price_history", "get_domestic_futures_intraday_history", "get_overseas_futures_price_history", "get_overseas_futures_intraday_history", "get_historical_intraday_price_history", "get_market_orderbook", "build_report_input", "render_report_html", "get_domestic_index_history", "get_global_index_history", "get_market_industry_investor_aggregates", "get_kis_house_estimates", "get_overseas_ice_actions", "get_domestic_index_period_history", "get_global_index_period_history"]);
-  assert.equal(call.result?.isError, true);
-  assert.match(call.result?.content?.[0]?.text ?? "", /member_login_required/);
-  assert.equal(call.result?.structuredContent, undefined);
+  assertSwitchBlocked("get_market_snapshot", call);
+});
+
+// New in M3: the positive half of the default policy. With no member gate and every read switch off,
+// a tool that needs no switch (build_report_input) runs on the real default entry point.
+test("stdio default entry runs build_report_input without member verification when every read switch is off", async () => {
+  const args = {
+    report_id: "R01",
+    subject: { id: "KRX:000660", name: "합성 종목", venue: "KRX", currency: "KRW" },
+    cutoff: "2026-10-23T03:00:00.000Z",
+    display_timezone: "Asia/Seoul",
+  };
+  const { listedTools, call } = await runStdioCall(entry, "build_report_input", args);
+  assert.equal(listedTools.length, 36);
+  assert.equal(call.result?.isError, undefined, JSON.stringify(call));
+  assert.doesNotMatch(JSON.stringify(call), MEMBER_GUARD_CODE);
+  assert.equal(call.result?.structuredContent?.report_id, "R01");
+  assert.equal(call.result?.structuredContent?.execution_status, "template_only");
 });
 
 const extendedEntry = fileURLToPath(new URL("./fixtures/extended-main.js", import.meta.url));
@@ -189,7 +231,7 @@ const operations: Array<[string, Record<string, unknown>]> = [
 for(const [name,args] of operations){
  test(`stdio ${name} remains denied by default`,async()=>{
   const {listedTools,call}=await runStdioCall(entry,name,args);
-  assert.equal(call.result?.isError,true);assert.match(call.result?.content?.[0]?.text??"",/member_login_required/);
+  assertSwitchBlocked(name,call);
  });
  test(`stdio ${name} returns typed synthetic injected response`,async()=>{
   const {call}=await runStdioCall(extendedEntry,name,args);assert.equal(call.result?.isError,undefined,JSON.stringify(call));const data=call.result?.structuredContent!;
@@ -210,8 +252,7 @@ const sourceInputEntry = fileURLToPath(new URL('./fixtures/source-input-main.js'
 for (const [name, args] of Object.entries(sourceInputs)) {
   test(`stdio source input ${name} remains denied by default`, async () => {
     const { listedTools, call } = await runStdioCall(entry, name, args);
-    assert.equal(listedTools.length, 36); assert.equal(call.result?.isError, true);
-    assert.match(call.result?.content?.[0]?.text ?? '', /^error_code=member_login_required$/);
+    assert.equal(listedTools.length, 36); assertSwitchBlocked(name, call);
   });
   test(`stdio source input ${name} rejects argument provenance or rights overrides`, async () => {
     for (const patch of [{}, { origin: 'actual' }, { rightsEnabled: true }]) {
@@ -242,7 +283,7 @@ const nativePeriodEntry = fileURLToPath(new URL('./fixtures/native-period-main.j
 for (const period of ['W', 'M', 'Y'] as const) {
   for (const [name, op] of [['get_domestic_index_period_history', '072'], ['get_global_index_period_history', '264']] as const) test(`stdio native ${name} ${period} default-denied`, async () => {
     const { listedTools, call } = await runStdioCall(entry, name, nativePeriodInput(period, op));
-    assert.equal(listedTools.length, 36); assert.equal(call.result?.content?.[0]?.text, 'error_code=member_login_required');
+    assert.equal(listedTools.length, 36); assertSwitchBlocked(name, call);
   });
   test(`stdio global native ${period} preserves synthetic raw-only state`, async () => {
     const { call } = await runStdioCall(nativePeriodEntry, 'get_global_index_period_history', nativePeriodInput(period));

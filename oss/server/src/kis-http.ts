@@ -1,5 +1,6 @@
 import { KIS_QUOTE_CATALOG } from "./normalize-kr-quote.js";
 import { validateProviderQuoteJson } from "./domain.js";
+import { SafeCredentialError } from "./local-credentials.js";
 
 export type KisEnvironment = "production" | "paper";
 
@@ -18,7 +19,7 @@ export interface KisQuoteTransport {
 }
 
 export class SafeKisError extends Error {
-  constructor(readonly code: "request_contract_conflict" | "invalid_input" | "credential_missing" | "auth_expired" | "rate_limited" | "upstream_timeout" | "request_cancelled" | "upstream_unavailable" | "upstream_rejected" | "schema_drift" | "response_too_large" | "pagination_not_supported" | "pagination_limit_reached" | "empty_response" | "duplicate_provider_business_date") {
+  constructor(readonly code: "request_contract_conflict" | "invalid_input" | "credential_missing" | "credential_rejected" | "credential_environment_invalid" | "auth_expired" | "rate_limited" | "upstream_timeout" | "request_cancelled" | "upstream_unavailable" | "upstream_rejected" | "schema_drift" | "response_too_large" | "pagination_not_supported" | "pagination_limit_reached" | "empty_response" | "duplicate_provider_business_date") {
     super(code);
     this.name = "SafeKisError";
   }
@@ -28,6 +29,17 @@ export const KIS_BASE_URL: Readonly<Record<KisEnvironment, string>> = Object.fre
   production: "https://openapi.koreainvestment.com:9443",
   paper: "https://openapivts.koreainvestment.com:29443",
 });
+
+/**
+ * Maps a failed `getForMarketRead()` to the error a tool call reports (SPEC-ATP-AUTH-002 M2). The token path's own
+ * SafeKisError codes (rate_limited, upstream_*, credential_rejected, schema_drift, ...) and the two credential-set
+ * codes survive; any other credential-resolution failure (corrupt or unsafe key file, ...) stays credential_missing.
+ */
+export function kisCredentialError(error: unknown): SafeKisError {
+  if (error instanceof SafeKisError) return error;
+  if (error instanceof SafeCredentialError && (error.code === "credential_missing" || error.code === "credential_environment_invalid")) return new SafeKisError(error.code);
+  return new SafeKisError("credential_missing");
+}
 
 const MIN_INTERVAL_MS = 1_000;
 export class RequestPacer {
@@ -96,7 +108,7 @@ export class AllowListedKisQuoteTransport implements KisQuoteTransport {
   /** No credentials, headers or URL query strings are included in this capture. */
   async getMarketSnapshotCapture(symbol: string, board: "J" | "NX" | "UN", outerSignal?: AbortSignal): Promise<KisQuoteCapture> {
     if (!/^\d{6}$/.test(symbol) || !["J", "NX", "UN"].includes(board)) throw new SafeKisError("invalid_input");
-    const credential = await this.credentials.getForMarketRead().catch(() => { throw new SafeKisError("credential_missing"); });
+    const credential = await this.credentials.getForMarketRead().catch((error: unknown) => { throw kisCredentialError(error); });
     if (!credential.appKey || !credential.appSecret || !credential.accessToken) throw new SafeKisError("credential_missing");
     await this.pacer.reserve();
     const base = KIS_BASE_URL[this.environment];

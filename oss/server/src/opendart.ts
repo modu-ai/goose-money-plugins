@@ -71,9 +71,53 @@ export const openDartResultSchema = z.object({
 });
 export type OpenDartResult = z.infer<typeof openDartResultSchema>;
 export class SafeOpenDartError extends Error {
-  constructor(readonly code: "invalid_input" | "invalid_provenance" | "invalid_response" | "response_mismatch" | "transport_error") {
+  constructor(readonly code: "invalid_input" | "invalid_provenance" | "invalid_response" | "response_mismatch" | "transport_error"
+    | "credential_missing" | "credential_rejected" | "rate_limited" | "upstream_rejected" | "upstream_unavailable" | "upstream_timeout") {
     super(code); this.name = "SafeOpenDartError";
   }
+}
+/**
+ * OpenDART HTTP-layer code (SafeOpenDartHttpError) -> the shared tool-result vocabulary (SPEC-ATP-AUTH-002 M2).
+ * Codes that fit no failure class F1-F7 (redirect, oversize body, key reflection, clock, authorization, ...)
+ * and any error that is not an HTTP-layer error stay transport_error (F8). Matched by name and code so this
+ * module does not import opendart-http.ts, which imports it.
+ */
+const HTTP_LAYER_CODES = new Map<string, SafeOpenDartError["code"]>([
+  ["credential_unavailable", "credential_missing"], ["credential_rejected", "credential_rejected"], ["rate_limited", "rate_limited"],
+  ["http_rejected", "upstream_rejected"], ["transport_failed", "upstream_unavailable"], ["request_timeout", "upstream_timeout"],
+  ["invalid_response", "invalid_response"],
+]);
+/** Prototype links inspected for a property; a genuine SafeOpenDartHttpError keeps both properties on the instance itself. */
+const MAX_PROTOTYPE_WALK = 8;
+/**
+ * A string-valued DATA property of an injected error, found without running anything the error controls:
+ * only Object.getOwnPropertyDescriptor (never a property read, so no getter and no Proxy `get` trap runs),
+ * along at most MAX_PROTOTYPE_WALK prototype links. The first own descriptor found decides, as a read would:
+ * an accessor, or a non-string value, means "not trusted" (undefined), never a call.
+ */
+function inspectedDataString(error: object, key: "name" | "code"): string | undefined {
+  let holder: object | null = error;
+  for (let depth = 0; depth < MAX_PROTOTYPE_WALK && holder !== null; depth += 1) {
+    const descriptor = Object.getOwnPropertyDescriptor(holder, key);
+    if (descriptor !== undefined) return "value" in descriptor && typeof descriptor.value === "string" ? descriptor.value : undefined;
+    holder = Object.getPrototypeOf(holder);
+  }
+  return undefined;
+}
+/**
+ * Whatever a provider/transport throws leaves as a SafeOpenDartError, always. The inspection can run hostile
+ * code (an injected Proxy's traps, `instanceof` on a Proxy) and is therefore wrapped as a whole: any failure
+ * falls back to transport_error, as the unconditional catch did before the HTTP-layer mapping existed.
+ */
+export function openDartTransportError(error: unknown): SafeOpenDartError {
+  try {
+    if (error instanceof Error && inspectedDataString(error, "name") === "SafeOpenDartHttpError") {
+      const code = inspectedDataString(error, "code");
+      const mapped = code === undefined ? undefined : HTTP_LAYER_CODES.get(code);
+      if (mapped) return new SafeOpenDartError(mapped);
+    }
+  } catch { /* The injected error's own failure never replaces the sanitized outcome. */ }
+  return new SafeOpenDartError("transport_error");
 }
 function validateInput(input: unknown): OpenDartInput {
   const result = openDartInputSchema.safeParse(input);
@@ -132,7 +176,7 @@ export async function requestOpenDartFullStatement(input: unknown, transport: Op
   let payload: unknown;
   try {
     payload = await transport.send(Object.freeze({ operation: "opendart.full_statement", method: "GET", endpoint: OPENDART_ENDPOINT, params: Object.freeze({ ...request }) }));
-  } catch { throw new SafeOpenDartError("transport_error"); }
+  } catch (error) { throw openDartTransportError(error); }
   const receivedEvidence = validateProvenance(provenanceFactory());
   if (transport.origin !== receivedEvidence.origin) throw new SafeOpenDartError("invalid_provenance");
   return parseOpenDartFullStatement(request, payload, receivedEvidence);
