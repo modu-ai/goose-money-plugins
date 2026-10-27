@@ -74,6 +74,7 @@
     "get_domestic_index_period_history",
     "get_global_index_period_history"
   ],
+  "default_denied_scope": "default_denied 목록은 서버 기본값(읽기 스위치 꺼짐)에서 차단되는 도구의 목록이다. 출하 플러그인 설정(mcp.json)은 KIS·OpenDART·로컬 보고서 읽기 스위치를 켜므로, 로컬 키가 있으면 호출 시 해당 공급자로 요청이 나간다. 요청 계약 충돌로 모든 설정에서 차단되는 도구와 주입 전송 전용 도구는 스위치와 무관하다. 도구별 부류는 이 파일이 아니라 시험(default-wording.test.ts)이 관찰값으로 고정한다.",
   "sec_capture_slice": {
     "transport": false,
     "formal_candidate_integration": "separate_capture_candidate_only",
@@ -334,7 +335,7 @@
   "local_report_input_builder": {
     "name": "build_report_input",
     "read_only": true,
-    "default_denied": true,
+    "default_denied": false,
     "external_requests": false,
     "file_writes": false,
     "routes": [
@@ -362,7 +363,7 @@
   "local_html_report_renderer": {
     "name": "render_report_html",
     "read_only": true,
-    "default_denied": true,
+    "default_denied": false,
     "external_requests": false,
     "file_writes": false,
     "input_contract": "validated atp.template/1.1 ReportInput (single subject) or atp.template/1.2 ReportInput (R02 comparison, explicit subjects input)",

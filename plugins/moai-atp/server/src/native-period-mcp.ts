@@ -56,7 +56,7 @@ export function registerNativePeriodTools(server: McpServer, options: NativePeri
   }));
   server.registerTool(NATIVE_PERIOD_MCP_NAMES[1], {
     title: 'KIS-264 글로벌 주·월·연 원시 이력',
-    description: '기본 차단. 별도 호스트 전송이 주입되면 W/M/Y를 그대로 전달하는 고정 GET 한 번만 실행합니다. 원문 문자열·빈값·누락·중복·순서를 보존합니다. 요청 주기는 실제 주기·기간 경계·완전성·총수익을 증명하지 않습니다. 정규 값은 null이며 자동 연속조회·재집계·일별 변환이 없습니다.',
+    description: '서버 기본값(읽기 스위치 꺼짐)에서는 차단됩니다. 출하 플러그인 설정(mcp.json)은 KIS 읽기 스위치를 켜므로 로컬 키가 있으면 호출 시 KIS로 요청이 나갑니다. W/M/Y를 그대로 전달하는 고정 GET 한 번만 실행합니다. 원문 문자열·빈값·누락·중복·순서를 보존합니다. 요청 주기는 실제 주기·기간 경계·완전성·총수익을 증명하지 않습니다. 정규 값은 null이며 자동 연속조회·재집계·일별 변환이 없습니다.',
     inputSchema: GlobalIndexPeriodToolInputSchema, outputSchema: Kis264PeriodResultSchema, annotations,
   }, async input => safeResult(async () => {
     const q = checked(GlobalIndexPeriodToolInputSchema, input); gate();
