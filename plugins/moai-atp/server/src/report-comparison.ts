@@ -140,8 +140,7 @@ export function analyzeComparison(subjects:readonly ComparisonSubject[],calls:re
     const status=statusOf.get(item.subject.id);
     return (item.source.provider==='opendart'||item.call.payload?.source==='opendart')&&(status==='unverified'||(status==='synthetic_fixture_match'&&item.call.origin==='actual'));
   });
-  const financial=(item:Bound)=>{const request=item.call.payload?.request;return isRecord(request)&&'fs_div' in request;};
-  return {bindings:new Map(bound.map(item=>[item.source.id,item.subject])),acquisitions:new Map(bound.map(item=>[item.source.id,acquisitionOf(item.call)])),mappings,hidden:new Set(withheld.map(item=>item.source.id)),hiddenTables:new Set(withheld.filter(financial).map(item=>item.source.id))};
+  return {bindings:new Map(bound.map(item=>[item.source.id,item.subject])),acquisitions:new Map(bound.map(item=>[item.source.id,acquisitionOf(item.call)])),mappings,hidden:new Set(withheld.map(item=>item.source.id)),hiddenTables:new Set(withheld.map(item=>item.source.id))};
 }
 
 // A DART-derived value's period carries the filing receipt number and the term label of its issuer
@@ -187,14 +186,15 @@ export function judgeFieldComparability(metrics:readonly (ComparableMetric|null|
 
 export type ComparisonParts={sources:readonly Source[];metrics:readonly Metric[];source_tables:readonly SourceTable[];visuals:readonly Visual[]};
 /**
- * D6 and REQ-MAP-002 on the assembled parts: hide the DART values of unaccepted subjects (metrics and the
- * raw source tables), prefix every metric label, source title, table title and visual title with the owning
+ * D6 and REQ-MAP-002 on the assembled parts: hide the DART values of unaccepted subjects (metrics, their period,
+ * which carries the filing receipt number, and every source table including the filing list),
+ * prefix every metric label, source title, table title and visual title with the owning
  * subject's name, and derive the comparison rows in the request's subject order.
  */
 export function attributeComparison(subjects:readonly ComparisonSubject[],analysis:ComparisonAnalysis,parts:ComparisonParts):{sources:Source[];metrics:Metric[];source_tables:SourceTable[];visuals:Visual[];comparison:ComparisonBlock}{
   const prefix=(sourceId:string,text:string)=>{const owner=analysis.bindings.get(sourceId);return owner?`${owner.name} · ${text}`:text;};
   const metrics:Metric[]=parts.metrics.map(metric=>{
-    const shown:Metric=analysis.hidden.has(metric.source_id)?{...metric,value:null,status:metric.status==='rights_pending'?'rights_pending':'missing',missing_reason:'issuer_mapping_unverified'}:metric;
+    const shown:Metric=analysis.hidden.has(metric.source_id)?{...metric,value:null,status:metric.status==='rights_pending'?'rights_pending':'missing',missing_reason:'issuer_mapping_unverified',period:'issuer_mapping_unverified'}:metric;
     return {...shown,label:prefix(metric.source_id,metric.label)};
   });
   const sources=parts.sources.map(source=>({...source,title:prefix(source.id,source.title)}));
