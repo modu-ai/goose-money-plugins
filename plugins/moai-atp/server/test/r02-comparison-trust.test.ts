@@ -88,11 +88,23 @@ test('AC-007e a receipt-based actual comparison document cannot be altered and r
     assert.deepStrictEqual(outcomeOf(reply),OK);
     const doc=reply.result.structuredContent;
     assert.deepStrictEqual(outcomeOf(await mcpRender(session.rpc,doc)),OK,'the untouched document renders');
+    // SPEC-ATP-DEBT-F3F4-001 (t29): an edit that breaks the comparison table's lineage against its own document is
+    // refused at the input schema before the content hash is reached, so these two edits are refusals of either kind.
     const rowEdited=structuredClone(doc);rowEdited.comparison.rows[0].cells[0].value='999999';
-    assert.deepStrictEqual(outcomeOf(await mcpRender(session.rpc,rowEdited)),{ok:false,code:'invalid_provenance'},'edited row value');
+    assert.ok(isRenderRefusal(await mcpRender(session.rpc,rowEdited)),'edited row value');
     const rebound=structuredClone(doc);
     rebound.comparison.source_bindings[0].subject_id=rebound.comparison.source_bindings[0].subject_id===SUBJECT_A.id?SUBJECT_B.id:SUBJECT_A.id;
-    assert.deepStrictEqual(outcomeOf(await mcpRender(session.rpc,rebound)),{ok:false,code:'invalid_provenance'},'edited binding');
+    assert.ok(isRenderRefusal(await mcpRender(session.rpc,rebound)),'edited binding');
+    // Edits that stay consistent with the document's own ledger still meet the content hash.
+    const lineage=structuredClone(doc);
+    const row=lineage.comparison.rows.find((candidate:any)=>candidate.cells[0].value!==null);const cell=row.cells[0];
+    lineage.metrics.find((metric:any)=>metric.source_id===cell.source_id&&metric.field_id===row.field_id).value='999999';cell.value='999999';
+    assert.deepStrictEqual(outcomeOf(await mcpRender(session.rpc,lineage)),{ok:false,code:'invalid_provenance'},'row value edited together with its metric');
+    const filings=sourceIdsOf(doc,SUBJECT_A.id,'get_public_filings')[0]!;
+    assert.equal(doc.comparison.rows.flatMap((candidate:any)=>candidate.cells).filter((candidate:any)=>candidate.source_id===filings).length,0,'no cell references the filing source');
+    const filingsRebound=structuredClone(doc);
+    filingsRebound.comparison.source_bindings.find((binding:any)=>binding.source_id===filings).subject_id=SUBJECT_B.id;
+    assert.deepStrictEqual(outcomeOf(await mcpRender(session.rpc,filingsRebound)),{ok:false,code:'invalid_provenance'},'edited binding of a source no cell references');
   }finally{await session.close();}
 });
 test('AC-007f a refusal consumes no receipt: the same receipts serve the corrected request',async()=>{
