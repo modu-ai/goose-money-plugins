@@ -7,19 +7,19 @@
     "writer": "MCP/data-contract owner",
     "report_owner_files_modified": false,
     "new_files_only": [
-      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
-      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.schema.json"
+      "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
+      "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.schema.json"
     ]
   },
   "source_basis": {
     "consumer_contract": {
-      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-masterplan-rebuild-20261021-v10/shared/report-data-requirements-v10.json",
+      "path": "<local-outputs>/internal/atp-masterplan-rebuild-20261021-v10/shared/report-data-requirements-v10.json",
       "source_sha256_declared": "1fca82faf10e201f56fb4d4b94fc13b7a16fec53867e4bda72302f0bb9903466",
       "local_recorded_hash": "6503bb58a97ff06e6401dab0db37ebab8ef2ebb2053d3581766b705ef85324a8",
       "read_mode": "read only"
     },
     "consumer_binding": {
-      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-masterplan-rebuild-20261021-v10/shared/mcp-report-consumer-binding-r1.json",
+      "path": "<local-outputs>/internal/atp-masterplan-rebuild-20261021-v10/shared/mcp-report-consumer-binding-r1.json",
       "sha256": "f0b05662ca209aba92d2554f52981a70da95d61fe04c9324fd262842fc50326c"
     },
     "normalized_contract": {
@@ -10985,7 +10985,7 @@
       "futures_basic": "R13"
     },
     "current_owner_handoff": {
-      "source": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/IMPLEMENTATION_STATUS.md",
+      "source": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/IMPLEMENTATION_STATUS.md",
       "basic_single_stock": "R01 family",
       "company_comparison": "R02 family",
       "market_briefing": "R06 family",

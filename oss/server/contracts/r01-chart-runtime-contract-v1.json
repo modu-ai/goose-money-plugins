@@ -5,21 +5,21 @@
   "status": "design_contract_only_no_live_provider_validation",
   "provenance": {
     "source_contract": "outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
-    "source_sha256": "803477a62949c7186cf6d1c833ae37ed057af646df3f529e59f565623132081d",
+    "source_sha256": "eeeab2d790a934fae06866b8cb2540e209c71e87c412c1fe14b05dd13b7a4f6c",
     "source_binding_id": "R01-chart-provider-binding-v1",
     "source_binding_version": "1.1.0-draft",
     "provider_catalog_commit": "2077773a69a428daf63e148182511f068cc45de3",
     "provider_catalog_scope": "334 rows only; not full portal/partner API coverage and not live-tested",
     "consumer_source_refs": [
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
+        "path": "<local-outputs>/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
         "sha256": "9497207439e3916be39af7aa00e13100c7751c514d9497fb1394656c1717f008",
         "contract_id": "goose.consumer-chart-requirements.v1",
         "version": "0.1.0-design",
         "modified_by_provider_owner": false
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
+        "path": "<local-outputs>/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
         "sha256": "280f79c54b733dcade6deb06a5471901a63df2dde76f24de688dce521f427153",
         "contract_id": "goose.consumer-chart-requirements.v1",
         "version": "0.1.0-design",

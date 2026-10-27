@@ -318,7 +318,7 @@
     "consumer_owner_files_read_only": true,
     "report_html_modified": false,
     "source": {
-      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
+      "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
       "sha256": "cfc73f39eb2cb22a357e71216d573b5bc56cbe43cbd553e3f8c84f99d4f5f7d4",
       "contract_id": "goose.R01.OHLCV-consumer/0.1-v13"
     },
@@ -351,12 +351,12 @@
     "live_projection": "false; offline synthetic examples only",
     "sources": [
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
         "sha256": "cfc73f39eb2cb22a357e71216d573b5bc56cbe43cbd553e3f8c84f99d4f5f7d4",
         "contract_id": "goose.R01.OHLCV-consumer/0.1-v13"
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/Goose_R01_가격캔들거래량_통합검증_v13.html",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/Goose_R01_가격캔들거래량_통합검증_v13.html",
         "sha256": "d0761539bc6b32abd52f25b8237d9b6f5011d01c49082d79f99d8328523233ce",
         "read_only_markers_found": [
           "m5",
@@ -367,7 +367,7 @@
         "data_status": "synthetic per V13 README"
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/Goose_차트_실행갤러리_v13.html",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/Goose_차트_실행갤러리_v13.html",
         "sha256": "49927cfc063a3247449ed5d0717a1475ccf48d9889b8ba831d18d5a392263f32",
         "read_only_markers_found": [
           "m5",

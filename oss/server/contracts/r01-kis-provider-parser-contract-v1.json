@@ -28,7 +28,7 @@
     },
     "consumer_supplier_crosswalk": {
       "path": "outputs/kis-mcp-v8/contracts/r01-consumer-supplier-registry-crosswalk-v1.json",
-      "sha256": "7aab41f25e1c6a621fe2981fc8f4358b4afc4b9a6c665da1235a82bf64c66058"
+      "sha256": "aac621e2d9d82ebaa3c0f756db2ce9fcfa4db47cf4415469843fbfe221ea8dd1"
     },
     "runtime_contract": {
       "path": "outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
@@ -48,7 +48,7 @@
       "limit": "Not a dynamic portal response-schema review for these three flow endpoints; no actual response or rights conclusion."
     },
     "v13_2_consumer_manifest": {
-      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
+      "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
       "sha256": "678837533751fc1fdb7b2d4529551d3e12246ebbb782d930d576cd233d44bef3",
       "manifest_id": "goose.r01.v13_2.consumer-provider-binding.kis53.v1",
       "version": "0.1.0-integration",
@@ -56,7 +56,7 @@
       "scope": "Read-only report-consumer binding manifest for the v13.2 synthetic KIS adapter integration; it records candidate paths and pending fields, not live data."
     },
     "v13_2_consumer_handoff": {
-      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
+      "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
       "sha256": "10271792c7508ced679541257099a6789f35af39d96130178128034d8fe9f810",
       "consumer_tests": {
         "passed": 14,
@@ -1055,67 +1055,67 @@
     "consumer_files_read_only": true,
     "consumer_manifest_id": "goose.r01.v13_2.consumer-provider-binding.kis53.v1",
     "consumer_manifest_version": "0.1.0-integration",
-    "consumer_manifest_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
+    "consumer_manifest_path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
     "consumer_manifest_sha256": "678837533751fc1fdb7b2d4529551d3e12246ebbb782d930d576cd233d44bef3",
-    "consumer_handoff_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
+    "consumer_handoff_path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
     "consumer_handoff_sha256": "10271792c7508ced679541257099a6789f35af39d96130178128034d8fe9f810",
-    "report_html_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/Goose-R01-v13.2-mock-adapter-integration.html",
+    "report_html_path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/Goose-R01-v13.2-mock-adapter-integration.html",
     "report_html_sha256": "b1d251163b7eb3ea3878afe5e535b9175564b522bb394f7cd06a812c072617c3",
     "source_hash_audit": {
       "all_manifest_provenance_hashes_matched_at_review": true,
       "matched_files": [
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/src/r01-kis-http-adapters.ts",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/src/r01-kis-http-adapters.ts",
           "sha256": "44d9c5f8b672bc46eadbe31cebe77ab13f9b84b3e8676f38e9eb4d86c936443a",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/src/r01-kis-field-parsers.ts",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/src/r01-kis-field-parsers.ts",
           "sha256": "a530f80837340750ca622b9b0755e3c53406dba6d1a71e102a566a7edc2fb5dd",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/src/r01-flow-risk-parsers.ts",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/src/r01-flow-risk-parsers.ts",
           "sha256": "132c7e08628484a253f9016c7daf0e8c0d7d659e28dfc4867690d29c50fc64fd",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/dist/src/r01-kis-http-adapters.js",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/dist/src/r01-kis-http-adapters.js",
           "sha256": "8a929a29306243ae45356364ce83cea303b56f25dc478e7e2ff9d4cc0ce5eb55",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-kis-provider-parser-contract-v1.json",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-kis-provider-parser-contract-v1.json",
           "sha256": "76f335282a83dae25b984371b7515548005e216f312df91da23445f929864e09",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-flow-risk-provider-extension-v1.json",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-flow-risk-provider-extension-v1.json",
           "sha256": "584e7e8d9cc75578f10810d3640f30db70a486395ce6516e061624a0955ccf7a",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
           "sha256": "c80608114b32cca4ce0682a9e4e47354deb0d248ffdfce8c05c52fb67745c17c",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-1/r01-flow-risk-consumer-binding-v13-1.json",
+          "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-1/r01-flow-risk-consumer-binding-v13-1.json",
           "sha256": "98079b96ccdbcd96755ccccc3b3c302a15cdaef706b7a337a7e6f927f7683d4b",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/Goose-R01-v13.2.html",
+          "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/Goose-R01-v13.2.html",
           "sha256": "4887f1ca5cb4aa682861b42335b429b97f4f574922f8db77454146504a9c9256",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/dist/src/r01-kis-field-parsers.js",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/dist/src/r01-kis-field-parsers.js",
           "sha256": "d5d464ede9fb3a57162f3de7906cc6c2087ab193343364e7679a6d414e815986",
           "matched_at_review": true
         },
         {
-          "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/typescript/dist/src/kis-http.js",
+          "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/typescript/dist/src/kis-http.js",
           "sha256": "0d38691911d5865ca7887d1689936282ddad15394af979875abf876c27e85915",
           "matched_at_review": true
         }

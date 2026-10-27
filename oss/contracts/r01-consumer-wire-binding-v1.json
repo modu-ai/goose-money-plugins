@@ -62,10 +62,10 @@
     },
     "operation_id": "kis.kr.quote.snapshot.v1",
     "source_file_hashes": {
-      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/kis-normalized-data-contract-v1.json": "7ea01592afe7d9e21f376ae1217105293c4ad7d374ad036f0b690bb74ca7635b",
-      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/r01-stock-analysis-data-support-draft.json": "670da32bf6b90d64b6515777ece0addf38687ba0048ac590e11449c6e1509720",
-      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/src/moai_kis_mcp/server.py": "a9980707cca900c4d92882e30db6c349e85afe79f6e681883658a6ba69364da9",
-      "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json": "3bb549099de0689f701cb8fd6ddec8f25bae0e6edfac38742b57e3e19c7b206b"
+      "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/kis-normalized-data-contract-v1.json": "7ea01592afe7d9e21f376ae1217105293c4ad7d374ad036f0b690bb74ca7635b",
+      "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/r01-stock-analysis-data-support-draft.json": "670da32bf6b90d64b6515777ece0addf38687ba0048ac590e11449c6e1509720",
+      "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/src/moai_kis_mcp/server.py": "a9980707cca900c4d92882e30db6c349e85afe79f6e681883658a6ba69364da9",
+      "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json": "3bb549099de0689f701cb8fd6ddec8f25bae0e6edfac38742b57e3e19c7b206b"
     }
   },
   "value_bindings": [

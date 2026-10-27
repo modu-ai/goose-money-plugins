@@ -11,32 +11,32 @@
   "sources": {
     "runtime_contract": {
       "path": "outputs/kis-mcp-v8/typescript/contracts/r01-chart-runtime-contract-v1.json",
-      "sha256": "c80608114b32cca4ce0682a9e4e47354deb0d248ffdfce8c05c52fb67745c17c",
+      "sha256": "45e72081a7240370a1a2a953daa8fab12975c79f3997e1ede761d5d81a0f1370",
       "contract_id": "moai.stock.r01.chart-provider-runtime.v1",
       "version": "1.1.0-draft"
     },
     "provider_mapping": {
       "path": "outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
-      "sha256": "803477a62949c7186cf6d1c833ae37ed057af646df3f529e59f565623132081d",
+      "sha256": "eeeab2d790a934fae06866b8cb2540e209c71e87c412c1fe14b05dd13b7a4f6c",
       "binding_id": "R01-chart-provider-binding-v1",
       "version": "1.1.0-draft"
     },
     "supplier_registry": {
       "path": "outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
-      "sha256": "21a79d2315af767b9d3684739cb248c089c7fbb8d0e43902c4537dee4724b71d",
+      "sha256": "fff80d5469cfadc5ef539aa8b02a566b4d19c724cbd4907c8fb70deef5f957b3",
       "registry_id": "moai.stock.report-data-source-registry",
       "version": "1.0.1-draft"
     },
     "consumer_contract_refs": [
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
+        "path": "<local-outputs>/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
         "sha256": "9497207439e3916be39af7aa00e13100c7751c514d9497fb1394656c1717f008",
         "contract_id": "goose.consumer-chart-requirements.v1",
         "version": "0.1.0-design",
         "modified_by_provider_owner": false
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
+        "path": "<local-outputs>/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
         "sha256": "280f79c54b733dcade6deb06a5471901a63df2dde76f24de688dce521f427153",
         "contract_id": "goose.consumer-chart-requirements.v1",
         "version": "0.1.0-design",

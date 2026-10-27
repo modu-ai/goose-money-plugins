@@ -259,7 +259,7 @@
     "get_account_activity"
   ],
   "report_integration": {
-    "masterplan_review": "/Users/goos/Documents/Codex/2026-10-21/task-6/review/Goose_리서치설계_독립심층검토_2026-10-21.html (read-only evidence)",
+    "masterplan_review": "<local-codex-workspace>/task-6/review/Goose_리서치설계_독립심층검토_2026-10-21.html (read-only evidence)",
     "report_family": "R01 심층 (reviewed family label)",
     "manifest_id": null,
     "mapping_status": "candidate data-adapter mapping only; not a report body or complete R01 implementation",

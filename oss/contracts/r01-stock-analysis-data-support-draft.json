@@ -3,7 +3,7 @@
   "version": "0.2.0-draft",
   "status": "review-draft; reconciled to R01 consumer 0.2; partial quote only",
   "review_basis": {
-    "source_path_read_only": "/Users/goos/Documents/Codex/2026-10-21/task-6/review/Goose_리서치설계_독립심층검토_2026-10-21.html",
+    "source_path_read_only": "<local-codex-workspace>/task-6/review/Goose_리서치설계_독립심층검토_2026-10-21.html",
     "reviewed_on": "2026-10-21",
     "findings": {
       "p0_required": 22,

@@ -1785,7 +1785,7 @@
       {
         "source_id": "kis.user-run-quote-evidence",
         "kind": "user_reported_cli_metadata",
-        "url": "file:///Users/goos/Documents/Codex/2026-10-21/task-4/kis_quote_user_run_evidence.json",
+        "url": "file://<local-codex-workspace>/task-4/kis_quote_user_run_evidence.json",
         "verified_on": "2026-10-21",
         "evidence": [
           "User-reported production OAuth HTTP 200 and quote HTTP 200/business code 0 for FHKST01010100; not independently executed by this assistant.",
@@ -3771,14 +3771,14 @@
     "status": "KIS portal response schemas reviewed and raw candidate paths documented; consumer mapping remains draft; no live validation",
     "consumer_sources": [
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
+        "path": "<local-outputs>/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-R01-v1.json",
         "sha256": "9497207439e3916be39af7aa00e13100c7751c514d9497fb1394656c1717f008",
         "contract_id": "goose.consumer-chart-requirements.v1",
         "version": "0.1.0-design",
         "modified_by_provider_owner": false
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
+        "path": "<local-outputs>/internal/atp-report-field-design-20261021-v11/consumer-chart-requirements-v1.json",
         "sha256": "280f79c54b733dcade6deb06a5471901a63df2dde76f24de688dce521f427153",
         "contract_id": "goose.consumer-chart-requirements.v1",
         "version": "0.1.0-design",
@@ -3786,7 +3786,7 @@
       }
     ],
     "supplier_registry_binding": {
-      "path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
+      "path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
       "registry_id": "moai.stock.report-data-source-registry",
       "version": "1.0.1-draft",
       "sha256": "21a79d2315af767b9d3684739cb248c089c7fbb8d0e43902c4537dee4724b71d",
@@ -9928,16 +9928,16 @@
       "formal_schema_validation": {
         "status": "passed_after_saved_mapping",
         "validator": "jsonschema CLI 4.25.1",
-        "schema_path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.schema.json",
-        "instance_path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
+        "schema_path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.schema.json",
+        "instance_path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/kis-api-mapping-v1.json",
         "command": "jsonschema -i <mapping JSON> <mapping schema JSON>",
         "note": "JSON Schema CLI emits a deprecation warning; validation process exits 0."
       },
       "supplier_registry_schema_validation": {
         "status": "passed",
         "validator": "jsonschema CLI 4.25.1",
-        "schema_path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.schema.json",
-        "instance_path": "/Users/goos/Documents/Codex/2026-10-21/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
+        "schema_path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.schema.json",
+        "instance_path": "<local-codex-workspace>/task-4/outputs/kis-mcp-v8/contracts/report-data-source-registry-r1.json",
         "note": "Read-only validation of owner registry; file not modified."
       },
       "custom_integrity_checks": {

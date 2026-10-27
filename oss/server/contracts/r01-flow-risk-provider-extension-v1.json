@@ -45,7 +45,7 @@
     "official_opendart_major_holding": "https://opendart.fss.or.kr/guide/detail.do?apiGrpCd=DS004&apiId=2019021",
     "verified_on": "2026-10-21",
     "v13_2_consumer_manifest": {
-      "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
+      "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
       "sha256": "678837533751fc1fdb7b2d4529551d3e12246ebbb782d930d576cd233d44bef3",
       "manifest_id": "goose.r01.v13_2.consumer-provider-binding.kis53.v1",
       "read_only": true,
@@ -990,22 +990,22 @@
     "report_html_modified": false,
     "sources": [
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/r01-flow-risk-consumer-binding-v13.json",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/r01-flow-risk-consumer-binding-v13.json",
         "sha256": "8cc97f4ebb59761bfb507db8735bdf8791475b1f9e3bc54fff652c7dbaf983a7",
         "contract_version": "0.1.0-consumer-design",
         "consumer_metric_count": 11
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/r01-ohlcv-consumer-crosswalk-v13.json",
         "sha256": "cfc73f39eb2cb22a357e71216d573b5bc56cbe43cbd553e3f8c84f99d4f5f7d4",
         "contract_id": "goose.R01.OHLCV-consumer/0.1-v13"
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/README.md",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/README.md",
         "status": "read; states all chart/risk example data is synthetic and online query is not implemented"
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/Goose_R01_가격캔들거래량_통합검증_v13.html",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/Goose_R01_가격캔들거래량_통합검증_v13.html",
         "sha256": "d0761539bc6b32abd52f25b8237d9b6f5011d01c49082d79f99d8328523233ce",
         "read_only_markers_found": [
           "short_volume",
@@ -1023,7 +1023,7 @@
         "data_status": "synthetic per V13 README; no values copied into supplier artifacts"
       },
       {
-        "path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13/Goose_차트_실행갤러리_v13.html",
+        "path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13/Goose_차트_실행갤러리_v13.html",
         "sha256": "49927cfc063a3247449ed5d0717a1475ccf48d9889b8ba831d18d5a392263f32",
         "data_status": "synthetic per V13 README; no values copied into supplier artifacts"
       }
@@ -1166,9 +1166,9 @@
     "consumer_owner_files_read_only": true,
     "consumer_manifest_id": "goose.r01.v13_2.consumer-provider-binding.kis53.v1",
     "consumer_manifest_version": "0.1.0-integration",
-    "consumer_manifest_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
+    "consumer_manifest_path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/consumer-manifest.json",
     "consumer_manifest_sha256": "678837533751fc1fdb7b2d4529551d3e12246ebbb782d930d576cd233d44bef3",
-    "consumer_handoff_path": "/Users/goos/GPT-Work/모두의주식/outputs/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
+    "consumer_handoff_path": "<local-outputs>/internal/atp-r01-gallery-20261021-v13-2/integration-kis53/handoff.json",
     "consumer_handoff_sha256": "10271792c7508ced679541257099a6789f35af39d96130178128034d8fe9f810",
     "summary": {
       "consumer_risk_id_count": 37,
