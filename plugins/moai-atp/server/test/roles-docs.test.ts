@@ -881,3 +881,89 @@ test('fix4 D9: the example list line for (d) names rule_unsupported and the rule
 test('fix4 D9 mutant: dropping the rule row from the first-match table turns example (d) red', () => {
   assertRed(() => verifyBacktest('backtest-d', BT_ROWS.filter(r => r.row !== 5)), 'rule row dropped');
 });
+
+// ---- fix 5 (sync re-audit D-R3): example (d') reaches row 6 of the first-match table -------------------------------------------------------------------
+// (d') carries a specification INSIDE the closed v1 rule grammar of the t36 limited backtest (`signal: {rule: "close_above_sma", window: N}`, one instrument, long only, positive initial cash), its own
+// spec_sha256 (recomputed here exactly as for the pinned strategy-spec example) and no history. Rows 0 to 5 do not apply to it, so the first match is row 6 (`validated_history_unavailable`, `not_run`).
+// The row excerpt is BT_ROWS, the same copy the (a) to (d) tests use, so deleting row 6 from it turns this test red (the diagnostic mutant that survived after 7891b89).
+const D_PRIME = 'backtest-d-prime' as const;
+const SPEC_TOP_KEYS: readonly string[] = [...ENVELOPE_KEYS, 'strategy_id', 'version', 'universe', 'signal', 'entry_timing', 'exit_timing', 'sizing', 'constraints', 'invalidation_rules', 'undecided_rules',
+  'required_data', 'cost_fill_assumptions', 'source_ledger', 'validation_plan', 'spec_sha256'];
+const DECIMAL_STRING = /^(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$/;
+function ruleInV1Grammar(spec: J): boolean {
+  const signal = spec.signal;
+  return Array.isArray(spec.universe) && spec.universe.length === 1 && spec.constraints?.long_only === true
+    && signal !== null && typeof signal === 'object' && JSON.stringify(Object.keys(signal).sort()) === JSON.stringify(['rule', 'window'])
+    && signal.rule === 'close_above_sma' && Number.isInteger(signal.window) && signal.window >= 2 && signal.window <= 200;
+}
+function verifyDPrime(rows: readonly BtRow[], value: J = example(D_PRIME)): void {
+  const spec = value.request.strategy_spec;
+  const e = value.envelope;
+  assert.ok(spec !== null && typeof spec === 'object', 'd-prime: the supplied specification is part of the request');
+  // Rows 0 to 5 computed from the example itself, not from flags: none of them may apply.
+  assert.equal(value.request.calculator_present, true, 'd-prime: row 0 does not apply (a calculator is assumed)');
+  assert.deepEqual(Object.keys(spec).filter(k => !SPEC_TOP_KEYS.includes(k)), [], 'd-prime: row 1, only strategy-specification top-level keys');
+  for (const decimal of [spec.sizing.initial_cash, spec.sizing.position_fraction]) assert.match(decimal, DECIMAL_STRING, 'd-prime: row 1, decimal strings');
+  assert.ok(Number(spec.sizing.initial_cash) > 0, 'd-prime: row 2a does not apply (initial_cash > 0)');
+  assert.equal(value.request.strategy_spec_present, true, 'd-prime: row 3 does not apply (a specification is present)');
+  assert.equal(spec.spec_sha256, specHash(spec), 'd-prime: row 4 does not apply (the stated hash equals the recomputed one)');
+  assert.equal(e.strategy_spec_sha256, spec.spec_sha256, 'd-prime: the result carries the hash of the supplied specification');
+  assert.equal(ruleInV1Grammar(spec), true, 'd-prime: row 5 does not apply (the rule is inside the v1 grammar)');
+  assert.equal(value.request.strategy_rule_in_v1_grammar, true, 'd-prime: the flag matches the specification');
+  assert.equal(value.request.validated_history_present, false);
+  // First match.
+  const decided = decideBacktest(rows, value.request);
+  assert.ok(decided, 'd-prime: the decision table has a first match');
+  assert.equal(rows.find(r => r.applies(value.request))!.row, 6, 'd-prime: the first match is row 6');
+  assert.equal(e.status, decided.status, 'd-prime: status');
+  assert.deepEqual(e.reasons, decided.reasons, 'd-prime: reasons');
+  assert.equal(e.contract, 'moai.atp.backtest-result.v1');
+  assert.equal(e.procedure, 'backtest');
+  assert.equal(e.experiment.strategy_id, spec.strategy_id, 'd-prime: carries the experiment it would have run');
+  assert.equal(e.metrics, null);
+  assert.equal(e.simulated_fills, null);
+  assert.equal(e.execution_receipt, null);
+  for (const section of ['out_of_sample', 'walk_forward', 'cost_sensitivity', 'leakage_checks', 'multiple_experiments']) assert.equal(e.sections[section], null, `d-prime: ${section} null`);
+  assert.ok(typeof value.request.assumption === 'string' && value.request.assumption.length > 0, 'd-prime: a calculator is only ever a labelled synthetic assumption');
+}
+test("fix5 D-R3: example backtest-d-prime (specification inside the v1 grammar, calculator assumed, no history) first-matches row 6 and is not_run with validated_history_unavailable", () => {
+  const value = example(D_PRIME);
+  assert.deepEqual({ status: value.envelope.status, reasons: value.envelope.reasons }, { status: 'not_run', reasons: ['validated_history_unavailable'] });
+  verifyDPrime(BT_ROWS, value);
+});
+test("fix5 D-R3: the specification of (d') differs from the pinned strategy-spec example and carries its own recomputed spec_sha256", () => {
+  const dPrime = example(D_PRIME).request.strategy_spec;
+  const pinned = example('strategy-spec');
+  assert.notEqual(dPrime.spec_sha256, pinned.spec_sha256);
+  assert.match(dPrime.spec_sha256, /^[0-9a-f]{64}$/);
+  assert.equal(dPrime.spec_sha256, specHash(dPrime));
+  assert.deepEqual(dPrime.signal, { rule: 'close_above_sma', window: 20 });
+});
+test("fix5 D-R3: the (d') list line names validated_history_unavailable and the no-history row, not the rule row, and the (d) paragraph no longer says the document has no such example", () => {
+  const line = linesOf(contractText()).find(l => l.startsWith("- (d')"));
+  assert.ok(line !== undefined, "the (d') list line is missing");
+  assert.ok(line.includes('`validated_history_unavailable`') && line.includes('`not_run`') && line.includes('판정표 6행'), line);
+  assert.equal(line.includes('판정표 5행') || line.includes('`rule_unsupported`'), false, line);
+  assert.equal(contractText().includes('이 문서는 그 모양을 예시로 싣지 않습니다'), false, 'the earlier sentence that denied this example is still there');
+});
+test("fix5 D-R3 mutant: deleting row 6 from the test's copy of the first-match table turns example (d') red (the survivor of the re-audit)", () => {
+  assertRed(() => verifyDPrime(BT_ROWS.filter(r => r.row !== 6)), 'row 6 dropped');
+});
+test("fix5 D-R3 mutants: a wrong flag, a rule outside the grammar, a wrong hash, a present history, a blocked status, a window outside 2..200, a zero cash or an unknown key each turn example (d') red", () => {
+  const flag = example(D_PRIME); flag.request.strategy_rule_in_v1_grammar = false;
+  assertRed(() => verifyDPrime(BT_ROWS, flag), 'flag false');
+  const rule = example(D_PRIME); rule.request.strategy_spec.signal = { formula_id: 'synthetic.sma_cross', inputs: ['daily_close'], fast_window: 5, slow_window: 20 };
+  assertRed(() => verifyDPrime(BT_ROWS, rule), 'rule outside grammar');
+  const hash = example(D_PRIME); hash.request.strategy_spec.spec_sha256 = '0'.repeat(64); hash.envelope.strategy_spec_sha256 = '0'.repeat(64);
+  assertRed(() => verifyDPrime(BT_ROWS, hash), 'wrong hash');
+  const history = example(D_PRIME); history.request.validated_history_present = true;
+  assertRed(() => verifyDPrime(BT_ROWS, history), 'history present');
+  const blocked = example(D_PRIME); blocked.envelope.status = 'blocked'; blocked.envelope.reasons = ['rule_unsupported'];
+  assertRed(() => verifyDPrime(BT_ROWS, blocked), 'blocked status');
+  const window = example(D_PRIME); window.request.strategy_spec.signal.window = 1; window.request.strategy_spec.spec_sha256 = specHash(window.request.strategy_spec); window.envelope.strategy_spec_sha256 = window.request.strategy_spec.spec_sha256;
+  assertRed(() => verifyDPrime(BT_ROWS, window), 'window outside 2..200');
+  const cash = example(D_PRIME); cash.request.strategy_spec.sizing.initial_cash = '0'; cash.request.strategy_spec.spec_sha256 = specHash(cash.request.strategy_spec); cash.envelope.strategy_spec_sha256 = cash.request.strategy_spec.spec_sha256;
+  assertRed(() => verifyDPrime(BT_ROWS, cash), 'non-positive initial cash (row 2a)');
+  const key = example(D_PRIME); key.request.strategy_spec.experiment = { trials: 1 };
+  assertRed(() => verifyDPrime(BT_ROWS, key), 'unknown top-level key (row 1)');
+});
