@@ -87,11 +87,21 @@ const FUND_TRANSFER_REQUEST=new RegExp(`(?:이체|송금)\\s*(?:을\\s*|를\\s*)
 // English trade commands (fix 4, F2). Imperative position only: the verb starts the request, follows sentence punctuation (`, then`, `. and`), or follows a request lead
 // (`please`, `then`, `can you`, `I want you to`, `you should`, `go ahead and`, `let's`). `how to buy`, `why did the fund buy`, `should I buy`, `I want to buy` and `bought` are not in imperative position.
 // The object must be a real token: a hyphen (`buy-side`, `sell-off`) or a descriptive head word (`buy and hold`, `buy signal`, `sell rules`, `buy rating`) ends the form. This is a measured range, not a complete English grammar.
-const EN_LEAD="(?:^|[.!?;:,]\\s*(?:(?:and|then|also)\\s+)?|\\b(?:please|kindly|just|then|also|now|first|next|(?:can|could|would|will)\\s+you(?:\\s+please)?|(?:i|we)\\s+(?:want|need)\\s+you\\s+to|(?:i|we)\\s*(?:'d|would)\\s+like\\s+you\\s+to|you\\s+(?:should|must|need\\s+to)|go\\s+ahead\\s+and|let\\s*'?s)\\s+)";
-const EN_DESCRIPTIVE='(?!(?:and|or|vs|versus|low|high|side|signals?|ratings?|recommendations?|rules?|strateg(?:y|ies)|orders?|back|off|in\\s+may|the\\s+dip|pressure|discipline|decisions?|timing|points?|zones?|levels?|targets?|volume|logic|criteria|triggers?|conditions?|walls?)\\b|-)';
-const EN_SHORT_DESCRIPTIVE='(?!(?:selling|interest|term|squeeze|sales?|positions?|ratio|summary|list|version|answer|description|overview|review|intro(?:duction)?|explanation|notes?|report|story|film|article|text|form|history)\\b|-)';
-const EN_BUY_SELL_COMMAND=new RegExp(`${EN_LEAD}(?:buy|sell|purchase)\\s+${EN_DESCRIPTIVE}[^\\s.!?,;]`,'u');
-const EN_SHORT_COMMAND=new RegExp(`${EN_LEAD}short\\s+${EN_SHORT_DESCRIPTIVE}[^\\s.!?,;]`,'u');
+// A request lead (`please`, `can you`, `I want you to`, ...) asks the reader to act, so a clause after it is a command whatever it says. A weak lead (the start, sentence punctuation, `then`, `now`, ...) only marks
+// a clause position: in a rule description (`백테스트: buy when RSI < 30, sell when RSI > 70`) the same clause is a rule, not an order. A clause counts as a rule text only when it carries a rule-condition marker
+// (`when`, `if`, `once`, `after`, `crosses`, a comparison operator, ...) AND the request is about a strategy, a rule or a backtest. Without that context `buy AAPL if it drops` stays a command.
+const EN_STRONG_LEAD="\\b(?:please|kindly|(?:can|could|would|will)\\s+you(?:\\s+please)?|(?:i|we)\\s+(?:want|need)\\s+you\\s+to|(?:i|we)\\s*(?:'d|would)\\s+like\\s+you\\s+to|you\\s+(?:should|must|need\\s+to)|go\\s+ahead\\s+and|let\\s*'?s)\\s+";
+const EN_WEAK_LEAD="(?:^|[.!?;:,]\\s*(?:(?:and|then|also)\\s+)?|\\b(?:just|then|also|now|first|next)\\s+)";
+const EN_RULE_MARK='(?:\\b(?:when|whenever|if|once|after|before|until|unless|while|cross(?:es|ed|ing)?|above|below|golden\\s+cross|death\\s+cross|breakout|at\\s+(?:the\\s+)?(?:open|close))\\b|[<>]=?|≥|≤)';
+const EN_RULE_CONTEXT='(?:백테스트|back-?test|전략|strateg|규칙|\\brules?\\b|signal|시그널|논문|walk.?forward|과거.{0,8}검증|simulat|시뮬레이션)';
+const EN_RULE_TEXT=`(?:(?<=${EN_RULE_MARK}[^.!?;]*)|(?=[^.!?;]*${EN_RULE_MARK}))(?:(?<=${EN_RULE_CONTEXT}[\\s\\S]*)|(?=[\\s\\S]*${EN_RULE_CONTEXT}))`;
+const EN_LEAD_NOT_RULE=`(?:${EN_STRONG_LEAD}|${EN_WEAK_LEAD}(?!${EN_RULE_TEXT}))`;
+// Heads that make the word after the verb a rule condition or a descriptive term, not a target: `buy when`, `sell below`, `buy at open`, `buy on a golden cross`, `purchase price`, `buy button`, `buy now pay later`.
+const EN_RULE_HEAD='when|whenever|if|once|after|before|until|unless|while|cross(?:es|ed|ing)?|above|below|under|over|on\\s+(?:a\\s+|the\\s+)?(?:golden|death|signal|breakout|cross|open|close|stop|dip|rally)|at\\s+(?:the\\s+)?(?:open|close|golden|death|signal|breakout|cross|next)|price|agreement|button|box|now\\s+pay';
+const EN_DESCRIPTIVE=`(?!(?:and|or|vs|versus|low|high|side|signals?|ratings?|recommendations?|rules?|strateg(?:y|ies)|orders?|back|off|in\\s+may|the\\s+(?:dip|rip|rally)|pressure|discipline|decisions?|timing|points?|zones?|levels?|targets?|volume|logic|criteria|triggers?|conditions?|walls?|${EN_RULE_HEAD})\\b|-)`;
+const EN_SHORT_DESCRIPTIVE=`(?!(?:selling|interest|term|squeeze|sales?|positions?|ratio|summary|list|version|answer|description|overview|review|intro(?:duction)?|explanation|notes?|report|stor(?:y|ies)|film|article|text|form|history|${EN_RULE_HEAD})\\b|-)`;
+const EN_BUY_SELL_COMMAND=new RegExp(`${EN_LEAD_NOT_RULE}(?:buy|sell|purchase)\\s+${EN_DESCRIPTIVE}[^\\s.!?,;]`,'u');
+const EN_SHORT_COMMAND=new RegExp(`${EN_LEAD_NOT_RULE}short\\s+${EN_SHORT_DESCRIPTIVE}[^\\s.!?,;]`,'u');
 
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
