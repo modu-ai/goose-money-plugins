@@ -14,7 +14,7 @@ import { createCredentialBackedServer } from '../src/credential-runtime.js';
 import { PROCESS_PACER } from '../src/kis-http.js';
 import { saveLocalCredentials } from '../src/local-credentials.js';
 import { openSession, outcome, toolArguments, type Session } from './default-server-harness.js';
-import { prepareHome } from './credential-home.js';
+import { assertStoreVerdict, prepareHome } from './credential-home.js';
 
 export type Family = 'K1' | 'K2' | 'K3' | 'K4' | 'O1' | 'O2';
 export type FailureClass = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8';
@@ -169,8 +169,11 @@ export async function withSession<T>(setup: CaseSetup, fn: (session: Session, tr
   const traffic = newTraffic();
   resetPacer();
   const session = await openSession(buildServer(home, routedFetch(setup.overrides ?? {}, traffic), prepared.env));
-  try { return { value: await fn(session, traffic), traffic }; }
-  finally { await session.close(); await rm(home, { recursive: true, force: true }); }
+  try {
+    const value = await fn(session, traffic);
+    await assertStoreVerdict(prepared); // the case's closing verdict on its home, once, before the home is removed
+    return { value, traffic };
+  } finally { await session.close(); await rm(home, { recursive: true, force: true }); }
 }
 
 export async function runCase(tool: string, setup: CaseSetup): Promise<CallResult & { traffic: Traffic }> {
@@ -224,7 +227,9 @@ export async function runDartDeadline(tool: string, stage: 'fetch' | 'body', wat
     pending.catch(() => undefined); // if the watchdog ends the case first, a later rejection of the call is not an unhandled one
     await withWatchdog(hung, watchdogMs, tool, `reach the injected OpenDART ${stage}`);
     mock.timers.tick(10_000);
-    return { ...(await withWatchdog(pending, watchdogMs, tool, 'answer after the 10,000 ms deadline tick')), traffic };
+    const answered = await withWatchdog(pending, watchdogMs, tool, 'answer after the 10,000 ms deadline tick');
+    await assertStoreVerdict(prepared); // the case's closing verdict on its home, once, before the home is removed
+    return { ...answered, traffic };
   } finally {
     mock.timers.reset();
     await session.close();
