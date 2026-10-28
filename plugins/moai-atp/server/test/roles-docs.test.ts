@@ -241,7 +241,7 @@ const STATUSES = ['ready', 'partial', 'not_run', 'blocked', 'unsupported'] as co
 const EXAMPLE_IDS = [
   'strategy-spec',
   'research-period-missing', 'research-source-missing', 'research-both-missing', 'handoff-calculator',
-  'backtest-a', 'backtest-b', 'backtest-c', 'backtest-d', 'handoff-mismatch',
+  'backtest-a', 'backtest-b', 'backtest-c', 'backtest-d', 'backtest-d-prime', 'handoff-mismatch',
   'performance-cost-basis', 'performance-cash-flows', 'performance-currency',
   'holdings-waiting', 'upstream-propagation', 'unit-unconfirmed', 'numeric-trace', 'research-note', 'risk-beyond-functions', 'ats-not-installed',
 ] as const;
@@ -270,7 +270,7 @@ test('M2: SKILL.md links the contract document and the link resolves to a file i
   const resolved = resolve(dirname(join(ossDir, SKILL_PATH)), 'references/role-contracts.md');
   assert.ok(resolved.startsWith(resolve(ossDir) + sep) && existsSync(resolved));
 });
-test('M2: the contract document carries all twenty labelled synthetic examples, each once and parseable', () => {
+test('M2: the contract document carries all twenty-one labelled synthetic examples, each once and parseable', () => {
   const found = [...loadExamples().keys()].sort();
   assert.deepEqual(found, [...EXAMPLE_IDS].sort());
 });
