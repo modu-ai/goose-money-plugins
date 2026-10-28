@@ -837,3 +837,51 @@ test('M2: every reason code used by an example is listed in the reason-code tabl
 test('M2: the contract document introduces no login / member / connected-status vocabulary (existing documentation tests stay green)', () => {
   assert.equal(/로그인|회원 인증|member_login_required|연결됨|연결 완료|검증됨/.test(contractText()), false);
 });
+
+// ---- fix 4 (sync audit D7 / D9): the planner claim is qualified in SKILL.md; backtest example (d) follows the first-match table --------------------------
+// D7: the planner classifies by patterns and never claims completeness. SKILL.md says so in an added paragraph (the earlier sentences stay as they are), and says that
+// the normative rule (no tool call, fixed sentence F or F_T) does not depend on the planner status.
+test('fix4 D7: SKILL.md says the planner classifies by patterns and cannot catch every phrasing, that blocked / unsupported plans carry no steps and no provider call, and that no order tool exists', () => {
+  const lines = linesOf(skillText()).filter(l => l.includes('정해 둔 말 꼴(패턴)'));
+  assert.equal(lines.length, 1, 'exactly one added paragraph carries the planner-limit statement');
+  const line = lines[0]!;
+  for (const piece of ['모든 표현을 잡아내지는 못합니다', '단계도 공급자 호출도', '주문·이체·계좌 도구', '고정 문장 F', 'F_T', '계획 상태가 이 규칙을 바꾸지 않습니다']) {
+    assert.ok(line.includes(piece), `the planner-limit paragraph lacks: ${piece}`);
+  }
+});
+test('fix4 D7: the earlier trade-block sentence of SKILL.md is still in place (the qualification is added next to it, not instead of it)', () => {
+  assert.ok(skillText().includes('계획이 `blocked`(`orders_or_transfers`)와 단계 0개로 막습니다'));
+  assert.ok(skillText().includes(TRADE_SENTENCE_CORE));
+});
+
+// D9: the pinned synthetic specification uses `signal.formula_id` (a t35 specification shape), which is outside the closed rule grammar of the t36 limited backtest, so the first match for
+// "calculator and specification assumed, no history" is the rule-grammar row, which comes before the no-history row.
+const FIX4_BT_ROWS: readonly BtRow[] = [
+  { row: 0, applies: r => !r.calculator_present, reason: 'backtest_engine_unavailable', status: 'not_run' },
+  { row: 3, applies: r => !r.strategy_spec_present, reason: 'strategy_spec_missing', status: 'blocked' },
+  { row: 5, applies: r => r.strategy_spec_present && r.strategy_rule_in_v1_grammar === false, reason: 'rule_unsupported', status: 'blocked' },
+  { row: 6, applies: r => !r.validated_history_present, reason: 'validated_history_unavailable', status: 'not_run' },
+];
+test('fix4 D9: example backtest-d states that the specification rule is outside the v1 grammar and is blocked with rule_unsupported (the rule row comes before the no-history row)', () => {
+  const value = example('backtest-d');
+  assert.equal(value.request.strategy_spec_present, true);
+  assert.equal(value.request.calculator_present, true);
+  assert.equal(value.request.validated_history_present, false);
+  assert.equal(value.request.strategy_rule_in_v1_grammar, false);
+  assert.deepEqual({ status: value.envelope.status, reasons: value.envelope.reasons }, { status: 'blocked', reasons: ['rule_unsupported'] });
+  verifyBacktest('backtest-d', FIX4_BT_ROWS, value);
+});
+test('fix4 D9: the flag matches the pinned specification (its signal has formula_id and no closed-grammar rule key)', () => {
+  const spec = example('strategy-spec');
+  assert.equal(typeof spec.signal.formula_id, 'string');
+  assert.equal('rule' in spec.signal, false);
+});
+test('fix4 D9: the example list line for (d) names rule_unsupported and the rule row, not the no-history row', () => {
+  const line = linesOf(contractText()).find(l => l.startsWith('- (d)'));
+  assert.ok(line !== undefined, 'the (d) list line is missing');
+  assert.ok(line.includes('`rule_unsupported`') && line.includes('판정표 5행'), line);
+  assert.equal(line.includes('판정표 6행') || line.includes('`validated_history_unavailable`'), false, line);
+});
+test('fix4 D9 mutant: dropping the rule row from the first-match table turns example (d) red', () => {
+  assertRed(() => verifyBacktest('backtest-d', FIX4_BT_ROWS.filter(r => r.row !== 5)), 'rule row dropped');
+});
