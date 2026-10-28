@@ -121,7 +121,7 @@ test('AC-F3-12 regression guard: a pending-rights source is already shown as a d
   const html=renderReportInputHtml(doc);const start=html.indexOf('data-r02-comparison');const section=html.slice(start,html.indexOf('</section>',start));
   const tableRow=(section.match(/<tr><td>[^<]*\(quote\.last\)<\/td>(?:<td[^>]*>[^<]*<\/td>)+<\/tr>/)??[''])[0];
   const ledger=html.match(/<tr><td>합성하이닉스 · 최근가<\/td><td>[^<]*<\/td>/g)??[];
-  assert.ok(tableRow.includes('>100<')&&!tableRow.includes('>200<'),tableRow);
+  assert.ok(tableRow.includes('>100 (기준 1)<')&&!tableRow.includes('>200'),tableRow);
   assert.ok(ledger.length>0&&ledger.every(row=>row.endsWith('<td>—</td>')),JSON.stringify(ledger));
 });
 test('AC-F3-13 control: caller-supplied actual results build with no issue, render, and carry a source id over a null value',()=>{
