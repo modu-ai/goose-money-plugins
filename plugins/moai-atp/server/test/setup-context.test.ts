@@ -6,13 +6,14 @@ import { join, dirname } from "node:path";
 import { dispatchGooseCommand } from "../src/cli.js";
 import { runSetupFlow } from "../src/setup-cli.js";
 import { saveInvestorContext, readInvestorContext, investorContextFilePath, selectInvestorContext, deleteInvestorContext, type InvestorContextAnswers } from "../src/user-context.js";
+import { enterStoreTest, STORE_BODY } from "./credential-home.js";
 
 const synthetic: InvestorContextAnswers = { objectives: ["learning"], timeHorizon: "unspecified", experience: "new", riskTolerance: "unspecified", riskCapacity: "unspecified", liquidityNeed: "unspecified", assetScope: ["domestic_equity"] };
 async function fixture(run: (home: string, first: string, second: string) => Promise<void>) {
   const base = await mkdtemp(join(tmpdir(), "moai-setup-synthetic-"));
   const home = join(base, "home"), first = join(base, "alpha"), second = join(base, "beta");
   await Promise.all([home, first, second].map(p => mkdir(p, { mode: 0o700 })));
-  try { await run(home, first, second); } finally { await rm(base, { recursive: true, force: true }); }
+  try { if (await enterStoreTest("profile-store", first, home) === STORE_BODY.run) await run(home, first, second); } finally { await rm(base, { recursive: true, force: true }); }
 }
 const sink = () => { const messages: string[] = []; return { messages, write(value: string) { messages.push(value); } }; };
 const questionnaire = () => ["YES", "4", "5", "1", "4", "4", "4", "1", "SAVE"];
