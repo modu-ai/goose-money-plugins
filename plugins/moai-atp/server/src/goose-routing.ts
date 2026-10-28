@@ -73,6 +73,15 @@ const KO_SA_JWO=new RegExp(`(?<![가-힣])사\\s*(?:줘|주세요|주라|줄래|
 const KO_PAL_A_JWO=new RegExp(`(?<![가-힣])팔\\s*아\\s*(?:줘|주세요|주라|줄래|버려|라|${POLITE_GIVE})|\\d[\\d,.]*\\s*주\\s*(?:만\\s*)?팔(?:아|자|라)`,'u');
 const FUND_TRANSFER_REQUEST=new RegExp(`(?:이체|송금)\\s*(?:을\\s*|를\\s*)?(?:${ASK}|하(?:시오|십시오|십쇼|세요)(?![가-힣]))`,'u');
 
+// English trade commands (fix 4, F2). Imperative position only: the verb starts the request, follows sentence punctuation (`, then`, `. and`), or follows a request lead
+// (`please`, `then`, `can you`, `I want you to`, `you should`, `go ahead and`, `let's`). `how to buy`, `why did the fund buy`, `should I buy`, `I want to buy` and `bought` are not in imperative position.
+// The object must be a real token: a hyphen (`buy-side`, `sell-off`) or a descriptive head word (`buy and hold`, `buy signal`, `sell rules`, `buy rating`) ends the form. This is a measured range, not a complete English grammar.
+const EN_LEAD="(?:^|[.!?;:,]\\s*(?:(?:and|then|also)\\s+)?|\\b(?:please|kindly|just|then|also|now|first|next|(?:can|could|would|will)\\s+you(?:\\s+please)?|(?:i|we)\\s+(?:want|need)\\s+you\\s+to|(?:i|we)\\s*(?:'d|would)\\s+like\\s+you\\s+to|you\\s+(?:should|must|need\\s+to)|go\\s+ahead\\s+and|let\\s*'?s)\\s+)";
+const EN_DESCRIPTIVE='(?!(?:and|or|vs|versus|low|high|side|signals?|ratings?|recommendations?|rules?|strateg(?:y|ies)|orders?|back|off|in\\s+may|the\\s+dip|pressure|discipline|decisions?|timing|points?|zones?|levels?|targets?|volume|logic|criteria|triggers?|conditions?|walls?)\\b|-)';
+const EN_SHORT_DESCRIPTIVE='(?!(?:selling|interest|term|squeeze|sales?|positions?|ratio|summary|list|version|answer|description|overview|review|intro(?:duction)?|explanation|notes?|report|story|film|article|text|form|history)\\b|-)';
+const EN_BUY_SELL_COMMAND=new RegExp(`${EN_LEAD}(?:buy|sell|purchase)\\s+${EN_DESCRIPTIVE}[^\\s.!?,;]`,'u');
+const EN_SHORT_COMMAND=new RegExp(`${EN_LEAD}short\\s+${EN_SHORT_DESCRIPTIVE}[^\\s.!?,;]`,'u');
+
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  // Existing baseline order wording, kept verbatim.
@@ -111,7 +120,10 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  // Account-change commands (REQ-SAF-001 / spec 0.2.0 scope: account changes are excluded). A bare noun (`계좌 해지 절차`) is not a form.
  {id:'account_change',pattern:new RegExp(`계좌\\s*(?:를\\s*|을\\s*)?(?:명의\\s*|비밀번호\\s*|한도\\s*)?(?:개설|해지|폐쇄|해약|이전|변경|수정|삭제|등록)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오|고)|시켜|좀|부탁|요(?![가-힣])|${END})|(?:거래|이체|출금|입금|주문)\\s*한도\\s*(?:를\\s*|을\\s*)?(?:변경|수정|올려|내려|늘려|높여|낮춰|조정)`,'u')},
  {id:'en_buy_sell',pattern:/(?<![a-z0-9-])(?:buy|sell)\s+(?:(?:\d[\d,.]*\s+(?:shares?\s+(?:of\s+)?)?)?\d{5,6}\b|\d[\d,.]*\s+(?:shares?|stocks?)\b|\S+.{0,30}\b(?:now|immediately|asap|at\s+market|right\s+away)\b)/u},
- {id:'en_order',pattern:/\b(?:place|submit|send|put\s+in|make)\s+(?:an?\s+|the\s+|my\s+)?(?:buy\s+|sell\s+|market\s+|limit\s+|stop\s+)?orders?\b|\bcancel\s+(?:the\s+|my\s+|an?\s+)?(?:buy\s+|sell\s+|limit\s+|stop\s+)?orders?\b|\b(?:modify|amend)\s+(?:the\s+|my\s+|an?\s+)?orders?\b/u},
+ {id:'en_order',pattern:/\b(?:place|submit|send|put\s+in|make)\s+(?:an?\s+|the\s+|my\s+)?(?:buy\s+|sell\s+|market\s+|limit\s+|stop\s+)?orders?\b|\bcancel\s+(?:(?:all|any|every)\s+(?:of\s+)?)?(?:(?:the|my|an?|your)\s+)?(?:(?:open|pending|unfilled|outstanding|active|existing|remaining)\s+)*(?:(?:buy|sell|limit|stop|market)\s+)*orders?\b|\b(?:modify|amend)\s+(?:the\s+|my\s+|an?\s+)?orders?\b/u},
+ // `buy AAPL`, `sell all my Tesla shares`, `please purchase 5 shares of X`, `short Tesla` (imperative position, see EN_LEAD). Original view only: the collapsed view would glue words.
+ {id:'en_buy_sell_command',pattern:EN_BUY_SELL_COMMAND,split:false},
+ {id:'en_short_command',pattern:EN_SHORT_COMMAND,split:false},
  {id:'en_transfer',pattern:/\b(?:transfer|wire|withdraw|deposit)\s+(?:[$₩€¥]?\d|funds?\b|money\b|cash\b|krw\b|usd\b|my\b)|\btransfer\b.{0,30}\b(?:account|bank)\b/u},
 ]);
 // "Fund movement" forms select F_T; every other trade-execution form (and any ATS-class form) selects F.
