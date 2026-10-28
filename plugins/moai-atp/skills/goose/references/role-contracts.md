@@ -344,7 +344,9 @@
 - (a) 명세 없음, 계산기 없음 → `not_run`, `backtest_engine_unavailable` (판정표 0행)
 - (b) 명세 있음, 계산기 없음 → `not_run`, `backtest_engine_unavailable` (판정표 0행)
 - (c) 계산기 있음(합성 가정), 명세 없음 → `blocked`, `strategy_spec_missing` (판정표 3행)
-- (d) 계산기·명세 있음(합성 가정), 이력 없음 → `not_run`, `validated_history_unavailable` (판정표 6행)
+- (d) 계산기·명세 있음(합성 가정), 이력 없음, 명세의 규칙이 v1 규칙 문법 밖 → `blocked`, `rule_unsupported` (판정표 5행)
+
+(d)의 합성 명세는 `signal` 에 `formula_id` 를 쓰는 명세 꼴이라 v1 규칙 문법 밖이며, 판정표는 이 규칙 행을 이력 없음 행보다 먼저 맞춥니다. 그래서 (d)는 이력이 없어도 규칙 행에서 멈춥니다. 이력 없음 행은 규칙이 문법 안인 명세에서 이력이 없을 때 맞으며, 이 문서는 그 모양을 예시로 싣지 않습니다.
 
 **예시 backtest-a**
 
@@ -443,6 +445,7 @@
     "strategy_spec_present": true,
     "calculator_present": true,
     "validated_history_present": false,
+    "strategy_rule_in_v1_grammar": false,
     "assumption": "synthetic: a backtest calculator is assumed to exist here; none exists today"
   },
   "envelope": {
@@ -455,8 +458,8 @@
     "units": [],
     "versions": {"contract": "1", "skill": "synthetic", "server_package": "synthetic"},
     "evidence_ids": [],
-    "status": "not_run",
-    "reasons": ["validated_history_unavailable"],
+    "status": "blocked",
+    "reasons": ["rule_unsupported"],
     "execution": {"authority": "plan_only", "order_sent": false, "provider_dispatches": 0},
     "strategy_spec_sha256": "e1dde1ccf1df3eccfcfe7e4136600973376561879beb867967aca0edd1e0d59c",
     "experiment": {"strategy_id": "synthetic-sma-cross", "parameters": {"fast_window": 5, "slow_window": 20}, "ledger": null},
@@ -706,6 +709,7 @@ ATS가 설치되지 않아도 ATP의 읽기·보고 기능은 그대로이며, A
 | `performance_inputs_missing` | 입력 없는 성과 요청(계획기) |
 | `period_unspecified` | 요청에 기간이 없음 |
 | `risk_engine_unavailable` | 결정적 함수 밖의 위험 절 |
+| `rule_unsupported` | 명세의 규칙이 백테스트 v1 규칙 문법 밖 |
 | `strategy_spec_missing` | 백테스트에 명세가 없음 |
 | `target_unspecified` | 대상이 없음 |
 | `unit_unconfirmed` | 단위 미확인 |
