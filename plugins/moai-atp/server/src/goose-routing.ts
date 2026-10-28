@@ -30,6 +30,11 @@ export function matchGooseForms(forms:readonly GooseForm[],text:string):string[]
 const END='(?=[\\s.!?~]*$)';
 const IMPERATIVE='(?:줘|주세요|주라|줄래|라|봐|요|버려)';
 const NOT_STATUS='(?!률|도|상황|현황|중)';
+// Connective forms (`매수하고`, `이체하고`, `매수해서`, `매수해 그리고`): the verb is followed by more of the sentence, so the command is not at the end.
+// A wish / state (`하고 싶`, `하고 있`, `하고자`) and a rule-design description (`매수하고 매도하는 규칙`) are not commands.
+const NOT_WISH='(?!자|\\s*(?:싶|있|계시|계신))';
+const NOT_RULE_DESIGN='(?![^.!?]{0,14}?(?:하는|할|한|하기|하면)\\s*(?:규칙|전략|신호|시점|타이밍|방법|기준|조건|로직|알고리즘))';
+const CONNECTIVE=`(?:하고${NOT_WISH}${NOT_RULE_DESIGN}|해서(?!\\s*(?:안|는\\s*안|손실|이익|수익|손해))|해\\s*(?:놓고|두고|주고|그리고|그다음|그\\s*다음|이후))`;
 
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
@@ -48,12 +53,19 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'handoff_execute',pattern:/(?:으?로|에|에게)\s*(?:보내|넘겨|넘기|전달|전송)(?:서|고|어)?\s*(?:바로\s*|그대로\s*)?(?:실제\s*)?(?:실행|주문|매매)/u},
  {id:'fund_transfer_ko',pattern:/(?:이체|송금).{0,10}(?:해|실행|진행)/u,split:false},
  {id:'fund_withdraw_deposit',pattern:new RegExp(`(?:출금|입금)\\s*(?:해(?![석설야도])|하(?:자|라|세요)|실행|진행${NOT_STATUS}|처리|부탁|좀)`,'u')},
+ // Connective trade / transfer commands anywhere in the sentence (`삼성전자 10주 매수하고 실적 분석 보고서`, `이체하고 종목 분석 보고서`).
+ {id:'ko_buysell_connective',pattern:new RegExp(`(?:매수|매도|매매|주문)\\s*${CONNECTIVE}`,'u')},
+ {id:'ko_fund_connective',pattern:new RegExp(`(?:이체|송금|출금|입금)\\s*${CONNECTIVE}`,'u')},
+ // `사고` / `팔고` are also the noun "accident" / a common word, so they count only with object evidence: a quantity, a 5-6 digit code or an object particle.
+ {id:'ko_sa_go',pattern:/(?:\d[\d,.]*\s*(?:주|개|만원|원어치|억)|\d{5,6}|[을를])\s*(?:만\s*)?(?:사|팔)고(?![가-힣])(?!\s*(?:싶|있|계시|계신))/u},
+ // Account-change commands (REQ-SAF-001 / spec 0.2.0 scope: account changes are excluded). A bare noun (`계좌 해지 절차`) is not a form.
+ {id:'account_change',pattern:new RegExp(`계좌\\s*(?:를\\s*|을\\s*)?(?:명의\\s*|비밀번호\\s*|한도\\s*)?(?:개설|해지|폐쇄|해약|이전|변경|수정|삭제|등록)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오|고)|시켜|좀|부탁|요(?![가-힣])|${END})|(?:거래|이체|출금|입금|주문)\\s*한도\\s*(?:를\\s*|을\\s*)?(?:변경|수정|올려|내려|늘려|높여|낮춰|조정)`,'u')},
  {id:'en_buy_sell',pattern:/(?<![a-z0-9-])(?:buy|sell)\s+(?:(?:\d[\d,.]*\s+(?:shares?\s+(?:of\s+)?)?)?\d{5,6}\b|\d[\d,.]*\s+(?:shares?|stocks?)\b|\S+.{0,30}\b(?:now|immediately|asap|at\s+market|right\s+away)\b)/u},
  {id:'en_order',pattern:/\b(?:place|submit|send|put\s+in|make)\s+(?:an?\s+|the\s+|my\s+)?(?:buy\s+|sell\s+|market\s+|limit\s+|stop\s+)?orders?\b|\bcancel\s+(?:the\s+|my\s+|an?\s+)?(?:buy\s+|sell\s+|limit\s+|stop\s+)?orders?\b|\b(?:modify|amend)\s+(?:the\s+|my\s+|an?\s+)?orders?\b/u},
  {id:'en_transfer',pattern:/\b(?:transfer|wire|withdraw|deposit)\s+(?:[$₩€¥]?\d|funds?\b|money\b|cash\b|krw\b|usd\b|my\b)|\btransfer\b.{0,30}\b(?:account|bank)\b/u},
 ]);
 // "Fund movement" forms select F_T; every other trade-execution form (and any ATS-class form) selects F.
-const FUND_MOVEMENT_FORM_IDS=new Set(['fund_transfer_ko','fund_withdraw_deposit','en_transfer']);
+const FUND_MOVEMENT_FORM_IDS=new Set(['fund_transfer_ko','fund_withdraw_deposit','ko_fund_connective','en_transfer']);
 
 const BUILD='(?:구축|만들|만드|개발|제작|설치|구성|구현|세팅)';
 /** ATS-class lexicon (design.md 3.4): building / installing / keeping running a system. No order or execution command forms. */
