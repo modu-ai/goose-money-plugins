@@ -41,8 +41,12 @@ const RUN_NOW=`(?:(?:실행|가동|시작|구동|기동|작동|진행)\\s*(?:해
 // Connective forms (`매수하고`, `이체하고`, `매수해서`, `매수해 그리고`): the verb is followed by more of the sentence, so the command is not at the end.
 // A wish / state (`하고 싶`, `하고 있`, `하고자`) and a rule-design description (`매수하고 매도하는 규칙`) are not commands.
 const NOT_WISH='(?!자|\\s*(?:싶|있|계시|계신))';
-const NOT_RULE_DESIGN='(?![^.!?]{0,14}?(?:하는|할|한|하기|하면)\\s*(?:규칙|전략|신호|시점|타이밍|방법|기준|조건|로직|알고리즘))';
+// A descriptive clause is not a command either: `매수하고 매도하는 규칙`, `주문하고 체결되는 과정`, or a verb phrase that modifies the next noun (`이체하고 받는 입장`).
+// These guards need whitespace, so the connective forms run on the original and the punctuation-stripped (whitespace kept) views only, never the collapsed one.
+const NOT_RULE_DESIGN='(?![^.!?]{0,14}?(?:하는|되는|할|한|하기|하면)\\s*(?:규칙|전략|신호|시점|타이밍|방법|기준|조건|로직|알고리즘|흐름|과정|절차|구조|방식|원리|프로세스)|\\s*[가-힣]{1,6}는\\s)';
 const CONNECTIVE=`(?:하고${NOT_WISH}${NOT_RULE_DESIGN}|해서(?!\\s*(?:안|는\\s*안|손실|이익|수익|손해))|해\\s*(?:놓고|두고|주고|그리고|그다음|그\\s*다음|이후))`;
+const BUYSELL_CONNECTIVE=new RegExp(`(?:매수|매도|매매|주문)\\s*${CONNECTIVE}`,'u');
+const FUND_CONNECTIVE=new RegExp(`(?:이체|송금|출금|입금)\\s*${CONNECTIVE}`,'u');
 
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
@@ -69,10 +73,10 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'fund_transfer_ko',pattern:/(?:이체|송금).{0,10}(?:해|실행|진행)/u,split:false},
  {id:'fund_withdraw_deposit',pattern:new RegExp(`(?:출금|입금)\\s*(?:해(?![석설야도])|하(?:자|라|세요)|실행|진행${NOT_STATUS}|처리|부탁|좀)`,'u')},
  // Connective trade / transfer commands anywhere in the sentence (`삼성전자 10주 매수하고 실적 분석 보고서`, `이체하고 종목 분석 보고서`).
- {id:'ko_buysell_connective',pattern:new RegExp(`(?:매수|매도|매매|주문)\\s*${CONNECTIVE}`,'u')},
- {id:'ko_fund_connective',pattern:new RegExp(`(?:이체|송금|출금|입금)\\s*${CONNECTIVE}`,'u')},
+ {id:'ko_buysell_connective',pattern:BUYSELL_CONNECTIVE,split:false,loose:BUYSELL_CONNECTIVE},
+ {id:'ko_fund_connective',pattern:FUND_CONNECTIVE,split:false,loose:FUND_CONNECTIVE},
  // `사고` / `팔고` are also the noun "accident" / a common word, so they count only with object evidence: a quantity, a 5-6 digit code or an object particle.
- {id:'ko_sa_go',pattern:/(?:\d[\d,.]*\s*(?:주|개|만원|원어치|억)|\d{5,6}|[을를])\s*(?:만\s*)?(?:사|팔)고(?![가-힣])(?!\s*(?:싶|있|계시|계신))/u},
+ {id:'ko_sa_go',pattern:/(?:\d[\d,.]*\s*(?:주|개|만원|원어치|억)|\d{5,6}|[을를])\s*(?:만\s*)?(?:사|팔)고(?![가-힣])(?!\s*(?:싶|있|계시|계신|[파팔]))/u},
  // Account-change commands (REQ-SAF-001 / spec 0.2.0 scope: account changes are excluded). A bare noun (`계좌 해지 절차`) is not a form.
  {id:'account_change',pattern:new RegExp(`계좌\\s*(?:를\\s*|을\\s*)?(?:명의\\s*|비밀번호\\s*|한도\\s*)?(?:개설|해지|폐쇄|해약|이전|변경|수정|삭제|등록)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오|고)|시켜|좀|부탁|요(?![가-힣])|${END})|(?:거래|이체|출금|입금|주문)\\s*한도\\s*(?:를\\s*|을\\s*)?(?:변경|수정|올려|내려|늘려|높여|낮춰|조정)`,'u')},
  {id:'en_buy_sell',pattern:/(?<![a-z0-9-])(?:buy|sell)\s+(?:(?:\d[\d,.]*\s+(?:shares?\s+(?:of\s+)?)?)?\d{5,6}\b|\d[\d,.]*\s+(?:shares?|stocks?)\b|\S+.{0,30}\b(?:now|immediately|asap|at\s+market|right\s+away)\b)/u},
