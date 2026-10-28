@@ -45,3 +45,18 @@ const EVIDENCED_CHAIN_NEAR_MISS=[
 ] as const;
 for(const request of EVIDENCED_CHAIN)test(`fix 3 hole 2: evidenced buy / sell chain is blocked with F, no steps: ${request}`,()=>assertBlockedOrder(request));
 for(const request of EVIDENCED_CHAIN_NEAR_MISS)test(`fix 3 hole 2 control: descriptive continuation is NOT an order: ${request}`,()=>assertNoOrderCode(request));
+
+// Hole 3: quantity + unit fused to the command word with no space. The one-syllable stem `사` is never matched by a word-list lookbehind;
+// the numeric evidence (`N주`, `N주식`, `N개`, `N원어치`, a 5-6 digit code) directly in front of the command is what makes `10주사줘` an order and `기업조사주세요` not.
+const COMPACT_ORDER=[
+ '/goose 10주사줘','/goose 삼성전자 10주사줘','/goose 삼성전자 10주사 줘','/goose 삼성전자 10주사 주세요','/goose 삼성전자 10주사주세요','/goose 5개사줘','/goose 100만원어치사줘','/goose 50000원어치사줘','/goose 삼성전자 100주식사줘',
+ '/goose 005930사줘','/goose 005930사 줘','/goose 005930매수','/goose 삼성전자 10주매도','/goose 10주매수','/goose 5개팔아줘','/goose 005930팔아줘','/goose 10주팔아줘',
+ // An explicit mode word, a separator between the quantity and the command, and a thousands separator do not change the verdict.
+ '/goose strategy 삼성전자 10주사줘','/goose 삼성전자 10주_사줘','/goose 삼성전자 1,000주사줘',
+] as const;
+const COMPACT_ORDER_NEAR_MISS=[
+ '/goose 기업조사주세요','/goose 연사주세요','/goose 3개사 비교 분석','/goose 3주 조사주세요','/goose 100개 기업조사주세요','/goose 2023년 조사주세요','/goose 10주년 기념 분석','/goose 삼성전자 10주 매수 후 6개월 수익률 분석',
+ '/goose 005930 매수 후 수익률 분석','/goose 10주 사라진 종목 분석','/goose 3주 연사 소개 보고서','/goose 100개 기업 조사 결과 분석 보고서',
+] as const;
+for(const request of COMPACT_ORDER)test(`fix 3 hole 3: quantity fused to the command word is blocked with F, no steps: ${request}`,()=>assertBlockedOrder(request));
+for(const request of COMPACT_ORDER_NEAR_MISS)test(`fix 3 hole 3 control: no numeric evidence or a spaced narrative is NOT an order: ${request}`,()=>assertNoOrderCode(request));
