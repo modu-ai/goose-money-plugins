@@ -460,10 +460,12 @@ test('AC-032: no other contract-document sentence restates the t36 hash scope li
 // ---- AC-010 / AC-014: backtest status --------------------------------------------------------------------------------------
 
 interface BtRow { row: number; applies: (r: J) => boolean; reason: string; status: 'not_run' | 'blocked' }
-// Excerpt of the first-match table of SPEC-ATP-BTEST-001 design.md 5.0 (rows 0, 3, 6) for the AC-010 cases; the t36 text is the single source.
+// Excerpt of the first-match table of SPEC-ATP-BTEST-001 design.md 5.0 (rows 0, 3, 5, 6) for the AC-010 cases; the t36 text is the single source.
+// Fix 4 (sync audit D9): row 5 (rule outside the v1 grammar) is part of the excerpt because it comes before row 6 and example (d) carries a specification outside that grammar.
 const BT_ROWS: readonly BtRow[] = [
   { row: 0, applies: r => !r.calculator_present, reason: 'backtest_engine_unavailable', status: 'not_run' },
   { row: 3, applies: r => !r.strategy_spec_present, reason: 'strategy_spec_missing', status: 'blocked' },
+  { row: 5, applies: r => r.strategy_spec_present && r.strategy_rule_in_v1_grammar === false, reason: 'rule_unsupported', status: 'blocked' },
   { row: 6, applies: r => !r.validated_history_present, reason: 'validated_history_unavailable', status: 'not_run' },
 ];
 function decideBacktest(rows: readonly BtRow[], request: J): { status: string; reasons: string[] } | null {
@@ -496,7 +498,7 @@ const EXPECTED_BACKTEST: Record<(typeof BACKTEST_CASES)[number], { status: strin
   'backtest-a': { status: 'not_run', reason: 'backtest_engine_unavailable' }, // no specification, no calculator (row 0 comes first)
   'backtest-b': { status: 'not_run', reason: 'backtest_engine_unavailable' }, // specification present, no calculator (row 0)
   'backtest-c': { status: 'blocked', reason: 'strategy_spec_missing' }, // calculator assumed, no specification (row 3)
-  'backtest-d': { status: 'not_run', reason: 'validated_history_unavailable' }, // calculator and specification assumed, no history (row 6)
+  'backtest-d': { status: 'blocked', reason: 'rule_unsupported' }, // calculator and specification assumed, no history, but the specification rule is outside the v1 grammar (row 5 comes before row 6)
 };
 for (const id of BACKTEST_CASES) {
   test(`AC-010/AC-014 ${id}: the example follows the SPEC-ATP-BTEST-001 §5.0 first-match table and carries null metrics, fills and receipt`, () => {
@@ -513,11 +515,11 @@ test('AC-010 today: with no calculator the result is not_run + backtest_engine_u
   }
 });
 test('AC-010 mutant: checking the specification before the calculator turns (a) red', () => {
-  const swapped: readonly BtRow[] = [BT_ROWS[1]!, BT_ROWS[0]!, BT_ROWS[2]!];
+  const swapped: readonly BtRow[] = [BT_ROWS[1]!, BT_ROWS[0]!, BT_ROWS[2]!, BT_ROWS[3]!];
   assertRed(() => verifyBacktest('backtest-a', swapped));
 });
 test('AC-010 mutant: deleting the "no specification" row turns (c) red', () => {
-  assertRed(() => verifyBacktest('backtest-c', [BT_ROWS[0]!, BT_ROWS[2]!]));
+  assertRed(() => verifyBacktest('backtest-c', [BT_ROWS[0]!, BT_ROWS[2]!, BT_ROWS[3]!]));
 });
 test('AC-014 mutant: filling a metric, a simulated fill or a receipt into a not_run result turns the check red', () => {
   for (const patch of [(e: J) => { e.metrics = { net_return: '0' }; }, (e: J) => { e.simulated_fills = []; }, (e: J) => { e.execution_receipt = { run_id: 'x' }; }]) {
@@ -856,12 +858,6 @@ test('fix4 D7: the earlier trade-block sentence of SKILL.md is still in place (t
 
 // D9: the pinned synthetic specification uses `signal.formula_id` (a t35 specification shape), which is outside the closed rule grammar of the t36 limited backtest, so the first match for
 // "calculator and specification assumed, no history" is the rule-grammar row, which comes before the no-history row.
-const FIX4_BT_ROWS: readonly BtRow[] = [
-  { row: 0, applies: r => !r.calculator_present, reason: 'backtest_engine_unavailable', status: 'not_run' },
-  { row: 3, applies: r => !r.strategy_spec_present, reason: 'strategy_spec_missing', status: 'blocked' },
-  { row: 5, applies: r => r.strategy_spec_present && r.strategy_rule_in_v1_grammar === false, reason: 'rule_unsupported', status: 'blocked' },
-  { row: 6, applies: r => !r.validated_history_present, reason: 'validated_history_unavailable', status: 'not_run' },
-];
 test('fix4 D9: example backtest-d states that the specification rule is outside the v1 grammar and is blocked with rule_unsupported (the rule row comes before the no-history row)', () => {
   const value = example('backtest-d');
   assert.equal(value.request.strategy_spec_present, true);
@@ -869,7 +865,7 @@ test('fix4 D9: example backtest-d states that the specification rule is outside 
   assert.equal(value.request.validated_history_present, false);
   assert.equal(value.request.strategy_rule_in_v1_grammar, false);
   assert.deepEqual({ status: value.envelope.status, reasons: value.envelope.reasons }, { status: 'blocked', reasons: ['rule_unsupported'] });
-  verifyBacktest('backtest-d', FIX4_BT_ROWS, value);
+  verifyBacktest('backtest-d', BT_ROWS, value);
 });
 test('fix4 D9: the flag matches the pinned specification (its signal has formula_id and no closed-grammar rule key)', () => {
   const spec = example('strategy-spec');
@@ -883,5 +879,5 @@ test('fix4 D9: the example list line for (d) names rule_unsupported and the rule
   assert.equal(line.includes('판정표 6행') || line.includes('`validated_history_unavailable`'), false, line);
 });
 test('fix4 D9 mutant: dropping the rule row from the first-match table turns example (d) red', () => {
-  assertRed(() => verifyBacktest('backtest-d', FIX4_BT_ROWS.filter(r => r.row !== 5)), 'rule row dropped');
+  assertRed(() => verifyBacktest('backtest-d', BT_ROWS.filter(r => r.row !== 5)), 'rule row dropped');
 });
