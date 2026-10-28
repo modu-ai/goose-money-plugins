@@ -27,12 +27,17 @@ const TABLE:Record<Category,Rows>={
    '/goose 매일 아침 자동으로 매매해줘','/goose 전략을 ATS로 보내서 실행해','/goose 삼성전자 10주 매수하고 실적 분석 보고서','/goose 삼성전자 매도하고 실적 분석 보고서','/goose 주문하고 보고서',
    '/goose 실제 매매 실행해줘','/goose 자동매매 시스템 실행해줘 논문 전략 보고서','/goose CrewAI로 자율매매 에이전트 팀 돌려줘','/goose 삼성전자 10주 사고 알려줘','/goose 삼성전자 매수해 그리고 실적 분석 보고서',
    '/goose 삼 성 전 자 사 줘','/goose 삼성전자 사_줘','/goose 백테스트 결과대로 실제 주문 넣어',
+   // Fix 3, hole 1: explicit sell + buy connective chain (`팔고 ... 사서`, `팔아서 ... 사서`, `사고 ... 팔고`) in either order, no object particle or quantity needed.
+   '/goose 삼성전자 팔고 SK하이닉스 사서 비교 보고서','/goose 삼성전자 팔아서 SK하이닉스 사서 비교 보고서','/goose SK하이닉스 사서 삼성전자 팔고 비교 보고서','/goose 삼성전자 사고 SK하이닉스 팔고 비교 분석 보고서',
+   '/goose 삼성전자 팔고 현대차 사서 비교 분석','/goose 삼성전자 팔고 SK하이닉스 사고 비교 보고서','/goose 005930 팔고 000660 사서 수익률 비교 보고서',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
    '/goose 매수 해석 보고서','/goose 주문 체결 구조 설명해줘','/goose 금융 사고 사례 분석 보고서','/goose 사고 원인 분석 보고서','/goose 매수하고 싶은 종목 분석','/goose 매수하고 매도하는 규칙 설계',
    '/goose 삼성전자 매수해야 할까요 실적 분석','/goose 자동매매 시스템 실행 비용 분석 보고서','/goose 실제 매매 실행 결과 분석 보고서','/goose ATS가 무엇인가요','/goose strategy 손절 규칙 정리','/goose 매수자 분석 보고서',
    '/goose 10주 사라진 종목 분석','/goose 매수 후 6개월 수익률 분석',
+   // Fix 3, hole 1 near misses: a lone `사서` (librarian), a wish / state of `팔고`, and a described method (`사서 비교하는 방법`) are not a sell + buy chain.
+   '/goose 사서 교사 채용 현황 분석 보고서','/goose 사서 선생님 인터뷰 분석 보고서','/goose 삼성전자 팔고 싶은 이유 분석 보고서','/goose 책을 팔고 있는 서점 분석 보고서','/goose 삼성전자 팔고 SK하이닉스 사서 비교하는 방법 설명',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
