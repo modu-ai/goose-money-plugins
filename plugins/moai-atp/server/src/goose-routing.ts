@@ -36,6 +36,10 @@ export function matchGooseForms(forms:readonly GooseForm[],text:string):string[]
 const END='(?=[\\s.!?~]*$)';
 const IMPERATIVE='(?:줘|주세요|주라|줄래|라|봐|요|버려)';
 const NOT_STATUS='(?!률|도|상황|현황|중)';
+// Polite / formal request endings (fix 4, F1): `해 주십시오`, `사 주시겠어요`, `팔아 주실 수 있나요`, `해 주시면`, `해 주시고`. `주시는` (a described giver) is not a request.
+const POLITE_GIVE='주(?:십시오|십쇼|시오|시겠|실래|실\\s*수|시면|시고|시죠|시지요|셔요)';
+// `부탁` after a trade / transfer noun is a request (`매수 부탁드립니다`, `송금 부탁해`, `매수 부탁하고`); `부탁 문구`, `부탁하는 방법` (noun / description) are not.
+const ASK='부탁(?:해(?![석설야도])|드리|드립|드려|합니|하고|하며|하여|하오|\\s*좀|좀|(?=[\\s.!?~]*$))';
 // Run-now command ending (`실행해`, `돌려줘`, `가동해`, bare `실행` as the whole request); a noun use (`실행 결과`, `실행 구조`) is not a command.
 const RUN_NOW=`(?:(?:실행|가동|시작|구동|기동|작동|진행)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오)|시켜|좀|부탁|합니다)|(?:실행|가동|시작|구동|기동|작동|진행)${END}|(?:돌려|돌리|켜|띄워)\\s*(?:줘|주세요|주라|줄래|봐|라|달라|버려)|(?:돌려|돌리|켜|띄워)${END})`;
 // Connective forms (`매수하고`, `이체하고`, `매수해서`, `매수해 그리고`): the verb is followed by more of the sentence, so the command is not at the end.
@@ -64,19 +68,26 @@ const QUANTITY='(?:\\d[\\d,.]*\\s*(?:주식|주|개|(?:천|만|억)?원어치)|(
 const COMPACT_QUANTITY_ORDER=new RegExp(`${QUANTITY}\\s*(?:사\\s*(?:줘|주세요|주라|줄래|달라)|팔\\s*아\\s*(?:줘|주세요|주라|줄래|버려|라))|${QUANTITY}(?:매수|매도)(?!세|자|인|량|가|금|단|분|비|율|액|일|시|물)`,'u');
 const SELL_BUY_CHAIN=new RegExp(`${SELL_STEM}[^.!?]{0,40}?${BUY_STEM}${NOT_RULE_DESIGN}|${BUY_STEM}[^.!?]{0,40}?${SELL_STEM}${NOT_RULE_DESIGN}`,'u');
 
+// One-syllable stems `사` / `팔아` count only as their own word (not preceded by a Hangul syllable), now also with a polite / formal request ending.
+const KO_SA_JWO=new RegExp(`(?<![가-힣])사\\s*(?:줘|주세요|주라|줄래|달라|${POLITE_GIVE})`,'u');
+const KO_PAL_A_JWO=new RegExp(`(?<![가-힣])팔\\s*아\\s*(?:줘|주세요|주라|줄래|버려|라|${POLITE_GIVE})|\\d[\\d,.]*\\s*주\\s*(?:만\\s*)?팔(?:아|자|라)`,'u');
+const FUND_TRANSFER_REQUEST=new RegExp(`(?:이체|송금)\\s*(?:을\\s*|를\\s*)?(?:${ASK}|하(?:시오|십시오|십쇼|세요)(?![가-힣]))`,'u');
+
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  // Existing baseline order wording, kept verbatim.
  {id:'order_command',pattern:/(?:주문|매수|매도).{0,6}(?:넣어|실행|해줘|해 줘)/u,split:false},
- {id:'ko_buysell_verb',pattern:new RegExp(`(?:매수|매도)\\s*(?:해${IMPERATIVE}|해${END}|하(?:자|라|세요|십시오)|진행${NOT_STATUS}|처리(?:해|하))`,'u')},
+ {id:'ko_buysell_verb',pattern:new RegExp(`(?:매수|매도)\\s*(?:해${IMPERATIVE}|해\\s*${POLITE_GIVE}|해${END}|하(?:자|라|세요|십시오|시오|십쇼)|진행${NOT_STATUS}|처리(?:해|하))`,'u')},
+ // `삼성전자 매수 부탁드립니다`, `매도 부탁해`, `주문 부탁드립니다`: a request after the noun. Runs on the original and punctuation-stripped views only (a collapsed view would glue `부탁 해외` into `부탁해외`).
+ {id:'ko_buysell_request',pattern:new RegExp(`(?:매수|매도|주문)\\s*(?:을\\s*|를\\s*)?${ASK}`,'u'),split:false,loose:new RegExp(`(?:매수|매도|주문)\\s*(?:을\\s*|를\\s*)?${ASK}`,'u')},
  // `삼성전자 매수` as a whole request (a bare trailing noun); preceded by whitespace or the start so `매수·매도 규칙 설계` is untouched.
  {id:'ko_buysell_bare_terminal',pattern:/(?:^|\s)(?:매수|매도)[\s.!?~]*$/u},
  // One-syllable verb stems (사, 팔) count only as their own word: `조사 주세요` / `연사 주세요` are not orders. The boundary is "not preceded by a Hangul syllable", checked on the
  // original and the punctuation-stripped view (whitespace kept); the whitespace-collapsed view would erase the boundary, so these forms skip it.
- {id:'ko_sa_jwo',pattern:/(?<![가-힣])사\s*(?:줘|주세요|주라|줄래|달라)/u,split:false,loose:/(?<![가-힣])사\s*(?:줘|주세요|주라|줄래|달라)/u},
+ {id:'ko_sa_jwo',pattern:KO_SA_JWO,split:false,loose:KO_SA_JWO},
  {id:'ko_n_ju_sa',pattern:new RegExp(`\\d[\\d,.]*\\s*주\\s*(?:만\\s*)?사(?:(?:라|자|요)(?![가-힣])|[\\s.!?~]*$)`,'u')},
- {id:'ko_pal_a_jwo',pattern:/(?<![가-힣])팔\s*아\s*(?:줘|주세요|주라|줄래|버려|라)|\d[\d,.]*\s*주\s*(?:만\s*)?팔(?:아|자|라)/u,split:/\d[\d,.]*주(?:만)?팔(?:아|자|라)/u,loose:/(?<![가-힣])팔\s*아\s*(?:줘|주세요|주라|줄래|버려|라)|\d[\d,.]*\s*주\s*(?:만\s*)?팔(?:아|자|라)/u},
- {id:'order_place',pattern:new RegExp(`주문\\s*(?:해${IMPERATIVE}|해${END}|넣|걸어|접수|내\\s*줘|보내|진행${NOT_STATUS})`,'u')},
+ {id:'ko_pal_a_jwo',pattern:KO_PAL_A_JWO,split:/\d[\d,.]*주(?:만)?팔(?:아|자|라)/u,loose:KO_PAL_A_JWO},
+ {id:'order_place',pattern:new RegExp(`주문\\s*(?:해${IMPERATIVE}|해\\s*${POLITE_GIVE}|해${END}|하(?:시오|십시오|십쇼|세요)|넣|걸어|접수|내\\s*줘|보내|진행${NOT_STATUS})`,'u')},
  {id:'order_cancel_modify',pattern:/주문\s*(?:을\s*)?(?:취소|정정|변경|수정)\s*(?:해|하|좀|부탁|요|$)|주문.{0,8}(?:취소|정정)해/u},
  {id:'reserved_order',pattern:/예약\s*(?:주문\s*(?:을\s*)?(?:자동화|걸|넣|해|등록|설정|실행|진행|내)|걸어|걸고|걸자|해\s*줘)|(?:매수|매도)\s*예약\s*(?:걸|해|등록|설정|넣)/u},
  {id:'auto_trading_command',pattern:/자동(?:으로)?\s*(?:매매|매수|매도|주문)\s*해(?![석설])|자동\s*매매\s*(?:돌려|돌리|실행|시작|가동|켜)|(?:매일|매주|매시간|매월|정기적으로|주기적으로).{0,24}(?:매매|매수|매도)\s*(?:해(?![석설])|돌려|실행)/u,split:/자동(?:으로)?(?:매매|매수|매도|주문)해(?![석설])|자동매매(?:돌려|돌리|실행|시작|가동|켜)/u},
@@ -87,7 +98,9 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'en_auto_trading_run',pattern:/\b(?:run|start|launch|execute|turn\s+on)\s+(?:the\s+|my\s+|an?\s+)?(?:automated|auto|autonomous|algorithmic)[\s-]*trading\b/u},
  {id:'handoff_execute',pattern:/(?:으?로|에|에게)\s*(?:보내|넘겨|넘기|전달|전송)(?:서|고|어)?\s*(?:바로\s*|그대로\s*)?(?:실제\s*)?(?:실행|주문|매매)/u},
  {id:'fund_transfer_ko',pattern:/(?:이체|송금).{0,10}(?:해|실행|진행)/u,split:false},
- {id:'fund_withdraw_deposit',pattern:new RegExp(`(?:출금|입금)\\s*(?:해(?![석설야도])|하(?:자|라|세요)|실행|진행${NOT_STATUS}|처리|부탁|좀)`,'u')},
+ {id:'fund_withdraw_deposit',pattern:new RegExp(`(?:출금|입금)\\s*(?:해(?![석설야도])|하(?:자|라|세요|시오|십시오|십쇼)|실행|진행${NOT_STATUS}|처리|부탁|좀)`,'u')},
+ // `50만원 송금 부탁드려요`, `이체 부탁드립니다`, `송금하시오`, `이체하십시오`: request / formal endings of a transfer. Original and punctuation-stripped views only.
+ {id:'fund_transfer_request',pattern:FUND_TRANSFER_REQUEST,split:false,loose:FUND_TRANSFER_REQUEST},
  // Connective trade / transfer commands anywhere in the sentence (`삼성전자 10주 매수하고 실적 분석 보고서`, `이체하고 종목 분석 보고서`).
  {id:'ko_buysell_connective',pattern:BUYSELL_CONNECTIVE,split:false,loose:BUYSELL_CONNECTIVE},
  {id:'ko_fund_connective',pattern:FUND_CONNECTIVE,split:false,loose:FUND_CONNECTIVE},
@@ -102,7 +115,7 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'en_transfer',pattern:/\b(?:transfer|wire|withdraw|deposit)\s+(?:[$₩€¥]?\d|funds?\b|money\b|cash\b|krw\b|usd\b|my\b)|\btransfer\b.{0,30}\b(?:account|bank)\b/u},
 ]);
 // "Fund movement" forms select F_T; every other trade-execution form (and any ATS-class form) selects F.
-const FUND_MOVEMENT_FORM_IDS=new Set(['fund_transfer_ko','fund_withdraw_deposit','ko_fund_connective','en_transfer']);
+const FUND_MOVEMENT_FORM_IDS=new Set(['fund_transfer_ko','fund_transfer_request','fund_withdraw_deposit','ko_fund_connective','en_transfer']);
 
 const BUILD='(?:구축|만들|만드|개발|제작|설치|구성|구현|세팅)';
 /** ATS-class lexicon (design.md 3.4): building / installing / keeping running a system. No order or execution command forms. */
