@@ -14,6 +14,7 @@ import { createCredentialBackedServer } from '../src/credential-runtime.js';
 import { PROCESS_PACER } from '../src/kis-http.js';
 import { saveLocalCredentials } from '../src/local-credentials.js';
 import { openSession, outcome, toolArguments, type Session } from './default-server-harness.js';
+import { prepareHome } from './credential-home.js';
 
 export type Family = 'K1' | 'K2' | 'K3' | 'K4' | 'O1' | 'O2';
 export type FailureClass = 'F1' | 'F2' | 'F3' | 'F4' | 'F5' | 'F6' | 'F7' | 'F8';
@@ -163,10 +164,11 @@ export async function call(session: Session, name: string, args?: Record<string,
 
 /** One server session on a fresh home; `fn` makes the calls; the home is removed afterwards. */
 export async function withSession<T>(setup: CaseSetup, fn: (session: Session, traffic: Traffic) => Promise<T>): Promise<{ value: T; traffic: Traffic }> {
-  const home = await makeHome(setup.home);
+  const prepared = await prepareHome(setup.home, { env: setup.env });
+  const home = prepared.home;
   const traffic = newTraffic();
   resetPacer();
-  const session = await openSession(buildServer(home, routedFetch(setup.overrides ?? {}, traffic), setup.env ?? {}));
+  const session = await openSession(buildServer(home, routedFetch(setup.overrides ?? {}, traffic), prepared.env));
   try { return { value: await fn(session, traffic), traffic }; }
   finally { await session.close(); await rm(home, { recursive: true, force: true }); }
 }
@@ -211,10 +213,11 @@ export async function runDartDeadline(tool: string, stage: 'fetch' | 'body', wat
     if (stage === 'fetch') { started(); return never; }
     return withUrl(new Response(new ReadableStream({ pull() { started(); return never; } }), { status: 200 }), url);
   };
-  const home = await makeHome('both');
+  const prepared = await prepareHome('both');
+  const home = prepared.home;
   const traffic = newTraffic();
   resetPacer();
-  const session = await openSession(buildServer(home, routedFetch({ dart }, traffic)));
+  const session = await openSession(buildServer(home, routedFetch({ dart }, traffic), prepared.env));
   mock.timers.enable({ apis: ['setTimeout'] });
   try {
     const pending = call(session, tool);

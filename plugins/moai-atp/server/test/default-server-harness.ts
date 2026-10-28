@@ -11,6 +11,7 @@ import { InMemoryTransport } from '@modelcontextprotocol/server';
 import { createStockMcpServer } from '../src/server.js';
 import { createCredentialBackedServer } from '../src/credential-runtime.js';
 import { saveLocalCredentials } from '../src/local-credentials.js';
+import { envForHome, prepareHome } from './credential-home.js';
 import { inputs as sourceInputs } from './source-input-fixtures.js';
 import { nativePeriodInput } from './native-period-mcp-fixtures.js';
 
@@ -122,9 +123,9 @@ export async function makeFileStoreSyntheticHome(): Promise<string> {
   return home;
 }
 
-/** mkdtemp home for a stub-free default server test (before M3 of card t30 this is the baseline preparation, unchanged). */
+/** mkdtemp home for a stub-free default server test; the shared helper decides the branch (card t30), and createDefaultServer finds the matching env by the home path. */
 export async function makeSyntheticHome(): Promise<string> {
-  return makeFileStoreSyntheticHome();
+  return (await prepareHome('synthetic')).home;
 }
 
 /** The option keys main.ts passes, plus the test-only injections. No memberAccess. */
@@ -135,7 +136,7 @@ export function createDefaultServer(options: { homeDir: string; fetchImpl: typeo
     openDartEnabled: options.switchesOn,
     authorizeOpenDartRead: async () => true,
     localReportViewEnabled: true,
-    env: {},
+    env: envForHome(options.homeDir),
     homeDir: options.homeDir,
     fetchImpl: options.fetchImpl,
   });
