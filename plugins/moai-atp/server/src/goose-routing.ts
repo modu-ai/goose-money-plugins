@@ -81,7 +81,11 @@ const PAL_A_TERMINAL=new RegExp(`(?<![가-힣])팔아(?:\\s*(?:버려|라))?${EN
 // A final `사` is an order only with object evidence in front of it: an object particle, a quantity or a 5-6 digit code (`삼성전자를 사`, `005930 사`, `삼성전자 10개 사`). A bare name before `사` is not evidence.
 const SA_TERMINAL=new RegExp(`(?:${QUANTITY}|[을를])\\s*(?:만\\s*)?사${END}`,'u');
 // A bare sell connective as its own word (`삼성전자 팔고 보고서`, `팔고서`): `팔고 싶`, `팔고 있` and a described clause (`팔고 사는 시점`) are not orders.
-const PAL_GO_CONNECTIVE=new RegExp(`(?<![가-힣])팔고서?(?![가-힣])(?!\\s*(?:싶|있|계시|계신))${NOT_RULE_DESIGN}`,'u');
+// A past narrative is not an order either (fix 5, mental support): `팔고 나니(까) ...` (a discovery after selling) and a sell connective followed in the same sentence by an
+// emotion / regret word (`팔고 나서 불안해요`, `팔고서 후회 중`, `팔고 마음이 불안해`). The emotion window is short (20 characters) and stops at sentence punctuation. A command that merely
+// carries a report request (`삼성전자 팔고 보고서`, `팔고 나서 보고서`) has no such word and stays blocked; a sell + buy chain is checked by its own form.
+const PAL_NARRATIVE='(?!\\s*나니(?:까)?(?![가-힣]))(?![^.!?]{0,20}?(?:후회|불안|우울|멘탈|마음|속상|허탈|힘들|걱정|아쉽|억울|두렵|답답|괴롭|심란))';
+const PAL_GO_CONNECTIVE=new RegExp(`(?<![가-힣])팔고서?(?![가-힣])(?!\\s*(?:싶|있|계시|계신))${PAL_NARRATIVE}${NOT_RULE_DESIGN}`,'u');
 const FUND_TRANSFER_REQUEST=new RegExp(`(?:이체|송금)\\s*(?:을\\s*|를\\s*)?(?:${ASK}|하(?:시오|십시오|십쇼|세요)(?![가-힣]))`,'u');
 
 // English trade commands (fix 4, F2). Imperative position only: the verb starts the request, follows sentence punctuation (`, then`, `. and`), or follows a request lead
