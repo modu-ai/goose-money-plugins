@@ -345,8 +345,11 @@
 - (b) 명세 있음, 계산기 없음 → `not_run`, `backtest_engine_unavailable` (판정표 0행)
 - (c) 계산기 있음(합성 가정), 명세 없음 → `blocked`, `strategy_spec_missing` (판정표 3행)
 - (d) 계산기·명세 있음(합성 가정), 이력 없음, 명세의 규칙이 v1 규칙 문법 밖 → `blocked`, `rule_unsupported` (판정표 5행)
+- (d') 계산기·명세 있음(합성 가정), 이력 없음, 명세의 규칙이 v1 규칙 문법 안 → `not_run`, `validated_history_unavailable` (판정표 6행)
 
-(d)의 합성 명세는 `signal` 에 `formula_id` 를 쓰는 명세 꼴이라 v1 규칙 문법 밖이며, 판정표는 이 규칙 행을 이력 없음 행보다 먼저 맞춥니다. 그래서 (d)는 이력이 없어도 규칙 행에서 멈춥니다. 이력 없음 행은 규칙이 문법 안인 명세에서 이력이 없을 때 맞으며, 이 문서는 그 모양을 예시로 싣지 않습니다.
+(d)의 합성 명세는 `signal` 에 `formula_id` 를 쓰는 명세 꼴이라 v1 규칙 문법 밖이며, 판정표는 이 규칙 행을 이력 없음 행보다 먼저 맞춥니다. 그래서 (d)는 이력이 없어도 규칙 행에서 멈춥니다. 이력 없음 행은 규칙이 문법 안인 명세에서 이력이 없을 때 맞으며, 그 모양은 (d')가 보입니다.
+
+(d')의 합성 명세는 `signal` 이 `{"rule": "close_above_sma", "window": 20}` 한 가지 꼴이고 종목이 하나이며 롱 전용이고 초기 자본이 0보다 커서 판정표의 0~5행에 걸리지 않습니다. 이력이 없으므로 첫 일치는 6행입니다. (d')는 요청 안에 명세 전체를 싣고, 그 `spec_sha256` 은 이 명세에 대해 따로 계산한 합성 예시 값입니다.
 
 **예시 backtest-a**
 
@@ -463,6 +466,69 @@
     "execution": {"authority": "plan_only", "order_sent": false, "provider_dispatches": 0},
     "strategy_spec_sha256": "e1dde1ccf1df3eccfcfe7e4136600973376561879beb867967aca0edd1e0d59c",
     "experiment": {"strategy_id": "synthetic-sma-cross", "parameters": {"fast_window": 5, "slow_window": 20}, "ledger": null},
+    "sections": {"out_of_sample": null, "walk_forward": null, "cost_sensitivity": null, "leakage_checks": null, "multiple_experiments": null},
+    "metrics": null,
+    "simulated_fills": null,
+    "execution_receipt": null
+  }
+}
+```
+
+**예시 backtest-d-prime**
+
+```json
+{
+  "request": {
+    "strategy_spec_present": true,
+    "calculator_present": true,
+    "validated_history_present": false,
+    "strategy_rule_in_v1_grammar": true,
+    "assumption": "synthetic: a backtest calculator is assumed to exist here; none exists today",
+    "strategy_spec": {
+      "contract": "moai.atp.strategy-spec.v1",
+      "procedure": "strategy",
+      "target": {"ref": "synthetic:EQ-A", "identity_status": "candidate"},
+      "period": {"start": "2020-01-02", "end": "2020-12-30", "kind": "requested"},
+      "cutoff": {"at_utc": "2021-01-04T00:00:00Z", "display_tz": "Asia/Seoul"},
+      "sources": [{"source_id": "synthetic:paper-note-1", "version": "v1", "received_at": "2021-01-04T00:00:00Z", "provider_as_of": "2020-12-30"}],
+      "units": [{"field": "sizing.initial_cash", "unit": "currency", "scale": "1", "currency": "KRW", "status": "confirmed"}],
+      "versions": {"contract": "1", "skill": "synthetic", "server_package": "synthetic"},
+      "evidence_ids": [],
+      "status": "partial",
+      "reasons": ["evidence_unbound"],
+      "execution": {"authority": "plan_only", "order_sent": false, "provider_dispatches": 0},
+      "strategy_id": "synthetic-close-above-sma",
+      "version": "1",
+      "universe": [{"instrument_ref": "synthetic:EQ-A", "identity_status": "candidate"}],
+      "signal": {"rule": "close_above_sma", "window": 20},
+      "entry_timing": {"signal_observed": "close_of_day_t", "fill_possible": "close_of_day_t_plus_1"},
+      "exit_timing": {"signal_observed": "close_of_day_t", "fill_possible": "close_of_day_t_plus_1"},
+      "sizing": {"initial_cash": "10000000", "position_fraction": "1"},
+      "constraints": {"long_only": true, "max_positions": 1},
+      "invalidation_rules": ["window must be an integer from 2 to 200"],
+      "undecided_rules": ["cost and slippage assumptions"],
+      "required_data": ["daily_close_adjusted"],
+      "cost_fill_assumptions": null,
+      "source_ledger": [{"source_id": "synthetic:paper-note-1", "claim_id": "c1"}],
+      "validation_plan": {"sections": ["out_of_sample", "walk_forward", "cost_sensitivity", "leakage_checks", "multiple_experiments"]},
+      "spec_sha256": "ab3929d51c59d84d96a021f9ef6289786f30c9815673c28854cf8955efeab6a3"
+    }
+  },
+  "envelope": {
+    "contract": "moai.atp.backtest-result.v1",
+    "procedure": "backtest",
+    "target": null,
+    "period": null,
+    "cutoff": null,
+    "sources": [],
+    "units": [],
+    "versions": {"contract": "1", "skill": "synthetic", "server_package": "synthetic"},
+    "evidence_ids": [],
+    "status": "not_run",
+    "reasons": ["validated_history_unavailable"],
+    "execution": {"authority": "plan_only", "order_sent": false, "provider_dispatches": 0},
+    "strategy_spec_sha256": "ab3929d51c59d84d96a021f9ef6289786f30c9815673c28854cf8955efeab6a3",
+    "experiment": {"strategy_id": "synthetic-close-above-sma", "parameters": {"window": 20}, "ledger": null},
     "sections": {"out_of_sample": null, "walk_forward": null, "cost_sensitivity": null, "leakage_checks": null, "multiple_experiments": null},
     "metrics": null,
     "simulated_fills": null,
