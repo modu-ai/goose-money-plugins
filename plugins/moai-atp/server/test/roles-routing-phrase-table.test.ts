@@ -42,6 +42,12 @@ const TABLE:Record<Category,Rows>={
    '/goose 삼성전자 매도 부탁드립니다','/goose 삼성전자 매도해 주십시오','/goose 삼성전자 매도하시오','/goose 삼성전자 10주 사 주실 수 있나요','/goose 삼성전자 사 주십시오',
    '/goose 삼성전자 10주 사 주시겠어요','/goose 삼성전자 사 주실래요','/goose 삼성전자 팔아 주십시오','/goose 삼성전자 팔아 주시겠어요','/goose 삼성전자 주문해 주시겠어요',
    '/goose 삼성전자 10주 주문해 주십시오','/goose 주문 부탁드립니다',
+   // Fix 4, F2: English trade commands (`buy <target>`, `sell <target>`, `purchase`, `short <target>`, `cancel ... orders`) in imperative position: at the start, after sentence punctuation, after `please` / `then` /
+   // `can you` / `I want you to` / `go ahead and`. Word-boundary and case-insensitive. A report request attached to the command does not change the class.
+   '/goose buy AAPL','/goose sell all my Tesla shares','/goose cancel all open orders','/goose buy AAPL and make an HTML report','/goose please purchase 5 shares of X','/goose place a market order','/goose short Tesla','/goose sell my stock',
+   '/goose Buy Samsung Electronics for me','/goose Please buy Tesla stock and write a report','/goose buy AAPL and write an analysis report','/goose cancel all open orders and write an analysis report','/goose can you buy AAPL for me',
+   '/goose write a report and then buy AAPL','/goose analyze AAPL, then sell my shares','/goose I want you to sell my Tesla position','/goose purchase 50 shares of MSFT','/goose Short Tesla now','/goose cancel my pending orders',
+   '/goose go ahead and buy Tesla','/goose cancel every unfilled order','/goose Sell TSLA immediately',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -58,6 +64,12 @@ const TABLE:Record<Category,Rows>={
    '/goose 매수 부탁 문구 설명','/goose 매수 부탁 문구 예시 분석 보고서','/goose 매수 부탁하는 방법 설명','/goose 삼성전자 매수해 주시는 분들의 특징 분석','/goose 매수하시는 분들의 특징 분석 보고서',
    '/goose 매수하시는 투자자 분석','/goose 삼성전자를 사 주시는 분들 분석','/goose 기업 조사 주십시오','/goose 기업 조사 주시겠어요','/goose 연사 주십시오','/goose 조사 주실 수 있나요',
    '/goose 삼성전자 실적 분석 부탁드립니다','/goose 삼성전자 분석 보고서 작성 부탁드립니다','/goose 주문 체결 구조 설명 부탁드립니다','/goose 삼성전자 매수 시점 분석 부탁드립니다','/goose 주문 방식 비교 보고서 부탁드립니다',
+   // Fix 4, F2 near misses: English descriptive / explanatory phrases (a verb with no object, a hyphenated compound, a past tense, a strategy name, a question, a wish).
+   '/goose how to buy','/goose why did the fund buy','/goose buy-side research','/goose buy and hold strategy backtest','/goose explain what sell-side means','/goose compare buy-and-hold vs momentum',
+   '/goose the investor bought shares last year, analyze the outcome','/goose buy signal analysis report','/goose sell-off analysis report','/goose what is a market order','/goose explain how a limit order works',
+   '/goose buy low sell high strategy backtest','/goose explain how to buy and sell shares','/goose short selling explained','/goose short term outlook for AAPL','/goose short summary of AAPL earnings report',
+   '/goose buy rating changes report','/goose should I buy AAPL? analysis','/goose I want to buy AAPL, analyze it','/goose which stocks do analysts buy','/goose backtest a strategy that buys 10 shares when RSI < 30',
+   '/goose sell rules design for a momentum strategy','/goose buy the dip strategy backtest','/goose sell side analyst report summary','/goose how do buy orders get matched',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
