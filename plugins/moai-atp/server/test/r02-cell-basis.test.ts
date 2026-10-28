@@ -275,6 +275,17 @@ test('AC-008 (c) rights come before the basis: the hidden subject reads its word
   assert.equal(cellAt(view,0,0),'— (rights_not_confirmed)');
   assert.equal(cellAt(view,0,1),'200 (기준 1)');
 });
+test('AC-008 (c′) hidden cell with a value: its differing designated basis never reaches the basis table (AUD-1)',()=>{
+  const baseline=viewOf(render(dated()),AB);
+  const doc=dated();hideQuoteA(doc);
+  firstMetric(doc,0,0).currency='합성통화';
+  Object.assign(doc.comparison.rows[0],{comparable:false,reasons:['currency_mismatch']});
+  const view=assertMatchesExpectation(doc,AB,render(doc));
+  assert.equal(cellAt(view,0,0),'— (rights_not_confirmed)');
+  assert.equal(cellAt(view,0,1),'200 (기준 1)');
+  assert.ok(!view.legend.raw.includes('합성통화'),'the hidden cell basis is not in the basis table');
+  assert.equal(view.legend.rows.length,baseline.legend.rows.length,'the basis table keeps the dated document row count');
+});
 test('AC-008 (d) rights come before an absent metric: the cell would be refused before rendering on a post-t29 base',()=>{
   const doc=dated();hideQuoteA(doc);doc.metrics=doc.metrics.filter((x:any)=>x!==firstMetric(doc,0,0));
   assert.throws(()=>render(doc),(error:unknown)=>String((error as Error)?.message??error).includes(LINEAGE),'refused with the lineage code');
