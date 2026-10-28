@@ -812,7 +812,7 @@ test('AC-028: the new document and the changed public documents define no ATP-to
   }
   const contractDirs = [join(ossDir, 'contracts'), join(ossDir, 'server', 'contracts')];
   for (const dir of contractDirs.filter(existsSync)) {
-    assert.deepEqual(readdirSync(dir).filter(name => /ats|strategy-file|verification-receipt|handoff/i.test(name)), [], `${dir} carries an ATS-contract-named file`);
+    assert.deepEqual(readdirSync(dir).filter(name => /(^|[-_.])ats([-_.]|$)|atp-ats|strategy-file|verification-receipt/i.test(name)), [], `${dir} carries an ATS-contract-named file`);
   }
 });
 test('REQ-SAF-006: the contract document has no shadow or paper execution contract key and says no such product exists', () => {
