@@ -30,6 +30,7 @@ const recorder = await import('./fetch-recorder.js');
 const { defaultCredentialFilePath, loadLocalCredentials, saveLocalCredentials, SafeCredentialError } = await import('../src/local-credentials.js');
 const { readHiddenLine, runCredentialSetupFlow } = await import('../src/credential-setup.js');
 const { dispatchGooseCommand } = await import('../src/cli.js');
+const { enterStoreTest, STORE_BODY } = await import('./credential-home.js'); // after the fetch recorder, like every src module above
 after(() => recorder.restoreOriginalFetch());
 
 // ---- synthetic keys and homes ------------------------------------------------------------------------
@@ -51,7 +52,7 @@ async function withSetup(run: (ctx: Ctx) => Promise<void>): Promise<void> {
   await mkdir(home, { mode: 0o700 }); await mkdir(project, { mode: 0o700 });
   assert.notEqual(home, homedir(), 'the synthetic home must not be the real home');
   const file = defaultCredentialFilePath(home);
-  try { await run({ home, project, file, keystore: dirname(file) }); } finally { await rm(base, { force: true, recursive: true }); }
+  try { if (await enterStoreTest('key-store', project, home) === STORE_BODY.run) await run({ home, project, file, keystore: dirname(file) }); } finally { await rm(base, { force: true, recursive: true }); }
 }
 const seed = (ctx: Ctx, providers: CredentialProviders): Promise<void> => saveLocalCredentials(providers, ctx.project, { confirmed: true, homeDir: ctx.home });
 
