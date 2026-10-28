@@ -8,18 +8,22 @@ import { defaultCredentialFilePath, loadLocalCredentials, saveLocalCredentials, 
 import { readHiddenLine, runCredentialSetupFlow } from "../src/credential-setup.js";
 import { createCredentialProvider, createCredentialBackedServer } from './synthetic-member-access.js';
 import { dispatchGooseCommand } from "../src/cli.js";
-import { enterStoreTest, STORE_BODY } from "./credential-home.js";
+import { registerBlockedHostRejectionTest, storeTestFor } from "./credential-home.js";
 
+// Direct key-store tests: on a host whose key store rejects every call they are registered as skipped with a reason
+// and one separately named store-rejection test stands in; on any other host they run exactly as before.
+const storeTest = storeTestFor(test, "key-store");
+registerBlockedHostRejectionTest(test, "key-store", "local-credentials.test.ts");
 const keys = { appKey: "synthetic-key", appSecret: "synthetic-secret" };
 const dart = "s".repeat(40);
 async function fixture(run: (home: string, project: string) => Promise<void>) {
   const base = await mkdtemp(join(tmpdir(), "moai-credentials-synthetic-"));
   const home = join(base, "home"), project = join(base, "project");
   await Promise.all([home, project].map(p => mkdir(p, { mode: 0o700 })));
-  try { if (await enterStoreTest("key-store", project, home) === STORE_BODY.run) await run(home, project); } finally { await rm(base, { force: true, recursive: true }); }
+  try { await run(home, project); } finally { await rm(base, { force: true, recursive: true }); }
 }
 const sink = () => { let text = ""; return { write(v: string) { text += v; }, get text() { return text; } }; };
-test("first credential setup saves only confirmed provider keys and runtime reads the same contract", () => fixture(async (home, project) => {
+storeTest("first credential setup saves only confirmed provider keys and runtime reads the same contract", () => fixture(async (home, project) => {
   const confirmation = ["YES", "SAVE"], secrets = [keys.appKey, keys.appSecret, dart], output = sink();
   await runCredentialSetupFlow(project, async () => confirmation.shift()!, async () => secrets.shift()!, output, home);
   assert.deepEqual((await loadLocalCredentials(project, home))?.providers, { kis: keys, opendart: { apiKey: dart } });
@@ -32,14 +36,14 @@ test("first credential setup saves only confirmed provider keys and runtime read
   assert.equal((await stat(dirname(dirname(file)))).mode & 0o777, 0o700);
   assert.doesNotMatch(await readFile(file, "utf8"), /synthetic-token|account|profile/);
 }));
-test("refusal, cancelled entry and declined SAVE create no credential file", () => fixture(async (home, project) => {
+storeTest("refusal, cancelled entry and declined SAVE create no credential file", () => fixture(async (home, project) => {
   await runCredentialSetupFlow(project, async () => "NO", async () => { throw Error("never ask"); }, sink(), home);
   await assert.rejects(runCredentialSetupFlow(project, async () => "YES", async () => { throw Error("setup_cancelled"); }, sink(), home), /setup_cancelled/);
   const confirmation = ["YES", "NO"], secrets = [keys.appKey, keys.appSecret, ""];
   await runCredentialSetupFlow(project, async () => confirmation.shift()!, async () => secrets.shift()!, sink(), home);
   assert.equal(await loadLocalCredentials(project, home), undefined);
 }));
-test("confirmed default reuses existing keys without asking for their value; partial replacement preserves originals", () => fixture(async (home, project) => {
+storeTest("confirmed default reuses existing keys without asking for their value; partial replacement preserves originals", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys }, project, { confirmed: true, homeDir: home });
   const before = await readFile(defaultCredentialFilePath(home), "utf8"), output = sink();
   const second = join(dirname(project), "second"); await mkdir(second);
@@ -51,19 +55,19 @@ test("confirmed default reuses existing keys without asking for their value; par
   const confirmation = ["YES", "2", "SAVE"];
   await assert.rejects(runCredentialSetupFlow(second, async () => confirmation.shift()!, async () => secrets.shift()!, sink(), home), /credential_file_invalid/);
 }));
-test("missing provider and missing token adapter fail closed", () => fixture(async (home, project) => {
+storeTest("missing provider and missing token adapter fail closed", () => fixture(async (home, project) => {
   await assert.rejects(resolveProviderCredentials("kis", { projectRoot: project, homeDir: home, env: {} }), /credential_missing/);
   await assert.rejects(createCredentialProvider({ projectRoot: project, homeDir: home, env: {} }).getForMarketRead(), /credential_missing/);
   await assert.rejects(saveLocalCredentials({ kis: keys }, project, { confirmed: false, homeDir: home }), /credential_confirmation_required/);
 }));
-test("complete environment pair wins without file access; partial or empty environment fails closed", () => fixture(async (home, project) => {
+storeTest("complete environment pair wins without file access; partial or empty environment fails closed", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys }, project, { confirmed: true, homeDir: home });
   await chmod(defaultCredentialFilePath(home), 0o644);
   assert.deepEqual(await resolveProviderCredentials("kis", { projectRoot: project, homeDir: home, env: { KIS_APP_KEY: "synthetic-env-key", KIS_APP_SECRET: "synthetic-env-secret" } }), { appKey: "synthetic-env-key", appSecret: "synthetic-env-secret" });
   for (const env of [{ KIS_APP_KEY: "partial" }, { KIS_APP_KEY: "", KIS_APP_SECRET: "" }]) await assert.rejects(resolveProviderCredentials("kis", { projectRoot: project, homeDir: home, env }), /credential_environment_invalid/);
   assert.deepEqual(await resolveProviderCredentials("opendart", { projectRoot: project, homeDir: home, env: { OPENDART_API_KEY: dart } }), { apiKey: dart });
 }));
-test("broad file or directory permissions are rejected and never silently chmodded", () => fixture(async (home, project) => {
+storeTest("broad file or directory permissions are rejected and never silently chmodded", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys }, project, { confirmed: true, homeDir: home });
   const file = defaultCredentialFilePath(home);
   await chmod(file, 0o644); await assert.rejects(loadLocalCredentials(project, home), /credential_file_unsafe/);
@@ -72,7 +76,7 @@ test("broad file or directory permissions are rejected and never silently chmodd
   await chmod(file, 0o600); await chmod(dirname(file), 0o755);
   await assert.rejects(loadLocalCredentials(project, home), /credential_file_unsafe/);
 }));
-test("symlink, hardlink, malformed, unknown-field and oversized files are rejected with sanitized errors", () => fixture(async (home, project) => {
+storeTest("symlink, hardlink, malformed, unknown-field and oversized files are rejected with sanitized errors", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys }, project, { confirmed: true, homeDir: home });
   const file = defaultCredentialFilePath(home), other = join(home, "other");
   await link(file, other); await assert.rejects(loadLocalCredentials(project, home), /credential_file_unsafe/); await rm(other);
@@ -83,7 +87,7 @@ test("symlink, hardlink, malformed, unknown-field and oversized files are reject
     await assert.rejects(loadLocalCredentials(project, home), e => e instanceof Error && /^credential_file_(invalid|unsafe)$/.test(e.message));
   }
 }));
-test("credential storage inside the project and symlinked parent are rejected", () => fixture(async (home, project) => {
+storeTest("credential storage inside the project and symlinked parent are rejected", () => fixture(async (home, project) => {
   await assert.rejects(saveLocalCredentials({ kis: keys }, home, { confirmed: true, homeDir: home }), /credential_file_unsafe/);
   await symlink(project, join(home, ".goose"));
   await assert.rejects(saveLocalCredentials({ kis: keys }, project, { confirmed: true, homeDir: home }), /credential_file_unsafe/);
@@ -127,7 +131,7 @@ test("CLI credentials option routes only to the credential setup flow", async ()
   assert.equal(await dispatchGooseCommand(["/goose", "setup", "--credentials"], async () => { throw Error("wrong route"); }, sink(), async () => { calls++; return 0; }), 0);
   assert.equal(calls, 1);
 });
-test("explicitly injected MCP adapter reads setup keys only after the gate; missing keys never reach transport", () => fixture(async (home, project) => {
+storeTest("explicitly injected MCP adapter reads setup keys only after the gate; missing keys never reach transport", () => fixture(async (home, project) => {
   let tokens = 0, requests = 0;
   const options = { projectRoot: project, homeDir: home, env: {}, rightsEnabled: true,
     obtainAccessToken: async (found: typeof keys) => { tokens++; assert.deepEqual(found, keys); return "synthetic-token"; },
@@ -144,7 +148,7 @@ test("explicitly injected MCP adapter reads setup keys only after the gate; miss
   await assert.rejects(call(), /upstream_unavailable/); assert.deepEqual([tokens, requests], [1, 1]);
 }));
 
-test("existing providers default to reuse only after confirmation and never ask hidden input", () => fixture(async (home, project) => {
+storeTest("existing providers default to reuse only after confirmation and never ask hidden input", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys, opendart: { apiKey: dart } }, project, { confirmed: true, homeDir: home });
   const file = defaultCredentialFilePath(home), before = await readFile(file), info = await stat(file);
   const selections = ["YES", "", "1"], questions: string[] = [], output = sink();
@@ -155,7 +159,7 @@ test("existing providers default to reuse only after confirmation and never ask 
   assert.match(output.text, /credentials_reused=true credentials_saved=false/);
   assert.doesNotMatch(output.text + questions.join(""), /synthetic-key|synthetic-secret|ssssssss/);
 }));
-test("cancelled replacement and declined SAVE preserve both existing providers byte-for-byte", () => fixture(async (home, project) => {
+storeTest("cancelled replacement and declined SAVE preserve both existing providers byte-for-byte", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys, opendart: { apiKey: dart } }, project, { confirmed: true, homeDir: home });
   const file = defaultCredentialFilePath(home), before = await readFile(file);
   const cancel = ["YES", "CANCEL"];
@@ -164,7 +168,7 @@ test("cancelled replacement and declined SAVE preserve both existing providers b
   await runCredentialSetupFlow(project, async () => decline.shift()!, async () => replacement.shift()!, sink(), home);
   assert.deepEqual(await readFile(file), before);
 }));
-test("editing one provider preserves the other and invalid selections do not enter secret input", () => fixture(async (home, project) => {
+storeTest("editing one provider preserves the other and invalid selections do not enter secret input", () => fixture(async (home, project) => {
   await saveLocalCredentials({ kis: keys, opendart: { apiKey: dart } }, project, { confirmed: true, homeDir: home });
   const selections = ["YES", "invalid", "1", "2", "SAVE"], replacement = "n".repeat(40), output = sink();
   let hiddenCalls = 0;
