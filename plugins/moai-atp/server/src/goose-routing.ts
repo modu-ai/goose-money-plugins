@@ -37,9 +37,11 @@ const END='(?=[\\s.!?~]*$)';
 const IMPERATIVE='(?:줘|주세요|주라|줄래|라|봐|요|버려)';
 const NOT_STATUS='(?!률|도|상황|현황|중)';
 // Polite / formal request endings (fix 4, F1): `해 주십시오`, `사 주시겠어요`, `팔아 주실 수 있나요`, `해 주시면`, `해 주시고`. `주시는` (a described giver) is not a request.
-const POLITE_GIVE='주(?:십시오|십쇼|시오|시겠|실래|실\\s*수|시면|시고|시죠|시지요|셔요)';
+// Fix 5 adds the wish `주셨으면` (`매수해 주셨으면 좋겠어요`) and the ability question `줄 수 있나요` (`매수해 줄 수 있나요`, `있어?`, `있을까요`); `줄 수 있는지` (a described ability) is not a request.
+const POLITE_GIVE='(?:주(?:십시오|십쇼|시오|시겠|실래|실\\s*수|시면|시고|시죠|시지요|셔요|셨으면)|줄\\s*수\\s*있(?:나요?|어요?|을까요?|니|겠(?:어요?|습니까)|습니까|죠)(?![가-힣]))';
 // `부탁` after a trade / transfer noun is a request (`매수 부탁드립니다`, `송금 부탁해`, `매수 부탁하고`); `부탁 문구`, `부탁하는 방법` (noun / description) are not.
-const ASK='부탁(?:해(?![석설야도])|드리|드립|드려|합니|하고|하며|하여|하오|\\s*좀|좀|(?=[\\s.!?~]*$))';
+// Fix 5 adds the formal wish `바랍니다` / `바라요` (`매수 바랍니다`); `바람` (wind, trend: `매도 바람이 분 이유`) and `바라는` (a described wish) are not requests.
+const ASK='(?:부탁(?:해(?![석설야도])|드리|드립|드려|합니|하고|하며|하여|하오|\\s*좀|좀|(?=[\\s.!?~]*$))|바(?:랍니다|라요|래요))';
 // Run-now command ending (`실행해`, `돌려줘`, `가동해`, bare `실행` as the whole request); a noun use (`실행 결과`, `실행 구조`) is not a command.
 const RUN_NOW=`(?:(?:실행|가동|시작|구동|기동|작동|진행)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오)|시켜|좀|부탁|합니다)|(?:실행|가동|시작|구동|기동|작동|진행)${END}|(?:돌려|돌리|켜|띄워)\\s*(?:줘|주세요|주라|줄래|봐|라|달라|버려)|(?:돌려|돌리|켜|띄워)${END})`;
 // Connective forms (`매수하고`, `이체하고`, `매수해서`, `매수해 그리고`): the verb is followed by more of the sentence, so the command is not at the end.
@@ -111,9 +113,9 @@ const EN_SHORT_COMMAND=new RegExp(`${EN_LEAD_NOT_RULE}short\\s+${EN_SHORT_DESCRI
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  // Existing baseline order wording, kept verbatim.
  {id:'order_command',pattern:/(?:주문|매수|매도).{0,6}(?:넣어|실행|해줘|해 줘)/u,split:false},
- {id:'ko_buysell_verb',pattern:new RegExp(`(?:매수|매도)\\s*(?:해${IMPERATIVE}|해\\s*${POLITE_GIVE}|해${END}|하(?:자|라|세요|십시오|시오|십쇼)|진행${NOT_STATUS}|처리(?:해|하))`,'u')},
+ {id:'ko_buysell_verb',pattern:new RegExp(`(?:매수|매도)\\s*(?:좀\\s*)?(?:해${IMPERATIVE}|해\\s*${POLITE_GIVE}|해${END}|하(?:자|라|세요|십시오|시오|십쇼)|진행${NOT_STATUS}|처리(?:해|하))`,'u')},
  // `삼성전자 매수 부탁드립니다`, `매도 부탁해`, `주문 부탁드립니다`: a request after the noun. Runs on the original and punctuation-stripped views only (a collapsed view would glue `부탁 해외` into `부탁해외`).
- {id:'ko_buysell_request',pattern:new RegExp(`(?:매수|매도|주문)\\s*(?:을\\s*|를\\s*)?${ASK}`,'u'),split:false,loose:new RegExp(`(?:매수|매도|주문)\\s*(?:을\\s*|를\\s*)?${ASK}`,'u')},
+ {id:'ko_buysell_request',pattern:new RegExp(`(?:매수|매도|주문)\\s*(?:을\\s*|를\\s*)?(?:좀\\s*)?${ASK}`,'u'),split:false,loose:new RegExp(`(?:매수|매도|주문)\\s*(?:을\\s*|를\\s*)?(?:좀\\s*)?${ASK}`,'u')},
  // `삼성전자 매수` as a whole request (a bare trailing noun); preceded by whitespace or the start so `매수·매도 규칙 설계` is untouched.
  {id:'ko_buysell_bare_terminal',pattern:/(?:^|\s)(?:매수|매도)[\s.!?~]*$/u},
  // One-syllable verb stems (사, 팔) count only as their own word: `조사 주세요` / `연사 주세요` are not orders. The boundary is "not preceded by a Hangul syllable", checked on the
