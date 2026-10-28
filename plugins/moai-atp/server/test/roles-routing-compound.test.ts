@@ -29,6 +29,24 @@ const NOT_BLOCKED=[
  '/goose 이체 수수료 구조를 설명해줘','/goose 매수 해석 보고서','/goose 삼성전자 매수해야 할까요 실적 분석',
 ] as const;
 
+// Item 1b (found by an adversarial sweep after item 1 GREEN): the verb of a descriptive clause (`주문하고 체결되는 과정`, `사고 파는 전략`) is not a command.
+const DESCRIPTIVE_NOT_BLOCKED=[
+ '/goose 배당주를 사고 파는 전략 백테스트','/goose 매수 주문하고 취소하는 흐름 설명','/goose 주문하고 체결되는 과정 설명해줘','/goose 이체하고 받는 입장에서 수수료 비교 분석','/goose 주식을 사고팔 때 세금 분석',
+ '/goose 매수하고 매도하는 시점 분석 보고서','/goose 주문하고 나서 취소하는 방법 설명',
+] as const;
+// The descriptive guard must not swallow a real compound command whose second clause is an ordinary analysis request.
+const STILL_BLOCKED_AFTER_GUARD=[
+ '/goose 삼성전자 10주 매수하고 삼성전자에 대한 분석 보고서','/goose 삼성전자 매수하고 관련 뉴스 분석 보고서','/goose 삼성전자 매수하고 나서 실적 분석','/goose 이체하고 나서 종목 분석 보고서',
+] as const;
+for(const request of DESCRIPTIVE_NOT_BLOCKED)test(`defect 1b control: a descriptive clause is NOT an order: ${request}`,()=>{
+ const p=planGooseRequest(request);
+ assert.notEqual(p.status,'blocked',request);assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.blocked_actions,[],request);assert.deepEqual(p.unsupported_actions,[],request);
+});
+for(const request of STILL_BLOCKED_AFTER_GUARD)test(`defect 1b control: a real compound command stays blocked: ${request}`,()=>{
+ const p=planGooseRequest(request);
+ assert.equal(p.status,'blocked',request);assert.ok(p.blocked_actions.includes('orders_or_transfers'),request);assert.deepEqual(p.steps,[],request);
+});
+
 for(const request of COMPOUND_F)test(`defect 1: compound trade command is blocked with F, no steps: ${request}`,()=>{
  const p=planGooseRequest(request);
  assert.equal(p.status,'blocked',request);assert.ok(p.blocked_actions.includes('orders_or_transfers'),request);assert.deepEqual(p.steps,[],request);
