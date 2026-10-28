@@ -47,6 +47,12 @@ const NOT_RULE_DESIGN='(?![^.!?]{0,14}?(?:하는|되는|할|한|하기|하면)\\
 const CONNECTIVE=`(?:하고${NOT_WISH}${NOT_RULE_DESIGN}|해서(?!\\s*(?:안|는\\s*안|손실|이익|수익|손해))|해\\s*(?:놓고|두고|주고|그리고|그다음|그\\s*다음|이후))`;
 const BUYSELL_CONNECTIVE=new RegExp(`(?:매수|매도|매매|주문)\\s*${CONNECTIVE}`,'u');
 const FUND_CONNECTIVE=new RegExp(`(?:이체|송금|출금|입금)\\s*${CONNECTIVE}`,'u');
+// Sell + buy chain (`삼성전자 팔고 SK하이닉스 사서 ...`): a sell connective (`팔고`, `팔고서`, `팔아서`) and a buy connective (`사서`, `사고`, `사고서`) in one clause, in either order.
+// Each stem counts only as its own word (not preceded or followed by a Hangul syllable), so `사서 교사`-class words and `금융 사고 사례` (no sell stem) stay out. A wish / state
+// (`팔고 싶`, `팔고 있`) and a described method (`사서 비교하는 방법`) end the chain without an order. This is the one place a trade needs no object particle or quantity: the pair is the evidence.
+const SELL_STEM='(?<![가-힣])팔(?:고서?|아서)(?![가-힣])(?!\\s*(?:싶|있|계시|계신))';
+const BUY_STEM='(?<![가-힣])사(?:서|고서?)(?![가-힣])(?!\\s*(?:싶|있|계시|계신))';
+const SELL_BUY_CHAIN=new RegExp(`${SELL_STEM}[^.!?]{0,40}?${BUY_STEM}${NOT_RULE_DESIGN}|${BUY_STEM}[^.!?]{0,40}?${SELL_STEM}${NOT_RULE_DESIGN}`,'u');
 
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
 export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
@@ -77,6 +83,7 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'ko_fund_connective',pattern:FUND_CONNECTIVE,split:false,loose:FUND_CONNECTIVE},
  // `사고` / `팔고` are also the noun "accident" / a common word, so they count only with object evidence: a quantity, a 5-6 digit code or an object particle.
  {id:'ko_sa_go',pattern:/(?:\d[\d,.]*\s*(?:주|개|만원|원어치|억)|\d{5,6}|[을를])\s*(?:만\s*)?(?:사|팔)고(?![가-힣])(?!\s*(?:싶|있|계시|계신|[파팔]))/u},
+ {id:'ko_sell_buy_chain',pattern:SELL_BUY_CHAIN,split:false,loose:SELL_BUY_CHAIN},
  // Account-change commands (REQ-SAF-001 / spec 0.2.0 scope: account changes are excluded). A bare noun (`계좌 해지 절차`) is not a form.
  {id:'account_change',pattern:new RegExp(`계좌\\s*(?:를\\s*|을\\s*)?(?:명의\\s*|비밀번호\\s*|한도\\s*)?(?:개설|해지|폐쇄|해약|이전|변경|수정|삭제|등록)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오|고)|시켜|좀|부탁|요(?![가-힣])|${END})|(?:거래|이체|출금|입금|주문)\\s*한도\\s*(?:를\\s*|을\\s*)?(?:변경|수정|올려|내려|늘려|높여|낮춰|조정)`,'u')},
  {id:'en_buy_sell',pattern:/(?<![a-z0-9-])(?:buy|sell)\s+(?:(?:\d[\d,.]*\s+(?:shares?\s+(?:of\s+)?)?)?\d{5,6}\b|\d[\d,.]*\s+(?:shares?|stocks?)\b|\S+.{0,30}\b(?:now|immediately|asap|at\s+market|right\s+away)\b)/u},
