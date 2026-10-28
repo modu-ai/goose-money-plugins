@@ -180,3 +180,32 @@ export async function enterStoreTest(store: StoreKind, project: string, home: st
   assert.equal((await readdir(home)).includes('.goose'), false, `${store}: the rejected home gained no .goose entry`);
   return STORE_BODY.notRun;
 }
+
+// ---- Gate for the direct file-store test groups (return-to-run fix) ------------------------------------------
+// RED skeleton: typed stubs that throw, so the contract test fails for the missing behavior and not for a type error.
+
+/** A test body as node:test accepts it, without the test-context parameter. */
+export type TestBody = () => void | Promise<void>;
+/** The part of node:test's `test` that the gate uses; the contract test hands in a recording stand-in. */
+export interface RegisterTest {
+  (name: string, body: TestBody): unknown;
+  (name: string, options: { skip?: string | undefined }, body: TestBody): unknown;
+}
+
+/** The reason string a skipped direct-store test shows in the reporter. */
+export function blockedHostSkipReason(store: StoreKind): string {
+  void store;
+  throw new Error('not_implemented');
+}
+
+/** Returns the registration function for one direct-store test group. */
+export function storeTestFor(register: RegisterTest, store: StoreKind, options: ExplicitPlatform = {}): (name: string, body: TestBody) => void {
+  void register; void store; void options;
+  throw new Error('not_implemented');
+}
+
+/** Registers the one separately named store-rejection test of a skipped group; returns whether it registered. */
+export function registerBlockedHostRejectionTest(register: RegisterTest, store: StoreKind, file: string, options: ExplicitPlatform = {}): boolean {
+  void register; void store; void file; void options;
+  throw new Error('not_implemented');
+}

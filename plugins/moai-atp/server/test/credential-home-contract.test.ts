@@ -116,3 +116,64 @@ test('explicit-platform-arg a prepared env is a copy: changing it does not chang
     assert.deepEqual(caseEnv, { SOME_CASE_VARIABLE: 'x' });
   });
 });
+
+// ---- Gate for the direct file-store test groups (return-to-run fix) ---------------------------------------------
+// The stand-in below records what the gate hands to the registration function. The original body is never run
+// for the win32 argument, and no store function is called in this file.
+type TestBody = import('./credential-home.js').TestBody;
+type RegisterTest = import('./credential-home.js').RegisterTest;
+type StoreKind = import('./credential-home.js').StoreKind;
+interface Registration { name: string; options: { skip?: string | undefined } | undefined; body: TestBody }
+const recordingRegister = (): { calls: Registration[]; register: RegisterTest } => {
+  const calls: Registration[] = [];
+  const register = ((name: string, second: unknown, third?: unknown) => {
+    if (typeof second === 'function') calls.push({ name, options: undefined, body: second as TestBody });
+    else calls.push({ name, options: second as { skip?: string | undefined }, body: third as TestBody });
+  }) as RegisterTest;
+  return { calls, register };
+};
+const STORES = ['key-store', 'profile-store'] as const satisfies readonly StoreKind[];
+
+for (const store of STORES) {
+  test(`explicit-platform-arg win32 ${store}: the gate marks the original test skipped with a reason and never runs its body (not Windows evidence)`, () => {
+    const { calls, register } = recordingRegister();
+    let ran = false;
+    helper.storeTestFor(register, store, { platform: 'win32' })('original behavior', () => { ran = true; });
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0]?.name, 'original behavior', 'the original test name is kept');
+    const reason = calls[0]?.options?.skip;
+    assert.equal(typeof reason, 'string');
+    assert.ok(String(reason).length > 0, 'the skip reason is non-empty');
+    assert.ok(String(reason).includes(store), 'the reason names the store');
+    assert.ok(String(reason).includes('not run'), 'the reason says the original behavior was not run');
+    assert.equal(reason, helper.blockedHostSkipReason(store));
+    assert.equal(ran, false, 'registering the test did not run the body');
+  });
+  test(`explicit-platform-arg darwin ${store}: the gate registers the original test without a skip and its body runs unchanged (not Windows evidence)`, async () => {
+    const { calls, register } = recordingRegister();
+    let ran = 0;
+    const body: TestBody = () => { ran += 1; };
+    helper.storeTestFor(register, store, { platform: 'darwin' })('original behavior', body);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0]?.name, 'original behavior');
+    assert.equal(calls[0]?.options?.skip, undefined, 'no skip on a host that is not blocked');
+    assert.equal(calls[0]?.body, body, 'the very same body function is registered');
+    await calls[0]?.body();
+    assert.equal(ran, 1);
+  });
+  test(`explicit-platform-arg win32 ${store}: one separately named test checks the store rejection and is not skipped (not Windows evidence)`, () => {
+    const { calls, register } = recordingRegister();
+    assert.equal(helper.registerBlockedHostRejectionTest(register, store, 'some-group.test.ts', { platform: 'win32' }), true);
+    assert.equal(calls.length, 1);
+    const name = calls[0]?.name ?? '';
+    for (const word of ['fail-closed', 'store rejection', 'some-group.test.ts', store]) assert.ok(name.includes(word), `the name carries "${word}"`);
+    assert.ok(name.includes('not the original behavior'), 'the name says it is not the original behavior');
+    assert.equal(calls[0]?.options?.skip, undefined, 'the rejection test itself is never skipped');
+  });
+}
+
+test('explicit-platform-arg darwin: no rejection test is registered for either store (not Windows evidence)', () => {
+  const { calls, register } = recordingRegister();
+  for (const store of STORES) assert.equal(helper.registerBlockedHostRejectionTest(register, store, 'some-group.test.ts', { platform: 'darwin' }), false);
+  assert.deepEqual(calls, []);
+});
