@@ -145,16 +145,42 @@ function comparisonSectionHtml(doc:ReportInput):string {
     const prefix=`${nameOf.get(ownerOf.get(metric.source_id)??'')??''} · `;
     return `${metric.label.startsWith(prefix)?metric.label.slice(prefix.length):metric.label} (${row.field_id})`;
   };
-  const shown=(cell:typeof block.rows[number]['cells'][number]|undefined)=>cell&&cell.value!==null&&cell.source_id!==null&&sourceMayDisplay(doc,cell.source_id)?cell.value:'—';
+  // Cell text and basis table (SPEC-ATP-R02-002). Every cell is decided by the first rule that applies: the
+  // rights / mapping words, then value_missing, then an absent designated metric (`(기준 —)`), then the basis row.
+  // The designated metric is the first metric with the row's field_id and THIS cell's source_id, not fieldLabel's pick.
+  const basisKeys:string[]=[];
+  const basisRows:string[][]=[];
+  const basisNumber=(metric:typeof doc.metrics[number]):number=>{
+    const source=doc.sources.find((item)=>item.id===metric.source_id);
+    const dart=/^(\d{4}):FY:(?:CFS|OFS):(?:IS|BS|CF):.*:\d{14}$/.exec(metric.period);
+    const undated=source!==undefined&&(source.source_as_of===null||source.source_as_of===undefined)&&metric.period===(source.received_at??source.observed_at);
+    const entry=[metric.unit,undated?'period_unconfirmed':dart?`사업연도 ${dart[1]} · 보고서 코드 11011`:metric.period,metric.period_kind,metric.scope,metric.currency??'—',metric.unit.includes('배율 미확인')?'scale_unconfirmed':metric.scale];
+    const key=JSON.stringify(entry);
+    let index=basisKeys.indexOf(key);
+    if(index<0){index=basisKeys.push(key)-1;basisRows.push([`기준 ${index+1}`,...entry]);}
+    return index+1;
+  };
+  const shown=(row:typeof block.rows[number],cell:typeof block.rows[number]['cells'][number]|undefined):string=>{
+    const metric=cell&&cell.source_id!==null?doc.metrics.find((candidate)=>candidate.field_id===row.field_id&&candidate.source_id===cell.source_id):undefined;
+    const words=[
+      ...(metric?.status==='rights_pending'||(cell&&cell.value!==null&&cell.source_id!==null&&!sourceMayDisplay(doc,cell.source_id))?['rights_not_confirmed']:[]),
+      ...(metric?.missing_reason==='issuer_mapping_unverified'?['issuer_mapping_unverified']:[]),
+    ];
+    if(words.length>0)return `— (${words.join(', ')})`;
+    if(!cell||cell.value===null||cell.source_id===null)return '— (value_missing)';
+    if(!metric)return `${cell.value} (기준 —)`;
+    return `${cell.value} (기준 ${basisNumber(metric)})`;
+  };
   const fields=reportTable(['지표',...block.subjects.map((subject)=>subject.name),'비교 여부','사유 코드'],block.rows.map((row)=>[
-    fieldLabel(row),...block.subjects.map((subject)=>shown(row.cells.find((cell)=>cell.subject_id===subject.id))),row.comparable?'비교 가능':'비교 불가',row.reasons.join(', ')||'—',
+    fieldLabel(row),...block.subjects.map((subject)=>shown(row,row.cells.find((cell)=>cell.subject_id===subject.id))),row.comparable?'비교 가능':'비교 불가',row.reasons.join(', ')||'—',
   ]));
+  const basis=reportTable(['기준','단위','기간 기준','기간 종류','범위','통화','배율'],basisRows);
   const mappings=reportTable(['대상','종목 코드','기업 코드','대응 상태','증거 출처','일치 접수번호','공시 기업명(표시용)'],block.subjects.map((subject)=>{
     const mapping=block.mappings.find((candidate)=>candidate.subject_id===subject.id);
     return mapping?[subject.name,mapping.kis_symbol,mapping.corp_code,`${mapping.status} · ${MAPPING_NOTE[mapping.status]??''}`,mapping.evidence_source_id??'—',mapping.matched_rcept_nos.join(', ')||'—',mapping.corp_name??'—']:[subject.name,subject.kis_symbol,subject.corp_code_candidate,'—','—','—','—'];
   }));
   const acquisitions=reportTable(['출처','대상','취득 종류','설명'],block.acquisitions.map((label)=>[label.source_id,nameOf.get(ownerOf.get(label.source_id)??'')??'—',label.kind,ACQUISITION_NOTE[label.kind]??'']));
-  return `<section class="panel" id="comparison" data-r02-comparison><h2>종목 비교</h2><p class="block-note">대상은 요청한 순서로 나열했습니다. 값은 받은 그대로의 원수치이며 환산하거나 계산하지 않았습니다. 기간·범위·통화·단위·배율이 하나라도 다르거나 값이 없으면 비교 불가로 표시합니다.</p><h3>지표별 비교</h3>${fields}<h3>대상별 대응 상태</h3>${mappings}<h3>출처별 취득 종류</h3>${acquisitions}</section>`;
+  return `<section class="panel" id="comparison" data-r02-comparison><h2>종목 비교</h2><p class="block-note">대상은 요청한 순서로 나열했습니다. 값은 받은 그대로의 원수치이며 환산하거나 계산하지 않았습니다. 기간·범위·통화·단위·배율이 하나라도 다르거나 값이 없으면 비교 불가로 표시합니다.</p><h3>지표별 비교</h3>${fields}<h3>값 기준표</h3>${basis}<h3>대상별 대응 상태</h3>${mappings}<h3>출처별 취득 종류</h3>${acquisitions}</section>`;
 }
 function specialVisualSections(doc:ReportInput):Map<string,Map<string,string[]>> {
   const bySection=new Map<string,Map<string,string[]>>();
