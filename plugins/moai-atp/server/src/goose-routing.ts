@@ -137,10 +137,15 @@ export function planGooseRequest(value:unknown){
   // Slash legacy form `/goose-<mode>` (H11): non-trading migration only, only for a currently mapped mode, and only when no trade-execution form is present.
   if((GOOSE_MODES as readonly string[]).includes(slashMode)&&tradeForms.length===0){explicit=slashMode as GooseMode;migrated=true;text=text.slice(first.length).trim();}
  }else{
-  const legacy=first.startsWith('goose-')?first.slice(6):first;
-  explicit=GOOSE_MODES.includes(legacy as GooseMode)?legacy as GooseMode:undefined;
-  migrated=explicit!==undefined&&first.startsWith('goose-');
-  if(explicit)text=text.slice(first.length).trim();
+  // Dash legacy forms `goose-<mode>` / `/goose goose-<mode>`: like the slash form, a trade-execution form in the request blocks the migration (REQ-ENT-003, H3 precedes migration).
+  // The plain mode word (`/goose strategy ...`) is not a legacy form; it keeps its explicit mode.
+  const dashLegacy=first.startsWith('goose-');
+  if(!(dashLegacy&&tradeForms.length>0)){
+   const legacy=dashLegacy?first.slice(6):first;
+   explicit=GOOSE_MODES.includes(legacy as GooseMode)?legacy as GooseMode:undefined;
+   migrated=explicit!==undefined&&dashLegacy;
+   if(explicit)text=text.slice(first.length).trim();
+  }
  }
  const blockedActions:string[]=[];
  if(tradeForms.length)blockedActions.push('orders_or_transfers');
