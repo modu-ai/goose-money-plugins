@@ -116,14 +116,14 @@ export function createProviderSpy() {
 const SYNTHETIC_KIS = { appKey: 'synthetic-app-key-never-real', appSecret: 'synthetic-app-secret-never-real' };
 const SYNTHETIC_DART_KEY = 'SYNTHETIC_OPENDART_KEY_00000000000000000';
 
-/** The baseline (file-store branch) preparation: a mkdtemp home holding synthetic KIS and OpenDART keys in the real keystore layout. */
+/** The baseline (macOS) file-store preparation: a mkdtemp home holding synthetic KIS and OpenDART keys in the real keystore layout. */
 export async function makeFileStoreSyntheticHome(): Promise<string> {
   const home = await mkdtemp(join(tmpdir(), 'atp-m1-home-'));
   await saveLocalCredentials({ kis: SYNTHETIC_KIS, opendart: { apiKey: SYNTHETIC_DART_KEY } }, process.cwd(), { confirmed: true, homeDir: home });
   return home;
 }
 
-/** mkdtemp home for a stub-free default server test; the shared helper decides the branch (card t30), and createDefaultServer finds the matching env by the home path. */
+/** mkdtemp home for a stub-free default server test; the shared helper decides how the home is prepared (card t30), and createDefaultServer finds the matching env by the home path. */
 export async function makeSyntheticHome(): Promise<string> {
   return (await prepareHome('synthetic')).home;
 }

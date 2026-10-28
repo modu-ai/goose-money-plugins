@@ -67,7 +67,7 @@ export interface PreparedHome {
 }
 
 /** What a direct file-store test does after `enterStoreTest`. */
-export const STORE_BODY = { run: 'run-body', skip: 'body-not-run' } as const;
+export const STORE_BODY = { run: 'run-body', notRun: 'body-not-run' } as const;
 export type StoreBodyDecision = (typeof STORE_BODY)[keyof typeof STORE_BODY];
 
 const ENV_KINDS: ReadonlySet<Kind> = new Set<Kind>(['both', 'kis', 'dart', 'synthetic']);
@@ -112,13 +112,13 @@ function syntheticEnvironment(kind: PreparedKind, caseEnv: NodeJS.ProcessEnv, co
 
 /** Prepare a home and an environment for one case; writes the branch line when the branch is not `file-store`. */
 export async function prepareHome(kind: PreparedKind, options: PrepareOptions = {}): Promise<PreparedHome> {
-  const branch = branchFor(kind, { platform: options.platform });
+  const chosen = branchFor(kind, { platform: options.platform });
   const output = options.output ?? defaultOutput;
   const caseEnv = options.env ?? {};
   const scenarios = await import('./auth002-m2-scenarios.js');
   let home: string;
   let env: NodeJS.ProcessEnv = { ...caseEnv };
-  if (branch === BRANCH.envCredential) {
+  if (chosen === BRANCH.envCredential) {
     home = await mkdtemp(join(tmpdir(), 'atp-t30-home-'));
     env = { ...syntheticEnvironment(kind, caseEnv, { kis: scenarios.SYNTHETIC_KIS, dartKey: scenarios.SYNTHETIC_DART_KEY }), ...caseEnv };
   } else if (kind === 'synthetic') {
@@ -126,9 +126,9 @@ export async function prepareHome(kind: PreparedKind, options: PrepareOptions = 
   } else {
     home = await scenarios.makeHome(kind);
   }
-  if (branch !== BRANCH.fileStore) output(branchLine(branch, kind));
+  if (chosen !== BRANCH.fileStore) output(branchLine(chosen, kind));
   preparedEnv.set(home, env);
-  return { home, env, branch, kind };
+  return { home, env, branch: chosen, kind };
 }
 
 const keyStoreRejection = (code: string) => (error: unknown): boolean => error instanceof SafeCredentialError && error.code === code;
@@ -145,13 +145,14 @@ const profileStoreRejection = (code: string) => (error: unknown): boolean => err
  */
 export async function assertStoreVerdict(prepared: PreparedHome): Promise<void> {
   const { home, kind } = prepared;
-  if (prepared.branch === BRANCH.envCredential) {
+  const chosen = prepared.branch;
+  if (chosen === BRANCH.envCredential) {
     assert.deepEqual(await readdir(home), [], `${kind}: the env-credential home holds zero entries`);
     return;
   }
   const project = await mkdtemp(join(tmpdir(), 'atp-t30-project-'));
   try {
-    if (prepared.branch === BRANCH.failClosed) {
+    if (chosen === BRANCH.failClosed) {
       await assert.rejects(loadLocalCredentials(project, home), keyStoreRejection('secure_file_storage_unsupported'));
       if (kind === 'none') assert.equal((await readdir(home)).includes('.goose'), false, 'the rejected home gained no .goose entry');
     } else if (kind === 'none') {
@@ -171,11 +172,11 @@ export async function assertStoreVerdict(prepared: PreparedHome): Promise<void> 
  * .goose entry, and says the body is not to run.
  */
 export async function enterStoreTest(store: StoreKind, project: string, home: string, output: OutputFn = defaultOutput): Promise<StoreBodyDecision> {
-  const branch = branchFor(store);
-  if (branch === BRANCH.fileStore) return STORE_BODY.run;
-  output(branchLine(branch, store));
+  const chosen = branchFor(store);
+  if (chosen === BRANCH.fileStore) return STORE_BODY.run;
+  output(branchLine(chosen, store));
   if (store === 'key-store') await assert.rejects(loadLocalCredentials(project, home), keyStoreRejection('secure_file_storage_unsupported'));
   else await assert.rejects(readInvestorContext(project, home), profileStoreRejection('context_unsafe_path'));
   assert.equal((await readdir(home)).includes('.goose'), false, `${store}: the rejected home gained no .goose entry`);
-  return STORE_BODY.skip;
+  return STORE_BODY.notRun;
 }
