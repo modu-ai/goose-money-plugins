@@ -60,6 +60,12 @@ const TABLE:Record<Category,Rows>={
    '/goose can you buy AAPL when it dips, backtest later','/goose write a report. buy AAPL when RSI < 30','/goose I want you to buy Tesla if RSI < 30 for my strategy','/goose analyze AAPL strategy, then buy AAPL',
    // Fix 5, mental-support guards: a sell connective that carries only a report request, or a sell + buy chain, stays blocked even next to an emotion word.
    '/goose 삼성전자 팔고 나서 보고서 써줘','/goose 삼성전자 팔고 현대차 사서 불안하지 않게 비교 보고서',
+   // Fix 5, F1 residual variants (the four most frequent of the re-audit L-R1): a filler `좀` between the noun and `해주세요`, `해 줄 수 있나요`, `해 주셨으면 좋겠어요`, `매수 바랍니다`.
+   // Same evidence as the other F1 endings: the trade noun / verb stem immediately in front of the request ending. A report request attached to the command does not change the class.
+   '/goose 삼성전자 매수 좀 해주세요','/goose 삼성전자 매수 좀 해 주십시오','/goose 삼성전자 매도 좀 해줘','/goose 삼성전자 매수 좀 부탁드립니다','/goose 삼성전자 매수 좀 해주세요 그리고 실적 분석 보고서도 써줘',
+   '/goose 삼성전자 매수해 줄 수 있나요','/goose 삼성전자 매수해 줄 수 있어?','/goose 삼성전자 매도해 줄 수 있을까요','/goose 삼성전자 사 줄 수 있나요','/goose 삼성전자 팔아 줄 수 있나요',
+   '/goose 삼성전자 매수해 주셨으면 좋겠어요','/goose 삼성전자 매수해 주셨으면 합니다','/goose 삼성전자 사 주셨으면 해요','/goose 삼성전자 팔아 주셨으면 좋겠어요',
+   '/goose 삼성전자 매수 바랍니다','/goose 삼성전자 매도 바랍니다','/goose 삼성전자 매수를 바랍니다','/goose 삼성전자 매수 바랍니다 and make an HTML report','/goose 삼성전자 손절 바랍니다',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -98,6 +104,11 @@ const TABLE:Record<Category,Rows>={
    '/goose 삼성전자 팔고 나서 불안해요','/goose 삼성전자 팔고 나니 후회돼요','/goose 삼성전자 팔고서 후회돼요 마음이 불안해','/goose 어제 삼성전자 팔고 불안해요','/goose 주식 다 팔고 나서 우울해요',
    '/goose 팔고 나니까 주가가 올라서 멘탈이 나갔어요','/goose 삼성전자 팔고 후회 중이에요 마음 관리 도와줘','/goose 삼성전자 팔고 마음이 불안해','/goose 팔고서 후회 중','/goose 삼성전자 팔고 나서 속상해요',
    '/goose 삼성전자 팔고 나니 주가가 올랐어요','/goose 삼성전자 팔고 나서 허탈해요 마음 관리',
+   // Fix 5, F1 residual near misses: a different verb after `좀` (`해석`), a request that is only an analysis or a description (`알려 줄 수 있나요`, `써 줄 수 있나요`, `줄 수 있는지`), `주셨으면` with no
+   // trade verb in front of `해`, and `바람` (wind / trend) or `바랍니다` after an analysis request.
+   '/goose 매수 좀 해석해 주세요','/goose 매수 좀 하는 편이 좋은지 분석','/goose 삼성전자 매수 시점을 알려 줄 수 있나요','/goose 보고서를 써 줄 수 있나요','/goose 투자자에게 매수해 줄 수 있는지 분석',
+   '/goose 보고서를 써 주셨으면 해요','/goose 매수 동향 분석 보고서 주셨으면 합니다','/goose 매도 바람이 분 이유 분석','/goose 분석 보고서 작성 바랍니다','/goose 삼성전자 실적 분석 바랍니다','/goose 매수세 분석 바랍니다',
+   '/goose 매수 주체 분석 바랍니다',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
@@ -108,6 +119,8 @@ const TABLE:Record<Category,Rows>={
    // Fix 4, F1: polite / request endings of a transfer, deposit or withdrawal command (F_T, no ATS wording).
    '/goose 50만원 송금 부탁드려요','/goose 이체 부탁드립니다','/goose 이체 부탁해','/goose 이체해 주시오','/goose 송금해 주실 수 있나요','/goose 송금해 주십시오','/goose 송금하시오','/goose 송금하세요',
    '/goose 이체하십시오','/goose 송금하십시오','/goose 출금하시오','/goose 입금해 주십시오','/goose 예수금 전액 출금 부탁드립니다',
+   // Fix 5, F1 residual: `바랍니다` after a transfer noun.
+   '/goose 100만원 이체 바랍니다','/goose 송금 바랍니다',
   ],
   negative:[
    '/goose 이체 비용이 수익률에 미치는 영향 분석','/goose 이체 수수료 구조를 설명해줘','/goose 송금하고 싶을 때 수수료 비교 분석','/goose 입금 내역 분석 보고서','/goose 이체 한도 개념 정리',
