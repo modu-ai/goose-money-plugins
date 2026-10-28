@@ -48,6 +48,12 @@ const TABLE:Record<Category,Rows>={
    '/goose Buy Samsung Electronics for me','/goose Please buy Tesla stock and write a report','/goose buy AAPL and write an analysis report','/goose cancel all open orders and write an analysis report','/goose can you buy AAPL for me',
    '/goose write a report and then buy AAPL','/goose analyze AAPL, then sell my shares','/goose I want you to sell my Tesla position','/goose purchase 50 shares of MSFT','/goose Short Tesla now','/goose cancel my pending orders',
    '/goose go ahead and buy Tesla','/goose cancel every unfilled order','/goose Sell TSLA immediately',
+   // Fix 4, L5 and slang / short imperatives: a bare sell connective (`팔고`, `팔고서`) as its own word; `손절해줘`, `익절해줘`, `청산해줘` (explicit exit verbs with a command ending);
+   // `팔아` as the last word; `를 사` / a code or quantity before a final `사`; `놔` / `둬` endings (`매수해놔`, `팔아놔`, `사놔`).
+   '/goose 삼성전자 팔고 보고서','/goose 삼성전자 팔고서 실적 보고서','/goose 삼성전자 팔고 실적 분석 보고서 써줘','/goose 손절해줘','/goose 삼성전자 손절해줘','/goose 익절해줘','/goose 청산해줘','/goose 삼성전자 전량 청산해줘',
+   '/goose 삼성전자 손절해 주십시오','/goose 삼성전자 청산해','/goose 삼성전자 손절매해줘','/goose 팔아','/goose 삼성전자 팔아','/goose 삼성전자 전부 팔아','/goose 삼성전자 팔아.','/goose 삼성전자를 사','/goose 005930 사',
+   '/goose 삼성전자 100만원어치 사','/goose 삼성전자 10개 사','/goose 매수해놔','/goose 삼성전자 매수해놔','/goose 삼성전자 매수해 둬','/goose 삼성전자 매도해 놔','/goose 팔아놔','/goose 삼성전자 팔아놔','/goose 삼성전자 팔아 둬',
+   '/goose 삼성전자 주식 좀 사놔','/goose 삼성전자 다 팔아버려',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -70,6 +76,10 @@ const TABLE:Record<Category,Rows>={
    '/goose buy low sell high strategy backtest','/goose explain how to buy and sell shares','/goose short selling explained','/goose short term outlook for AAPL','/goose short summary of AAPL earnings report',
    '/goose buy rating changes report','/goose should I buy AAPL? analysis','/goose I want to buy AAPL, analyze it','/goose which stocks do analysts buy','/goose backtest a strategy that buys 10 shares when RSI < 30',
    '/goose sell rules design for a momentum strategy','/goose buy the dip strategy backtest','/goose sell side analyst report summary','/goose how do buy orders get matched',
+   // Fix 4, L5 / slang near misses: a rule or procedure noun (`손절 규칙`, `청산 절차`), a should-I question (`팔아야 할까요`), a state / past form (`매수해둔`, `매수해 놓은`, `사놓은`), a wish, a described method, a homograph with `놔`.
+   '/goose 삼성전자 팔고 사는 시점 분석 보고서','/goose 삼성전자 팔고 사는 방법 설명','/goose 팔고 싶은 종목 정리','/goose 상품을 팔고 있는 회사 실적 분석','/goose 손절 규칙 정리','/goose 손절매 규칙 설계 논문 근거',
+   '/goose 청산 절차 설명','/goose 청산 가치 분석 보고서','/goose 익절 기준 백테스트','/goose 손절해야 할까요 분석','/goose 삼성전자 팔아야 할까요','/goose 삼성전자 팔아도 될까요 분석 보고서','/goose 삼성전자 팔아야 하는 이유 분석',
+   '/goose 매수해둔 종목 분석 보고서','/goose 매수해 놓은 종목 수익률 분석','/goose 책을 팔아 번 돈 분석','/goose 사놓은 주식 분석','/goose 조사 놔 둬','/goose 시장 조사 놔',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
