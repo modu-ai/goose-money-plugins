@@ -54,6 +54,10 @@ const TABLE:Record<Category,Rows>={
    '/goose 삼성전자 손절해 주십시오','/goose 삼성전자 청산해','/goose 삼성전자 손절매해줘','/goose 팔아','/goose 삼성전자 팔아','/goose 삼성전자 전부 팔아','/goose 삼성전자 팔아.','/goose 삼성전자를 사','/goose 005930 사',
    '/goose 삼성전자 100만원어치 사','/goose 삼성전자 10개 사','/goose 매수해놔','/goose 삼성전자 매수해놔','/goose 삼성전자 매수해 둬','/goose 삼성전자 매도해 놔','/goose 팔아놔','/goose 삼성전자 팔아놔','/goose 삼성전자 팔아 둬',
    '/goose 삼성전자 주식 좀 사놔','/goose 삼성전자 다 팔아버려',
+   // Fix 5, R1 guards: a rule-condition word or a strategy word elsewhere in the request does not turn a genuine English command into a rule. A request lead (`please`, `can you`, `I want you to`) or a plain
+   // `Task:` / `Instruction:` label keeps the command; a conditional order with no strategy / rule / backtest context is still a command.
+   '/goose Task: buy AAPL','/goose Instruction: sell all my Tesla shares','/goose buy AAPL if it drops below 150','/goose sell AAPL when it crosses 150','/goose please buy AAPL when RSI < 30 and write a backtest report',
+   '/goose can you buy AAPL when it dips, backtest later','/goose write a report. buy AAPL when RSI < 30','/goose I want you to buy Tesla if RSI < 30 for my strategy','/goose analyze AAPL strategy, then buy AAPL',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -80,6 +84,14 @@ const TABLE:Record<Category,Rows>={
    '/goose 삼성전자 팔고 사는 시점 분석 보고서','/goose 삼성전자 팔고 사는 방법 설명','/goose 팔고 싶은 종목 정리','/goose 상품을 팔고 있는 회사 실적 분석','/goose 손절 규칙 정리','/goose 손절매 규칙 설계 논문 근거',
    '/goose 청산 절차 설명','/goose 청산 가치 분석 보고서','/goose 익절 기준 백테스트','/goose 손절해야 할까요 분석','/goose 삼성전자 팔아야 할까요','/goose 삼성전자 팔아도 될까요 분석 보고서','/goose 삼성전자 팔아야 하는 이유 분석',
    '/goose 매수해둔 종목 분석 보고서','/goose 매수해 놓은 종목 수익률 분석','/goose 책을 팔아 번 돈 분석','/goose 사놓은 주식 분석','/goose 조사 놔 둬','/goose 시장 조사 놔',
+   // Fix 5, R1: English buy / sell RULE text inside a strategy or backtest request is a rule description, not an order (rule-condition words `when` / `if` / `once` / `at` / `on` / `above` / `below` / `crosses`,
+   // comparison operators). They kept their baseline status (`ready`, `strategy` / `backtest`) at 2d78f33; roles-nonregression-table.ts asserts the exact status.
+   '/goose 백테스트: buy when RSI < 30, sell when RSI > 70','/goose 논문 근거로 buy when price > SMA20, sell when below 전략 설계','/goose 이동평균 전략 백테스트: buy at golden cross','/goose backtest: buy when RSI < 30, sell when RSI > 70',
+   '/goose strategy: buy on golden cross and sell on death cross, backtest it','/goose buy when MACD crosses up; sell when it crosses down. backtest','/goose Rules: buy at open, sell at close. backtest',
+   '/goose 백테스트: buy AAPL when RSI < 30, sell AAPL when RSI > 70','/goose Backtest rule: buy once RSI < 30 and sell after 5 days','/goose 전략 설계: buy on breakout, sell on stop',
+   '/goose Rules: buy above SMA50, sell below SMA50. 전략 백테스트','/goose Strategy rules: buy the dip, sell the rip. backtest','/goose 백테스트: short when RSI > 70, cover when RSI < 50',
+   // Fix 5, D-R2: title-like or sector English terms that start with `buy` / `purchase` / `short` are descriptive, not orders.
+   '/goose buy now pay later companies analysis','/goose purchase price allocation analysis','/goose purchase agreement review','/goose Buy box share analysis','/goose buy button design review','/goose short stories analysis',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
