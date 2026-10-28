@@ -8,6 +8,7 @@ import { defaultCredentialFilePath, loadLocalCredentials, saveLocalCredentials, 
 import { readHiddenLine, runCredentialSetupFlow } from "../src/credential-setup.js";
 import { createCredentialProvider, createCredentialBackedServer } from './synthetic-member-access.js';
 import { dispatchGooseCommand } from "../src/cli.js";
+import { enterStoreTest, STORE_BODY } from "./credential-home.js";
 
 const keys = { appKey: "synthetic-key", appSecret: "synthetic-secret" };
 const dart = "s".repeat(40);
@@ -15,7 +16,7 @@ async function fixture(run: (home: string, project: string) => Promise<void>) {
   const base = await mkdtemp(join(tmpdir(), "moai-credentials-synthetic-"));
   const home = join(base, "home"), project = join(base, "project");
   await Promise.all([home, project].map(p => mkdir(p, { mode: 0o700 })));
-  try { await run(home, project); } finally { await rm(base, { force: true, recursive: true }); }
+  try { if (await enterStoreTest("key-store", project, home) === STORE_BODY.run) await run(home, project); } finally { await rm(base, { force: true, recursive: true }); }
 }
 const sink = () => { let text = ""; return { write(v: string) { text += v; }, get text() { return text; } }; };
 test("first credential setup saves only confirmed provider keys and runtime reads the same contract", () => fixture(async (home, project) => {
