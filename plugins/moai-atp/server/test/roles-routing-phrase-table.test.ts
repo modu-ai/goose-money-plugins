@@ -36,6 +36,12 @@ const TABLE:Record<Category,Rows>={
    // Fix 3, hole 3: quantity + unit (`N주`, `N주식`, `N개`, `N원어치`) or a 5-6 digit code fused to the command word with no space (`10주사줘`, `005930매수`).
    '/goose 10주사줘','/goose 삼성전자 10주사줘','/goose 삼성전자 10주사 주세요','/goose 5개사줘','/goose 100만원어치사줘','/goose 005930매수','/goose 삼성전자 10주매도','/goose 5개팔아줘','/goose 10주매수','/goose 삼성전자 100주식사줘',
    '/goose 005930사줘','/goose 10주팔아줘',
+   // Fix 4, F1: polite / request endings of an explicit buy / sell / order command (`해 주십시오`, `해 주시겠어요`, `하시오`, `부탁드립니다`, `사 주실 수 있나요`), same register as the already handled `하십시오` / `출금 부탁`.
+   '/goose 삼성전자 매수해 주십시오','/goose 삼성전자 매수해 주시겠어요?','/goose 삼성전자 매수해 주실래요?','/goose 삼성전자 매수해 주시고 실적 분석 보고서도 부탁해요','/goose 삼성전자 10주 매수해 주시면 감사하겠습니다',
+   '/goose 삼성전자 매수하시오','/goose 삼성전자를 매수하시오','/goose 삼성전자 매수 부탁해','/goose 삼성전자 매수 부탁드립니다','/goose 삼성전자 10주 매수 부탁하고 보고서도 써줘',
+   '/goose 삼성전자 매도 부탁드립니다','/goose 삼성전자 매도해 주십시오','/goose 삼성전자 매도하시오','/goose 삼성전자 10주 사 주실 수 있나요','/goose 삼성전자 사 주십시오',
+   '/goose 삼성전자 10주 사 주시겠어요','/goose 삼성전자 사 주실래요','/goose 삼성전자 팔아 주십시오','/goose 삼성전자 팔아 주시겠어요','/goose 삼성전자 주문해 주시겠어요',
+   '/goose 삼성전자 10주 주문해 주십시오','/goose 주문 부탁드립니다',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -48,6 +54,10 @@ const TABLE:Record<Category,Rows>={
    '/goose 10주 사고 싶은 종목 분석','/goose 삼성전자를 사고 파는 시점 분석 보고서','/goose 10주 사고 팔 때 세금 분석','/goose 삼성전자 10주 사고 팔 수 있는지 분석',
    // Fix 3, hole 3 near misses: no numeric evidence (`기업조사주세요`, `연사주세요`), a counter that is not a quantity of shares (`3개사`, `10주년`, `3주 조사`), or a spaced narrative (`10주 매수 후`).
    '/goose 기업조사주세요','/goose 연사주세요','/goose 3개사 비교 분석','/goose 3주 조사주세요','/goose 100개 기업조사주세요','/goose 2023년 조사주세요','/goose 10주년 기념 분석','/goose 삼성전자 10주 매수 후 6개월 수익률 분석',
+   // Fix 4, F1 near misses: `부탁` as a noun (a phrase, a message, a way of asking), a described group (`매수하시는 분들`), `조사` / `연사` homographs with a polite ending, and a request that is only an analysis.
+   '/goose 매수 부탁 문구 설명','/goose 매수 부탁 문구 예시 분석 보고서','/goose 매수 부탁하는 방법 설명','/goose 삼성전자 매수해 주시는 분들의 특징 분석','/goose 매수하시는 분들의 특징 분석 보고서',
+   '/goose 매수하시는 투자자 분석','/goose 삼성전자를 사 주시는 분들 분석','/goose 기업 조사 주십시오','/goose 기업 조사 주시겠어요','/goose 연사 주십시오','/goose 조사 주실 수 있나요',
+   '/goose 삼성전자 실적 분석 부탁드립니다','/goose 삼성전자 분석 보고서 작성 부탁드립니다','/goose 주문 체결 구조 설명 부탁드립니다','/goose 삼성전자 매수 시점 분석 부탁드립니다','/goose 주문 방식 비교 보고서 부탁드립니다',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
@@ -55,10 +65,15 @@ const TABLE:Record<Category,Rows>={
   positive:[
    '/goose 송금 실행해','/goose 100만원 이체해줘','/goose 예수금 출금해줘','/goose 이체하고 종목 분석 보고서','/goose 송금하고 보고서','/goose 입금하고 보고서','/goose 출금하고 분석 보고서',
    '/goose 이체 하고 종목 분석','/goose 송금해서 보고서','/goose transfer 1000000 won to my bank','/goose withdraw my money',
+   // Fix 4, F1: polite / request endings of a transfer, deposit or withdrawal command (F_T, no ATS wording).
+   '/goose 50만원 송금 부탁드려요','/goose 이체 부탁드립니다','/goose 이체 부탁해','/goose 이체해 주시오','/goose 송금해 주실 수 있나요','/goose 송금해 주십시오','/goose 송금하시오','/goose 송금하세요',
+   '/goose 이체하십시오','/goose 송금하십시오','/goose 출금하시오','/goose 입금해 주십시오','/goose 예수금 전액 출금 부탁드립니다',
   ],
   negative:[
    '/goose 이체 비용이 수익률에 미치는 영향 분석','/goose 이체 수수료 구조를 설명해줘','/goose 송금하고 싶을 때 수수료 비교 분석','/goose 입금 내역 분석 보고서','/goose 이체 한도 개념 정리',
    '/goose 해외 송금 시장 규모 보고서','/goose 환전 수수료 비교 분석','/goose 출금 정책 변화 분석 보고서','/goose 삼성전자 실적 분석 보고서','/goose 논문 근거로 매수·매도 규칙 설계',
+   // Fix 4, F1 near misses: `부탁` after a described transfer topic, or the noun `송금 부탁 메시지`.
+   '/goose 이체 부탁 문구가 사기에 쓰이는 방식 분석','/goose 송금 부탁 메시지 분석 보고서','/goose 이체 수수료 구조 설명 부탁드립니다','/goose 송금 수수료 비교 분석 부탁드려요',
   ],
  },
  // Account-change command (개설, 해지, 비밀번호 변경, 한도 상향 ...). Excluded by spec 0.2.0; same orders_or_transfers code, fixed sentence F.
