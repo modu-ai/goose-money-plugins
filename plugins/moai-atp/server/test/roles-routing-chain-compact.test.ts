@@ -31,3 +31,17 @@ const SELL_BUY_CHAIN_NEAR_MISS=[
 ] as const;
 for(const request of SELL_BUY_CHAIN)test(`fix 3 hole 1: sell + buy connective chain is blocked with F, no steps: ${request}`,()=>assertBlockedOrder(request));
 for(const request of SELL_BUY_CHAIN_NEAR_MISS)test(`fix 3 hole 1 control: near miss is NOT an order: ${request}`,()=>assertNoOrderCode(request));
+
+// Hole 2: `사고` / `팔고` with quantity, code or object-particle evidence was suppressed whenever a sell stem (`팔`, `파`) followed it, which let `10주 사고 팔고` through.
+// Only the descriptive continuations (`사고 파는`, `사고 팔 때`) stay suppressed; a connective or imperative sell stem (`팔고`, `팔아`, `팔아서`) after a buy is a chain of orders.
+const EVIDENCED_CHAIN=[
+ '/goose 삼성전자 10주 사고 팔고 보고서','/goose 005930 사고 팔고 비교 분석 보고서','/goose 삼성전자를 사고 팔고 보고서','/goose 삼성전자 10주 사고팔고 보고서','/goose 삼성전자 10주 사고 팔아 보고서','/goose 삼성전자 10주 사고 팔아서 보고서',
+ // Another sell / buy stem before and after the evidenced one, an explicit mode word, a sell-first chain.
+ '/goose 삼성전자 팔고 SK하이닉스 10주 사고 팔고 보고서','/goose 삼성전자 10주 팔고 10주 사고 팔고 보고서','/goose report 삼성전자 10주 사고 팔고 비교','/goose 삼성전자 10주 팔고 사고 보고서','/goose 삼성전자 10주 사고 SK하이닉스 5주 팔고 보고서',
+] as const;
+const EVIDENCED_CHAIN_NEAR_MISS=[
+ '/goose 10주 사고 싶은 종목 분석','/goose 삼성전자를 사고 파는 시점 분석 보고서','/goose 10주 사고 팔 때 세금 분석','/goose 삼성전자 10주 사고 팔 수 있는지 분석','/goose 10주 사고 있는 종목 분석 보고서',
+ '/goose 삼성전자를 사고 파는 전략 백테스트','/goose 사고 원인 분석 보고서','/goose 주식을 사고팔 때 세금 분석',
+] as const;
+for(const request of EVIDENCED_CHAIN)test(`fix 3 hole 2: evidenced buy / sell chain is blocked with F, no steps: ${request}`,()=>assertBlockedOrder(request));
+for(const request of EVIDENCED_CHAIN_NEAR_MISS)test(`fix 3 hole 2 control: descriptive continuation is NOT an order: ${request}`,()=>assertNoOrderCode(request));

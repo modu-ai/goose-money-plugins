@@ -30,6 +30,9 @@ const TABLE:Record<Category,Rows>={
    // Fix 3, hole 1: explicit sell + buy connective chain (`팔고 ... 사서`, `팔아서 ... 사서`, `사고 ... 팔고`) in either order, no object particle or quantity needed.
    '/goose 삼성전자 팔고 SK하이닉스 사서 비교 보고서','/goose 삼성전자 팔아서 SK하이닉스 사서 비교 보고서','/goose SK하이닉스 사서 삼성전자 팔고 비교 보고서','/goose 삼성전자 사고 SK하이닉스 팔고 비교 분석 보고서',
    '/goose 삼성전자 팔고 현대차 사서 비교 분석','/goose 삼성전자 팔고 SK하이닉스 사고 비교 보고서','/goose 005930 팔고 000660 사서 수익률 비교 보고서',
+   // Fix 3, hole 2: a quantity / code / particle evidenced `사고` chain with another sell stem after it (`사고 팔고`, `사고팔고`, `사고 팔아`), or before and after it.
+   '/goose 삼성전자 10주 사고 팔고 보고서','/goose 005930 사고 팔고 비교 분석 보고서','/goose 삼성전자를 사고 팔고 보고서','/goose 삼성전자 10주 사고팔고 보고서','/goose 삼성전자 10주 사고 팔아 보고서',
+   '/goose 삼성전자 10주 사고 팔아서 보고서','/goose 삼성전자 10주 사고 SK하이닉스 5주 팔고 보고서','/goose 삼성전자 10주 팔고 사고 보고서','/goose 삼성전자 팔고 SK하이닉스 10주 사고 팔고 보고서',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -38,6 +41,8 @@ const TABLE:Record<Category,Rows>={
    '/goose 10주 사라진 종목 분석','/goose 매수 후 6개월 수익률 분석',
    // Fix 3, hole 1 near misses: a lone `사서` (librarian), a wish / state of `팔고`, and a described method (`사서 비교하는 방법`) are not a sell + buy chain.
    '/goose 사서 교사 채용 현황 분석 보고서','/goose 사서 선생님 인터뷰 분석 보고서','/goose 삼성전자 팔고 싶은 이유 분석 보고서','/goose 책을 팔고 있는 서점 분석 보고서','/goose 삼성전자 팔고 SK하이닉스 사서 비교하는 방법 설명',
+   // Fix 3, hole 2 near misses: a wish (`사고 싶은`), a described action (`사고 파는 시점`, `사고 팔 때`, `사고 팔 수 있는지`) is not a chain of orders.
+   '/goose 10주 사고 싶은 종목 분석','/goose 삼성전자를 사고 파는 시점 분석 보고서','/goose 10주 사고 팔 때 세금 분석','/goose 삼성전자 10주 사고 팔 수 있는지 분석',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
