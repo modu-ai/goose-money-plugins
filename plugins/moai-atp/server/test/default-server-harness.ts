@@ -115,11 +115,16 @@ export function createProviderSpy() {
 const SYNTHETIC_KIS = { appKey: 'synthetic-app-key-never-real', appSecret: 'synthetic-app-secret-never-real' };
 const SYNTHETIC_DART_KEY = 'SYNTHETIC_OPENDART_KEY_00000000000000000';
 
-/** mkdtemp home holding synthetic KIS and OpenDART keys in the real keystore layout. */
-export async function makeSyntheticHome(): Promise<string> {
+/** The baseline (file-store branch) preparation: a mkdtemp home holding synthetic KIS and OpenDART keys in the real keystore layout. */
+export async function makeFileStoreSyntheticHome(): Promise<string> {
   const home = await mkdtemp(join(tmpdir(), 'atp-m1-home-'));
   await saveLocalCredentials({ kis: SYNTHETIC_KIS, opendart: { apiKey: SYNTHETIC_DART_KEY } }, process.cwd(), { confirmed: true, homeDir: home });
   return home;
+}
+
+/** mkdtemp home for a stub-free default server test (before M3 of card t30 this is the baseline preparation, unchanged). */
+export async function makeSyntheticHome(): Promise<string> {
+  return makeFileStoreSyntheticHome();
 }
 
 /** The option keys main.ts passes, plus the test-only injections. No memberAccess. */

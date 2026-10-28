@@ -49,7 +49,7 @@ for (const platform of ['darwin', 'win32'] as const) {
   });
 }
 
-test('explicit-platform-arg branchLine has the exact [t30-branch] shape (not Windows evidence)', () => {
+test('explicit-platform-arg branchLine has the exact branch-line shape (not Windows evidence)', () => {
   assert.equal(branchLine(BRANCH.envCredential, 'both'), '[t30-branch] env-credential kind=both');
   assert.equal(branchLine(BRANCH.failClosed, 'key-store'), '[t30-branch] fail-closed-assertion kind=key-store');
 });
