@@ -10,6 +10,8 @@
 //                       Windows host and has not been observed (Gap, see WINDOWS-TEST-STATUS.md).
 //   on macOS            the same declaration asserts the symmetric non-platform result on an empty mkdtemp home, so
 //                       the test ends in an assertion on both platforms. That result says nothing about Windows.
+// The names are the same on both hosts and end with a label saying so (a name printed by a macOS run is the symmetric
+// result, never a Windows result); only a run on a real Windows host observes the blocked-host arm.
 //
 // Every call passes an explicit mkdtemp `project` and `home` (and, where the function reads an environment, an
 // explicit empty one), so no call can fall back to the working directory, the user's home or the ambient
@@ -45,22 +47,22 @@ async function inDirectories(run: (project: string, home: string) => Promise<voi
 }
 const assertNoGoose = async (home: string): Promise<void> => assert.equal((await readdir(home)).includes('.goose'), false, 'the rejected home gained no .goose entry');
 
-test('key store: loadLocalCredentials rejects with secure_file_storage_unsupported on a blocked host and returns no document elsewhere', () => inDirectories(async (project, home) => {
+test('key store: loadLocalCredentials rejects with secure_file_storage_unsupported on a blocked host and returns no document elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   if (keyStoreBlocksHost) { await assert.rejects(loadLocalCredentials(project, home), platformKeyError); await assertNoGoose(home); }
   else assert.equal(await loadLocalCredentials(project, home), undefined);
 }));
 
-test('key store: saveLocalCredentials with confirmed true and a valid synthetic patch rejects with secure_file_storage_unsupported on a blocked host and saves elsewhere', () => inDirectories(async (project, home) => {
+test('key store: saveLocalCredentials with confirmed true and a valid synthetic patch rejects with secure_file_storage_unsupported on a blocked host and saves elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   if (keyStoreBlocksHost) { await assert.rejects(saveLocalCredentials(SYNTHETIC_PATCH, project, { confirmed: true, homeDir: home }), platformKeyError); await assertNoGoose(home); }
   else await assert.doesNotReject(saveLocalCredentials(SYNTHETIC_PATCH, project, { confirmed: true, homeDir: home }));
 }));
 
-test('key store: resolveProviderCredentials with an explicit empty env rejects with secure_file_storage_unsupported on a blocked host and with credential_missing elsewhere', () => inDirectories(async (project, home) => {
+test('key store: resolveProviderCredentials with an explicit empty env rejects with secure_file_storage_unsupported on a blocked host and with credential_missing elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   if (keyStoreBlocksHost) { await assert.rejects(resolveProviderCredentials('kis', { projectRoot: project, homeDir: home, env: {} }), platformKeyError); await assertNoGoose(home); }
   else await assert.rejects(resolveProviderCredentials('kis', { projectRoot: project, homeDir: home, env: {} }), (error: unknown) => error instanceof SafeCredentialError && error.code === 'credential_missing');
 }));
 
-test('key store: runCredentialSetupFlow after a YES start answer rejects with secure_file_storage_unsupported before any hidden input on a blocked host and reaches the first hidden prompt elsewhere', () => inDirectories(async (project, home) => {
+test('key store: runCredentialSetupFlow after a YES start answer rejects with secure_file_storage_unsupported before any hidden input on a blocked host and reaches the first hidden prompt elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   let hiddenCalls = 0;
   const hidden = async (): Promise<string> => { hiddenCalls += 1; throw new Error('setup_cancelled'); };
   if (keyStoreBlocksHost) {
@@ -73,22 +75,22 @@ test('key store: runCredentialSetupFlow after a YES start answer rejects with se
   }
 }));
 
-test('profile store: readInvestorContext rejects with context_unsafe_path on a blocked host and returns no profile elsewhere', () => inDirectories(async (project, home) => {
+test('profile store: readInvestorContext rejects with context_unsafe_path on a blocked host and returns no profile elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   if (profileStoreBlocksHost) { await assert.rejects(readInvestorContext(project, home), platformProfileError); await assertNoGoose(home); }
   else assert.equal(await readInvestorContext(project, home), undefined);
 }));
 
-test('profile store: saveInvestorContext with confirmed true and valid synthetic answers rejects with context_unsafe_path on a blocked host and saves revision 1 elsewhere', () => inDirectories(async (project, home) => {
+test('profile store: saveInvestorContext with confirmed true and valid synthetic answers rejects with context_unsafe_path on a blocked host and saves revision 1 elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   if (profileStoreBlocksHost) { await assert.rejects(saveInvestorContext(SYNTHETIC_ANSWERS, project, { confirmed: true, homeDir: home }), platformProfileError); await assertNoGoose(home); }
   else assert.equal((await saveInvestorContext(SYNTHETIC_ANSWERS, project, { confirmed: true, homeDir: home })).revision, 1);
 }));
 
-test('profile store: deleteInvestorContext with confirmed true rejects with context_unsafe_path on a blocked host and reports nothing to delete elsewhere', () => inDirectories(async (project, home) => {
+test('profile store: deleteInvestorContext with confirmed true rejects with context_unsafe_path on a blocked host and reports nothing to delete elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   if (profileStoreBlocksHost) { await assert.rejects(deleteInvestorContext(project, { confirmed: true, homeDir: home }), platformProfileError); await assertNoGoose(home); }
   else assert.equal(await deleteInvestorContext(project, { confirmed: true, homeDir: home }), false);
 }));
 
-test('profile store: runSetupFlow rejects with context_unsafe_path at its first profile read, before any question, on a blocked host and asks its one question elsewhere', () => inDirectories(async (project, home) => {
+test('profile store: runSetupFlow rejects with context_unsafe_path at its first profile read, before any question, on a blocked host and asks its one question elsewhere (macOS-run asserts the symmetric result; not Windows evidence)', () => inDirectories(async (project, home) => {
   let questions = 0;
   const ask = async (): Promise<string> => { questions += 1; return 'NO'; };
   if (profileStoreBlocksHost) {
