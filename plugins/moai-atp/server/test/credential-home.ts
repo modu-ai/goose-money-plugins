@@ -19,7 +19,10 @@
 // working directory, the user's home directory or the ambient environment.
 //
 // This module is a helper, not a test (its name has no `.test.`). The baseline scenario and harness modules are
-// loaded lazily so that importing this file loads no server module before a test has installed the fetch recorder.
+// loaded lazily, so importing this file does not load them before a test has installed the fetch recorder. It does
+// import two store modules statically (../src/local-credentials.js and ../src/user-context.js); neither file mentions fetch
+// (checked with a text search), so loading them ahead of the recorder does not bypass it. The direct file-store test groups use storeTestFor and
+// registerBlockedHostRejectionTest (end of file): skipped with a reason on a blocked host, unchanged elsewhere.
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
