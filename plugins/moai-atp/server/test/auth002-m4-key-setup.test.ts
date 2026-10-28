@@ -30,7 +30,10 @@ const recorder = await import('./fetch-recorder.js');
 const { defaultCredentialFilePath, loadLocalCredentials, saveLocalCredentials, SafeCredentialError } = await import('../src/local-credentials.js');
 const { readHiddenLine, runCredentialSetupFlow } = await import('../src/credential-setup.js');
 const { dispatchGooseCommand } = await import('../src/cli.js');
-const { enterStoreTest, STORE_BODY } = await import('./credential-home.js'); // after the fetch recorder, like every src module above
+const { registerBlockedHostRejectionTest, storeTestFor } = await import('./credential-home.js'); // after the fetch recorder, like every src module above
+// Direct key-store tests: skipped with a reason on a host whose key store rejects every call (one separately named store-rejection test stands in); unchanged elsewhere.
+const storeTest = storeTestFor(test, 'key-store');
+registerBlockedHostRejectionTest(test, 'key-store', 'auth002-m4-key-setup.test.ts');
 after(() => recorder.restoreOriginalFetch());
 
 // ---- synthetic keys and homes ------------------------------------------------------------------------
@@ -52,7 +55,7 @@ async function withSetup(run: (ctx: Ctx) => Promise<void>): Promise<void> {
   await mkdir(home, { mode: 0o700 }); await mkdir(project, { mode: 0o700 });
   assert.notEqual(home, homedir(), 'the synthetic home must not be the real home');
   const file = defaultCredentialFilePath(home);
-  try { if (await enterStoreTest('key-store', project, home) === STORE_BODY.run) await run({ home, project, file, keystore: dirname(file) }); } finally { await rm(base, { force: true, recursive: true }); }
+  try { await run({ home, project, file, keystore: dirname(file) }); } finally { await rm(base, { force: true, recursive: true }); }
 }
 const seed = (ctx: Ctx, providers: CredentialProviders): Promise<void> => saveLocalCredentials(providers, ctx.project, { confirmed: true, homeDir: ctx.home });
 
@@ -150,7 +153,7 @@ async function runFlow(ctx: Ctx, secrets: string[], script: { ask: Step[]; hidde
 // ---- 004a: existing keys are the default selection ---------------------------------------------------
 
 for (const answer of ['', '1', '  ']) {
-  test(`AC-004a reuse is the default: answering ${JSON.stringify(answer)} for both providers reuses the stored keys, asks for no secret and rewrites nothing`, () => withSetup(async (ctx) => {
+  storeTest(`AC-004a reuse is the default: answering ${JSON.stringify(answer)} for both providers reuses the stored keys, asks for no secret and rewrites nothing`, () => withSetup(async (ctx) => {
     const old = newSecrets('O'); await seed(ctx, both(old));
     const before = await snap(ctx);
     const ran = await runFlow(ctx, secretList(old), { ask: ['YES', answer, answer] });
@@ -164,7 +167,7 @@ for (const answer of ['', '1', '  ']) {
     assertSame(before, await snap(ctx), 'reuse');
   }));
 }
-test('AC-004a reuse through the selector hook: both providers answered "reuse" ask no secret and rewrite nothing', () => withSetup(async (ctx) => {
+storeTest('AC-004a reuse through the selector hook: both providers answered "reuse" ask no secret and rewrite nothing', () => withSetup(async (ctx) => {
   const old = newSecrets('O'); await seed(ctx, both(old));
   const before = await snap(ctx);
   const ran = await runFlow(ctx, secretList(old), { ask: ['YES'], select: ['reuse', 'reuse'] });
@@ -186,7 +189,7 @@ const replaceCases: { name: string; ask: (nw: Secrets) => Step[]; hidden: (nw: S
     expect: (_old, nw) => both(nw), prompts: [/KIS App Key/, /KIS App Secret/, /OpenDART API/] },
 ];
 for (const c of replaceCases) {
-  test(`AC-004b new input after "2" then SAVE replaces ${c.name} and preserves the other provider's stored key`, () => withSetup(async (ctx) => {
+  storeTest(`AC-004b new input after "2" then SAVE replaces ${c.name} and preserves the other provider's stored key`, () => withSetup(async (ctx) => {
     const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
     const before = await snap(ctx);
     const ran = await runFlow(ctx, secretList(old, nw), { ask: c.ask(nw), hidden: c.hidden(nw) });
@@ -200,7 +203,7 @@ for (const c of replaceCases) {
     assert.equal(after.mode, 0o600); assert.deepEqual(after.names, ['credentials.json']);
   }));
 }
-test('AC-004b new input on a first setup (no stored key) saves both providers at 0600 in a 0700 keystore', () => withSetup(async (ctx) => {
+storeTest('AC-004b new input on a first setup (no stored key) saves both providers at 0600 in a 0700 keystore', () => withSetup(async (ctx) => {
   const nw = newSecrets('N');
   const ran = await runFlow(ctx, secretList(nw), { ask: ['YES', 'SAVE'], hidden: [nw.kis.appKey, nw.kis.appSecret, nw.dart] });
   assert.equal(ran.error, undefined); assert.match(ran.out, /credentials_saved=true/);
@@ -213,7 +216,7 @@ test('AC-004b new input on a first setup (no stored key) saves both providers at
 // ---- 004e: SAVE absent -> nothing saved --------------------------------------------------------------
 
 for (const confirmation of ['', 'NO', 'save', 'Save', 'SAVE ', ' SAVE', 'yes', 'Y', 'CANCEL', '1']) {
-  test(`AC-004e answering ${JSON.stringify(confirmation)} instead of SAVE saves nothing and leaves the existing file untouched`, () => withSetup(async (ctx) => {
+  storeTest(`AC-004e answering ${JSON.stringify(confirmation)} instead of SAVE saves nothing and leaves the existing file untouched`, () => withSetup(async (ctx) => {
     const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
     const before = await snap(ctx);
     const ran = await runFlow(ctx, secretList(old, nw), { ask: ['YES', '2', '', confirmation], hidden: [nw.kis.appKey, nw.kis.appSecret] });
@@ -223,21 +226,21 @@ for (const confirmation of ['', 'NO', 'save', 'Save', 'SAVE ', ' SAVE', 'yes', '
     assertSame(before, await snap(ctx), `confirmation ${JSON.stringify(confirmation)}`);
   }));
 }
-test('AC-004e no SAVE on a first setup creates no keystore and no file at all', () => withSetup(async (ctx) => {
+storeTest('AC-004e no SAVE on a first setup creates no keystore and no file at all', () => withSetup(async (ctx) => {
   const nw = newSecrets('N');
   const ran = await runFlow(ctx, secretList(nw), { ask: ['YES', 'NO'], hidden: [nw.kis.appKey, nw.kis.appSecret, nw.dart] });
   assert.equal(ran.error, undefined); assert.match(ran.out, /credentials_saved=false/);
   await absent(join(ctx.home, '.goose'));
   assert.deepEqual(await readdir(ctx.home), []);
 }));
-test('AC-004e a start answer other than YES ends the flow before any further prompt', () => withSetup(async (ctx) => {
+storeTest('AC-004e a start answer other than YES ends the flow before any further prompt', () => withSetup(async (ctx) => {
   const old = newSecrets('O'); await seed(ctx, both(old));
   const before = await snap(ctx);
   const ran = await runFlow(ctx, secretList(old), { ask: ['yes'] });
   assert.equal(ran.error, undefined); assert.equal(ran.questions.length, 1); assert.match(ran.out, /credentials_saved=false/);
   assertSame(before, await snap(ctx), 'start declined');
 }));
-test('AC-004e saveLocalCredentials without confirmation rejects credential_confirmation_required and writes nothing', () => withSetup(async (ctx) => {
+storeTest('AC-004e saveLocalCredentials without confirmation rejects credential_confirmation_required and writes nothing', () => withSetup(async (ctx) => {
   const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
   const before = await snap(ctx);
   await assert.rejects(saveLocalCredentials({ kis: nw.kis }, ctx.project, { confirmed: false, homeDir: ctx.home }), (e: unknown) => codeOf(e) === 'credential_confirmation_required');
@@ -259,7 +262,7 @@ const cancelCases: { name: string; ask: (nw: Secrets) => Step[]; hidden?: (nw: S
   { name: 'the selector keeps KIS then returns cancel for OpenDART', ask: () => ['YES'], select: ['reuse', 'cancel'] },
 ];
 for (const c of cancelCases) {
-  test(`AC-004d cancel: ${c.name} -> setup_cancelled and the existing file is byte-identical`, () => withSetup(async (ctx) => {
+  storeTest(`AC-004d cancel: ${c.name} -> setup_cancelled and the existing file is byte-identical`, () => withSetup(async (ctx) => {
     const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
     const before = await snap(ctx);
     const ttys: FakeTTY[] = [];
@@ -271,14 +274,14 @@ for (const c of cancelCases) {
     assertSame(before, await snap(ctx), c.name);
   }));
 }
-test('AC-004d cancel in the first hidden prompt of a first setup creates no keystore and no file', () => withSetup(async (ctx) => {
+storeTest('AC-004d cancel in the first hidden prompt of a first setup creates no keystore and no file', () => withSetup(async (ctx) => {
   const nw = newSecrets('N');
   const ran = await runFlow(ctx, secretList(nw), { ask: ['YES'], hidden: ttyHidden([CTRL_C], []) });
   assert.equal(codeOf(ran.error), 'setup_cancelled');
   await absent(join(ctx.home, '.goose'));
   assert.deepEqual(await readdir(ctx.home), []);
 }));
-test('AC-004d half an entry (key without secret) is refused as credential_file_invalid and leaves the file byte-identical', () => withSetup(async (ctx) => {
+storeTest('AC-004d half an entry (key without secret) is refused as credential_file_invalid and leaves the file byte-identical', () => withSetup(async (ctx) => {
   const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
   const before = await snap(ctx);
   const ran = await runFlow(ctx, secretList(old, nw), { ask: ['YES', '2'], hidden: [nw.kis.appKey, ''] });
@@ -288,7 +291,7 @@ test('AC-004d half an entry (key without secret) is refused as credential_file_i
 
 // ---- 004f: no "connected / verified" wording, no provider call ---------------------------------------
 
-test('AC-004f setup output in every outcome (reuse, save, decline, cancel) never says connected or verified and makes no request', () => withSetup(async (ctx) => {
+storeTest('AC-004f setup output in every outcome (reuse, save, decline, cancel) never says connected or verified and makes no request', () => withSetup(async (ctx) => {
   const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
   const everything = secretList(old, nw);
   const outs = [
@@ -382,7 +385,7 @@ function assertSanitized(failure: unknown, injected: Error, secrets: string[]): 
   for (const secret of secrets) assert.ok(!text.includes(secret), 'a synthetic secret reached the error');
 }
 
-test('AC-004c-i rename-step failure with an existing file: bytes identical, no .credentials-*.tmp, credential_io_failed only', () => withSetup(async (ctx) => {
+storeTest('AC-004c-i rename-step failure with an existing file: bytes identical, no .credentials-*.tmp, credential_io_failed only', () => withSetup(async (ctx) => {
   const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
   const before = await snap(ctx);
   const injected = new Error('synthetic rename failure'); assert.ok(!(injected instanceof SafeCredentialError), 'the injected error must be a plain Error');
@@ -397,7 +400,7 @@ test('AC-004c-i rename-step failure with an existing file: bytes identical, no .
   assertSame(before, await snap(ctx), 'rename failure');
   assert.deepEqual((await loadLocalCredentials(ctx.project, ctx.home))?.providers, both(old));
 }));
-test('AC-004c-ii link-step failure with no existing file: no credentials.json, no temp file, credential_io_failed only', () => withSetup(async (ctx) => {
+storeTest('AC-004c-ii link-step failure with no existing file: no credentials.json, no temp file, credential_io_failed only', () => withSetup(async (ctx) => {
   const nw = newSecrets('N');
   const injected = new Error('synthetic link failure'); assert.ok(!(injected instanceof SafeCredentialError));
   const { adapter, calls } = recordingAdapter({ link: injected });
@@ -411,7 +414,7 @@ test('AC-004c-ii link-step failure with no existing file: no credentials.json, n
   await absent(ctx.file);
   assert.deepEqual(await readdir(ctx.keystore), [], 'no temporary file is left behind');
 }));
-test('AC-004c open-step failure (temp file cannot be created) with an existing file: bytes identical, credential_io_failed only', () => withSetup(async (ctx) => {
+storeTest('AC-004c open-step failure (temp file cannot be created) with an existing file: bytes identical, credential_io_failed only', () => withSetup(async (ctx) => {
   const old = newSecrets('O'), nw = newSecrets('N'); await seed(ctx, both(old));
   const before = await snap(ctx);
   const injected = Object.assign(new Error('synthetic open failure'), { code: 'EACCES' });
@@ -421,7 +424,7 @@ test('AC-004c open-step failure (temp file cannot be created) with an existing f
   assert.equal(calls.open.length, 1); assert.deepEqual(calls.rename, []); assert.deepEqual(calls.link, []);
   assertSame(before, await snap(ctx), 'open failure');
 }));
-test('AC-004c a pass-through adapter sees open, rename, unlink (existing file) and open, link, unlink (first save) and the saves succeed', () => withSetup(async (ctx) => {
+storeTest('AC-004c a pass-through adapter sees open, rename, unlink (existing file) and open, link, unlink (first save) and the saves succeed', () => withSetup(async (ctx) => {
   const first = newSecrets('O'), second = newSecrets('N');
   const firstRun = recordingAdapter();
   await saveWith(both(first), ctx, firstRun.adapter);
@@ -433,7 +436,7 @@ test('AC-004c a pass-through adapter sees open, rename, unlink (existing file) a
   assert.deepEqual((await loadLocalCredentials(ctx.project, ctx.home))?.providers, { kis: second.kis, opendart: { apiKey: first.dart } });
   assert.deepEqual(await readdir(ctx.keystore), ['credentials.json']);
 }));
-test('AC-004c an empty fsAdapter behaves exactly like no adapter (defaults are the node:fs/promises functions)', () => withSetup(async (ctx) => {
+storeTest('AC-004c an empty fsAdapter behaves exactly like no adapter (defaults are the node:fs/promises functions)', () => withSetup(async (ctx) => {
   const first = newSecrets('O'), second = newSecrets('N');
   await saveWith(both(first), ctx, {});
   await saveWith({ opendart: { apiKey: second.dart } }, ctx, {});
