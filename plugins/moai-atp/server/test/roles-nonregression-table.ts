@@ -14,6 +14,13 @@
 //   routing-probe-*: every input of the retained plan-phase probes (trade guards and unsupported / account rows included, so they stay blocked).
 //   curated: representative backtest / strategy / mental-support / company-research / English rule-text sentences chosen for this table.
 // Rows whose 2d78f33 status was already `blocked` or `unsupported` are in the table only when they are probe inputs. All sentences are synthetic.
+// PINS (fix round 6)
+//   The table itself is pinned by `roles-nonregression.test.ts`: the exact row count and a SHA-256 digest of the (sentence, baseline status,
+//   baseline steps) pairs in table order, computed by `tablePairsDigest` at the end of this file. Deleting, adding, reordering or re-measuring a row
+//   therefore fails a test even though the planner assertions would not notice. The comment block above the pins in that test file states how an
+//   intentional table change must be made (own commit, pins updated with a reason, never together with a planner change).
+import { createHash } from 'node:crypto';
+
 export interface NonRegressionRow{
  readonly text:string;
  readonly status:'ready'|'clarification_required'|'blocked'|'unsupported';
@@ -271,3 +278,26 @@ export const NONREGRESSION_ROWS:readonly NonRegressionRow[]=[
  {text:"short interest analysis report",status:'clarification_required',steps:0,modes:'',group:"curated",baseline:'clarification_required:0',at024:'clarification_required:0'},
  {text:"백테스트 결과 해석 보고서",status:'ready',steps:2,modes:'backtest+report',group:"curated",baseline:'ready:2',at024:'ready:2'},
 ];
+
+/** The part of a row that the pins cover: the sentence and its 2d78f33 measurement. */
+export type NonRegressionPairRow=Pick<NonRegressionRow,'text'|'baseline'>;
+
+// CANONICAL FORM of the pinned pairs
+//   One JSON array with one element per row, in table order. Each element is the three-element array [sentence, baseline status, baseline steps]:
+//   the sentence as a JSON string, the status as a JSON string, the step count as a JSON number. `baseline` ("status:steps") is split at its single
+//   colon. The text is `JSON.stringify` output with no indent and no extra whitespace, for example
+//     [["삼성전자 실적 분석 보고서","ready",2],["삼성전자 매수세 분석","clarification_required",0]]
+//   Non-ASCII characters are kept as they are (not \u-escaped) and the string is hashed as UTF-8. Nothing but these three fields enters the form, so
+//   a change to status / steps / modes / group / at024 / reason does not move the digest. A baseline that is not `<letters_>:<digits>` throws.
+export function tablePairsCanonical(rows:readonly NonRegressionPairRow[]):string{
+ return JSON.stringify(rows.map(row=>{
+  const match=/^([a-z_]+):(\d+)$/.exec(row.baseline);
+  if(match===null)throw new Error(`baseline ${JSON.stringify(row.baseline)} of ${JSON.stringify(row.text)} is not <status>:<steps>`);
+  return [row.text,match[1],Number(match[2])];
+ }));
+}
+
+/** Lower-case hex SHA-256 of `tablePairsCanonical(rows)` encoded as UTF-8. */
+export function tablePairsDigest(rows:readonly NonRegressionPairRow[]):string{
+ return createHash('sha256').update(tablePairsCanonical(rows),'utf8').digest('hex');
+}
