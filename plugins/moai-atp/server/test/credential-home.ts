@@ -21,7 +21,7 @@
 // This module is a helper, not a test (its name has no `.test.`). The baseline scenario and harness modules are
 // loaded lazily so that importing this file loads no server module before a test has installed the fetch recorder.
 import assert from 'node:assert/strict';
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { loadLocalCredentials, SafeCredentialError } from '../src/local-credentials.js';
@@ -182,7 +182,11 @@ export async function enterStoreTest(store: StoreKind, project: string, home: st
 }
 
 // ---- Gate for the direct file-store test groups (return-to-run fix) ------------------------------------------
-// RED skeleton: typed stubs that throw, so the contract test fails for the missing behavior and not for a type error.
+// On a blocked host the baseline bodies of the direct file-store groups cannot run: the store rejects every call.
+// Entering them and then passing on the rejection check would report their behavior as checked when it was not, so
+// the gate registers each of them as skipped, with a reason, and registers ONE separately named test per group that
+// checks only the store rejection. The decision takes an explicit platform argument (default: the host), so the
+// contract test can check it on any host; that is a check of this logic and is not Windows evidence.
 
 /** A test body as node:test accepts it, without the test-context parameter. */
 export type TestBody = () => void | Promise<void>;
@@ -192,20 +196,37 @@ export interface RegisterTest {
   (name: string, options: { skip?: string | undefined }, body: TestBody): unknown;
 }
 
+const PLATFORM_CODE: Record<StoreKind, string> = { 'key-store': 'secure_file_storage_unsupported', 'profile-store': 'context_unsafe_path' };
+
 /** The reason string a skipped direct-store test shows in the reporter. */
 export function blockedHostSkipReason(store: StoreKind): string {
-  void store;
-  throw new Error('not_implemented');
+  return `${store} rejects every call on this host with ${PLATFORM_CODE[store]}; the original behavior of this test was not run (only the separately named fail-closed store rejection test ran)`;
 }
 
-/** Returns the registration function for one direct-store test group. */
+/**
+ * Returns the registration function for one direct-store test group: on a blocked host the test is registered
+ * with a skip reason and its body is never run; otherwise it is registered unchanged, with the very same body.
+ */
 export function storeTestFor(register: RegisterTest, store: StoreKind, options: ExplicitPlatform = {}): (name: string, body: TestBody) => void {
-  void register; void store; void options;
-  throw new Error('not_implemented');
+  if (branchFor(store, options) === BRANCH.fileStore) return (name, body) => { register(name, body); };
+  const reason = blockedHostSkipReason(store);
+  return (name, body) => { register(name, { skip: reason }, body); };
 }
 
-/** Registers the one separately named store-rejection test of a skipped group; returns whether it registered. */
+/**
+ * Registers the one separately named test that checks the store rejection of a skipped group, and returns whether
+ * it registered (only on a blocked host). The test's body decides by the HOST platform (enterStoreTest), so its
+ * result is a Windows result only when it is printed by a Windows host.
+ */
 export function registerBlockedHostRejectionTest(register: RegisterTest, store: StoreKind, file: string, options: ExplicitPlatform = {}): boolean {
-  void register; void store; void file; void options;
-  throw new Error('not_implemented');
+  if (branchFor(store, options) === BRANCH.fileStore) return false;
+  register(`fail-closed store rejection check, not the original behavior (${file}, ${store}): an mkdtemp project and home are rejected with ${PLATFORM_CODE[store]} and gain no .goose entry`, async () => {
+    const base = await mkdtemp(join(tmpdir(), 'atp-t30-rejection-'));
+    try {
+      const home = join(base, 'home'), project = join(base, 'project');
+      await mkdir(home, { mode: 0o700 }); await mkdir(project, { mode: 0o700 });
+      assert.equal(await enterStoreTest(store, project, home), STORE_BODY.notRun, 'a blocked host does not run the baseline body');
+    } finally { await rm(base, { recursive: true, force: true }); }
+  });
+  return true;
 }
