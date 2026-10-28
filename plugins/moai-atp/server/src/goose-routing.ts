@@ -30,6 +30,8 @@ export function matchGooseForms(forms:readonly GooseForm[],text:string):string[]
 const END='(?=[\\s.!?~]*$)';
 const IMPERATIVE='(?:줘|주세요|주라|줄래|라|봐|요|버려)';
 const NOT_STATUS='(?!률|도|상황|현황|중)';
+// Run-now command ending (`실행해`, `돌려줘`, `가동해`, bare `실행` as the whole request); a noun use (`실행 결과`, `실행 구조`) is not a command.
+const RUN_NOW=`(?:(?:실행|가동|시작|구동|기동|작동|진행)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오)|시켜|좀|부탁|합니다)|(?:실행|가동|시작|구동|기동|작동|진행)${END}|(?:돌려|돌리|켜|띄워)\\s*(?:줘|주세요|주라|줄래|봐|라|달라|버려)|(?:돌려|돌리|켜|띄워)${END})`;
 // Connective forms (`매수하고`, `이체하고`, `매수해서`, `매수해 그리고`): the verb is followed by more of the sentence, so the command is not at the end.
 // A wish / state (`하고 싶`, `하고 있`, `하고자`) and a rule-design description (`매수하고 매도하는 규칙`) are not commands.
 const NOT_WISH='(?!자|\\s*(?:싶|있|계시|계신))';
@@ -50,6 +52,11 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'order_cancel_modify',pattern:/주문\s*(?:을\s*)?(?:취소|정정|변경|수정)\s*(?:해|하|좀|부탁|요|$)|주문.{0,8}(?:취소|정정)해/u},
  {id:'reserved_order',pattern:/예약\s*(?:주문\s*(?:을\s*)?(?:자동화|걸|넣|해|등록|설정|실행|진행|내)|걸어|걸고|걸자|해\s*줘)|(?:매수|매도)\s*예약\s*(?:걸|해|등록|설정|넣)/u},
  {id:'auto_trading_command',pattern:/자동(?:으로)?\s*(?:매매|매수|매도|주문)\s*해(?![석설])|자동\s*매매\s*(?:돌려|돌리|실행|시작|가동|켜)|(?:매일|매주|매시간|매월|정기적으로|주기적으로).{0,24}(?:매매|매수|매도)\s*(?:해(?![석설])|돌려|실행)/u,split:/자동(?:으로)?(?:매매|매수|매도|주문)해(?![석설])|자동매매(?:돌려|돌리|실행|시작|가동|켜)/u},
+ // Running an automated / autonomous trading system or agent team, and real trading, as a run-now command (`자동매매 시스템 실행해줘`, `자율매매 에이전트 팀 돌려줘`, `실제 매매 실행해줘`).
+ // Building or keeping such a system running is the ATS-class lexicon below; both can match one request (blocked wins, design.md 3.5).
+ {id:'auto_system_run',pattern:new RegExp(`(?:자동|자율|알고리즘)\\s*(?:매매|거래|트레이딩)(?:\\s*(?:시스템|프로그램|봇|엔진|에이전트|팀|프레임워크))*\\s*(?:을\\s*|를\\s*)?${RUN_NOW}`,'u')},
+ {id:'real_trading_run',pattern:new RegExp(`(?:실제|실전|라이브)\\s*(?:매매|거래|주문|매수|매도)\\s*(?:을\\s*|를\\s*)?${RUN_NOW}`,'u')},
+ {id:'en_auto_trading_run',pattern:/\b(?:run|start|launch|execute|turn\s+on)\s+(?:the\s+|my\s+|an?\s+)?(?:automated|auto|autonomous|algorithmic)[\s-]*trading\b/u},
  {id:'handoff_execute',pattern:/(?:으?로|에|에게)\s*(?:보내|넘겨|넘기|전달|전송)(?:서|고|어)?\s*(?:바로\s*|그대로\s*)?(?:실제\s*)?(?:실행|주문|매매)/u},
  {id:'fund_transfer_ko',pattern:/(?:이체|송금).{0,10}(?:해|실행|진행)/u,split:false},
  {id:'fund_withdraw_deposit',pattern:new RegExp(`(?:출금|입금)\\s*(?:해(?![석설야도])|하(?:자|라|세요)|실행|진행${NOT_STATUS}|처리|부탁|좀)`,'u')},
@@ -70,7 +77,7 @@ const FUND_MOVEMENT_FORM_IDS=new Set(['fund_transfer_ko','fund_withdraw_deposit'
 const BUILD='(?:구축|만들|만드|개발|제작|설치|구성|구현|세팅)';
 /** ATS-class lexicon (design.md 3.4): building / installing / keeping running a system. No order or execution command forms. */
 export const GOOSE_ATS_FORMS:readonly GooseForm[]=Object.freeze([
- {id:'ats_autotrade_system',pattern:new RegExp(`자동\\s*매매\\s*(?:시스템|프로그램|봇|엔진).{0,6}${BUILD}|\\b(?:build|create|make|develop|deploy|set\\s+up)\\s+(?:an?\\s+)?(?:automated|algorithmic|auto)[\\s-]*trading\\s+(?:system|platform|engine|bot)`,'u')},
+ {id:'ats_autotrade_system',pattern:new RegExp(`자동\\s*매매\\s*(?:시스템|프로그램|봇|엔진)(?:.{0,6}${BUILD}|.{0,10}(?:운영|배포)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오)|시켜|좀|부탁|${END}))|\\b(?:build|create|make|develop|deploy|set\\s+up)\\s+(?:an?\\s+)?(?:automated|algorithmic|auto)[\\s-]*trading\\s+(?:system|platform|engine|bot)`,'u')},
  {id:'ats_trading_bot',pattern:new RegExp(`(?:매매|트레이딩|주식|투자|거래|자동)\\s*(?:봇|bot)\\s*(?:을|를)?\\s*(?:만들|만드|개발|제작|구축|설치|구성|돌려|돌리|운영|띄워|배포)|(?:24\\s*시간|상시|항상|365\\s*일).{0,14}(?:돌아가|돌리|돌려|운영|작동|가동).{0,14}(?:봇|bot)|\\b(?:build|create|make|develop|deploy|run)\\s+(?:an?\\s+)?(?:\\S+\\s+){0,2}(?:trading|stock)\\s*bot`,'u'),split:/(?:매매|트레이딩|주식|투자|거래|자동)(?:봇|bot)(?:을|를)?(?:만들|만드|개발|제작|구축|설치|구성|돌려|돌리|운영|띄워|배포)/u},
  {id:'ats_quant_engine',pattern:new RegExp(`(?:퀀트|시스템\\s*트레이딩).{0,12}엔진.{0,10}(?:만들|만드|구축|개발|제작|설치|구성|구현|돌려|돌리|운영|실행|가동)|\\b(?:build|create|develop)\\s+.{0,12}(?:quant|system\\s*trading)\\s+engine`,'u'),split:/(?:퀀트|시스템트레이딩)(?:시스템트레이딩)?엔진(?:을|를)?(?:만들|만드|구축|개발|제작|설치|구성|구현|돌려|돌리|운영|실행|가동)/u},
  {id:'ats_team_agent',pattern:/팀\s*에이전트.{0,12}(?:상시|구성|만들|만드|운영|실행|돌려|돌리|가동)|(?:트레이딩|매매|투자|주식)\s*(?:에이전트\s*)?팀.{0,8}(?:구성|만들|만드|구축|운영|세팅|상시)|상시\s*(?:실행|운영|가동)?\s*(?:되는\s*)?(?:트레이딩\s*|매매\s*)?에이전트|(?:crewai|autogen|langgraph).{0,20}(?:팀|에이전트).{0,8}(?:구성|만들|구축)/u,split:/팀에이전트(?:상시|구성|만들|만드|운영|실행|돌려|돌리|가동)|(?:트레이딩|매매|투자|주식)(?:에이전트)?팀(?:을)?(?:구성|만들|만드|구축|운영|세팅|상시)|상시(?:실행|운영|가동)?(?:되는)?(?:트레이딩|매매)?에이전트/u},
