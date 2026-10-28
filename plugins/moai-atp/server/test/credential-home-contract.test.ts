@@ -133,21 +133,45 @@ const recordingRegister = (): { calls: Registration[]; register: RegisterTest } 
   return { calls, register };
 };
 const STORES = ['key-store', 'profile-store'] as const satisfies readonly StoreKind[];
+// The platform code each store throws on a blocked host, written out here as literals so the reason check does not
+// compare the helper with itself. Verified against src/local-credentials.ts and src/user-context.ts by reading them.
+const PLATFORM_CODE = { 'key-store': 'secure_file_storage_unsupported', 'profile-store': 'context_unsafe_path' } as const satisfies Record<StoreKind, string>;
+// Real test names copied from the routed files (local-credentials.test.ts and auth002-m4-key-setup.test.ts for the
+// key store; setup-context.test.ts for the profile store), not invented.
+const REAL_NAMES = {
+  'key-store': [
+    'first credential setup saves only confirmed provider keys and runtime reads the same contract',
+    'symlink, hardlink, malformed, unknown-field and oversized files are rejected with sanitized errors',
+    'AC-004e no SAVE on a first setup creates no keystore and no file at all',
+    'AC-004c an empty fsAdapter behaves exactly like no adapter (defaults are the node:fs/promises functions)',
+  ],
+  'profile-store': [
+    'first setup collects confirmed closed choices and a second project reuses the common profile without a question',
+    'symlinked context directory is rejected without reading or modifying its target',
+    'profiles cannot be stored inside the selected project repository',
+  ],
+} as const satisfies Record<StoreKind, readonly string[]>;
 
 for (const store of STORES) {
   test(`explicit-platform-arg win32 ${store}: the gate marks the original test skipped with a reason and never runs its body (not Windows evidence)`, () => {
     const { calls, register } = recordingRegister();
-    let ran = false;
-    helper.storeTestFor(register, store, { platform: 'win32' })('original behavior', () => { ran = true; });
-    assert.equal(calls.length, 1);
-    assert.equal(calls[0]?.name, 'original behavior', 'the original test name is kept');
-    const reason = calls[0]?.options?.skip;
-    assert.equal(typeof reason, 'string');
-    assert.ok(String(reason).length > 0, 'the skip reason is non-empty');
-    assert.ok(String(reason).includes(store), 'the reason names the store');
-    assert.ok(String(reason).includes('not run'), 'the reason says the original behavior was not run');
-    assert.equal(reason, helper.blockedHostSkipReason(store));
-    assert.equal(ran, false, 'registering the test did not run the body');
+    let ran = 0;
+    const gate = helper.storeTestFor(register, store, { platform: 'win32' });
+    for (const name of REAL_NAMES[store]) gate(name, () => { ran += 1; });
+    assert.equal(calls.length, REAL_NAMES[store].length);
+    const otherCode = PLATFORM_CODE[store === 'key-store' ? 'profile-store' : 'key-store'];
+    calls.forEach((call, index) => {
+      assert.equal(call.name, REAL_NAMES[store][index], 'the original test name is kept');
+      const reason = call.options?.skip;
+      assert.equal(typeof reason, 'string', `${call.name}: skipped with a string reason`);
+      assert.ok(String(reason).length > 0, 'the skip reason is non-empty');
+      assert.ok(String(reason).includes(store), 'the reason names the store');
+      assert.ok(String(reason).includes(PLATFORM_CODE[store]), `the reason carries the platform code ${PLATFORM_CODE[store]}`);
+      assert.ok(!String(reason).includes(otherCode), 'the reason does not carry the other store\'s platform code');
+      assert.ok(String(reason).includes('not run'), 'the reason says the original behavior was not run');
+      assert.equal(reason, helper.blockedHostSkipReason(store));
+    });
+    assert.equal(ran, 0, 'registering the tests did not run any body');
   });
   test(`explicit-platform-arg darwin ${store}: the gate registers the original test without a skip and its body runs unchanged (not Windows evidence)`, async () => {
     const { calls, register } = recordingRegister();
