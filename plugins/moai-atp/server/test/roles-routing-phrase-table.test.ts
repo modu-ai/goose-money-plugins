@@ -58,6 +58,8 @@ const TABLE:Record<Category,Rows>={
    // `Task:` / `Instruction:` label keeps the command; a conditional order with no strategy / rule / backtest context is still a command.
    '/goose Task: buy AAPL','/goose Instruction: sell all my Tesla shares','/goose buy AAPL if it drops below 150','/goose sell AAPL when it crosses 150','/goose please buy AAPL when RSI < 30 and write a backtest report',
    '/goose can you buy AAPL when it dips, backtest later','/goose write a report. buy AAPL when RSI < 30','/goose I want you to buy Tesla if RSI < 30 for my strategy','/goose analyze AAPL strategy, then buy AAPL',
+   // Fix 5, mental-support guards: a sell connective that carries only a report request, or a sell + buy chain, stays blocked even next to an emotion word.
+   '/goose 삼성전자 팔고 나서 보고서 써줘','/goose 삼성전자 팔고 현대차 사서 불안하지 않게 비교 보고서',
   ],
   negative:[
    '/goose 기업 조사 주세요','/goose 연사 주세요','/goose 논문 근거로 매수·매도 규칙 설계','/goose 매도 신호 규칙을 백테스트','/goose 매수 시점 분석 보고서','/goose 삼성전자 실적 분석 보고서',
@@ -92,6 +94,10 @@ const TABLE:Record<Category,Rows>={
    '/goose Rules: buy above SMA50, sell below SMA50. 전략 백테스트','/goose Strategy rules: buy the dip, sell the rip. backtest','/goose 백테스트: short when RSI > 70, cover when RSI < 50',
    // Fix 5, D-R2: title-like or sector English terms that start with `buy` / `purchase` / `short` are descriptive, not orders.
    '/goose buy now pay later companies analysis','/goose purchase price allocation analysis','/goose purchase agreement review','/goose Buy box share analysis','/goose buy button design review','/goose short stories analysis',
+   // Fix 5, mental support: a past narrative (`팔고 나니(까)`, a sell connective followed by an emotion / regret word) is not an order. They kept `ready` + `mental-support` (or `clarification_required`) at 2d78f33.
+   '/goose 삼성전자 팔고 나서 불안해요','/goose 삼성전자 팔고 나니 후회돼요','/goose 삼성전자 팔고서 후회돼요 마음이 불안해','/goose 어제 삼성전자 팔고 불안해요','/goose 주식 다 팔고 나서 우울해요',
+   '/goose 팔고 나니까 주가가 올라서 멘탈이 나갔어요','/goose 삼성전자 팔고 후회 중이에요 마음 관리 도와줘','/goose 삼성전자 팔고 마음이 불안해','/goose 팔고서 후회 중','/goose 삼성전자 팔고 나서 속상해요',
+   '/goose 삼성전자 팔고 나니 주가가 올랐어요','/goose 삼성전자 팔고 나서 허탈해요 마음 관리',
   ],
  },
  // Transfer / deposit / withdrawal command (fixed sentence F_T, no ATS wording).
