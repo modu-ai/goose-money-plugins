@@ -71,6 +71,17 @@ const SELL_BUY_CHAIN=new RegExp(`${SELL_STEM}[^.!?]{0,40}?${BUY_STEM}${NOT_RULE_
 // One-syllable stems `사` / `팔아` count only as their own word (not preceded by a Hangul syllable), now also with a polite / formal request ending.
 const KO_SA_JWO=new RegExp(`(?<![가-힣])사\\s*(?:줘|주세요|주라|줄래|달라|${POLITE_GIVE})`,'u');
 const KO_PAL_A_JWO=new RegExp(`(?<![가-힣])팔\\s*아\\s*(?:줘|주세요|주라|줄래|버려|라|${POLITE_GIVE})|\\d[\\d,.]*\\s*주\\s*(?:만\\s*)?팔(?:아|자|라)`,'u');
+// Fix 4, L5 and slang / short imperatives. Explicit exit verbs (`손절해줘`, `익절해줘`, `청산해줘`) with a command ending; a rule or procedure noun (`손절 규칙`, `청산 절차`) and a should-I question (`손절해야`) are not commands.
+const PLACE_AHEAD='(?:놔|놓아|둬|두어)(?![야도서])';
+const SLANG_EXIT=new RegExp(`(?:손절매?|익절|청산)\\s*(?:을\\s*|를\\s*)?(?:해\\s*(?:줘|주세요|주라|줄래|달라|라|요|버려|봐(?![야도]))|해\\s*${POLITE_GIVE}|해\\s*${PLACE_AHEAD}|해${END}|하(?:자|라|세요|십시오|시오|십쇼)|시켜\\s*줘|${ASK})`,'u');
+// `매수해놔`, `매도해 둬`, `팔아놔`, `주식 좀 사놔`: leave-it-done endings. `매수해 놓은` / `사놓은` (a state) are not commands. The one-syllable stems keep the own-word boundary.
+const PLACE_AHEAD_ORDER=new RegExp(`(?:매수|매도|주문)\\s*해\\s*${PLACE_AHEAD}|(?<![가-힣])(?:팔\\s*아|사)\\s*${PLACE_AHEAD}`,'u');
+// `팔아` as the last word (`삼성전자 팔아`, `전부 팔아`, `팔아라`); `팔아야` / `팔아도` and a non-final `팔아 번 돈` are not commands.
+const PAL_A_TERMINAL=new RegExp(`(?<![가-힣])팔아(?:\\s*(?:버려|라))?${END}`,'u');
+// A final `사` is an order only with object evidence in front of it: an object particle, a quantity or a 5-6 digit code (`삼성전자를 사`, `005930 사`, `삼성전자 10개 사`). A bare name before `사` is not evidence.
+const SA_TERMINAL=new RegExp(`(?:${QUANTITY}|[을를])\\s*(?:만\\s*)?사${END}`,'u');
+// A bare sell connective as its own word (`삼성전자 팔고 보고서`, `팔고서`): `팔고 싶`, `팔고 있` and a described clause (`팔고 사는 시점`) are not orders.
+const PAL_GO_CONNECTIVE=new RegExp(`(?<![가-힣])팔고서?(?![가-힣])(?!\\s*(?:싶|있|계시|계신))${NOT_RULE_DESIGN}`,'u');
 const FUND_TRANSFER_REQUEST=new RegExp(`(?:이체|송금)\\s*(?:을\\s*|를\\s*)?(?:${ASK}|하(?:시오|십시오|십쇼|세요)(?![가-힣]))`,'u');
 
 // English trade commands (fix 4, F2). Imperative position only: the verb starts the request, follows sentence punctuation (`, then`, `. and`), or follows a request lead
@@ -116,6 +127,11 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  // `사고` / `팔고` are also the noun "accident" / a common word, so they count only with object evidence: a quantity, a 5-6 digit code or an object particle.
  {id:'ko_sa_go',pattern:KO_SA_GO},
  {id:'ko_sell_buy_chain',pattern:SELL_BUY_CHAIN,split:false,loose:SELL_BUY_CHAIN},
+ {id:'ko_slang_exit_verb',pattern:SLANG_EXIT,split:false,loose:SLANG_EXIT},
+ {id:'ko_place_ahead_order',pattern:PLACE_AHEAD_ORDER,split:false,loose:PLACE_AHEAD_ORDER},
+ {id:'ko_pal_a_terminal',pattern:PAL_A_TERMINAL,split:false,loose:PAL_A_TERMINAL},
+ {id:'ko_sa_terminal',pattern:SA_TERMINAL,split:false,loose:SA_TERMINAL},
+ {id:'ko_pal_go_connective',pattern:PAL_GO_CONNECTIVE,split:false,loose:PAL_GO_CONNECTIVE},
  {id:'ko_quantity_compact_order',pattern:COMPACT_QUANTITY_ORDER,split:false,loose:COMPACT_QUANTITY_ORDER},
  // Account-change commands (REQ-SAF-001 / spec 0.2.0 scope: account changes are excluded). A bare noun (`계좌 해지 절차`) is not a form.
  {id:'account_change',pattern:new RegExp(`계좌\\s*(?:를\\s*|을\\s*)?(?:명의\\s*|비밀번호\\s*|한도\\s*)?(?:개설|해지|폐쇄|해약|이전|변경|수정|삭제|등록)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오|고)|시켜|좀|부탁|요(?![가-힣])|${END})|(?:거래|이체|출금|입금|주문)\\s*한도\\s*(?:를\\s*|을\\s*)?(?:변경|수정|올려|내려|늘려|높여|낮춰|조정)`,'u')},
