@@ -57,6 +57,11 @@ const BUY_STEM='(?<![가-힣])사(?:서|고서?)(?![가-힣])(?!\\s*(?:싶|있|�
 const SELL_FOLLOW='팔(?:고|아(?![야도]))';
 const DESCRIBED_SELL='[파팔](?!고|아(?![야도]))';
 const KO_SA_GO=new RegExp(`(?:\\d[\\d,.]*\\s*(?:주|개|만원|원어치|억)|\\d{5,6}|[을를])\\s*(?:만\\s*)?(?:사|팔)고(?:(?=${SELL_FOLLOW})${NOT_RULE_DESIGN}|(?![가-힣])(?!\\s*(?:싶|있|계시|계신|${DESCRIBED_SELL})))`,'u');
+// Quantity evidence (`N주`, `N주식`, `N개`, `N원어치`, a 5-6 digit code) fused to the command word with no space (`10주사줘`, `5개팔아줘`, `005930매수`). The numeric evidence directly in front of the
+// command is what makes the one-syllable stem `사` an order here, so no word list is needed and `기업조사주세요` (no number) stays out. The bare `매수` / `매도` must follow the quantity at once
+// (`10주 매수 후 6개월` with a space is a narrative) and must not be the start of a noun (`매수세`, `매도량`, `매수자`).
+const QUANTITY='(?:\\d[\\d,.]*\\s*(?:주식|주|개|(?:천|만|억)?원어치)|(?<![\\d,.])\\d{5,6}(?!\\d))';
+const COMPACT_QUANTITY_ORDER=new RegExp(`${QUANTITY}\\s*(?:사\\s*(?:줘|주세요|주라|줄래|달라)|팔\\s*아\\s*(?:줘|주세요|주라|줄래|버려|라))|${QUANTITY}(?:매수|매도)(?!세|자|인|량|가|금|단|분|비|율|액|일|시|물)`,'u');
 const SELL_BUY_CHAIN=new RegExp(`${SELL_STEM}[^.!?]{0,40}?${BUY_STEM}${NOT_RULE_DESIGN}|${BUY_STEM}[^.!?]{0,40}?${SELL_STEM}${NOT_RULE_DESIGN}`,'u');
 
 /** Trade-execution lexicon (design.md 3.1): commands only; bare nouns and explanations are not forms. */
@@ -89,6 +94,7 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  // `사고` / `팔고` are also the noun "accident" / a common word, so they count only with object evidence: a quantity, a 5-6 digit code or an object particle.
  {id:'ko_sa_go',pattern:KO_SA_GO},
  {id:'ko_sell_buy_chain',pattern:SELL_BUY_CHAIN,split:false,loose:SELL_BUY_CHAIN},
+ {id:'ko_quantity_compact_order',pattern:COMPACT_QUANTITY_ORDER,split:false,loose:COMPACT_QUANTITY_ORDER},
  // Account-change commands (REQ-SAF-001 / spec 0.2.0 scope: account changes are excluded). A bare noun (`계좌 해지 절차`) is not a form.
  {id:'account_change',pattern:new RegExp(`계좌\\s*(?:를\\s*|을\\s*)?(?:명의\\s*|비밀번호\\s*|한도\\s*)?(?:개설|해지|폐쇄|해약|이전|변경|수정|삭제|등록)\\s*(?:해(?![석설야도])|하(?:자|라|세요|십시오|고)|시켜|좀|부탁|요(?![가-힣])|${END})|(?:거래|이체|출금|입금|주문)\\s*한도\\s*(?:를\\s*|을\\s*)?(?:변경|수정|올려|내려|늘려|높여|낮춰|조정)`,'u')},
  {id:'en_buy_sell',pattern:/(?<![a-z0-9-])(?:buy|sell)\s+(?:(?:\d[\d,.]*\s+(?:shares?\s+(?:of\s+)?)?)?\d{5,6}\b|\d[\d,.]*\s+(?:shares?|stocks?)\b|\S+.{0,30}\b(?:now|immediately|asap|at\s+market|right\s+away)\b)/u},
