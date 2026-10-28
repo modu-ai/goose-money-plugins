@@ -10,19 +10,25 @@ export const GOOSE_SENTENCE_F_T='이 플러그인은 이체·입출금을 지원
 export const GOOSE_SENTENCE_ACCOUNT='읽기 전용 보유·계좌 수익률 조회는 아직 제공하지 않습니다(별도 승인 뒤 제공 예정)';
 export const GOOSE_SENTENCE_PERFORMANCE='수익률·성과를 계산할 입력(매입가 또는 자산곡선, 기간, 통화, 입출금 흐름)이 없어 계산할 수 없습니다';
 
-/** `pattern` runs on the NFC + lower-cased text. `split` runs on the separator-collapsed text: omitted = reuse `pattern`, `false` = skip. */
-export interface GooseForm{readonly id:string;readonly pattern:RegExp;readonly split?:RegExp|false}
+/**
+ * `pattern` runs on the NFC + lower-cased text. `split` runs on the separator-collapsed text: omitted = reuse `pattern`, `false` = skip.
+ * `loose` (optional) runs on the text with punctuation, symbols and format characters removed but whitespace kept, so a
+ * word-boundary check still works on `사_줘` (a collapsed view would glue `조사 주세요` into `조사주세요`).
+ */
+export interface GooseForm{readonly id:string;readonly pattern:RegExp;readonly split?:RegExp|false;readonly loose?:RegExp}
 // Each form is checked on two views of the request: NFC + lower-cased text, and that text with whitespace,
 // punctuation, symbols and format characters removed (split-form check). Forms with a wide `.{0,N}` window use a
 // tight `split` pattern (or none) because removing whitespace would stretch the window over unrelated words.
 // This narrows casual obfuscation only; it does not claim to block paraphrases. Zero steps and the absence of
 // any order tool are the last line of defence.
 const SEPARATORS=/[\s\p{P}\p{S}\p{Cf}]+/gu;
+const MARKS=/[\p{P}\p{S}\p{Cf}]+/gu;
 /** Ids of the form(s) in `forms` that match `text`. Pure, no side effects. */
 export function matchGooseForms(forms:readonly GooseForm[],text:string):string[]{
- const normalized=text.normalize('NFC').toLowerCase();const collapsed=normalized.replace(SEPARATORS,'');
+ const normalized=text.normalize('NFC').toLowerCase();const collapsed=normalized.replace(SEPARATORS,'');const loose=normalized.replace(MARKS,'');
  return forms.filter(form=>{
   if(form.pattern.test(normalized))return true;
+  if(form.loose!==undefined&&form.loose.test(loose))return true;
   const split=form.split===undefined?form.pattern:form.split;
   return split!==false&&split.test(collapsed);
  }).map(form=>form.id);
@@ -45,9 +51,11 @@ export const GOOSE_TRADE_FORMS:readonly GooseForm[]=Object.freeze([
  {id:'ko_buysell_verb',pattern:new RegExp(`(?:매수|매도)\\s*(?:해${IMPERATIVE}|해${END}|하(?:자|라|세요|십시오)|진행${NOT_STATUS}|처리(?:해|하))`,'u')},
  // `삼성전자 매수` as a whole request (a bare trailing noun); preceded by whitespace or the start so `매수·매도 규칙 설계` is untouched.
  {id:'ko_buysell_bare_terminal',pattern:/(?:^|\s)(?:매수|매도)[\s.!?~]*$/u},
- {id:'ko_sa_jwo',pattern:/사\s*(?:줘|주세요|주라|줄래|달라)/u},
- {id:'ko_n_ju_sa',pattern:new RegExp(`\\d[\\d,.]*\\s*주\\s*(?:만\\s*)?사(?:라|자|요|[\\s.!?~]*$)`,'u')},
- {id:'ko_pal_a_jwo',pattern:/팔아\s*(?:줘|주세요|주라|줄래|버려|라)|\d[\d,.]*\s*주\s*(?:만\s*)?팔(?:아|자|라)/u},
+ // One-syllable verb stems (사, 팔) count only as their own word: `조사 주세요` / `연사 주세요` are not orders. The boundary is "not preceded by a Hangul syllable", checked on the
+ // original and the punctuation-stripped view (whitespace kept); the whitespace-collapsed view would erase the boundary, so these forms skip it.
+ {id:'ko_sa_jwo',pattern:/(?<![가-힣])사\s*(?:줘|주세요|주라|줄래|달라)/u,split:false,loose:/(?<![가-힣])사\s*(?:줘|주세요|주라|줄래|달라)/u},
+ {id:'ko_n_ju_sa',pattern:new RegExp(`\\d[\\d,.]*\\s*주\\s*(?:만\\s*)?사(?:(?:라|자|요)(?![가-힣])|[\\s.!?~]*$)`,'u')},
+ {id:'ko_pal_a_jwo',pattern:/(?<![가-힣])팔\s*아\s*(?:줘|주세요|주라|줄래|버려|라)|\d[\d,.]*\s*주\s*(?:만\s*)?팔(?:아|자|라)/u,split:/\d[\d,.]*주(?:만)?팔(?:아|자|라)/u,loose:/(?<![가-힣])팔\s*아\s*(?:줘|주세요|주라|줄래|버려|라)|\d[\d,.]*\s*주\s*(?:만\s*)?팔(?:아|자|라)/u},
  {id:'order_place',pattern:new RegExp(`주문\\s*(?:해${IMPERATIVE}|해${END}|넣|걸어|접수|내\\s*줘|보내|진행${NOT_STATUS})`,'u')},
  {id:'order_cancel_modify',pattern:/주문\s*(?:을\s*)?(?:취소|정정|변경|수정)\s*(?:해|하|좀|부탁|요|$)|주문.{0,8}(?:취소|정정)해/u},
  {id:'reserved_order',pattern:/예약\s*(?:주문\s*(?:을\s*)?(?:자동화|걸|넣|해|등록|설정|실행|진행|내)|걸어|걸고|걸자|해\s*줘)|(?:매수|매도)\s*예약\s*(?:걸|해|등록|설정|넣)/u},
@@ -100,6 +108,18 @@ const PERFORMANCE_FORMS:readonly RegExp[]=[
  /\bmy\s+(?:portfolio\s+)?(?:returns?|performance|pnl)\b/u,
 ];
 const PERFORMANCE_INPUT=/\d[\d,.]*\s*(?:원|주|달러|usd|krw|%|만원|억원|억)/u;
+// An explicit negation next to an account form (`계좌 없이`, `계좌 말고`, `계좌 제외`, `계좌를 연결하지 않고`) says the user does NOT want account data.
+// Only the negated phrase is removed; a remaining holdings / balance / deposit form in the same request still counts.
+const ACCOUNT_NEGATION=/계좌(?:\s*(?:조회|연결|연동|접근|접속|정보|분석|자료|내역))?\s*(?:을|를|은|는|이|가|와|과|도)?\s*(?:없이|없는|없고|없어도|말고|제외|빼고|뺀|무관하게|상관없이|(?:연결|연동|조회|접근|접속|사용|이용|참조|확인|보|쓰)(?:하)?지\s*(?:않|말)|필요\s*(?:없|하지\s*않))/gu;
+// User-owned fund / asset holdings (`내 ETF 보유 종목`, `내가 가진 ETF`). The public-fund-holdings exemption below must not hide these: they are the user's account.
+const OWNED_HOLDINGS:readonly RegExp[]=[
+ /(?<![가-힣])(?:내|제|나의|저의|우리(?:의)?)\s*(?:etf|펀드|리츠|지수)\s*(?:의\s*)?(?:구성\s*)?(?:보유|잔고|평가)/u,
+ /(?<![가-힣])(?:내|제|저|우리)가\s*(?:지금\s*|현재\s*)?(?:가진|가지고\s*있는|갖고\s*있는|보유한|보유\s*중인|들고\s*있는|투자한|산|매수한|소유한)\s*(?:etf|펀드|리츠|주식|종목|코인|자산)/u,
+];
+function matchesAccount(text:string):boolean{
+ const cleaned=text.normalize('NFC').toLowerCase().replace(ACCOUNT_NEGATION,' ');
+ return OWNED_HOLDINGS.some(form=>form.test(cleaned))||matchesAny(ACCOUNT_FORMS,cleaned);
+}
 function matchesAny(forms:readonly RegExp[],text:string):boolean{
  const normalized=text.normalize('NFC').toLowerCase().replace(FUND_HOLDINGS,' ');const views=[normalized,normalized.replace(SEPARATORS,'')];
  return forms.some(form=>views.some(view=>form.test(view)));
@@ -124,7 +144,7 @@ export function planGooseRequest(value:unknown){
  }
  const blockedActions:string[]=[];
  if(tradeForms.length)blockedActions.push('orders_or_transfers');
- const accountRequest=matchesAny(ACCOUNT_FORMS,text);
+ const accountRequest=matchesAccount(text);
  if(accountRequest)blockedActions.push('account_access');
  const modes=new Set<GooseMode>();if(explicit)modes.add(explicit);
  if(!explicit||explicit!=='setup'){
