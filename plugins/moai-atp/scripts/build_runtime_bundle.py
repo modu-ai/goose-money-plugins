@@ -28,8 +28,8 @@ def build(root, output):
   relative=Path(name)
   if relative.is_absolute() or '..' in relative.parts or any(part in FORBIDDEN for part in relative.parts) or relative.name.startswith('.env') or relative.name in {'credentials.json','secrets.json'}:raise ValueError('private_path_in_bundle')
   approved_icon=({
-   'assets/modu-stock-plugin-icon-square.png':'4157d9d6e094cdc6b2009e979002812fbea86a6414b477df388a13ca010a3125',
-   'server/assets/report-runtime/stock-sample-logo.png':'9f859a9d720238dd4edd7f462ca00b16a144eec420b6ca8a6d7eaa5df3ece8af',
+   'assets/modu-stock-plugin-icon-square.png':'f8b6e1fd48b693643232a46be6969ad585ef5dc8f34a2f06c417868b2a206166',
+   'server/assets/report-runtime/stock-sample-logo.png':'5c4f5d9ca5e04e3bf42bd686602de399b997aa8e5020710f547bc9520511036b',
   }.get(name)==hashlib.sha256(data).hexdigest() and data.startswith(b'\x89PNG\r\n\x1a\n'))
   issues=[f for f in findings_for(name,data) if f['rule']!='excluded_path' and not(approved_icon and f['rule']=='unexpected_binary')]
   if approved_icon:issues += [f for f in findings_for(name,data.replace(b'\0',b'')) if f['rule']!='excluded_path']

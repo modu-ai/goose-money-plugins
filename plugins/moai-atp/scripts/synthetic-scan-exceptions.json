@@ -57,12 +57,12 @@
     "path": "plugins/moai-atp/assets/modu-stock-plugin-icon-square.png",
     "rule": "unexpected_binary",
     "line_sha256": "",
-    "reason": "Reviewed plugin icon image (PNG 1254x1254 RGB, sha256 4157d9d6e094cdc6b2009e979002812fbea86a6414b477df388a13ca010a3125, pinned in build_runtime_bundle.py) referenced by plugin.json composerIcon/logo; chunks IHDR/caBX(C2PA provenance)/IDAT/IEND only, no text metadata; no user account or credential."
+    "reason": "Reviewed plugin icon image (PNG 1254x1254 RGB, sha256 f8b6e1fd48b693643232a46be6969ad585ef5dc8f34a2f06c417868b2a206166, pinned in build_runtime_bundle.py) referenced by plugin.json composerIcon/logo; chunks IHDR/IDAT/IEND only (the caBX C2PA provenance chunk removed; no metadata chunks, pixel data unchanged); no user account or credential."
   },
   {
     "path": "plugins/moai-atp/server/assets/report-runtime/stock-sample-logo.png",
     "rule": "unexpected_binary",
     "line_sha256": "",
-    "reason": "Reviewed report logo image (PNG 2166x726 RGBA, sha256 9f859a9d720238dd4edd7f462ca00b16a144eec420b6ca8a6d7eaa5df3ece8af, pinned in build_runtime_bundle.py) embedded by report-template-renderer.ts; chunks IHDR/caBX(C2PA provenance)/IDAT/IEND only, no text metadata; no user account or credential."
+    "reason": "Reviewed report logo image (PNG 2166x726 RGBA, sha256 5c4f5d9ca5e04e3bf42bd686602de399b997aa8e5020710f547bc9520511036b, pinned in build_runtime_bundle.py) embedded by report-template-renderer.ts; chunks IHDR/IDAT/IEND only (the caBX C2PA provenance chunk removed; no metadata chunks, pixel data unchanged); no user account or credential."
   }
 ]
