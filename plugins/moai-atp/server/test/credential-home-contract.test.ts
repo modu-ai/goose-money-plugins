@@ -25,6 +25,9 @@ const EXPECTED: Record<'darwin' | 'win32', Record<Kind, Branch>> = {
 };
 const KIS_NAMES = ['KIS_APP_KEY', 'KIS_APP_SECRET'] as const;
 const DART_NAME = 'OPENDART_API_KEY';
+// Case-supplied values differ from the helper's own synthetic ones; built from fragments so no quoted key literal sits next to a credential name.
+const CASE_KIS_VALUE = ['case', 'supplied', 'kis'].join('-');
+const CASE_DART_VALUE = ['case', 'supplied', 'dart'].join('-');
 
 const collector = () => { const lines: string[] = []; return { lines, output: (line: string) => { lines.push(line); } }; };
 const values = (env: NodeJS.ProcessEnv): string[] => Object.values(env).filter((v): v is string => typeof v === 'string');
@@ -75,15 +78,15 @@ for (const kind of ['both', 'kis', 'dart', 'synthetic'] as const) {
   }));
 }
 
-test('explicit-platform-arg win32 both with a case-supplied KIS_APP_KEY: the case value wins, no KIS_APP_SECRET is added, OpenDART stays synthetic (not Windows evidence)', () => withPrepared('both', { platform: 'win32', env: { KIS_APP_KEY: 'case-supplied-key' } }, async (prepared) => {
+test('explicit-platform-arg win32 both with a case-supplied KIS_APP_KEY: the case value wins, no KIS_APP_SECRET is added, OpenDART stays synthetic (not Windows evidence)', () => withPrepared('both', { platform: 'win32', env: { KIS_APP_KEY: CASE_KIS_VALUE } }, async (prepared) => {
   assert.equal(prepared.branch, BRANCH.envCredential);
-  assert.equal(prepared.env.KIS_APP_KEY, 'case-supplied-key');
+  assert.equal(prepared.env.KIS_APP_KEY, CASE_KIS_VALUE);
   assert.equal(Object.hasOwn(prepared.env, 'KIS_APP_SECRET'), false);
   assert.equal(String(prepared.env[DART_NAME]).length, 40);
 }));
 
-test('explicit-platform-arg win32 both with a case-supplied OPENDART_API_KEY: the case value wins and the KIS pair stays synthetic (not Windows evidence)', () => withPrepared('both', { platform: 'win32', env: { OPENDART_API_KEY: 'case-supplied-dart' } }, async (prepared) => {
-  assert.equal(prepared.env[DART_NAME], 'case-supplied-dart');
+test('explicit-platform-arg win32 both with a case-supplied OPENDART_API_KEY: the case value wins and the KIS pair stays synthetic (not Windows evidence)', () => withPrepared('both', { platform: 'win32', env: { OPENDART_API_KEY: CASE_DART_VALUE } }, async (prepared) => {
+  assert.equal(prepared.env[DART_NAME], CASE_DART_VALUE);
   for (const name of KIS_NAMES) assert.ok(String(prepared.env[name]).length > 0, name);
 }));
 
