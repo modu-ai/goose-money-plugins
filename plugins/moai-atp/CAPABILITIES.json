@@ -449,12 +449,12 @@
     "actual_public_sec_fact_records_retained": 100,
     "source_tests": 2051
   },
-  "source_tests": 2641,
+  "source_tests": 4993,
   "latest_validation": {
-    "tests": 2641,
+    "tests": 4993,
     "failed": 0,
     "skipped": 0,
-    "log": "npm --prefix oss/server test on macOS with Node 24.22.1; console output is not retained in this package",
+    "log": "npm --prefix plugins/moai-atp/server test on macOS with Node 24.22.1; console output is not retained in this package",
     "provider_http_this_followup": 0,
     "public_skills": 1,
     "public_tools": 36,
