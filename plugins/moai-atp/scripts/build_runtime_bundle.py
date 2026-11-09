@@ -37,7 +37,7 @@ def build(root, output):
   files[name]=data
  def public_overlay(name,data):
   if name=='skills/goose/references/catalog.json':
-   catalog=json.loads(data);catalog['entries']=[entry for entry in catalog['entries'] if entry['id'] in {'R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'}]
+   catalog=json.loads(data);catalog['entries']=[entry for entry in catalog['entries'] if entry['id'] in {'R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','U01'}]
    for entry in catalog['entries']:entry['required_groups']=[g for g in entry.get('required_groups',[]) if g not in {'account_ledger'}]
    return (json.dumps(catalog,ensure_ascii=False,indent=2)+'\n').encode()
   if name=='README.md':

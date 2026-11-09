@@ -61,11 +61,11 @@ for path in (root/'skills').glob('*/SKILL.md'):
         assert resolved.is_relative_to(root) and resolved.is_file(), f'bad skill reference: {path.name}'
 catalog = json.loads((root/'skills/goose/references/catalog.json').read_text())['entries']
 if args.runtime:
-    assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,15) if i != 4] + ['U01']
+    assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,14) if i != 4] + ['U01']
     assert all(x['public'] for x in catalog)
 else:
-    assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,15)] + ['U01','U02','U03']
-    assert sum(x['public'] for x in catalog) == 16
+    assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,14)] + ['U01','U02','U03']
+    assert sum(x['public'] for x in catalog) == 15
     assert catalog[-1]['kind'] == 'internal_qa' and not catalog[-1]['public']
 assert all(x['actual_data_complete'] is False for x in catalog)
 route_path = root/('server/runtime/contracts/report-route-bindings.v1.json' if args.runtime else 'server/contracts/report-route-bindings.v1.json')

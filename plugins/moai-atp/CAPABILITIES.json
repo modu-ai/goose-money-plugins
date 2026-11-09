@@ -350,7 +350,7 @@
       "R09",
       "R10",
       "R11",
-      "R14",
+      "R12",
       "U01"
     ],
     "input_contract": "previous_mcp_result_envelopes; caller_cannot_override_received_at",
@@ -388,13 +388,41 @@
     "R10",
     "R11",
     "R12",
-    "R13",
-    "R14",
     "U01"
   ],
   "planned_report_routes": [
     "R04"
   ],
+  "report_catalog": {
+    "source": "function definition revision 6",
+    "ids": [
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "U01",
+      "U02",
+      "U03"
+    ],
+    "conditional": [
+      "R12"
+    ],
+    "release_hold": [
+      "R13"
+    ],
+    "excluded": [
+      "R14"
+    ]
+  },
   "local_read_settings": {
     "source": "mcp.json env (non-secret switches only)",
     "credential_source": "user keystore or existing environment",
