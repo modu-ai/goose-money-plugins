@@ -258,7 +258,7 @@ export const NONREGRESSION_ROWS:readonly NonRegressionRow[]=[
  {text:"SK하이닉스 재무 점검 리포트",status:'ready',steps:2,modes:'analyze+report',group:"curated",baseline:'ready:2',at024:'ready:2'},
  {text:"반도체 업종 공시 분석 보고서 HTML",status:'ready',steps:2,modes:'analyze+report',group:"curated",baseline:'ready:2',at024:'ready:2'},
  {text:"ETF 구성 비교 점검",status:'ready',steps:1,modes:'analyze',group:"curated",baseline:'ready:1',at024:'ready:1'},
- {text:"코스피200 선물 수급 분석",status:'ready',steps:1,modes:'analyze',group:"curated",baseline:'ready:1',at024:'ready:1'},
+ {text:"코스피200 선물 수급 분석",status:'unsupported',steps:0,modes:'',group:"curated",baseline:'ready:1',at024:'ready:1',reason:"Issue #2 (function definition revision 6): futures (R13) is held for the initial release, so a futures analysis request is unsupported (report_release_hold) with no steps."},
  {text:"논문 근거로 변동성 돌파 전략 설계",status:'ready',steps:1,modes:'strategy',group:"curated",baseline:'ready:1',at024:'ready:1'},
  {text:"이동평균 교차 전략 과거 검증 계획",status:'ready',steps:1,modes:'backtest',group:"curated",baseline:'ready:1',at024:'ready:1'},
  {text:"백테스트 비용 모형 점검",status:'ready',steps:1,modes:'backtest',group:"curated",baseline:'ready:1',at024:'ready:1'},
