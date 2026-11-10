@@ -58,6 +58,14 @@ export type StateMachineOptions = {
 
 const UNHANDLED_CAP = 200;
 
+// Design §5.4 N1/N2: a replacement checkout proves a new cycle only when the view shows the
+// subscription settled into it — pending (the checkout in progress), trialing, or active. A view
+// still in dispute is not a settlement (N2 keeps checkouts out of a live dispute), and the later
+// states (past_due on) are reachable from the old cycle without any replacement, so they prove
+// nothing about a new one.
+const settledForReplacement = (state: SubscriptionState): boolean =>
+  state === 'pending' || state === 'trialing' || state === 'active';
+
 export function createSubscriptionStateMachine(options: StateMachineOptions = {}) {
   const emptySubscription = (subscription_id: string): StoredSubscription => ({
     subscription_id,
@@ -237,8 +245,12 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       // advanced, no period stated (the intermediate pending view was skipped, and the stored period
       // may even still be nominally live: it belongs to the dead cycle either way, N1).
       // The marker (§5.2) is the routed-checkout evidence; without it the same confirmation keeps
-      // the stored period, so a plain confirm never revives anything (Codex 4530750266).
+      // the stored period, so a plain confirm never revives anything (Codex 4530750266). The view
+      // must also show the subscription settled into the new cycle — a dispute kept alive in the
+      // view is not a settlement, so the marker, the period, and the anchor all wait (Codex 4531973934,
+      // §5.4 N2).
       const replacementSettled = current.replacement_checkout_pending
+        && settledForReplacement(provider.state)
         && provider.revision !== undefined
         && provider.revision > current.revision;
       const confirmedReplacementCheckout = (pendingElapsed || replacementSettled)
@@ -296,8 +308,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     const enteringDispute = provider.state === 'disputed' && current.state !== 'disputed';
     // N1's adoption twin (Codex 4530750266 sibling): a replacement settled straight to a paid state —
     // marker evidence + advanced revision + no period stated — starts the new cycle empty; the
-    // pending-only clear above left the old cycle's period poisoning the settled state.
+    // pending-only clear above left the old cycle's period poisoning the settled state. The settled-
+    // state requirement is the adopt-path twin of the confirm gate above: a view adopting a dispute
+    // keeps the old cycle's period so dispute.won restores with it (Codex 4531973934, §5.4 N2).
     const replacementSettledAdopt = current.replacement_checkout_pending
+      && settledForReplacement(provider.state)
       && provider.current_period_end === undefined
       && provider.revision !== undefined
       && provider.revision > current.revision;

@@ -105,7 +105,7 @@ Refs #8.
 | `state_changed_at` | 현재 상태가 시작된 시각 — 유예(B-04)·`pending` 시간 초과의 기준점 | now 로 재설정하면 만료된 유예·타임아웃이 결제 없이 대사마다 재시작(§5 지연) |
 | `previous_state` | 분쟁 복구 상태 — `dispute.won`이 돌아갈 목표 | 없으면 분쟁 종결이 표 밖 조합이 되어 `disputed`에 갇힘(§4). 대사가 기간만 갱신할 때 보존, 대사가 놓친 분쟁 개시를 채택할 때 신규 포착 |
 | `previous_state_changed_at` | 분쟁 복구 시 되돌릴 기준 시각 — `dispute.opened`가 `state_changed_at`을 따로 저장 | 분쟁 왕복(`past_due` → `disputed` → 복구)이 소진된 유예를 재시작하지 않게 함(`state_changed_at`과 같은 이유) |
-| `replacement_checkout_pending` | 교체 checkout 대기 표지 — 판본 없는 `checkout.completed`가 표에 적용되지 못하고 뷰 대기 중(새 주기 후보) | 확인 대사가 지우면 정산까지 끝난 교체가 구기간에 갇혀 effective `expired`로 남음(§5.4 N1). 소비는 증거(판본 진전)가 있을 때만(N3) |
+| `replacement_checkout_pending` | 교체 checkout 대기 표지 — 판본 없는 `checkout.completed`가 표에 적용되지 못하고 뷰 대기 중(새 주기 후보) | 확인 대사가 지우면 정산까지 끝난 교체가 구기간에 갇혀 effective `expired`로 남음(§5.4 N1). 소비는 뷰가 새 주기에 정산된 상태(`pending`/`trialing`/`active`)에 도달하고 증거(판본 진전)가 있을 때만 — 분쟁을 유지하는 뷰는 정산이 아니므로 소비하지 않음(§5.4 N2·N3) |
 
 예시 — `trialing` + `trial_ended` 저장 중 대사가 공급자 뷰 `trialing`(기간 갱신)을 확인 → 표지 유지 → 이후 검증된 `payment.succeeded`가 `active` 로 정산.
 
@@ -127,7 +127,7 @@ Refs #8.
 
 | 규칙 | 내용 | 근거 |
 |---|---|---|
-| N1 | `checkout.completed`는 새 구독 주기의 시작 — 이전 주기의 `current_period_end`를 물려받지 않음. 새 기간은 사건·대사 뷰가 줄 때만 설정하고, 주지 않으면 비어 시작. 정산이 이미 끝난 상태로 대사 뷰가 도달해도(중간 `pending` 미관찰) 같다 — 교체 증거(판본 진전 + §5.2 `replacement_checkout_pending`)가 있을 때만 이전 기간을 비움 | §5 지연 행: 만료된 기간을 물려받으면 새 `pending`이 즉시 `expired`로 계산되어 §4 전이가 무효화됨 |
+| N1 | `checkout.completed`는 새 구독 주기의 시작 — 이전 주기의 `current_period_end`를 물려받지 않음. 새 기간은 사건·대사 뷰가 줄 때만 설정하고, 주지 않으면 비어 시작. 정산이 이미 끝난 상태로 대사 뷰가 도달해도(중간 `pending` 미관찰) 같다 — 교체 증거(뷰가 새 주기에 정산된 상태 도달 + 판본 진전 + §5.2 `replacement_checkout_pending`)가 있을 때만 이전 기간을 비움. 뷰가 분쟁 등 정산 아닌 상태를 유지하면 이전 기간·기준점·표지를 그대로 둠 | §5 지연 행: 만료된 기간을 물려받으면 새 `pending`이 즉시 `expired`로 계산되어 §4 전이가 무효화됨 |
 | N2 | checkout 수용 판정은 저장 상태가 아니라 계산된(effective) 상태 기준 — 만료·시간 초과로 effective 가 `expired`/`none`이면 수용. 단 저장 상태가 `disputed`면 수용하지 않음 | §4 전이표(none/expired 기준)·§5 지연. `disputed` 제외는 복구 상태 소실 방지(§5.2) |
 | N3 | 기준점 초기화는 새 주기가 실제로 시작될 때만(전이 적용 또는 대사 채택). 같은 상태를 확인하는 대사와 시간 경과만으로는 초기화하지 않음 — 버려진 checkout이 주기 대사마다 부활하는 것을 막음. '교체 checkout' 판정은 저장 값으로 구분되는 증거(판본 진전 등)일 때만 | §5 지연·§5.1 P6. 판정 세부 기준은 공급자 뷰 구성(B-01) 확정 뒤 다시 적음 |
 | N4 | 분쟁 중 구독의 기간이 끝났을 때 공급자 뷰가 종결 상태(`expired` 등)를 확인하면 저장 상태를 그 값으로 맞춤 — 분쟁 관련 제한은 기간이 살아 있는 동안의 규칙 | §4("조회로 현재 상태를 맞춤")·§5 지연(effective 이미 만료). 채택하지 않으면 checkout·대사 어느 쪽으로도 회수 불가 |
