@@ -19,7 +19,7 @@ async function fixture(run: (home: string, project: string, base: string) => Pro
 }
 test("manual input preserves missing optional quantities, cost, cash and liabilities", () => {
   assert.deepEqual(parseManualHoldings(input), input);
-  for (const bad of [{ ...input, cash: "" }, { ...input, account_number: "12345678" }, { ...input, as_of: "2026-02-30" }, { ...input, positions: [{ symbol: "005930", quantity: "-1" }] }]) {
+  for (const bad of [{ ...input, cash: "" }, { ...input, account_number: "9".repeat(8) }, { ...input, as_of: "2026-02-30" }, { ...input, positions: [{ symbol: "005930", quantity: "-1" }] }]) {
     assert.throws(() => parseManualHoldings(bad), /^HoldingsError: holdings_invalid$/);
   }
 });
