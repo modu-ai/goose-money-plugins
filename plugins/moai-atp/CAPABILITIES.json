@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.6",
   "tools": [
     "get_market_snapshot",
     "get_market_orderbook",
