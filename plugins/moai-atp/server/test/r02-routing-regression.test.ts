@@ -29,3 +29,9 @@ for(const count of ['12','13','14','22','24','2.3'])test(`numeric count ${count}
 for(const id of ['R01','R03'])test(`explicit ${id} outranks natural comparison wording`,()=>{
  const p=planGooseRequest(`/goose report ${id} 두 종목 비교 분석`);assert.equal(p.report_id,id);assert.equal(p.provider_dispatches,0);
 });
+for(const count of ['스물두','서른세','스물네','열두','한두','두세'])test(`compound or indefinite Korean count ${count} is not an exact two-to-four count`,()=>{
+ const p=planGooseRequest(`${count} 종목 비교 분석`);assert.equal(p.report_id,'R01');assert.equal(p.provider_dispatches,0);
+});
+for(const phrase of ['비교 안 하고','비교를 안 하고','비교는 안하고','비교 없이','비교는 제외하고','비교를 빼고'])test(`negated comparison ${phrase} retains single-stock analysis`,()=>{
+ const p=planGooseRequest(`두 종목 ${phrase} 삼성전자 종목 분석`);assert.equal(p.report_id,'R01');assert.equal(p.provider_dispatches,0);
+});
