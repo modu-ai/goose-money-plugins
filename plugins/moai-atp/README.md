@@ -5,6 +5,14 @@
 읽기 전용 분석 플러그인이며, **자동 실주문과 수익 보장을 제공하지 않습니다.**
 기술 이름 `moai-atp`, 서버 패키지 ID와 저장소 경로는 표시명과 별개입니다.
 
+## 명령 계획과 MCP 조회의 차이
+
+`/goose`의 분석·보고서 명령이 반환하는 `execution_authority: plan_only`와 `provider_dispatches: 0`은 명령 라우터가 실행 계획만 만든다는 뜻입니다. 이 값은 별도로 호출하는 MCP 도구의 외부 요청을 막는 설정이 아닙니다. `setup`은 로컬 설정을 수행하므로 이 설명의 대상에서 제외합니다.
+
+`tools/list`는 도구의 이름과 입력 규격을 받는 요청입니다. 목록을 받았다고 공급자 조회가 실행되거나 인증·설치·호스트 화면 표시가 검증된 것은 아닙니다. 별도 `tools/call`로 조회 도구를 호출하면 읽기 스위치와 해당 도구의 자격 증명·권한 조건에 따라 외부 요청이 나갈 수 있습니다. 출하 `mcp.json`은 `GOOSE_KIS_READ_ENABLED`, `GOOSE_OPENDART_READ_ENABLED`, `GOOSE_LOCAL_REPORT_VIEW_ENABLED`를 모두 `1`로 설정합니다. 특히 종목 디렉터리 도구는 키 없이도 첫 사용 시 KIS 마스터 파일을 요청할 수 있습니다.
+
+키와 실제 사용자 저장소를 사용하지 않은 main 빌드의 stdio 측정 결과는 [도구 목록 실측 기록](skills/goose/references/tools-list-verification.md)에 기준 SHA·도구 이름·fetch 기록과 함께 남겼습니다. `build_report_input`·`render_report_html`은 로컬 조립·렌더 도구이며 외부 요청·파일 저장을 하지 않습니다.
+
 ## 소스 패키지와 설정
 
 이 소스 ZIP은 계정 등록·설치가 완료된 플러그인이나 바로 실행 가능한
@@ -82,7 +90,7 @@ Windows와 macOS만 검증 대상으로 삼으며 Linux 테스트는 진행하�
 
 ## 현재 범위
 
-- 구현: 공통 프로필 설정, 연구 워크플로우 스킬 5개, 서버 기본값(읽기 스위치 꺼짐)에서 차단되는 공급자 조회 MCP 도구 34개와 로컬 `build_report_input`·`render_report_html` 도구. 입력 조립은 이전 MCP 응답만 정규화하고, HTML 도구는 검증된 `ReportInput`을 HTML로 렌더해 5분 한도의 메모리 전용 MCP resource link로 반환합니다. 두 도구는 파일 쓰기와 외부 요청을 하지 않습니다. 다만 만들어진 보고서를 열면 브라우저가 글꼴(Pretendard·마루 부리·고운바탕)을 버전이 고정된 주소의 CDN(cdn.jsdelivr.net)에서 내려받습니다. 이 요청에는 보고서 내용·사용자 정보·Referer가 실리지 않고, 오프라인이거나 차단되면 이 PC의 대체 글꼴로 표시됩니다. 렌더러는 금융차트와 matrix/timeline/Pele-style SVG 블록을 지원합니다. 실제 MCP 호스트의 화면 표시·다운로드는 미검증입니다.
+- 구현: 공통 프로필 설정, 연구 워크플로우 스킬 5개, 서버 기본값(읽기 스위치 꺼짐)에서 차단되는 공급자 조회 MCP 도구 34개와 로컬 `build_report_input`·`render_report_html` 도구. 입력 조립은 이전 MCP 응답과 R04/R05의 명시 수동 입력을 각각의 계약에 맞춰 정규화하고, HTML 도구는 검증된 `ReportInput`을 HTML로 렌더해 5분 한도의 메모리 전용 MCP resource link로 반환합니다. 두 도구는 파일 쓰기와 외부 요청을 하지 않습니다. 다만 만들어진 보고서를 열면 브라우저가 글꼴(Pretendard·마루 부리·고운바탕)을 버전이 고정된 주소의 CDN(cdn.jsdelivr.net)에서 내려받습니다. 이 요청에는 보고서 내용·사용자 정보·Referer가 실리지 않고, 오프라인이거나 차단되면 이 PC의 대체 글꼴로 표시됩니다. 렌더러는 금융차트와 matrix/timeline/Pele-style SVG 블록을 지원합니다. 실제 MCP 호스트의 화면 표시·다운로드는 미검증입니다.
 - 미완: 실제 데이터 보고서 0건, 공급자 호출부터 보고서까지의 라이브 end-to-end, 조건식 자동 등록·모바일 등록·전략/백테스트 엔진, 원래 Cowork 템플릿과의 전체 정합성 및 실제 ChatGPT 호스트 설치 검증. 지침에는 R01–R14, U01/U02와 내부 U03 검수 구분이 있습니다.
 - 금융 차트는 별도 계약이며, `report-templates/`의 별도 소유자가 실제
   Cowork/Pele 보고서 자산을 담당합니다. 추가 UI·원격 호스팅은 후속 범위입니다.
