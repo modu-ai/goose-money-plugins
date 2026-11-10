@@ -26,6 +26,8 @@ try {
   const external = [...new Set(Object.values(result.metafile.outputs).flatMap(output => output.imports.filter(i=>i.external).map(i=>i.path)))].sort();
   if (external.some(name=>!builtins.has(name))) throw Error('unbundled_runtime_dependency');
   await mkdir(join(stage,'contracts'));
+  // Packaged CLI report plans need the fixed workflow contract without provider calls.
+  await cp(join(root,'contracts','report-workflows.v1.json'),join(stage,'contracts','report-workflows.v1.json'));
   const manualBindings=JSON.parse(await readFile(join(root,'contracts','report-route-bindings.v1.json'),'utf8'));
   if(!manualBindings.routes.R04?.field_groups.holdings_snapshot||manualBindings.routes.R04.field_groups.account_ledger||manualBindings.routes.R04.sections.some(section=>section.field_ids.some(id=>!id.startsWith('manual.'))))throw Error('manual_R04_contract_required');
   for (const name of ['report-route-bindings.v1.json','report-layout-profiles.v1.json']) {
