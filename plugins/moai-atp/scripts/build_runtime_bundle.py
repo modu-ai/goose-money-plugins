@@ -37,11 +37,11 @@ def build(root, output):
   files[name]=data
  def public_overlay(name,data):
   if name=='skills/goose/references/catalog.json':
-   catalog=json.loads(data);catalog['entries']=[entry for entry in catalog['entries'] if entry['id'] in {'R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','U01'}]
+   catalog=json.loads(data);catalog['entries']=[entry for entry in catalog['entries'] if entry['id'] in {'R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','U01'}]
    for entry in catalog['entries']:entry['required_groups']=[g for g in entry.get('required_groups',[]) if g not in {'account_ledger'}]
    return (json.dumps(catalog,ensure_ascii=False,indent=2)+'\n').encode()
   if name=='README.md':
-   data += '\n\n이번 공개판은 계좌 연결·계좌 분석을 제외합니다. ETF·국내외 선물은 검증된 읽기 전용 범위만 제공하며 미검증 필드로 손익·성과를 만들지 않습니다.\n'.encode()
+   data += '\n\n수동 입력 R04/R05 상담은 비공개입니다. 계좌 연결·거래/성과 원장은 제외합니다. ETF·국내외 선물은 검증된 읽기 전용 범위만 제공하며 미검증 필드로 손익·성과를 만들지 않습니다.\n'.encode()
   if name=='CAPABILITIES.json':
    excluded={'get_account_snapshot'}
    def clean(v):
@@ -51,7 +51,7 @@ def build(root, output):
    return (json.dumps(clean(json.loads(data)),ensure_ascii=False,indent=2)+'\n').encode()
   if name.startswith('skills/') and name.endswith(('.md','.yaml')):
    text=data.decode()
-   text+='\n이번 공개판은 계좌 연결·계좌 분석·주문·이체를 제공하지 않습니다. ETF·선물은 가용 도구와 실제 자료·계약 검증 상태를 확인한 읽기 전용 분석으로 연결합니다.\n' if name.endswith('SKILL.md') else ''
+   text+='\n수동 입력 R04/R05 상담은 비공개이며 계좌 연결·거래/성과 원장·주문·이체를 제공하지 않습니다. ETF·선물은 가용 도구와 실제 자료·계약 검증 상태를 확인한 읽기 전용 분석으로 연결합니다.\n' if name.endswith('SKILL.md') else ''
    return text.encode()
   if name=='skills/goose/SKILL.md':
    return data.decode().replace('R01–R11/R14/U01','R01–R03/R05–R11/R14/U01').encode()
