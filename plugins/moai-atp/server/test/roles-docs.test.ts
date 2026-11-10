@@ -62,6 +62,7 @@ const FLOW = '목적 분류 → 필요한 입력·자료 권한 확인 → 내�
 const TRADE_SENTENCE_CORE = '매매 실행 요청은 도구를 부르지 않고 고정 문장 F로만 답';
 const ATP_SCOPE_ITEMS = ['`/goose` 단일 진입', '읽기 전용 계좌 현황', '분석·리서치', '전략 수립', '백테스트', '보고'] as const;
 const ATP_SCOPE = 'ATP의 범위는 `/goose` 단일 진입, 읽기 전용 계좌 현황(아직 제공하지 않음), 분석·리서치, 전략 수립, 백테스트, 보고입니다.';
+const README_ATP_SCOPE = '현재 ATP의 범위는 `/goose` 단일 진입의 분석·리서치, 투자 관점·반증 조건 정리, 명시 수동 입력 보유·비용 상담과 보고입니다.';
 const ATS_DOMAIN = '실거래·주문·취소·자동매매·예약 주문, 팀 에이전트, 상시 상태, 퀀트·시스템트레이딩 엔진은 별도 시스템 ATS(Agentic Trading System)의 영역입니다.';
 const ATS_NOT_APPROVAL = 'ATS라는 이름은 실거래 승인이 아닙니다.';
 const SEQUENTIAL_LABEL = '`순차 실행`';
@@ -111,6 +112,8 @@ test('AC-004 (README clause): README says trade and order requests are unsupport
   assert.ok(section.includes(FIXED_F_PIECE_1), 'README section lacks F piece 1');
   assert.ok(lineCount(section, '도구를 호출하지 않') >= 1, 'README section lacks the no-tool-call statement');
   assert.ok(section.includes('실거래는 사용자께서 직접 판단·실행'), 'README section lacks F piece 4');
+  assert.ok(section.includes(routing.GOOSE_SENTENCE_F), 'README must quote the current router reply without backtest alternatives');
+  assert.ok(section.includes('백테스트는 제품 범위 밖'), 'README must distinguish the historical mode from supported workflows');
 });
 
 // ---- AC-009: sequential fallback ------------------------------------------------------------------------------------------
@@ -165,7 +168,7 @@ test('AC-007 (documents): SKILL.md and request-routing.md say an incomplete retu
 test('AC-025: SKILL.md, request-routing.md and README.md each carry the ATP scope, the ATS domain and the "not a live-trading approval" sentence', () => {
   for (const item of ATP_SCOPE_ITEMS) assert.ok(ATP_SCOPE.includes(item), `the scope sentence names ${item}`);
   for (const [name, text] of [['SKILL.md', skillText()], ['request-routing.md', routingText()], ['README.md', readmeText()]] as const) {
-    assert.ok(text.includes(ATP_SCOPE), `${name} lacks the ATP scope sentence`);
+    assert.ok(text.includes(name === 'README.md' ? README_ATP_SCOPE : ATP_SCOPE), `${name} lacks the ATP scope sentence`);
     assert.ok(text.includes(ATS_DOMAIN), `${name} lacks the ATS domain sentence`);
     assert.ok(text.includes(ATS_NOT_APPROVAL), `${name} lacks the not-an-approval sentence`);
   }

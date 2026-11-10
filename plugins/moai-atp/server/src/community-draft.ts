@@ -1,0 +1,66 @@
+import {createHash} from 'node:crypto';
+import {z} from 'zod';
+import {boundedBody} from './global-market-data.js';
+const ref=z.string().min(1).max(100).regex(/^[A-Za-z0-9_.:-]+$/);
+const inputSchema=z.object({board_id:ref,kind:z.enum(['analysis','report_summary','workflow','comment']),visibility:z.enum(['members','public']),title:z.string().trim().min(1).max(120),body:z.string().trim().min(1).max(30000),source_refs:z.array(ref).max(100).default([])}).strict();
+type DraftInput=z.infer<typeof inputSchema>;
+type PublicationResult={state:string;operation_id:string|null;retried_write:boolean};
+export type MemberContext={service_id:string;user_id:string;session_id:string;authorization_version:string;scopes:readonly string[]};
+export type MemberPolicy={service_id:string;policy_version:string;boards:readonly {board_id:string;kinds:readonly string[];visibilities:readonly string[]}[]};
+type Binding=DraftInput&{service_id:string;user_id:string;session_id:string;authorization_version:string;policy_version:string;body_hash:string;content_trust:'untrusted_plain_text';privacy_redacted:boolean};
+export interface CommunityAdapter {
+ // Future server adapter only. No URL, credentials or default network implementation is supplied here.
+ publish(binding:Readonly<Binding>,idempotencyKey:string):Promise<{operation_id:string}>;
+ lookup(binding:Readonly<Binding>,idempotencyKey:string):Promise<{operation_id:string}|null>;
+ withdraw(binding:Readonly<Binding>,operationId:string):Promise<void>;
+}
+type Options={context:()=>MemberContext|undefined;policy:()=>MemberPolicy|undefined;verifyPublicSources?:(context:MemberContext,refs:readonly string[])=>Promise<boolean>;moderate?:(binding:Readonly<Binding>)=>Promise<boolean>;confirmPublish?:(binding:Readonly<Binding>)=>Promise<boolean>;confirmWithdraw?:(operationId:string)=>Promise<boolean>;adapter?:CommunityAdapter|undefined};
+const fail=(code:string):never=>{throw Error(code);};
+const hash=(value:unknown)=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
+function clean(text:string){return text.replace(/^.*(?:계좌|예수금|잔고|app[_ -]?key|app[_ -]?secret|access[_ -]?token|crtfc_key|api[_ -]?key).*$/gim,'[비공개 정보 제거]').replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,'[연락처 제거]').replace(/(?:\+82[- ]?)?0?1[016789][- ]?\d{3,4}[- ]?\d{4}/g,'[연락처 제거]');}
+/** Local draft/approval lifecycle only. Disconnected by default; never registered as a financial MCP tool. */
+export function createMemberDraftHarness(options:Options){
+ const drafts=new WeakMap<object,Binding>(),grants=new WeakMap<object,{binding:Binding;usedKey?:string}>();
+ const operations=new Map<string,{binding:Binding;state:'unknown'|'published'|'withdrawn'|'withdraw_unknown';operation_id:string|undefined;reconciled:boolean}>();
+ const withdrawals=new WeakMap<object,Promise<{state:string}>>();
+ const publications=new WeakMap<object,Promise<PublicationResult>>();
+ function context(scope:string){const c=options.context();if(!c||!c.scopes.includes(scope)||c.scopes.some(s=>/admin|\*/i.test(s)))return fail('member_authorization_required');for(const value of [c.service_id,c.user_id,c.session_id,c.authorization_version])if(!ref.safeParse(value).success)return fail('invalid_context');return c;}
+ function validate(binding:Binding,scope:string){const c=context(scope),p=options.policy();if(!p||p.service_id!==c.service_id)return fail('service_not_configured');if(binding.service_id!==c.service_id||binding.user_id!==c.user_id||binding.session_id!==c.session_id||binding.authorization_version!==c.authorization_version||binding.policy_version!==p.policy_version)return fail('authorization_invalidated');const board=p.boards.find(b=>b.board_id===binding.board_id);if(!board||!board.kinds.includes(binding.kind)||!board.visibilities.includes(binding.visibility))return fail('target_not_allowed');return c;}
+ const getDraft=(token:object)=>drafts.get(token)??fail('unknown_draft');
+ return {
+  capabilities(){const p=options.policy();return {connected:false,adapter_supplied:options.adapter!==undefined,service_connection_verified:false,policy_configured:p!==undefined,autonomous_publish:false,attachments_supported:false,admin_scope_supported:false,content_format:'plain_text',financial_rights_promoted:false};},
+  draft(value:unknown){boundedBody(value,{maxBytes:40000,maxNodes:1000});const c=context('member:draft'),p=options.policy();if(!p||p.service_id!==c.service_id)return fail('service_not_configured');const d=inputSchema.parse(value);const title=clean(d.title),body=clean(d.body);const base={...d,title,body,service_id:c.service_id,user_id:c.user_id,session_id:c.session_id,authorization_version:c.authorization_version,policy_version:p.policy_version,content_trust:'untrusted_plain_text' as const,privacy_redacted:title!==d.title||body!==d.body};const binding={...base,body_hash:hash(base)};Object.freeze(binding.source_refs);Object.freeze(binding);validate(binding,'member:draft');const token=Object.freeze({type:'local_member_draft'});drafts.set(token,binding);return token;},
+  preview(token:object){const d=getDraft(token);validate(d,'member:draft');return {title:d.title,body:d.body,board_id:d.board_id,service_id:d.service_id,visibility:d.visibility,kind:d.kind,policy_version:d.policy_version,body_hash:d.body_hash,privacy_redacted:d.privacy_redacted,content_trust:d.content_trust,source_refs:[...d.source_refs],publication:'not_published',attachments:'unsupported'};},
+  async approve(token:object,expectedHash:string){const d=getDraft(token),c=validate(d,'member:publish');if(expectedHash!==d.body_hash)return fail('approval_mismatch');if((d.kind==='analysis'||d.kind==='report_summary')&&d.source_refs.length===0)return fail('public_source_evidence_required');if(d.source_refs.length&&(!options.verifyPublicSources||await options.verifyPublicSources(c,d.source_refs)!==true))return fail('public_redistribution_not_verified');if(!options.moderate||await options.moderate(d)!==true)return fail('moderation_required');if(!options.confirmPublish||await options.confirmPublish(d)!==true)return fail('explicit_publish_confirmation_required');validate(d,'member:publish');const grant=Object.freeze({type:'local_member_publication_grant'});grants.set(grant,{binding:d});return grant;},
+  async publish(token:object,idempotencyKey:string){const g=grants.get(token)??fail('unknown_grant');const d=g.binding,c=validate(d,'member:publish');if(!ref.safeParse(idempotencyKey).success)return fail('invalid_idempotency_key');if(!options.adapter)return fail('service_not_connected');const key=[c.service_id,c.user_id,idempotencyKey].join('|');const old=operations.get(key);if(old&&old.binding.body_hash!==d.body_hash)return fail('idempotency_conflict');if(g.usedKey&&g.usedKey!==key)return fail('grant_already_used');
+   if(old){g.usedKey=key;const pending=publications.get(old);if(pending)return pending;if(old.state==='unknown'&&!old.reconciled){old.reconciled=true;try{const found=await options.adapter.lookup(d,idempotencyKey);if(found&&ref.safeParse(found.operation_id).success){old.state='published';old.operation_id=found.operation_id;}}catch{/* Lookup failure remains unknown; no write retry. */}}return {state:old.state,operation_id:old.operation_id??null,retried_write:false};}
+   if(operations.size>=100)return fail('local_operation_limit');g.usedKey=key;const op={binding:d,state:'unknown' as 'unknown'|'published'|'withdrawn'|'withdraw_unknown',reconciled:false,operation_id:undefined as string|undefined};operations.set(key,op);
+   // Register before invoking the adapter; a pending write must not reconcile.
+   let complete!: (result:PublicationResult)=>void;
+   const publication=new Promise<PublicationResult>(resolve=>{complete=resolve;});
+   publications.set(op,publication);
+   try{const response=await options.adapter.publish(Object.freeze({...d}),idempotencyKey);if(!ref.safeParse(response.operation_id).success)throw Error('invalid_response');op.state='published';op.operation_id=response.operation_id;}catch{/* Unknown outcome: reconcile, never automatically publish again. */}
+   const result={state:op.state,operation_id:op.operation_id??null,retried_write:false};
+   publications.delete(op);complete(result);return result;
+  },
+  async withdraw(token:object,idempotencyKey:string){
+   const g=grants.get(token)??fail('unknown_grant'),d=g.binding,c=validate(d,'member:withdraw');
+   const op=operations.get([c.service_id,c.user_id,idempotencyKey].join('|'));
+   if(!op||op.binding.body_hash!==d.body_hash)return fail('unknown_operation');
+   const pending=withdrawals.get(op);if(pending)return pending;
+   if(op.state==='withdrawn')return {state:'withdrawn'};
+   if(op.state!=='published'||!op.operation_id)return fail('operation_not_confirmed');
+   const operationId=op.operation_id;
+   // Reserve before calling the confirmation hook: equivalent grants share the
+   // same operation, confirmation and write, including its unknown outcome.
+   const withdrawal=Promise.resolve().then(async()=>{
+    if(!options.confirmWithdraw||await options.confirmWithdraw(operationId)!==true)return fail('explicit_withdraw_confirmation_required');
+    validate(d,'member:withdraw');if(!options.adapter)return fail('service_not_connected');
+    try{await options.adapter.withdraw(d,operationId);op.state='withdrawn';}catch{op.state='withdraw_unknown';}
+    return {state:op.state};
+   });
+   withdrawals.set(op,withdrawal);
+   try{return await withdrawal;}finally{withdrawals.delete(op);}
+  },
+ };
+}

@@ -1,6 +1,8 @@
 # 기능별 출시 판정표 — 무엇이 어디까지 완료인가
 
-Refs #30 · 기준 커밋 `64fd665cb5f30446e6e3b6fa306bf5281e4b1aea` (main, 2026-11-10)
+Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` (main, 2026-11-10 14:38 KST)
+
+최초 작성 기준은 `64fd665cb5f30446e6e3b6fa306bf5281e4b1aea`입니다. 이번 갱신은 아래에 명시한 실행 기록·병합 상태·코드 확인 범위만 반영하며, 표 전체를 다시 시험한 결과가 아닙니다.
 
 이 문서는 #27의 `public-release-checklist.md`(공개 전 저장소·asset 점검)와 다른 파일로, **기능별로 출시로 부를 수 있는 상태인지**를 근거와 함께 한 문서에 정리합니다. 완료로 볼 수 없는 것은 미완으로 적습니다. 이 문서는 판정 근거의 모음일 뿐이며 출시 처리나 결정 채택이 아닙니다.
 
@@ -21,7 +23,8 @@ Refs #30 · 기준 커밋 `64fd665cb5f30446e6e3b6fa306bf5281e4b1aea` (main, 2026
 
 - 기능별 코드·시험 기본값은 `docs/design/feature-table-rev6.md`(HEAD `8711890` 직접 측정 + main `fc3b16f` 범위 변경 추적)을 인용해 채웠습니다. 그 뒤 병합된 PR(#44·#47·#53·#54·#55·#56·#57·#59)의 변경은 PR 제목과 병합 기록으로 반영했고, **변경된 트리에서 시험 수치를 다시 실행해 측정하지는 않았습니다.**
 - 실제 공급자 호출·실화면 관찰·호스트 설치는 이 문서 작성 시점에 실행하지 않았습니다(레인 규칙상 공급자 실호출·화면 접근은 HOLD). 따라서 live-connected 이하의 칸은 과거 기록(#17 등)의 인용입니다.
-- GitHub 저장소 설정은 2026-11-10 API로 직접 조회했습니다(§4).
+- GitHub 저장소 설정은 최초 작성 시 2026-11-10 API로 직접 조회했습니다(§4). 이번 갱신에서는 설정을 재조회하지 않았습니다.
+- 2026-11-10 14:38 KST 갱신: 로컬 보존 기록 `2026-11-10-r01-actual-two-companies/RESULT.md`를 읽고 #17 실행 결과를 반영했습니다. 그 기록은 실행 HEAD `fc3b16f0029b7a36dd6de6f52e7e30d6ed130b9d`의 관찰이며, 이번 문서 기준 HEAD에서 API를 재호출한 결과가 아닙니다. PR #64·#66·#60·#69의 병합 SHA는 GitHub API로 확인했습니다. #62의 새 gate 실행은 [Actions run 42762980409](https://github.com/modu-ai/moai-stock-plugins/actions/runs/42762980409) 성공과 로그의 `Image: ubuntu-26.04`를 확인했습니다. 실제 청구액은 측정하지 않았습니다.
 - 시간 예측은 쓰지 않습니다. 남은 것은 이슈 번호로만 적습니다.
 
 ## 3. 기능별 상태표
@@ -30,13 +33,13 @@ Refs #30 · 기준 커밋 `64fd665cb5f30446e6e3b6fa306bf5281e4b1aea` (main, 2026
 
 | F | 기능 | 보고서·도구 | 상태 | 근거 | 남은 결정·HOLD |
 |---|---|---|---|---|---|
-| F01 | Goose 요청 해석 | `/goose` plan | synthetic-tested | `goose-routing.ts` 결정적 plan, provider_dispatches 0; `goose-routing.test.ts`·`roles-*.test.ts` (F-table 부분 일치) | 실제 호스트 미검증(#25). 백테스트 모드 범위 밖 분류는 PR #60 진행 중(아직 main 미병합) |
-| F02 | 초기화 + KIS/DART 키 설정 | `setup-cli` | synthetic-tested (부분) | `setup-cli.ts`·`local-credentials.ts`(0600 키스토어)·`credential-runtime.ts`; `auth002-m4-key-setup.test.ts` (F-table: 키 설정은 계약보다 앞섬) | 프로젝트 초기화(`project_init_*`) 부재. 키·개인정보 삭제 명령 #43 진행 중. 사용자 PC 저장·삭제 방침은 #9 사용자 결정 기록 |
+| F01 | Goose 요청 해석 | `/goose` plan | synthetic-tested | `goose-routing.ts` 결정적 plan, provider_dispatches 0; `goose-routing.test.ts`·`roles-*.test.ts` (F-table 부분 일치) | 실제 호스트 미검증(#25). 백테스트 모드 범위 밖 분류는 PR #60 병합(`8382172`); 실제 호스트 실행은 미검증 |
+| F02 | 초기화 + KIS/DART 키 설정 | `setup-cli` | synthetic-tested (부분) | `setup-cli.ts`·`local-credentials.ts`(0600 키스토어)·`credential-runtime.ts`; `auth002-m4-key-setup.test.ts` (F-table: 키 설정은 계약보다 앞섬) | 프로젝트 초기화(`project_init_*`) 부재. 키·프로필 삭제 명령 #43은 PR #64(`2214808`)로 병합. 신규 보유 snapshot·논지 등 모든 개인 자료의 삭제까지 검증됐다는 뜻은 아님. 사용자 PC 저장·삭제 방침은 #9 사용자 결정 기록 |
 | F03 | 모두의 AI 로그인 | — | source-defined | `docs/design/identity-auth-contract.md`(PR #34); `member-token-verifier.ts` ES256 골격 + `member-token-verifier.test.ts`, `network_connected:false`, 실행 경로 미연결 (F-table 불일치) | issuer/JWKS/철회 등 실계약 확정 #6. 인증 방향 충돌 정리 #1, 코드 반영 보완 #63. **필수 기능 미연결 — 출시 판정 실패 칸** |
-| F04 | 서비스 가입·권한 | — | source-defined (평가기 골격만 synthetic-tested) | `docs/design/product-tiers.md`(PR #37); `entitlement.ts` 순수 평가기 + 시험(PR #57) — **서버 등록·도구 호출 경로 미연결**, 가격·한도 미주입 | #5 상품 계약 결정(가격·한도), ID 연동 #6 이후 연결 |
+| F04 | 서비스 가입·권한 | — | source-defined (평가기 골격만 synthetic-tested) | `docs/design/product-tiers.md`(PR #37); `entitlement.ts` 순수 평가기 + 시험(PR #57) — **서버 등록·도구 호출 경로 미연결**, 가격·한도 미주입 | #5의 가격·청구 주기·무료 사용량 한도는 출시 전 필수 결정(§5.1); ID 연동 #6·호출 경로 연결 #7은 별도 |
 | F05 | 기업·증권 식별 | `search_instruments`·`resolve_instrument` | synthetic-tested | 원천 계약 + 시험 존재 (F-table 일치 — 원천 수준) | 실호출 승인 범위 미결정(#17 계열) |
-| F06 | 공시·재무·뉴스 근거 | `get_public_filings` 등 | synthetic-tested (원천 수준) | 원천 도구·지침 존재 (F-table 일치 — 원천 수준) | live 미완 — 실제 사실 기반 보고서는 #17 승인 전까지 없음 |
-| F07 | 종목 심층 분석 | R01 | synthetic-tested + live-connected (부분) | 합성 시험 21파일(F-table). **실제 계보: 삼성전자 R01 원본 2개뿐**(2026-11-08 KIS·OpenDART 실행, 이슈 #17 해시 재확인). SK하이닉스는 연결재무 지표 5개 누락 미수리 #51. 화면 결함 중 High 일부 수리 PR #53, 재검수 미완 #52 | KIS/OpenDART 7요청 제안 **미승인** #17. 실화면 QA 0건 #18 |
+| F06 | 공시·재무·뉴스 근거 | `get_public_filings` 등 | synthetic-tested (원천 수준) | 원천 도구·지침 존재 (F-table 일치 — 원천 수준) | #17 승인 7요청 실행 기록 확인; 공시 원문·수치의 독립 대조와 다른 보고서 E2E는 미완 |
+| F07 | 종목 심층 분석 | R01 | synthetic-tested + live-connected (부분) | 합성 시험 21파일(F-table, 미재실행). #17 승인 7요청이 2026-11-10 10:06 KST 실행됨(7/7 HTTP 200, 재시도·계좌·주문·이체 0). MCP `build_report_input → render_report_html → resources/read`로 삼성 19지표(18 provided_unverified + 1 missing), SK하이닉스 14지표(13 + 1), 두 R01 모두 actual_data_partial. 보존 RESULT 기록 인용 | 숫자 독립 검증·실제 호스트 화면·다른 보고서 E2E 미완. SK하이닉스 5지표 누락 #51, #52 실화면 QA 미완 |
 | F08 | 동종기업 비교 | R02 | synthetic-tested | `report-comparison.ts` + 시험 11파일 (F-table 일치 — 합성 수준) | 실데이터 검증 없음 |
 | F09 | 실적·현금흐름 | R07 일부 | synthetic-tested (합성만) | financial bridge·derivation + bridge 시험. **실제 사실 0** (F-table 부분) | 실데이터 승인·범위 #17 계열 |
 | F10 | 공시·사건 영향 | R07 | synthetic-tested | R07 enum + 서술문 + 전용 경로 시험(PR #56) | 파생 지표(예상 대비 차이·막대)가 서로 다른 출처 값으로 계산 불가 — #58 원인·선택지 정리 중 |
@@ -56,14 +59,14 @@ Refs #30 · 기준 커밋 `64fd665cb5f30446e6e3b6fa306bf5281e4b1aea` (main, 2026
 | F25 | 마감 전 후보 | R10 | synthetic-tested (원천 수준) | R10 경로 + 호가·분봉 원천 (F-table 일치 — 원천 수준) | E2E 미구현, 실자료 #20 |
 | F26 | ETF | R12 | synthetic-tested (conditional) | catalog `availability: conditional` — ETF 구조 근거 있을 때만 조립, 없으면 `report_not_applicable`(PR #32) | 초기 범위 자동 승격 금지 원칙과의 정합은 조건부로 유지 중 |
 | F27 | 선물 | R13 | source-defined (release_hold) | catalog `release_hold`, `ACTIVE_REPORT_ROUTE_IDS` 제외, plan 단계 0(선물 요청) — PR #32. non-regression 표에서 선물 행 unsupported 고정 | 별도 범위 결정 전까지 보류 |
-| (F17) | 백테스트 | R14 | 제외 (범위 밖) | catalog 항목 제거, `ACTIVE_REPORT_ROUTE_IDS` 제외 — PR #32. 계획기 backtest 모드 잔존분은 PR #60에서 `backtest_out_of_product_scope` 분류로 제거 진행 중 | #60 main 병합 대기 |
+| (F17) | 백테스트 | R14 | 제외 (범위 밖) | catalog 항목 제거, `ACTIVE_REPORT_ROUTE_IDS` 제외 — PR #32. 계획기 backtest 모드도 PR #60(`8382172`)에서 `backtest_out_of_product_scope`로 분류 | 실제 호스트 실행 검증은 별도 |
 
 ## 4. 공통 기반 상태
 
 | 항목 | 상태 | 근거 |
 |---|---|---|
 | 테스트 CI (macOS·Windows) | 운영 중 | `.github/workflows/test.yml`(PR #39). main 최신 보호로 PR마다 두 검사 실행 |
-| Codex 리뷰 게이트 | 운영 중 | `.github/workflows/codex-gate.yml`(PR #46·#54). head별 증거 판정. Actions 예산 절감 #62 미처리 |
+| Codex 리뷰 게이트 | 운영 중 | `.github/workflows/codex-gate.yml`(PR #46·#54). head별 증거 판정. 예산 절감 #62는 PR #66(`5ee69e0`) 병합. Ubuntu gate 실행 성공 관찰(run 42762980409); 비용 절감률·실제 청구액은 미측정 |
 | main 브랜치 보호 | 관측됨 (2026-11-10 API 조회) | `strict:true`, 필수 검사 `test (macos-latest)`·`test (windows-latest)`·`codex-gate`, 대화 해결 필수, 관리자 예외 없음, 강제 push·삭제 금지 |
 | 비밀 검사 | 운영 중 | `scripts/check_secrets.py` (CI와 push 전 수동 실행) |
 | 문서-코드 정합 시험 | 운영 중 | `roles-docs.test.ts` — SKILL.md·request-routing.md·README가 문장 F·범위 문장을 소스와 일치시키는지 검사 |
@@ -71,22 +74,36 @@ Refs #30 · 기준 커밋 `64fd665cb5f30446e6e3b6fa306bf5281e4b1aea` (main, 2026
 
 ## 5. 출시 판정 체크리스트
 
-"출시"로 부르기 전 각 문항이 완료돼야 합니다. 현재 상태를 사실대로 적습니다 — **2026-11-10 기준 완료 문항은 0개입니다.**
+"출시"로 부르기 전 각 문항이 완료돼야 합니다. 현재 상태를 관찰 범위대로 적습니다. 일부 하위 작업 병합이나 부분본 생성만으로 전체 문항을 완료로 올리지 않으며, 이번 갱신에서 완료 문항 수를 집계하지 않았습니다.
 
 | # | 문항 | 현재 상태 |
 |---|---|---|
 | R1 | 필수 기능(모두의 AI 로그인 F03)이 실행 경로에 연결돼 있고 실계약(issuer·JWKS·철회)이 검증됐다 | 미완 — 골격만 존재(#6·#63) |
-| R2 | 서비스 권한 평가기가 서버에 등록돼 가격·한도 설정을 주입받아 판정한다 | 미완 — 순수 모듈만 병합(PR #57), 연결·설정 주입 없음(#5·#7) |
-| R3 | 개인 금융정보가 사용자 PC에만 저장되고 삭제 명령이 시험과 함께 제공된다 | 미완 — #43 진행 중(계획: 합성 홈 디렉터리 시험만) |
-| R4 | 보고서 실데이터의 공급자 사용 범위가 승인됐고 요청→근거→HTML 사슬 기록이 남는다 | 미완 — 7요청 제안 미승인(#17). 실제 계보는 삼성 R01 2부분본뿐 |
-| R5 | 보고서 HTML이 실화면(데스크톱·실제 모바일)에서 검수돼 결함이 해소됐다 | 미완 — 실화면 관찰 0건(#18), 에뮬레이션 결함 11건 중 일부만 수리(#52·PR #53), 재검수 미완 |
+| R2 | 서비스 권한 평가기가 서버에 등록돼 가격·한도 설정을 주입받아 판정한다 | 미완 — 순수 평가기 병합(PR #57), 이 기준에서 서버 연결 미반영(#7). 가격·청구 주기·무료 사용량 값은 출시 전 결정(§5.1) |
+| R3 | 개인 금융정보가 사용자 PC에만 저장되고 삭제 명령이 시험과 함께 제공된다 | 부분 — 키·프로필 삭제는 PR #64(`2214808`) 병합. 신규 개인 보유·논지 등 모든 개인 자료의 저장·삭제 검증은 별도 |
+| R4 | 보고서 실데이터의 공급자 사용 범위가 승인됐고 요청→근거→HTML 사슬 기록이 남는다 | 부분 — #17 승인 7요청 실행과 두 회사 R01 actual_data_partial 생성 기록 확인. 독립 지표 검증·다른 보고서 E2E는 미완 |
+| R5 | 보고서 HTML이 실화면(데스크톱·실제 모바일)에서 검수돼 결함이 해소됐다 | 미완 — #52·PR #53 일부 수리, PR #69(`932839b`) 한국어·KST 표시 병합. PR #72 CDN 글꼴의 실제 로드·Referer·오프라인 대체·desktop/390px QA 미완(리더 #52 댓글 기준) |
 | R6 | R04·R05 범위(차단 해제·성과 포함 여부)와 데이터 계약(R03·R06·R08·R11)이 결정돼 카탈로그에 반영됐다 | 미완 — #13·#22·#20·#21 결정 대기 |
 | R7 | 게시·정정·철회 루틴과 공개 범위 규칙이 코드로 존재한다 | 미완 — 설계만(#23·PR #48) |
 | R8 | 격리 후보(#11 보존분)의 미반입 변경이 검토·반입 또는 기각됐다 | 미완 — #12 6단위 분할 계획 단계 |
-| R9 | 계획기가 기능 정의서 개정6 범위와 일치한다 | 부분 — 카탈로그 정합은 PR #32로 달성, backtest 모드 제거는 PR #60 병합 대기 |
+| R9 | 계획기가 기능 정의서 개정6 범위와 일치한다 | 부분 — 카탈로그 PR #32와 backtest 범위 밖 분류 PR #60(`8382172`) 병합. 정의서 전체·호스트 정합 재검증은 별도 |
 | R10 | 비공개 내보내기·PDF·폰트 배포가 결정·구현됐다 | 미완 — #24 |
 | R11 | 호스트별 설치·표시 검증(#25)과 과거 asset 출처 결정(#27 C1~C5)이 끝났다 | 미완 |
 | R12 | 출시 실행 기록(버전·아티팩트·검증 결과)이 존재한다 | 미완 — 출시 절차 자체가 아직 실행된 적 없음 |
+
+### 5.1 출시 전 필수 결정 — 가격·청구 주기·무료 사용량
+
+[사용자 결정 #5](https://github.com/modu-ai/moai-stock-plugins/issues/5#issuecomment-6759712861): 다음 세 값은 지금 임의로 정하지 않고 출시 전에 확정합니다. 이슈가 닫힌 것은 값이 채워졌다는 뜻이 아닙니다.
+
+| 항목 | 값 | 출시 조건 |
+|---|---|---|
+| 유료 가격 | 결정 필요 | 확정 전 유료 상품 활성화 보류 |
+| 청구 주기 | 결정 필요 | 확정 전 유료 상품 활성화 보류 |
+| 무료 사용량 한도 | 결정 필요 | 확정 전 유료 상품 활성화 보류, 기술적 스키마 상한을 상품 한도로 대체하지 않음 |
+
+세 값이 비어 있는 동안 유료 기능을 열지 않는 운영 방침을 유지합니다. 다만 현재 코드의 보장 범위는 구분해야 합니다. 이 기준의 `entitlement.ts`는 가격·청구·사용량을 입력으로 받지 않는 순수 평가기이며, 서비스 설정이 빠지면 `not_configured`를 반환합니다(`entitlement.test.ts`의 미설정 거부 시험 존재, 이번에는 미실행). 설정과 유효한 구독·수강 자격이 있으면 유료 판정을 내릴 수 있으므로 **가격 값 누락 자체를 검사하는 코드나 서버 전체 차단이 이미 구현됐다고 보지 않습니다.** 서버 호출 경로 연결(#7), 실제 ID 계약(#6), 상품 값 주입·활성화 검증을 별도로 완료해야 합니다.
+
+이 문서는 가격·한도 값을 만들거나 코드를 변경하지 않습니다. 이 결정란을 채워도 공급자 준비·자료 권리·로그인·호스트 QA 같은 다른 출시 조건은 각각 확인해야 합니다.
 
 ## 6. 지원 문서 현황
 
