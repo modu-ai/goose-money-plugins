@@ -22,9 +22,10 @@ def synthetic_root(parent, root_package, server_package, manifest_fields=None):
     (root / 'server/runtime/src').mkdir(parents=True)
     files = {}
     for name in ('src/main.mjs', 'src/cli.mjs'):
-        body = 'export {};\n'
-        (root / 'server/runtime' / name).write_text(body)
-        files[name] = hashlib.sha256(body.encode()).hexdigest()
+        body = b'export {};\n'
+        # Write bytes: write_text would translate '\n' to '\r\n' on Windows and break the pinned digest.
+        (root / 'server/runtime' / name).write_bytes(body)
+        files[name] = hashlib.sha256(body).hexdigest()
     engines = (server_package.get('engines') or {}).get('node')
     pin = ((server_package.get('devEngines') or {}).get('runtime') or {}).get('version')
     manifest = {'format': MARKER, 'node_required': pin, 'node_runtime_range': engines, 'node_build_pin': pin,
