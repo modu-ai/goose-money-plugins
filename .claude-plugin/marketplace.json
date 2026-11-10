@@ -1,0 +1,14 @@
+{
+  "name": "moai-atp-claude-local",
+  "owner": {
+    "name": "modu-ai"
+  },
+  "plugins": [
+    {
+      "name": "moai-atp",
+      "source": "./plugins/moai-atp",
+      "description": "모두의 주식 · MoAI ATP는 투자 자료 분석과 근거 중심 보고서, 전략 검증을 돕는 읽기 전용 분석 플러그인입니다. 자동 주문과 수익을 보장하지 않습니다."
+    }
+  ],
+  "description": "모두의 주식 · MoAI ATP의 Claude Code 로컬 검증용 카탈로그"
+}

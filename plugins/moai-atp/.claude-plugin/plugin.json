@@ -1,0 +1,24 @@
+{
+  "name": "moai-atp",
+  "version": "0.1.0-dev.6",
+  "description": "모두의 주식 · MoAI ATP는 투자 자료 분석과 근거 중심 보고서, 전략 검증을 돕는 읽기 전용 분석 플러그인입니다. 자동 주문과 수익을 보장하지 않습니다.",
+  "license": "LGPL-3.0-only",
+  "mcpServers": {
+    "moai-kis-readonly": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/server/dist/src/main.js"
+      ],
+      "env": {
+        "GOOSE_KIS_READ_ENABLED": "1",
+        "GOOSE_OPENDART_READ_ENABLED": "1",
+        "GOOSE_LOCAL_REPORT_VIEW_ENABLED": "1"
+      }
+    }
+  },
+  "author": {
+    "name": "modu-ai"
+  },
+  "icon": "./assets/modu-stock-plugin-icon-square.png"
+}

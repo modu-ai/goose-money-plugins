@@ -16,7 +16,7 @@ assert manifest['$schema'] == 'https://agent-plugins.org/schemas/1.0.0/plugin.sc
 assert manifest['name'] == 'moai-atp'
 assert re.fullmatch(r'\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?', manifest['version'])
 # Source and runtime layouts retain different metadata files; every present version must agree.
-for relative in ['package.json', 'server/package.json', 'CAPABILITIES.json', 'server/package-lock.json']:
+for relative in ['package.json', 'server/package.json', 'CAPABILITIES.json', 'server/package-lock.json', '.claude-plugin/plugin.json']:
     candidate = root/relative
     if candidate.is_file():
         record = json.loads(candidate.read_text(encoding='utf-8'))
@@ -34,6 +34,11 @@ assert mcp['$schema'] == 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.jso
 server = mcp['mcpServers']['moai-kis-readonly']
 entry = 'runtime/src/main.mjs' if args.runtime else 'dist/src/main.js'
 assert server == {'type':'stdio','command':'node','args':['${PLUGIN_ROOT}/server/'+entry],'cwd':'${PLUGIN_ROOT}/server','env':{'GOOSE_KIS_READ_ENABLED':'1','GOOSE_OPENDART_READ_ENABLED':'1','GOOSE_LOCAL_REPORT_VIEW_ENABLED':'1'}}
+claude_path = root/'.claude-plugin/plugin.json'
+if claude_path.is_file():
+    claude = json.loads(claude_path.read_text(encoding='utf-8'))
+    assert claude['name'] == manifest['name'], 'Claude plugin name mismatch'
+    assert claude['mcpServers'] == {'moai-kis-readonly': {'type':'stdio','command':'node','args':['${CLAUDE_PLUGIN_ROOT}/server/'+entry],'env':server['env']}}, 'Claude MCP entry mismatch'
 if args.source_only:
     assert (root/'server/src/main.ts').is_file(), 'source entrypoint missing'
     assert (root/'server/src/cli.ts').is_file(), 'source CLI missing'
