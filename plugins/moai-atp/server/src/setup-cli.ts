@@ -1,10 +1,11 @@
 import { createInterface } from "node:readline/promises";
 import { readTerminalChoice } from "./terminal-choice.js";
 import { homedir } from "node:os";
+import { deleteHoldings, HoldingsError } from "./user-holdings.js";
 import { readInvestorContext, saveInvestorContext, deleteInvestorContext, deleteOnboardingMarker, setupWasPresented, markSetupPresented, UserContextError, type InvestorContextAnswers } from "./user-context.js";
 
 type Output = { write(value: string): unknown };
-export type SetupAction = "reuse" | "edit" | "delete" | "delete-onboarding";
+export type SetupAction = "reuse" | "edit" | "delete" | "delete-onboarding" | "delete-holdings";
 const choices = {
   objectives: ["long_term_growth", "income", "capital_preservation", "learning"],
   timeHorizon: ["under_1y", "1_3y", "3_5y", "5y_plus", "unspecified"],
@@ -28,6 +29,11 @@ const answerLabels: Record<string, string> = {
 };
 export async function runSetupFlow(projectRoot: string, ask: (question: string) => Promise<string>, output: Output, homeDir = homedir(), action: SetupAction = "reuse", select?: (question: string, options: readonly string[], multi: boolean) => Promise<string>): Promise<number> {
   output.write("모두의 주식 · MoAI ATP — 로컬 공통 프로필 설정\n");
+  if (action === "delete-holdings") {
+    const confirmed = await ask("PC에 저장한 보유 snapshot을 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
+    if (!confirmed) { output.write("holdings_deleted=false\n"); return 0; }
+    output.write(`holdings_deleted=${await deleteHoldings(projectRoot, { confirmed, homeDir })}\n`); return 0;
+  }
   const existing = await readInvestorContext(projectRoot, homeDir);
   if (action === "delete") {
     const confirmed = await ask("모든 프로젝트에서 공유하는 프로필을 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
@@ -81,5 +87,5 @@ export async function runSetup(action: SetupAction = "reuse"): Promise<number> {
     return ask(`${question} — 항목 이름 또는 번호${multi ? " (복수: 쉼표)" : ""}, 중단은 CANCEL: `);
   };
   try { return await runSetupFlow(process.cwd(), ask, process.stdout, homedir(), action, select); }
-  catch (e) { process.stderr.write(`${e instanceof UserContextError ? e.code : "setup_failed"}\n`); return 2; }
+  catch (e) { process.stderr.write(`${e instanceof UserContextError || e instanceof HoldingsError ? e.code : "setup_failed"}\n`); return 2; }
 }

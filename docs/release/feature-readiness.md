@@ -49,7 +49,7 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 | F14 | 본인 보유 읽기 | — | source-defined (부재) | 부정 시험(heldTools)로 미구현 상태 고정. 방향은 사용자 결정(2026-11-10 #42): KIS 보유 잔고 읽기 전용 + 수동 입력. 설계 `privacy-retention.md`(PR #35) | #42 구현 미착수 |
 | F15 | 보유 분석·리밸런싱 | R04 | source-defined | catalog `availability: planned`(#32 이후). 렌더 코드 존재, `source_not_enabled` 차단 유지 | #13 차단 해제 수용 여부 미결정. 입력 수집 방식 #22 |
 | F16 | 투자 관점·분석 조건 | strategy·conditions 모드 | synthetic-tested (계획 수준) | `goose-routing` strategy·conditions 모드, `references/workflows/` 지침 | 실행 엔진 없음(고정 안내). 정의서 계약 정의 단계 |
-| F18 | 보고서 생성·내보내기 | `build_report_input`→`render_report_html` | synthetic-tested | 조립→렌더→`resources/read` 사슬 + 시험, TTL 5분 메모리만. 화면 결함 11건 중 일부 수리(PR #53), 나머지 #52 진행 중 | 비공개 export 파일·공유판 분리 부재 — PDF·폰트 #24 |
+| F18 | 보고서 생성·내보내기 | `build_report_input`→`render_report_html` | synthetic-tested | 조립→렌더→`resources/read` 사슬 + 시험, TTL 5분 메모리만. 화면 결함 11건 중 일부 수리(PR #53), 나머지 #52 진행 중. [별도 요약 PDF 시제품·archive 계보](../design/report-artifact-lineage.md)는 HTML 인쇄 검수와 구분 | 비공개 export 파일·공유판 분리 부재 — PDF·폰트 #24 |
 | F19 | 게시·정정·철회 | — | source-defined (부재) | `docs/design/publication-review.md`(PR #48). 코드는 미연결 안내뿐 | 루틴 구현 미착수, 공개 범위 규칙 명문화 #23 |
 | F20 | 작업 상태·복구 | — | source-defined (일부 코드) | `docs/design/durable-job-and-stock-link.md`(PR #49). 역할 timeout·실패 기록만 존재 | durable job 계약 구현 미착수 |
 | F21 | 호스트 설치·진단 | `runtime-guard` | synthetic-tested (부분) | Node 범위 검사 + 일부 시험 | 실설치·호스트별 표시 검증 미실시 #25 |
