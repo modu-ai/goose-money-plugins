@@ -15,6 +15,19 @@ export const ACTIVE_REPORT_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08
 export const REPORT_CATALOG_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','U01','U02','U03'] as const;
 // Routes the report builder accepts as a request: active routes plus R13/R14, which are refused with a coded answer.
 export const BUILD_REQUEST_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
+/** Route ids as human-readable text, e.g. 'R01–R03, R05–R12, U01' (issue #3: descriptions take the list from the enum). */
+export function formatRouteList(ids: readonly string[]): string {
+  const parts: string[] = [];
+  let i = 0;
+  while (i < ids.length) {
+    let j = i;
+    const prefix = ids[i]!.slice(0, 1);
+    while (j + 1 < ids.length && ids[j + 1]!.slice(0, 1) === prefix && Number(ids[j + 1]!.slice(1)) === Number(ids[j]!.slice(1)) + 1) j++;
+    parts.push(j > i ? `${ids[i]}–${ids[j]}` : ids[i]!);
+    i = j + 1;
+  }
+  return parts.join(', ');
+}
 export type ReportRouteId = typeof REPORT_ROUTE_IDS[number];
 export type DataMode = 'synthetic' | 'supplied' | 'actual' | 'mixed';
 export type Provider = 'kis' | 'opendart' | 'sec' | 'public_web';
