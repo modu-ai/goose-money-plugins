@@ -492,7 +492,8 @@
   },
   "member_onboarding": {
     "status": "member_feature_not_connected",
-    "analysis_and_report_prerequisite": "not_a_prerequisite; local KIS App Key/Secret and OpenDART API key are the only authentication, and only the provider a request needs is checked",
+    "analysis_and_report_prerequisite": "not_a_prerequisite in the current build; local KIS App Key/Secret and OpenDART API key are the only authentication the current build uses, and only the provider a request needs is checked",
+    "decided_direction": "2026-11-10 product decision (issues #1, #5): MoAI-AI member sign-in is required for every tier; free = R01 and R07, paid = extended features and personal account analysis, learner = paid-equivalent for the course period. Not implemented in this build; the 2026-10-26 removal record is superseded. Design drafts: docs/design/identity-auth-contract.md, docs/design/product-tiers.md",
     "disconnected_member_module": {
       "actual_login_adapter": "not_configured",
       "provider_check_adapter": "trusted_host_injection_required",
