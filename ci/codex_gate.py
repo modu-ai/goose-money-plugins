@@ -37,7 +37,7 @@ CONTEXT = 'codex-gate'
 WAITING_PREFIXES = ('summary_missing_or_malformed', 'summary_stale_head', 'summary_status_',
                     'security_status_', 'security_stale_head', 'clean_receipt_thumbs_up_missing',
                     'clean_receipt_no_completion_time', 'check_not_success:', 'merge_state_behind',
-                    'merge_state_unknown', 'head_changed_during_check')
+                    'merge_state_unknown', 'head_changed_during_check', 'evidence_changed_during_check')
 # (connection name, pageInfo flag that means "more nodes were not read").
 # `last:N` connections leave older nodes unread (hasPreviousPage); `first:N` leave newer ones (hasNextPage).
 TOP_CONNECTIONS = (('comments', 'hasPreviousPage'), ('reviews', 'hasPreviousPage'),
@@ -178,34 +178,57 @@ class HeadMoved(Exception):
     """The PR head changed between reads; the judged head must not receive success."""
 
 
+def _evidence(pr):
+    """Everything the decision reads from a PR snapshot, except the lazily computed merge state."""
+    return json.dumps({k: v for k, v in pr.items() if k != 'mergeStateStatus'}, sort_keys=True)
+
+
+def _publish(client, head, state, description):
+    """Write the status only when it differs from the current one (GitHub keeps at most 1000
+    statuses per SHA and context). If the current status cannot be read, write anyway."""
+    try:
+        current = client.current_status(head)
+    except Exception:  # noqa: BLE001 - unknown current status means write
+        current = None
+    if current == (state, description):
+        return False
+    client.post_status(head, state, description)
+    return True
+
+
 def run_one(client, number, thumbs_retries=0, sleep=time.sleep):
     """Judge one PR and publish its status. Any error after the head is known ends with `failure`.
+
+    The decision uses the LAST full PR read; if the evidence changed between the first and the
+    last read, the result is held (pending, evidence_changed_during_check). The status is written
+    once per change, never twice for the same result.
 
     Limit: the head comes from a minimal REST lookup. If that lookup (or the status write) fails,
     no status can be written, so an earlier success on that head cannot be cleared here; the
     exception propagates and the next event or scheduled run judges again.
     """
     head = client.head_sha(number)
-    # Mark the head pending before any judging read, so a previous success cannot survive a failure.
-    client.post_status(head, 'pending', 'judging Codex review evidence for this head')
     kind = None
     try:
-        pr = client.pull_request(number)
-        if pr['headRefOid'] != head:
+        first = client.pull_request(number)
+        if first['headRefOid'] != head:
             raise HeadMoved()
         for attempt in range(thumbs_retries + 1):
-            if pr.get('mergeStateStatus') == 'UNKNOWN':
+            if first.get('mergeStateStatus') == 'UNKNOWN':
                 # GitHub computes the merge state lazily; the first read is often UNKNOWN. Re-read once.
                 sleep(5)
-                pr = client.pull_request(number)
+                first = client.pull_request(number)
             chk = client.checks(head)
-            head_again = client.pull_request(number)['headRefOid']
-            kind, fail = evaluate(pr, chk, head, head_again)
+            last = client.pull_request(number)
+            kind, fail = evaluate(last, chk, head, last['headRefOid'])
+            if _evidence(first) != _evidence(last) and 'evidence_changed_during_check' not in fail:
+                kind = None
+                fail.append('evidence_changed_during_check')
             # The bot reacts +1 shortly after editing its summary; wait briefly for that one signal only.
             if fail != ['clean_receipt_thumbs_up_missing_after_completion'] or attempt == thumbs_retries:
                 break
             sleep(30)
-            pr = client.pull_request(number)
+            first = client.pull_request(number)
         state, description = status_for(fail)
         # Re-read the head right before writing so a success never lands on a head we did not judge.
         if state == 'success' and client.head_sha(number) != head:
@@ -216,8 +239,8 @@ def run_one(client, number, thumbs_retries=0, sleep=time.sleep):
     except Exception as error:  # noqa: BLE001 - any error must end in a non-success status
         kind, fail = None, ['gate_error:' + type(error).__name__]
         state, description = 'failure', 'gate_error:' + type(error).__name__
-    client.post_status(head, state, description)
-    return {'pr': number, 'head': head, 'receipt': kind, 'state': state, 'fail': fail}
+    written = _publish(client, head, state, description)
+    return {'pr': number, 'head': head, 'receipt': kind, 'state': state, 'fail': fail, 'written': written}
 
 
 QUERY = '''query($o:String!,$n:String!,$p:Int!){repository(owner:$o,name:$n){pullRequest(number:$p){
@@ -267,8 +290,23 @@ class GitHubClient:
         self._call('POST', '%s/repos/%s/statuses/%s' % (self.api, self.repo, head),
                    {'state': state, 'context': CONTEXT, 'description': description, 'target_url': self.target_url})
 
+    def current_status(self, head):
+        """Latest `codex-gate` status on the head as (state, description), or None."""
+        statuses = self._call('GET', '%s/repos/%s/commits/%s/statuses?per_page=100' % (self.api, self.repo, head))
+        for status in statuses or []:  # newest first
+            if status.get('context') == CONTEXT:
+                return status.get('state'), status.get('description')
+        return None
+
     def open_pull_requests(self):
-        return [p['number'] for p in self._call('GET', '%s/repos/%s/pulls?state=open&base=main&per_page=100' % (self.api, self.repo))]
+        """Every open PR to main, all pages."""
+        numbers, page = [], 1
+        while True:
+            batch = self._call('GET', '%s/repos/%s/pulls?state=open&base=main&per_page=100&page=%d' % (self.api, self.repo, page))
+            numbers += [p['number'] for p in batch or []]
+            if len(batch or []) < 100:
+                return numbers
+            page += 1
 
 
 def main(argv):
@@ -277,6 +315,11 @@ def main(argv):
                                         os.environ.get('GITHUB_RUN_ID', ''))
     client = GitHubClient(os.environ.get('GITHUB_API_URL', 'https://api.github.com'), repo,
                           os.environ['GITHUB_TOKEN'], target)
+    if argv[1:2] == ['--list-targets']:
+        # Targets for the per-PR matrix: the event's PR numbers, or every open PR to main.
+        numbers = [int(x) for x in argv[2:] if x.strip()] or client.open_pull_requests()
+        print(json.dumps(sorted(set(numbers))))
+        return 0
     numbers = [int(x) for x in argv[1:] if x.strip()] or client.open_pull_requests()
     retries = int(os.environ.get('CODEX_GATE_THUMBS_RETRIES', '0'))
     for number in numbers:

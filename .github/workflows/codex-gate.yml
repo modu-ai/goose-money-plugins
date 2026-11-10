@@ -4,6 +4,9 @@
 # There is deliberately no workflow_dispatch: a manual run can pick another branch's
 # workflow and judging code. A new push leaves the new head without a `codex-gate`
 # status, so stale evidence cannot pass.
+#
+# Every trigger judges each PR in the same per-PR concurrency group (codex-gate-pr-<n>),
+# so two judgements of one PR never run at the same time and the later run writes last.
 name: codex-gate
 
 on:
@@ -24,12 +27,8 @@ permissions:
   checks: read
   statuses: write
 
-concurrency:
-  group: codex-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event_name }}
-  cancel-in-progress: false
-
 jobs:
-  gate:
+  targets:
     # Runs only from the default branch ref. For issue_comment, only the Codex bot's summary
     # comment on a pull request re-triggers the gate.
     if: >-
@@ -39,7 +38,9 @@ jobs:
         github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
         contains(github.event.comment.body, 'codex-pull-request-review-summary')))
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
+    outputs:
+      prs: ${{ steps.list.outputs.prs }}
     defaults:
       run:
         shell: bash
@@ -55,11 +56,43 @@ jobs:
         with:
           python-version: '3.13'
 
+      - name: List PRs to judge (event PR numbers, else every open PR to main, all pages)
+        id: list
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBERS: >-
+            ${{ github.event.pull_request.number || github.event.issue.number ||
+            join(github.event.workflow_run.pull_requests.*.number, ' ') }}
+        run: echo "prs=$(python -X utf8 ci/codex_gate.py --list-targets $PR_NUMBERS)" >> "$GITHUB_OUTPUT"
+
+  gate:
+    needs: targets
+    if: needs.targets.outputs.prs != '' && needs.targets.outputs.prs != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        pr: ${{ fromJSON(needs.targets.outputs.prs) }}
+    concurrency:
+      group: codex-gate-pr-${{ matrix.pr }}
+      cancel-in-progress: false
+    runs-on: windows-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: ci
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
       - name: Judge and publish codex-gate
         env:
           GITHUB_TOKEN: ${{ github.token }}
           CODEX_GATE_THUMBS_RETRIES: ${{ github.event_name == 'issue_comment' && '6' || '0' }}
-          PR_NUMBERS: >-
-            ${{ github.event.pull_request.number || github.event.issue.number ||
-            join(github.event.workflow_run.pull_requests.*.number, ' ') }}
-        run: python -X utf8 ci/codex_gate.py $PR_NUMBERS
+        run: python -X utf8 ci/codex_gate.py ${{ matrix.pr }}
