@@ -458,3 +458,23 @@ test('reconciliation restoring a pre-dispute trialing state keeps the trial sett
   assert.equal(paid.outcome, 'applied');
   assert.equal(state(paid.subscription), 'active');
 });
+
+test('reconciliation entering a dispute keeps the trial settlement marker for the later restore', () => {
+  // Codex P2 :251 — a missed dispute opening adopted from trialing must capture the marker the
+  // way dispute.opened does, or neither dispute.won nor a reconciled restore can settle the
+  // payment afterwards.
+  let sub = machine.apply(empty(), ev('y0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('y1', 'payment.succeeded', { provider_revision: 2, trial: true })).subscription;
+  sub = machine.apply(sub, ev('y2', 'trial.ended', { provider_revision: 3, occurred_at: T0 + 7 * DAY })).subscription;
+  const adopted = machine.reconcile(sub, { state: 'disputed', revision: 4 }, T0 + 8 * DAY);
+  assert.equal(state(adopted.subscription), 'disputed');
+  assert.equal(adopted.subscription.previous_state, 'trialing');
+  assert.equal(adopted.subscription.trial_ended, true);
+  const won = machine.apply(adopted.subscription, ev('y3', 'dispute.won', { provider_revision: 5, occurred_at: T0 + 9 * DAY }));
+  assert.equal(won.outcome, 'applied');
+  assert.equal(state(won.subscription), 'trialing');
+  assert.equal(won.subscription.trial_ended, true);
+  const paid = machine.apply(won.subscription, ev('y4', 'payment.succeeded', { provider_revision: 6, occurred_at: T0 + 10 * DAY }));
+  assert.equal(paid.outcome, 'applied');
+  assert.equal(state(paid.subscription), 'active');
+});

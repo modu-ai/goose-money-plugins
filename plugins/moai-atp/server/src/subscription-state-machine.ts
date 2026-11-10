@@ -239,8 +239,10 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       : null;
     // Restoring the pre-dispute state through the reconciliation view is not a new state change:
     // carry the saved anchor back like dispute.won does (P2 :248) so an exhausted past_due grace
-    // does not restart without a successful payment.
+    // does not restart without a successful payment. Entering a dispute through reconciliation
+    // mirrors dispute.opened, which keeps the trial settlement marker (P2 :251).
     const restoringDisputeState = current.state === 'disputed' && provider.state === current.previous_state && current.previous_state_changed_at !== null;
+    const enteringDispute = provider.state === 'disputed' && current.state !== 'disputed';
     const adopted: StoredSubscription = {
       ...current,
       state: provider.state,
@@ -248,7 +250,7 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       revision: provider.revision ?? current.revision,
       previous_state,
       previous_state_changed_at,
-      trial_ended: restoringDisputeState ? current.trial_ended : false,
+      trial_ended: (restoringDisputeState || enteringDispute) ? current.trial_ended : false,
       state_changed_at: restoringDisputeState ? (current.previous_state_changed_at ?? now) : now,
       last_event_at: now,
     };
