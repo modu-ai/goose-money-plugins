@@ -12,6 +12,10 @@ for(const [request,expected]of [
  ['/goose backtest 전략을 만들지 말고 과거 검증',[]],
 ] as const)test(`single Goose local routing fixture: ${request}`,()=>{assert.deepEqual(ids(request),expected);const p=planGooseRequest(request);assert.equal(p.provider_dispatches,0);assert.equal(p.execution_authority,'plan_only');assert.ok(p.steps.every(s=>s.execution_status==='not_run'));});
 test('explicit research mode is preserved and dependent report steps keep prerequisites',()=>{const p=planGooseRequest('/goose strategy 논문으로 설계하고 보고서');assert.equal(p.explicit_mode,'strategy');assert.deepEqual(p.steps.map(s=>s.depends_on),[[],['strategy']]);});
+test('explicit backtest exclusion wording keeps the stock path (out-of-scope classification covers backtest requests only)',()=>{
+ for(const request of ['/goose 백테스트는 빼고 삼성전자 실적 분석 보고서','/goose 백테스트 하지 않고 삼성전자 실적 분석 보고서','/goose 백테스트 없이 삼성전자 실적 분석 보고서','/goose 백테스트 제외하고 삼성전자 실적 분석 보고서']){const p=planGooseRequest(request);assert.equal(p.status,'ready',request);assert.deepEqual(p.unsupported_actions,[],request);assert.deepEqual(ids(request),['analyze','report'],request);}
+ assert.equal(planGooseRequest('/goose 삼성전자 매도 신호 규칙을 백테스트').status,'unsupported');
+});
 test('ETF and domestic/overseas futures route to restored reports without enabling execution',()=>{assert.equal(planGooseRequest('ETF 분석').report_id,'R12');assert.equal(planGooseRequest('해외 선물 분석 보고서').report_id,'R13');});
 for(const request of ['지금 매수 주문해줘','내 계좌 분석해줘','예수금 조회','송금 실행해'])test('financial action is blocked without executable steps: '+request,()=>{const p=planGooseRequest(request);assert.equal(p.status,'blocked');assert.equal(p.steps.length,0);assert.equal(p.provider_dispatches,0);});
 test('unsupported engine and unclear request stay explicit, legacy backtest is rejected without new skills',()=>{assert.equal(planGooseRequest('조건식 자동 등록해').status,'unsupported');assert.equal(planGooseRequest('도와줘').status,'clarification_required');assert.ok(planGooseRequest('goose-backtest').migrated_legacy_command);assert.deepEqual(ids('goose-backtest'),[]);assert.equal(planGooseRequest('goose-backtest').status,'unsupported');});

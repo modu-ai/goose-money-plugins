@@ -234,7 +234,7 @@ export function planGooseRequest(value:unknown){
  if(!explicit||explicit!=='setup'){
   if(/조건식|HTS|MTS/i.test(text))modes.add('conditions');
   if((/논문|전략.{0,10}(?:설계|만들)/.test(text))&&!/전략.{0,10}(?:만들지|설계하지)/.test(text))modes.add('strategy');
-  if(/백테스트|과거.{0,8}검증|walk.?forward/i.test(text.replace(/백테스트\s*(?:(?:는|를|은|을)\s*)?(?:하지\s*말고|말고|없이|제외하고)/g,'')))modes.add('backtest');
+  if(/백테스트|과거.{0,8}검증|walk.?forward/i.test(text.replace(/백테스트\s*(?:(?:는|를|은|을)\s*)?(?:하지\s*(?:말고|않고)|말고|없이|제외하고|빼고)/g,'')))modes.add('backtest');
   if(/멘탈|불안|마음|후회|만회.{0,8}충동/.test(text))modes.add('mental-support');
   if(/보고서|리포트|HTML/i.test(text))modes.add('report');
   if(/(?:종목|기업|수급|실적|공시|재무|ETF|선물).{0,12}(?:분석|비교|점검)|분석.{0,10}(?:종목|기업|ETF|선물)/i.test(text))modes.add('analyze');
