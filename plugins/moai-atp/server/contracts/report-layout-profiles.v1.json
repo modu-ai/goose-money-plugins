@@ -170,55 +170,52 @@
       ]
     },
     "R04": {
-      "family": "portfolio_risk",
-      "narrative_boundary": "계좌 API를 호출하지 않습니다. 사용자 제공 원장만 입력된 경우 해당 입력 기준의 노출을 계산하며, 평가 통화·가격 시점·현금 대사가 없으면 합산을 중단합니다.",
+      "family": "manual_holdings_consultation",
+      "narrative_boundary": "개인 수동 입력·비공개. 계좌 API·거래/성과 원장·주문·모의투자·백테스트를 연결하지 않습니다. 입력의 정확성·단위·가격시각과 실제 상품 비용은 독립 검증되지 않았습니다.",
       "sections": [
         {
           "id": "R04.S01",
           "blocks": [
-            "donut",
             "table"
           ]
         },
         {
           "id": "R04.S02",
           "blocks": [
-            "table"
+            "table",
+            "donut"
           ]
         },
         {
           "id": "R04.S03",
           "blocks": [
-            "bar",
             "table"
           ]
         },
         {
           "id": "R04.S04",
           "blocks": [
-            "bar",
             "table"
           ]
         },
         {
           "id": "R04.S05",
           "blocks": [
-            "matrix",
-            "table"
+            "table",
+            "bar"
           ]
         },
         {
           "id": "R04.S06",
           "blocks": [
-            "bar",
             "table"
           ]
         }
       ]
     },
     "R05": {
-      "family": "performance_cost",
-      "narrative_boundary": "기간 수익률은 외부 입출금과 분리해야 합니다. 거래·세금·환전·롤 자료가 빠지면 순성과나 비용 기여를 추정하지 않습니다.",
+      "family": "manual_cost_impact",
+      "narrative_boundary": "개인 수동 입력·비공개. 계좌 API·거래/성과 원장·주문·모의투자·백테스트를 연결하지 않습니다. 입력의 정확성·단위·가격시각과 실제 상품 비용은 독립 검증되지 않았습니다.",
       "sections": [
         {
           "id": "R05.S01",
@@ -229,35 +226,31 @@
         {
           "id": "R05.S02",
           "blocks": [
-            "table",
-            "bar"
+            "table"
           ]
         },
         {
           "id": "R05.S03",
           "blocks": [
-            "line",
-            "table"
+            "table",
+            "bar"
           ]
         },
         {
           "id": "R05.S04",
           "blocks": [
-            "bar",
             "table"
           ]
         },
         {
           "id": "R05.S05",
           "blocks": [
-            "bar",
             "table"
           ]
         },
         {
           "id": "R05.S06",
           "blocks": [
-            "line",
             "table"
           ]
         }

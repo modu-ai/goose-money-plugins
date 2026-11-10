@@ -87,7 +87,6 @@ export function registerReportHtmlTool(server: McpServer, clock: () => string, t
     async ({ report_input, narrative_draft }) => {
       const base = await safeResult(async () => {
         const doc = ReportInputSchema.parse(report_input);
-        if(doc.report_id==='R04')throw new Error('source_not_enabled');
         if(doc.sources.some(source=>source.kind!=='synthetic'&&source.kind!=='user_supplied'&&source.rights==='local_view')&&!trustedReport(doc))throw new Error('invalid_provenance');
         const narrativeDoc=narrative_draft?applyNarrativeDraft(doc,narrative_draft):doc;
         const html = renderReportInputHtml(narrativeDoc);
