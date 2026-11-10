@@ -51,8 +51,7 @@ export function entitlementRegistrations(server: McpServer, options?: Entitlemen
           await check(feature);
           if (unavailable.has(name)) throw new Error('error_code=unavailable');
           const result: unknown = await callback(...args);
-          // Revocation while an asynchronous provider/render callback runs cannot release data.
-          await check(feature);
+          // Record renderer cache order before an asynchronous post-check can reorder it.
           if (name === 'render_report_html') {
             const metadata = record(record(result).structuredContent);
             if (typeof metadata.resource_uri === 'string' && metadata.report_id === feature && typeof metadata.expires_at === 'string') {
@@ -60,6 +59,8 @@ export function entitlementRegistrations(server: McpServer, options?: Entitlemen
               resources.set(metadata.resource_uri, { feature, expires: Date.parse(metadata.expires_at) });
             }
           }
+          // Revocation while an asynchronous provider/render callback runs cannot release data.
+          await check(feature);
           return result;
         };
         return Reflect.apply(target.registerTool, target, [name, config, guarded]);

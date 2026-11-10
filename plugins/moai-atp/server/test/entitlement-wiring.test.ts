@@ -106,3 +106,32 @@ test('SEC public data needs no KIS/DART setup; revocation during callback withho
   assert.equal(outcome(reply),'auth_required');assert.doesNotMatch(JSON.stringify(reply),/Synthetic Company/);assert.equal(calls,2);
  });
 });
+
+test('a delayed post-render check cannot evict authorization for HTML still in the renderer cache',async()=>{
+ let checks=0, pause=false;
+ let release!:()=>void, entered!:()=>void;
+ const held=new Promise<void>(resolve=>{release=resolve;});
+ const waiting=new Promise<void>(resolve=>{entered=resolve;});
+ await session({entitlement:policy(async()=>{
+  if(pause&&++checks===2){entered();await held;}
+  return member();
+ })},async s=>{
+  const built=await s.rpc('tools/call',{name:'build_report_input',arguments:reportArgs()});assert.equal(outcome(built),'OK');
+  const render=()=>s.rpc('tools/call',{name:'render_report_html',arguments:{report_input:built.result.structuredContent}});
+  pause=true;
+  const delayed=render();
+  try{
+   await waiting;
+   const retained=[];
+   for(let i=0;i<3;i++){
+    const reply=await render();assert.equal(outcome(reply),'OK');
+    retained.push(reply.result.structuredContent.resource_uri as string);
+   }
+   assert.equal(outcome(await s.rpc('resources/read',{uri:retained[0]})),'OK','B is readable before A completes');
+   release();
+   const first=await delayed;assert.equal(outcome(first),'OK');
+   for(const uri of retained)assert.equal(outcome(await s.rpc('resources/read',{uri})),'OK','B/C/D HTML remains cached after A completes');
+   assert.notEqual(outcome(await s.rpc('resources/read',{uri:first.result.structuredContent.resource_uri})),'OK','A HTML was evicted by the renderer');
+  }finally{release();await delayed;}
+ });
+});
