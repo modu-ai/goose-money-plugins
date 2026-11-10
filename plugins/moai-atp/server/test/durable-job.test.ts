@@ -38,7 +38,11 @@ test('blocked waits on a reason code and resumes only through a passed recheck (
   assert.equal(b.state,'blocked');assert.equal(b.blocked_reason,'provider_key_missing');
   assert.equal(apply(b,{event:'unblock',permission_recheck:'passed'}).state,'running');
   const still=apply(b,{event:'unblock',permission_recheck:'failed'});
-  assert.equal(still.state,'blocked');assert.equal(still.blocked_reason,'permission_revoked');
+  assert.equal(still.state,'blocked');
+  // A failed recheck is not necessarily a revocation (the key may still be missing): the original
+  // reason stays — the design is silent on recheck-failure codes, so nothing is invented and no
+  // reason information is lost.
+  assert.equal(still.blocked_reason,'provider_key_missing');
 });
 
 test('running closes as completed, partial (missing_data) or failed (failure_code) (§2.2)',()=>{
@@ -55,6 +59,14 @@ test('permission revocation lands blocked from every non-terminal live state (§
     assert.equal(b.state,'blocked');assert.equal(b.blocked_reason,'permission_revoked');
   }
   assert.throws(()=>apply(cancelled(),{event:'permission_revoked'}),/error_code=illegal_transition/);
+});
+
+test('M1: revocation while cancelling is recorded without abandoning the cancel procedure (§2.2 "어느 상태든" + §4)',()=>{
+  const c=apply(running(),{event:'cancel_requested'});
+  const r=apply(c,{event:'permission_revoked'});
+  assert.equal(r.state,'cancelling');assert.equal(r.permission_revoked,true);
+  // The cancel procedure continues: cancelled still requires the worker end observation (§4).
+  assert.equal(apply(r,{event:'worker_end_observed'}).state,'cancelled');
 });
 
 test('cancel request from queued, running or blocked turns cancelling and stops new node starts (§4)',()=>{
@@ -79,10 +91,25 @@ test('T3b: timeout without observation stays cancelling and records cancel_uncon
   assert.equal(apply(t,{event:'worker_end_observed'}).state,'cancelled');
 });
 
-test('T4: late results after a cancel are not accepted — record-only discard (§4)',()=>{
+test('L1: cancel straight after intake walks queued→cancelling→cancelled (§2.2·§4)',()=>{
+  const c=apply(createDurableJob(),{event:'cancel_requested'});
+  assert.equal(c.state,'cancelling');
+  assert.equal(apply(c,{event:'worker_end_observed'}).state,'cancelled');
+});
+
+test('T4: late results after a cancel are discarded with a record (§4 "버리고 기록만")',()=>{
   assert.equal(acceptsNodeResults(apply(running(),{event:'cancel_requested'})),false);
   assert.equal(acceptsNodeResults(cancelled()),false);
   assert.equal(acceptsNodeResults(running()),true);
+  const c=apply(running(),{event:'cancel_requested'});
+  const d1=apply(c,{event:'node_completed',node_result_hash:'late-1'});
+  assert.equal(d1.state,'cancelling');
+  assert.equal(d1.discarded_late_results,1);
+  // The discarded hash never mixes into the accepted node results.
+  assert.deepEqual(d1.node_result_hashes,['node-1-hash']);
+  const d2=apply(apply(d1,{event:'worker_end_observed'}),{event:'node_completed',node_result_hash:'late-2'});
+  assert.equal(d2.state,'cancelled');
+  assert.equal(d2.discarded_late_results,2);
 });
 
 test('budget limits are injected configuration; unset budget never invents a verdict',()=>{
@@ -107,4 +134,11 @@ test('budget and spent values are validated; negatives and junk are invalid_inpu
   assert.throws(()=>checkBudget({max_provider_calls:-1},{elapsed_ms:0,provider_calls:0}),/error_code=invalid_input/);
   assert.throws(()=>checkBudget({max_provider_calls:5},{elapsed_ms:-1,provider_calls:0}),/error_code=invalid_input/);
   assert.throws(()=>checkBudget({max_provider_calls:5},{elapsed_ms:1}),/error_code=invalid_input/);
+});
+
+test('L2: a zero limit is exhausted immediately (§6 reaching a limit counts as exhausted)',()=>{
+  const t=checkBudget({max_elapsed_ms:0},{elapsed_ms:0,provider_calls:0});
+  assert.equal(t.ok,false);assert.ok(t.ok===false&&JSON.stringify(t.exhausted)==='["max_elapsed_ms"]');
+  const c=checkBudget({max_provider_calls:0},{elapsed_ms:0,provider_calls:0});
+  assert.equal(c.ok,false);assert.ok(c.ok===false&&JSON.stringify(c.exhausted)==='["max_provider_calls"]');
 });

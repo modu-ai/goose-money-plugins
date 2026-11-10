@@ -22,6 +22,11 @@ export type JobRecord={
   budget_exhausted?:boolean;
   budget_outcome?:'partial'|'failed';
   cancel_unconfirmed?:boolean;
+  /** Recorded when a revocation arrives while cancelling (§2.2 "어느 상태든"): the cancel
+   * procedure stays, and live states carry the revocation in `blocked_reason` instead. */
+  permission_revoked?:boolean;
+  /** Count of node results discarded after a cancel, accepted results excluded (§4 "버리고 기록만"). */
+  discarded_late_results?:number;
 };
 
 const Recheck=z.enum(['passed','failed']);
@@ -43,7 +48,12 @@ type JobEvent=z.infer<typeof EventSchema>;
 
 export function createDurableJob():JobRecord{return {state:'queued',node_result_hashes:[]};}
 
-const keep=(job:JobRecord)=>({node_result_hashes:job.node_result_hashes??[]});
+/** Everything but `state` survives a transition (§2.1: terminal states keep their record);
+ * the caller names the new state so it is excluded here. Node hashes are always a list. */
+const keep=(job:JobRecord):Omit<JobRecord,'state'>=>{
+  const {state,...rest}=job;
+  return {...rest,node_result_hashes:rest.node_result_hashes??[]};
+};
 
 /** Apply one event to a job record. Every transition outside the design §2.2 table is refused with
  * `error_code=illegal_transition:<state>+<event>`; malformed events with `error_code=invalid_input`. */
@@ -55,8 +65,11 @@ export function apply(job:JobRecord,event:unknown):JobRecord{
   switch(e.event){
     case 'start':
       if(s!=='queued')illegal();
-      return e.permission_recheck==='passed'?{state:'running',...keep(job)}:{state:'blocked',blocked_reason:'permission_revoked',...keep(job)};
+      return e.permission_recheck==='passed'?{state:'running',...keep(job)}:{state:'blocked',...keep(job),blocked_reason:'permission_revoked'};
     case 'node_completed':
+      // Late results after a cancel are discarded, record-only (§4, T4): the state is kept and
+      // only the discard count grows — cancelled is not reopened.
+      if(s==='cancelling'||s==='cancelled')return {...job,discarded_late_results:(job.discarded_late_results??0)+1};
       if(s!=='running')illegal();
       return {state:'running',node_result_hashes:[...(job.node_result_hashes??[]),e.node_result_hash]};
     case 'blocked':
@@ -64,7 +77,10 @@ export function apply(job:JobRecord,event:unknown):JobRecord{
       return {state:'blocked',blocked_reason:e.reason,...keep(job)};
     case 'unblock':
       if(s!=='blocked')illegal();
-      return e.permission_recheck==='passed'?{state:'running',...keep(job)}:{state:'blocked',blocked_reason:'permission_revoked',...keep(job)};
+      // A failed recheck is not necessarily a revocation (the key may still be missing): the job
+      // stays blocked with its original reason — no invented code, no reason information lost.
+      if(e.permission_recheck!=='passed')return {...job};
+      return {state:'running',...keep(job)};
     case 'complete':
       if(s!=='running')illegal();
       return {state:'completed',...keep(job)};
@@ -78,8 +94,13 @@ export function apply(job:JobRecord,event:unknown):JobRecord{
       if(s!=='running')illegal();
       return e.outcome==='partial'?{state:'partial',budget_exhausted:true,budget_outcome:'partial',...keep(job)}:{state:'failed',budget_exhausted:true,budget_outcome:'failed',...keep(job)};
     case 'permission_revoked':
+      // §2.2 last row ("어느 상태든") read against §4: a revocation arriving while cancelling must
+      // not be dropped, yet the only route to `cancelled` stays the observed worker end — so the
+      // cancel procedure keeps running and the revocation is recorded on the record. Terminal
+      // states keep their record (§2.1 ●): they are not reopened by a blocked transition.
+      if(s==='cancelling')return {...job,permission_revoked:true};
       if(s!=='queued'&&s!=='running'&&s!=='blocked')illegal();
-      return {state:'blocked',blocked_reason:'permission_revoked',...keep(job)};
+      return {state:'blocked',...keep(job),blocked_reason:'permission_revoked'};
     case 'cancel_requested':
       if(s!=='queued'&&s!=='running'&&s!=='blocked')illegal();
       return {state:'cancelling',...keep(job)};
