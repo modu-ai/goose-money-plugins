@@ -727,3 +727,16 @@ test('a replacement view that states a period uses it', () => {
   assert.equal(settled.subscription.current_period_end, end + 30 * DAY);
   assert.equal(machine.effectiveState(settled.subscription, end + DAY), 'active');
 });
+
+test('an equal-revision event still applies the transition (current behavior, B-11 pending)', () => {
+  // 설계 §5.1 P3("저장 판본 이하" 기록만)과 §5 순서 역전 행("오래된"=엄격히 이전)의 경계가
+  // 어긋나 동일 판번 처우는 B-11 결정 필요. 결정 전까지 현재 동작 — 엄격히 이전만 기록-only,
+  // 동일 판번은 전이 적용 — 을 고정한다(동작 변경은 B-11 결정 후).
+  let sub = machine.apply(empty(), ev('b0', 'checkout.completed', { provider_revision: 2 })).subscription;
+  sub = machine.apply(sub, ev('b1', 'payment.succeeded', { provider_revision: 2 })).subscription;
+  assert.equal(state(sub), 'active');
+  assert.equal(sub.revision, 2);
+  const equal = machine.apply(sub, ev('b2', 'subscription.cancel_requested', { provider_revision: 2, occurred_at: T0 + DAY }));
+  assert.equal(equal.outcome, 'applied');
+  assert.equal(state(equal.subscription), 'canceled_pending_end');
+});
