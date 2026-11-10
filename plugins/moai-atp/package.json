@@ -1,6 +1,6 @@
 {
   "name": "moai-atp",
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.6",
   "private": true,
   "license": "LGPL-3.0-only",
   "description": "모두의 주식 · MoAI ATP는 투자 지표 참고·자료 분석·근거 중심 보고서·전략 검증 지원을 목표로 개발 중인 읽기 전용 분석 플러그인입니다. 자동 실주문과 수익 보장을 제공하지 않습니다.",
