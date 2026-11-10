@@ -1,11 +1,12 @@
 import { createInterface } from "node:readline/promises";
 import { readTerminalChoice } from "./terminal-choice.js";
 import { homedir } from "node:os";
+import { deleteLocalCredentials, SafeCredentialError } from "./local-credentials.js";
 import { deleteHoldings, HoldingsError } from "./user-holdings.js";
 import { readInvestorContext, saveInvestorContext, deleteInvestorContext, deleteOnboardingMarker, setupWasPresented, markSetupPresented, UserContextError, type InvestorContextAnswers } from "./user-context.js";
 
 type Output = { write(value: string): unknown };
-export type SetupAction = "reuse" | "edit" | "delete" | "delete-onboarding" | "delete-holdings";
+export type SetupAction = "reuse" | "edit" | "delete" | "delete-onboarding" | "delete-holdings" | "delete-local-data";
 const choices = {
   objectives: ["long_term_growth", "income", "capital_preservation", "learning"],
   timeHorizon: ["under_1y", "1_3y", "3_5y", "5y_plus", "unspecified"],
@@ -29,6 +30,36 @@ const answerLabels: Record<string, string> = {
 };
 export async function runSetupFlow(projectRoot: string, ask: (question: string) => Promise<string>, output: Output, homeDir = homedir(), action: SetupAction = "reuse", select?: (question: string, options: readonly string[], multi: boolean) => Promise<string>): Promise<number> {
   output.write("모두의 주식 · MoAI ATP — 로컬 공통 프로필 설정\n");
+  // Design #9 §4 S1: one explicit confirmation clears the three decided local stores (rows 1·4·6).
+  // The onboarding-presented marker (row 5) stays out — P-02 is undecided; --delete-onboarding
+  // remains the opt-in path, and no deletion logic lives here: each store keeps its own guard.
+  if (action === "delete-local-data") {
+    const confirmed = await ask("로컬에 저장된 개인 데이터(공급자 키·투자 프로필·보유 snapshot)를 모두 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
+    if (!confirmed) {
+      output.write("credentials_deleted=false\n");
+      output.write("profile_deleted=false\n");
+      output.write("holdings_deleted=false\n");
+      return 0;
+    }
+    // #118: one store erroring must not swallow the remaining result lines — each call is
+    // wrapped so the failing store still gets an explicit fixed-code failure line, the
+    // other stores keep running, and the failure is reported at the end with the existing
+    // failure exit code (2, as in runSetup's catch).
+    const failures: string[] = [];
+    const report = async (store: string, run: () => Promise<boolean>): Promise<void> => {
+      try { output.write(`${store}_deleted=${await run()}\n`); }
+      catch (e) {
+        const code = e instanceof SafeCredentialError || e instanceof UserContextError || e instanceof HoldingsError ? e.code : "setup_failed";
+        output.write(`${store}_deleted=error:${code}\n`);
+        failures.push(code);
+      }
+    };
+    await report("credentials", () => deleteLocalCredentials(projectRoot, { confirmed, homeDir }));
+    await report("profile", () => deleteInvestorContext(projectRoot, { confirmed, homeDir }));
+    await report("holdings", () => deleteHoldings(projectRoot, { confirmed, homeDir }));
+    if (failures.length) { output.write(`deletion_errors=${failures.join(",")}\n`); return 2; }
+    return 0;
+  }
   if (action === "delete-holdings") {
     const confirmed = await ask("PC에 저장한 보유 snapshot을 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
     if (!confirmed) { output.write("holdings_deleted=false\n"); return 0; }

@@ -66,8 +66,8 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 | 항목 | 상태 | 근거 |
 |---|---|---|
 | 테스트 CI (macOS·Windows) | 운영 중 | `.github/workflows/test.yml`(PR #39). main 최신 보호로 PR마다 두 검사 실행 |
-| Codex 리뷰 게이트 | 운영 중 | `.github/workflows/codex-gate.yml`(PR #46·#54). head별 증거 판정. 예산 절감 #62는 PR #66(`5ee69e0`) 병합. Ubuntu gate 실행 성공 관찰(run 42762980409); 비용 절감률·실제 청구액은 미측정 |
-| main 브랜치 보호 | 관측됨 (2026-11-10 API 조회) | `strict:true`, 필수 검사 `test (macos-latest)`·`test (windows-latest)`·`codex-gate`, 대화 해결 필수, 관리자 예외 없음, 강제 push·삭제 금지 |
+| Codex 리뷰 게이트 | 제거 (2026-11-11, #105) | PR #46·#54로 도입. #105 조사에서 예약 재판정(`schedule */30`)이 GitHub 스케줄러 지연·생략으로 25틱 중 1회만 생성됨이 확인됐고, main 필수 검사 제외(#31)에 따라 워크플로·판정 모듈(`ci/codex_gate.py`)·시험(`ci/test_codex_gate.py`)·CI 단계를 제거. `@codex review` 봇 리뷰 요청은 계속 사용 |
+| main 브랜치 보호 | 관측됨 (2026-11-11 API 조회) | 2026-11-11 재구성(#31): `strict:false`, 필수 검사 `test (macos-latest)`·`test (windows-latest)` 2종, 관리자 예외 없음, PR 필수(승인 0·오래된 리뷰 무효화), 강제 push·삭제 금지 |
 | 비밀 검사 | 운영 중 | `scripts/check_secrets.py` (CI와 push 전 수동 실행) |
 | 문서-코드 정합 시험 | 운영 중 | `roles-docs.test.ts` — SKILL.md·request-routing.md·README가 문장 F·범위 문장을 소스와 일치시키는지 검사 |
 | 저장소 가시성 | 비공개 (`private:true` — 2026-11-10 API 조회) | 공개 전환은 #27의 결정 항목(C1~C5)이 먼저 |
