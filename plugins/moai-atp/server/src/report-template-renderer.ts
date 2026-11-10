@@ -37,6 +37,7 @@ const BASE_CSS = `
 :root{color-scheme:light;--ink:#171A20;--muted:#5C5E62;--paper:#fff;--bg:#fff;--line:#D4D6D8;--soft:#F4F4F4;--accent:#B4141A;--chart-1:var(--color-chart-1);--chart-2:var(--color-chart-2);--chart-3:var(--color-chart-3);--chart-4:var(--color-chart-4);--chart-5:var(--color-chart-5)}
 *{box-sizing:border-box}html{scroll-behavior:auto}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.75 MaruBuri,AppleMyungjo,Batang,Georgia,serif}.shell{max-width:1120px;margin:auto;padding:36px 32px 64px}.topline{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:1px solid #E8E8E8;padding:0 0 18px}.brand,.eyebrow,.badge,h1,h2,h3,nav,table,button,.meta,.section-id,.status,.ui,figcaption,footer,summary{font-family:Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif}.brand{font-weight:800;letter-spacing:.02em}.badge{font-size:13px;font-weight:700;background:#F4F4F4;border:1px solid #D4D6D8;border-radius:4px;padding:5px 10px}.hero{padding:34px 0 22px}.eyebrow{font-size:13px;color:#B4141A;font-weight:700;letter-spacing:.06em}.hero h1{font-size:clamp(30px,4vw,44px);line-height:1.2;letter-spacing:-.035em;margin:12px 0}.lead{font-size:18px;color:#393C41;max-width:850px}.meta{display:flex;gap:10px 22px;flex-wrap:wrap;color:#5C5E62;font-size:13px}.notice{background:#F4F4F4;border-left:3px solid #D71920;padding:14px 18px;margin:18px 0 22px;color:#393C41}.layout{display:grid;grid-template-columns:210px minmax(0,1fr);gap:32px}.rail{position:sticky;top:14px;align-self:start;border-top:1px solid #E8E8E8;padding-top:14px}.rail a{display:block;color:#393C41;padding:5px 0;text-decoration:none;font:14px Pretendard,sans-serif}.content{min-width:0}.panel{border:0;border-top:1px solid #E8E8E8;padding:24px 0;margin:0;min-width:0}.panel h2{font:800 23px/1.4 Pretendard,sans-serif;letter-spacing:-.025em;margin:0 0 12px}.panel h3{font:700 17px/1.5 Pretendard,sans-serif}.panel p,.panel li{font:18px/1.85 MaruBuri,AppleMyungjo,Batang,Georgia,serif;color:#393C41}.muted,.caption,figcaption,small{color:#5C5E62;font:13px/1.6 Pretendard,sans-serif}.section-id{font-size:13px;font-weight:700;color:#5C5E62}.status{display:inline-block;font-size:12px;font-weight:700;color:#393C41;background:#F4F4F4;border:1px solid #D4D6D8;padding:3px 7px;border-radius:3px}.table-wrap{max-width:100%;overflow:auto;border-top:1px solid #D4D6D8;margin:12px 0 20px}table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #E8E8E8;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#F4F4F4;color:#171A20;font-weight:700}td{color:#393C41}.numeric{text-align:right;white-space:nowrap}.chart-box{margin:18px 0 8px;min-width:0}.chart-scroll{overflow-x:auto;max-width:100%}.echart{height:340px;min-width:300px}.lwc-chart{height:360px;min-width:300px}.chart-caption{margin-top:8px}.diagram{max-width:760px;margin:16px auto}.diagram svg{display:block;width:100%;height:auto;max-width:100%}.field-list{font:13px/1.7 Pretendard,sans-serif;overflow-wrap:anywhere}.block-missing{margin:16px 0;padding:12px 16px;background:#F7F7F7;border-left:3px solid #A8ADB4;color:#5C5E62;font:14px/1.7 Pretendard,sans-serif}.block-note{margin:10px 0;color:#5C5E62;font:13px/1.6 Pretendard,sans-serif}.actions{display:flex;flex-wrap:wrap;gap:10px}.skip{position:absolute;left:-1000px}.skip:focus{left:12px;top:12px;background:white;padding:10px;z-index:2}a{color:#244BBA;text-underline-offset:3px}button{border:1px solid #737780;background:white;color:#171A20;border-radius:4px;padding:9px 12px;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #3E6AE1;outline-offset:3px}details{border-top:1px solid #D4D6D8;margin-top:12px;padding-top:10px}summary{font-weight:700;cursor:pointer}.legend{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.legend button[aria-pressed=false]{opacity:.55}footer{border-top:1px solid #E8E8E8;padding-top:18px;margin-top:24px;color:#5C5E62;font-size:12px}
 ${ORIGINAL_TEMPLATE_CSS}${SPECIAL_VISUAL_CSS}${THEME}
+.table-wrap td.unit,.rs .table-wrap td.unit{white-space:nowrap}
 @media(max-width:760px){.shell{padding:24px 20px 44px}.layout{grid-template-columns:1fr;gap:14px}.rail{position:static;display:flex;gap:4px 14px;flex-wrap:wrap;padding:12px 0}.rail strong{width:100%}.rail a{padding:3px 0}.hero{padding:26px 0 16px}.panel{padding:20px 0}.panel p,.panel li{font-size:17px}.echart,.lwc-chart{height:300px}}
 @media(max-width:420px){.shell{padding:20px 16px 36px}.topline{align-items:flex-start}.hero h1{font-size:30px}.meta{display:block}.meta span{display:block;margin:3px 0}.table-wrap{max-width:100%;margin-right:0;overflow-x:auto;overscroll-behavior-inline:contain}th,td{padding:10px 12px;font-size:inherit}table{font-size:18px}th{font-size:17px}td{font-size:18px}}
 @media print{.shell{max-width:none;padding:0}.layout{display:block}.rail,.actions{display:none}.panel{break-inside:auto;padding:16px 0}.hero{padding:16px 0}.chart-box,figure,.diagram{break-inside:avoid}.echart,.lwc-chart{height:300px}.table-wrap{overflow:visible}th,td{white-space:normal;font-size:9pt}.panel p,.panel li{font-size:11pt;line-height:1.6}}
@@ -64,13 +65,14 @@ function numericSeries(values: readonly (string | null)[]): number[] | null {
   return result;
 }
 /** A table cell: plain text, or display text whose raw value stays in the title attribute (#52 D5). */
-type TableCell = string | { text: string; title: string };
+type TableCell = string | { text: string; title: string; nowrap?: boolean };
 function reportTable(headers: string[], rows: Array<Array<TableCell>>): string {
   const head = headers.map((value) => `<th scope="col">${E(value)}</th>`).join('');
   const cell = (value: TableCell): string => {
     const text = typeof value === 'string' ? value : value.text;
     const title = typeof value === 'string' ? '' : ` title="${E(value.title)}"`;
-    return `<td${/^[+-]?[0-9][0-9,]*(?:\.[0-9]+)?(?:%|원|주)?$/.test(text)?' class="numeric"':''}${title}>${E(text)}</td>`;
+    const cellClass = typeof value !== 'string' && value.nowrap ? 'unit' : /^[+-]?[0-9][0-9,]*(?:\.[0-9]+)?(?:%|원|주)?$/.test(text) ? 'numeric' : '';
+    return `<td${cellClass ? ` class="${cellClass}"` : ''}${title}>${E(text)}</td>`;
   };
   const body = rows.length
     ? rows.map((row) => `<tr>${row.map(cell).join('')}</tr>`).join('')
@@ -120,7 +122,8 @@ function chartFigure(spec:RenderChart,doc:ReportInput):string {
 }
 function sourceCaption(doc:ReportInput,sourceId:string):string {
   const source=doc.sources.find(item=>item.id===sourceId);
-  return `${E(source?.provider?.toUpperCase()??source?.kind??'출처 없음')} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · ${E(source?.id??'출처 없음')}`;
+  const rawTime=`source_as_of ${source?.source_as_of??'미제공'} · received_at ${source?.received_at??source?.observed_at??'미제공'}`;
+  return `<span title="${E(rawTime)}">${E(source?.provider?.toUpperCase()??source?.kind??'출처 없음')} · 출처 기준시각 ${E(displayInstant(source?.source_as_of??'미제공',doc.display_timezone))} · 수집시각 ${E(displayInstant(source?.received_at??source?.observed_at??'미제공',doc.display_timezone))} · ${E(source?.id??'출처 없음')}</span>`;
 }
 function matrixVisualHtml(visual:Extract<NonNullable<ReportInput['visuals']>[number],{kind:'matrix'}>,doc:ReportInput):string {
   const rows=visual.rows.map((label,row)=>[label,...visual.columns.map((_,column)=>visual.values[row*visual.columns.length+column]??'—')]);
@@ -246,7 +249,7 @@ export function displayInstant(value: string, timeZone: string): string {
   return `${part('year')}-${part('month')}-${part('day')} ${part('hour')}:${part('minute')} ${timeZone === 'Asia/Seoul' ? 'KST' : timeZone}`;
 }
 /** A body-table cell that shows a readable form and keeps the raw value in title when the two differ. */
-const readableCell = (raw: string, shown: string): TableCell => (shown === raw ? raw : { text: shown, title: raw });
+const readableCell = (raw: string, shown: string, nowrap = false): TableCell => (shown === raw && !nowrap ? raw : { text: shown, title: raw, ...(nowrap ? { nowrap: true } : {}) });
 /** Collapse exact mapping aliases for display only; the raw ledger still uses doc.metrics. */
 function metricBodyRows(doc: ReportInput, metrics = doc.metrics): TableCell[][] {
   const seen = new Set<string>();
@@ -266,7 +269,7 @@ function metricBodyRows(doc: ReportInput, metrics = doc.metrics): TableCell[][] 
     const period = metric.period_kind === 'observation' && source?.source_as_of == null && metric.period === (source?.received_at ?? source?.observed_at)
       ? '기준일 미확인 · 수집시각은 출처 참조'
       : annual ? `${annual[1]}년 연간 · ${annual[2] === 'CFS' ? '연결' : '별도'} · ${annual[4]}` : displayInstant(metric.period,doc.display_timezone);
-    return [metric.label,visible && metric.value !== null ? groupIntegerDigits(metric.value) : '—',readableCell(metric.unit,unit),readableCell(metric.period,period),readableCell(status,metricStatusLabel(status)),readableCell(note,metricNoteLabel(note))];
+    return [metric.label,visible && metric.value !== null ? groupIntegerDigits(metric.value) : '—',readableCell(metric.unit,unit,true),readableCell(metric.period,period),readableCell(status,metricStatusLabel(status)),readableCell(note,metricNoteLabel(note))];
   });
 }
 /** Same rights checks and readable strings for the text fallback and body tables. */
