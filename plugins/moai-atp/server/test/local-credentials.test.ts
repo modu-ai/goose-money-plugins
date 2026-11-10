@@ -131,6 +131,11 @@ test("CLI credentials option routes only to the credential setup flow", async ()
   assert.equal(await dispatchGooseCommand(["/goose", "setup", "--credentials"], async () => { throw Error("wrong route"); }, sink(), async () => { calls++; return 0; }), 0);
   assert.equal(calls, 1);
 });
+test("CLI --delete-credentials routes only to the credential delete flow, not the setup flow", async () => {
+  let setupCalls = 0, deleteCalls = 0;
+  assert.equal(await dispatchGooseCommand(["setup", "--delete-credentials"], async () => { setupCalls++; throw Error("wrong route"); }, sink(), async () => { setupCalls++; return 0; }, sink(), async () => { deleteCalls++; return 0; }), 0);
+  assert.deepEqual([setupCalls, deleteCalls], [0, 1]);
+});
 storeTest("explicitly injected MCP adapter reads setup keys only after the gate; missing keys never reach transport", () => fixture(async (home, project) => {
   let tokens = 0, requests = 0;
   const options = { projectRoot: project, homeDir: home, env: {}, rightsEnabled: true,
