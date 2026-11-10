@@ -7,6 +7,44 @@ function deferred<T>() {
  const promise=new Promise<T>(done=>{resolve=done;});
  return {promise,resolve};
 }
+test('an equivalent grant reused for an existing operation is consumed by that key',async()=>{
+ const f=fixture(),d=f.h.draft(input),hash=f.h.preview(d).body_hash;
+ const first=await f.h.approve(d,hash),equivalent=await f.h.approve(d,hash);
+ await f.h.publish(first,'synthetic-key');await f.h.publish(equivalent,'synthetic-key');
+ await assert.rejects(f.h.publish(equivalent,'synthetic-other-key'),/grant_already_used/);
+ assert.equal(f.counts().writes,1);
+});
+test('a pending publish cannot reconcile, withdraw early, or resurrect a withdrawn publication',async()=>{
+ const entered=deferred<void>(),completion=deferred<void>();let writes=0,lookups=0,withdraws=0;
+ const f=fixture({adapter:{async publish(){writes++;entered.resolve();await completion.promise;return {operation_id:'synthetic-op'};},async lookup(){lookups++;return {operation_id:'synthetic-op'};},async withdraw(){withdraws++;}}});
+ const g=await grant(f);const first=f.h.publish(g,'synthetic-key');await entered.promise;
+ const second=f.h.publish(g,'synthetic-key');
+ await Promise.resolve();await Promise.resolve();
+ const early=await f.h.withdraw(g,'synthetic-key').then(value=>value.state,error=>String(error));
+ completion.resolve();const results=await Promise.all([first,second]);
+ await f.h.withdraw(g,'synthetic-key');await f.h.withdraw(g,'synthetic-key');
+ assert.equal(withdraws,1,'a late publish must never permit another withdrawal');
+ assert.match(early,/operation_not_confirmed/);assert.equal(lookups,0);assert.equal(writes,1);
+ assert.deepEqual(results,[{state:'published',operation_id:'synthetic-op',retried_write:false},{state:'published',operation_id:'synthetic-op',retried_write:false}]);
+ assert.equal((await f.h.publish(g,'synthetic-key')).state,'withdrawn');
+});
+test('concurrent equivalent publishes share an uncertain write before explicit reconciliation',async()=>{
+ const entered=deferred<void>(),completion=deferred<void>();let writes=0,lookups=0;
+ const f=fixture({adapter:{async publish(){writes++;entered.resolve();await completion.promise;throw Error('synthetic-uncertain');},async lookup(){lookups++;return {operation_id:'synthetic-op'};},async withdraw(){}}});
+ const g=await grant(f),equivalent=await grant(f);
+ const first=f.h.publish(g,'synthetic-key');await entered.promise;
+ const second=f.h.publish(equivalent,'synthetic-key');completion.resolve();
+ const results=await Promise.all([first,second]);
+ assert.deepEqual(results.map(result=>result.state),['unknown','unknown']);assert.equal(lookups,0);assert.equal(writes,1);
+ await assert.rejects(f.h.publish(equivalent,'synthetic-other-key'),/grant_already_used/);
+ assert.equal((await f.h.publish(equivalent,'synthetic-key')).state,'published');assert.equal(lookups,1);assert.equal(writes,1);
+});
+test('rejecting an operation conflict does not consume the rejected grant',async()=>{
+ const f=fixture(),first=await grant(f),different=await grant(f,{...input,body:'Different synthetic body'});
+ await f.h.publish(first,'synthetic-key');
+ await assert.rejects(f.h.publish(different,'synthetic-key'),/idempotency_conflict/);
+ assert.equal((await f.h.publish(different,'synthetic-other-key')).state,'published');assert.equal(f.counts().writes,2);
+});
 test('concurrent withdrawals reserve the operation before confirmation and share one write',async()=>{
  const confirmation=deferred<boolean>();let confirmations=0,writes=0;
  const f=fixture({confirmWithdraw:async()=>{confirmations++;return confirmation.promise;},adapter:{async publish(){return {operation_id:'synthetic-op'};},async lookup(){return null;},async withdraw(){writes++;}}});
