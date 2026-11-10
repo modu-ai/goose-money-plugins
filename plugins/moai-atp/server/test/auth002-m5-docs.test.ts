@@ -176,7 +176,7 @@ test('AC-006 E-55: no member_authentication_required: true at any depth of CAPAB
 });
 
 test('AC-006 E-55: the verbatim acceptance.md python predicate prints [] and exits 0', () => {
-  const run = spawnSync('python3', ['-I', '-c', ACCEPTANCE_PYTHON_PREDICATE], {
+  const run = spawnSync('python3', ['-X', 'utf8', '-I', '-c', ACCEPTANCE_PYTHON_PREDICATE], {
     cwd: repoRoot,
     encoding: 'utf8',
     env: { PATH: process.env.PATH ?? '/usr/bin:/bin' },
