@@ -64,6 +64,25 @@ assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,14)] + ['U01',
 assert all(x['public'] is True for x in catalog[:-1])
 assert catalog[-1]['kind'] == 'internal_qa' and catalog[-1]['public'] is False
 assert all(x['actual_data_complete'] is False for x in catalog)
+workflow_path = root/('server/runtime/contracts/report-workflows.v1.json' if args.runtime else 'server/contracts/report-workflows.v1.json')
+workflows = json.loads(workflow_path.read_text(encoding='utf-8'))
+assert workflows['contract'] == 'moai.report-workflows.v1'
+assert [r['id'] for r in workflows['reports']] == [f'R{i:02}' for i in range(1,14)]
+for report in workflows['reports']:
+    rid = report['id']
+    assert report['command'] == f'/goose report {rid}' and report['alias'] == f'/goose {rid.lower()}'
+    assert report['workflow_ref'] == f'references/reports/{rid}.md'
+    document = (root/'skills/goose'/report['workflow_ref']).read_text(encoding='utf-8')
+    assert report['command'] in document and report['skill'] in document
+    assert all(f'`{name}`' in document for name in report['provider_tools'])
+    assert all(f'`{section}`' in document for section in report['sections'])
+    if not args.runtime:
+        source = root/'skill-sources'/report['skill']/'SKILL.md'
+        assert source.is_file() and report['command'] in source.read_text(encoding='utf-8')
+    if rid in ['R04','R05','R13']:
+        assert report['provider_tools'] == []
+assert workflows['reports'][11]['scope'] == 'conditional'
+assert workflows['reports'][-1]['scope'] == 'deferred'
 route_path = root/('server/runtime/contracts/report-route-bindings.v1.json' if args.runtime else 'server/contracts/report-route-bindings.v1.json')
 if route_path.is_file():
     routes = json.loads(route_path.read_text(encoding='utf-8'))['routes']

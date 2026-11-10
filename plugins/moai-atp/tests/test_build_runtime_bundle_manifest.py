@@ -3,7 +3,9 @@
 Synthetic trees only; no credentials, no network. Run: python3 -m unittest plugins/moai-atp/tests/test_build_runtime_bundle_manifest.py
 """
 import copy
+import hashlib
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -140,6 +142,17 @@ class CatalogOverlay(unittest.TestCase):
                     'kind': 'internal_qa' if rid == 'U03' else 'report', 'required_groups': []}
                    for rid in ids]
         (skill / 'references/catalog.json').write_text(json.dumps({'entries': entries}), encoding='utf-8')
+        # Report-command packages also carry fixed workflow instructions; runtime stays synthetic.
+        workflow = 'contracts/report-workflows.v1.json'
+        runtime = root / 'server/runtime'
+        (runtime / 'contracts').mkdir()
+        contract = (HERE.parent / 'server' / workflow).read_bytes()
+        (runtime / workflow).write_bytes(contract)
+        receipt = runtime / 'runtime-manifest.json'
+        record = json.loads(receipt.read_text(encoding='utf-8'))
+        record['files'][workflow] = hashlib.sha256(contract).hexdigest()
+        receipt.write_text(json.dumps(record), encoding='utf-8')
+        shutil.copytree(HERE.parent / 'skills/goose/references/reports', skill / 'references/reports')
         bundle.build(root, output)
         from zipfile import ZipFile
         extracted = output.parent / 'extracted'
