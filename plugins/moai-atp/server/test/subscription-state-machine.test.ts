@@ -627,3 +627,20 @@ test('a provider-confirmed expired dispute is adopted instead of looping in no_d
   assert.equal(checkout.outcome, 'applied');  // the dispute trap is gone
   assert.equal(state(checkout.subscription), 'pending');
 });
+
+test('an expired-period replacement checkout also restarts on reconciliation', () => {
+  // Codex P2 :226 — without pendingTimeoutMs a pending still expires through its stored period;
+  // a confirming pending view with an advanced revision must restart the replacement checkout
+  // like the timeout case does, or it stays effectively expired.
+  const end = T0 + 30 * DAY;
+  let sub = machine.apply(machine.emptySubscription('s'), ev('p0', 'checkout.completed', { provider_revision: 1, current_period_end: end })).subscription;
+  assert.equal(state(sub), 'pending');
+  assert.equal(machine.effectiveState(sub, end + DAY), 'expired');  // period elapsed, no timeout needed
+  const routed = machine.apply(sub, ev('p1', 'checkout.completed', { occurred_at: end + DAY }));  // revision-less → view
+  assert.equal(routed.outcome, 'reconcile_required');
+  const confirmed = machine.reconcile(routed.subscription, { state: 'pending', revision: 2 }, end + DAY);
+  assert.equal(confirmed.outcome, 'applied');  // the period clearing is a recorded difference
+  assert.equal(confirmed.subscription.state_changed_at, end + DAY);  // anchor restarted
+  assert.equal(confirmed.subscription.current_period_end, null);     // expired period cleared
+  assert.equal(machine.effectiveState(confirmed.subscription, end + DAY), 'pending');
+});
