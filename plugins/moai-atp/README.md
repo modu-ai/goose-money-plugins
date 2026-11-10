@@ -82,7 +82,7 @@ Windows와 macOS만 검증 대상으로 삼으며 Linux 테스트는 진행하�
 
 ## 현재 범위
 
-- 구현: 공통 프로필 설정, 연구 워크플로우 스킬 5개, 서버 기본값(읽기 스위치 꺼짐)에서 차단되는 공급자 조회 MCP 도구 34개와 로컬 `build_report_input`·`render_report_html` 도구. 입력 조립은 이전 MCP 응답만 정규화하고, HTML 도구는 검증된 `ReportInput`을 HTML로 렌더해 5분 한도의 메모리 전용 MCP resource link로 반환합니다. 파일 쓰기와 외부 요청은 하지 않습니다. 오프라인 렌더러는 금융차트와 matrix/timeline/Pele-style SVG 블록을 지원합니다. 실제 MCP 호스트의 화면 표시·다운로드는 미검증입니다.
+- 구현: 공통 프로필 설정, 연구 워크플로우 스킬 5개, 서버 기본값(읽기 스위치 꺼짐)에서 차단되는 공급자 조회 MCP 도구 34개와 로컬 `build_report_input`·`render_report_html` 도구. 입력 조립은 이전 MCP 응답만 정규화하고, HTML 도구는 검증된 `ReportInput`을 HTML로 렌더해 5분 한도의 메모리 전용 MCP resource link로 반환합니다. 두 도구는 파일 쓰기와 외부 요청을 하지 않습니다. 다만 만들어진 보고서를 열면 브라우저가 글꼴(Pretendard·마루 부리)을 버전이 고정된 주소의 CDN(cdn.jsdelivr.net)에서 내려받습니다. 이 요청에는 보고서 내용·사용자 정보·Referer가 실리지 않고, 오프라인이거나 차단되면 이 PC의 대체 글꼴로 표시됩니다. 렌더러는 금융차트와 matrix/timeline/Pele-style SVG 블록을 지원합니다. 실제 MCP 호스트의 화면 표시·다운로드는 미검증입니다.
 - 미완: 실제 데이터 보고서 0건, 공급자 호출부터 보고서까지의 라이브 end-to-end, 조건식 자동 등록·모바일 등록·전략/백테스트 엔진, 원래 Cowork 템플릿과의 전체 정합성 및 실제 ChatGPT 호스트 설치 검증. 지침에는 R01–R14, U01/U02와 내부 U03 검수 구분이 있습니다.
 - 금융 차트는 별도 계약이며, `report-templates/`의 별도 소유자가 실제
   Cowork/Pele 보고서 자산을 담당합니다. 추가 UI·원격 호스팅은 후속 범위입니다.
