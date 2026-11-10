@@ -195,7 +195,7 @@ macOS 27.0.1 arm64 / Node 22.14.0에서 병합 main
 `host_rendering: not_observed`(32·147행), E3
 `local-credentials.ts`의 win32 저장 거부(28행)는 모두 그대로였고,
 `@modelcontextprotocol/ext-apps`·`registerApp`·`resourceUri`·
-`text/html;profile=mcp-app` 검색 일치도 0건이었습니다.
+`text/html;profile=mcp-app`의 `server/src/` 범위 검색 일치도 0건이었습니다.
 
 ### 격리와 한계
 
@@ -217,8 +217,15 @@ macOS 27.0.1 arm64 / Node 22.14.0에서 병합 main
   아래 표의 결과를 얻었습니다. 제품 동작이 아니라 측정 준비 문제였음을
   구분해 기록합니다.
 - 갱신 표식은 임시 사본의 설치 기록과 카탈로그 manifest 버전만 바꿨고
-  저장소·출시 버전은 그대로입니다. 원시 로그는 이 머신의
-  `/tmp/lane2-e7/*.log`에만 두며 Git 미추적입니다.
+  저장소·출시 버전은 그대로입니다. 원시 로그는 설치 2회·호출 차단
+  `--print`·`plugin details` 2회·`plugin validate`의 6종을 이 머신의
+  `/tmp/lane2-e7/*.log`에만 두며 Git 미추적입니다. 사전·사후
+  `plugin list`, `mcp list`, 갱신·제거 명령, 빌드(`npm ci`·
+  `npm run build`)와 `check_package.py`·`test_claude_package.py`의
+  출력 원문은 원시 로그 미보존이라 재관측할 수 없고, 갱신·제거의 결과
+  상태는 설치 캐시의 두 버전 디렉터리(`0.1.0-dev.6`·
+  `0.1.0-dev.6-localprobe.1`)·카탈로그 manifest 버전·
+  `installed_plugins.json`(비어 있음)으로 교차 확인했습니다.
 
 ### 다섯 단계의 재관측
 
@@ -272,7 +279,8 @@ CDN 글꼴 허용 범위도 호스트별로 검증해야 합니다.
 2026-11-11 현재(병합 main `9d96b93` 재확인): 위 두 선택지의 비교는
 그대로이며 채택 여부는 여전히 결정 필요입니다. 이번 재확인에서
 `@modelcontextprotocol/ext-apps`·`registerApp`·`resourceUri`·
-`text/html;profile=mcp-app` 검색 일치는 0건이었고, E2의 일반 HTML 자원
+`text/html;profile=mcp-app`의 `server/src/` 범위 검색 일치는 0건이었고,
+E2의 일반 HTML 자원
 계약(`delivery=mcp_resource_link`, `host_rendering=not_observed`)도
 `report-html-mcp.ts` 28·31·32·143·146·147행에서 그대로 확인됐습니다.
 즉 MCP Apps UI 쪽 선택지는 아직 구현·검증이 시작되지 않은 상태이고,
