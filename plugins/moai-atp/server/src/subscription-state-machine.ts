@@ -9,12 +9,12 @@
 // discipline is the caller's duty; createSubscriptionEventProcessor only serializes in-memory work
 // per subscription_id (design §5 동시 처리).
 
-import {z} from 'zod';
+import { z } from 'zod';
 
-export const SUBSCRIPTION_STATES = ['none','pending','trialing','active','past_due','canceled_pending_end','expired','refunded','disputed'] as const;
+export const SUBSCRIPTION_STATES = ['none', 'pending', 'trialing', 'active', 'past_due', 'canceled_pending_end', 'expired', 'refunded', 'disputed'] as const;
 export type SubscriptionState = (typeof SUBSCRIPTION_STATES)[number];
 
-export const EVENT_TYPES = ['checkout.completed','payment.succeeded','payment.failed','trial.ended','renewal.succeeded','renewal.failed','subscription.cancel_requested','subscription.resumed','refund.succeeded','dispute.opened','dispute.won','dispute.lost'] as const;
+export const EVENT_TYPES = ['checkout.completed', 'payment.succeeded', 'payment.failed', 'trial.ended', 'renewal.succeeded', 'renewal.failed', 'subscription.cancel_requested', 'subscription.resumed', 'refund.succeeded', 'dispute.opened', 'dispute.won', 'dispute.lost'] as const;
 export type ProviderEventType = (typeof EVENT_TYPES)[number];
 
 const eventSchema = z.object({
@@ -34,19 +34,19 @@ export type StoredSubscription = {
   subscription_id: string;
   state: SubscriptionState;
   current_period_end: number | null;          // stored provider period end; expiry is computed from this, not from late events (S3)
-  revision: number;                           // last applied provider order, else internal monotonic count
+  revision: number;                           // last applied provider order (0 while none seen); a revision-less event never advances it
   previous_state: SubscriptionState | null;   // remembered for dispute.won restore
   trial_ended: boolean;                       // trial.ended seen, awaiting the settling payment
   state_changed_at: number;
   last_event_at: number;
-  applied_event_ids: string[];                // idempotency keys (S1), bounded
-  unhandled: {event_id: string; type: string; at: number; reason: string}[];  // recorded-only events (S2, unknown combinations, undecided values), bounded
+  applied_event_ids: string[];                // idempotency keys (S1) — uncapped: design §5 keeps every processed id until persistence decides otherwise
+  unhandled: { event_id: string; type: string; at: number; reason: string }[];  // recorded-only events (S2, unknown combinations, undecided values), bounded
 };
 
 export type ApplyOutcome = 'applied' | 'duplicate_ignored' | 'stale_recorded' | 'unhandled_recorded' | 'rejected' | 'no_difference' | 'provider_stale';
-export type ApplyResult = {outcome: ApplyOutcome; reason?: string; subscription: StoredSubscription};
+export type ApplyResult = { outcome: ApplyOutcome; reason?: string; subscription: StoredSubscription };
 
-export type ProviderView = {state: SubscriptionState; current_period_end?: number | null; revision?: number};
+export type ProviderView = { state: SubscriptionState; current_period_end?: number | null; revision?: number };
 
 export type StateMachineOptions = {
   trialEndFailureTarget?: 'past_due' | 'expired';  // design table offers both (#8 decision pending) — unset stays unhandled
@@ -54,7 +54,6 @@ export type StateMachineOptions = {
   pastDueGraceMs?: number;                         // #8 B-04 grace length; unset keeps past_due until a settling event
 };
 
-const APPLIED_CAP = 1000;
 const UNHANDLED_CAP = 200;
 
 export function createSubscriptionStateMachine(options: StateMachineOptions = {}) {
@@ -71,11 +70,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     unhandled: [],
   });
 
-  const record = (sub: StoredSubscription, entry: {event_id: string; type: string; at: number; reason: string}): StoredSubscription =>
-    ({...sub, unhandled: [...sub.unhandled, entry].slice(-UNHANDLED_CAP)});
+  const record = (sub: StoredSubscription, entry: { event_id: string; type: string; at: number; reason: string }): StoredSubscription =>
+    ({ ...sub, unhandled: [...sub.unhandled, entry].slice(-UNHANDLED_CAP) });
 
   const withApplied = (sub: StoredSubscription, event_id: string): StoredSubscription =>
-    ({...sub, applied_event_ids: [...sub.applied_event_ids, event_id].slice(-APPLIED_CAP)});
+    ({ ...sub, applied_event_ids: [...sub.applied_event_ids, event_id] });
 
   function effectiveState(sub: StoredSubscription, now: number): SubscriptionState {
     // Design §5 지연: the stored period end closes paid access without waiting for an expiry event (S3).
@@ -83,10 +82,13 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       && sub.state !== 'none' && sub.state !== 'expired' && sub.state !== 'refunded') return 'expired';
     if (options.pendingTimeoutMs !== undefined && sub.state === 'pending' && sub.state_changed_at + options.pendingTimeoutMs <= now) return 'none';
     if (options.pastDueGraceMs !== undefined && sub.state === 'past_due' && sub.state_changed_at + options.pastDueGraceMs <= now) return 'expired';
+    // #8 B-04: the grace anchor above is the settling event's occurred_at (kept in state_changed_at),
+    // so this module stays deterministic in event time; whether the wall clock should anchor the
+    // grace instead is part of the undecided value itself.
     return sub.state;
   }
 
-  type Transition = {sub: StoredSubscription} | {unhandled: string};
+  type Transition = { sub: StoredSubscription } | { unhandled: string };
 
   function transition(sub: StoredSubscription, event: z.infer<typeof eventSchema>, now: number): Transition | undefined {
     // Period ends and revisions come from the event when the provider states them; nothing is invented.
@@ -96,99 +98,123 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       state,
       state_changed_at: now,
       last_event_at: now,
-      revision: event.provider_revision ?? sub.revision + 1,
+      // Design §5: the revision space belongs to the provider's order. A revision-less event advances
+      // nothing — comparing it against a provider order is undefined, and §5 routes order-less events
+      // through the reconciliation view instead (아래 reconcile).
+      revision: event.provider_revision ?? sub.revision,
       current_period_end: event.current_period_end ?? sub.current_period_end,
     });
     switch (event.type) {
-      case 'checkout.completed':
-        if (sub.state === 'none' || sub.state === 'expired') return {sub: next('pending', {trial_ended: false, previous_state: null})};
+      case 'checkout.completed': {
+        // Design §4 "none/expired -> checkout.completed -> pending" with §5 지연: elapsed states
+        // count as none/expired here — a paid state whose stored period already ended (S3) and a
+        // pending checkout past its injected timeout, so a new checkout can start from them.
+        // A stored dispute stays out: §4 exits a dispute only via dispute.won/lost, and a checkout
+        // would erase the restoration state — combinations outside the table keep the state and are
+        // recorded verbatim (§4, S14 guard).
+        const effective = effectiveState(sub, now);
+        if (sub.state !== 'disputed' && (effective === 'none' || effective === 'expired')) return { sub: next('pending', { trial_ended: false, previous_state: null }) };
         return undefined;
+      }
       case 'payment.succeeded':
-        if (sub.state === 'pending') return {sub: next(event.trial === true ? 'trialing' : 'active', {trial_ended: false, previous_state: null})};
-        if (sub.state === 'trialing' && sub.trial_ended) return {sub: next('active', {trial_ended: false})};
-        if (sub.state === 'past_due') return {sub: next('active')};
+        if (sub.state === 'pending') return { sub: next(event.trial === true ? 'trialing' : 'active', { trial_ended: false, previous_state: null }) };
+        if (sub.state === 'trialing' && sub.trial_ended) return { sub: next('active', { trial_ended: false }) };
+        if (sub.state === 'past_due') return { sub: next('active') };
         return undefined;
       case 'payment.failed':
-        if (sub.state === 'pending') return {sub: next('none')};
+        if (sub.state === 'pending') return { sub: next('none') };
         if (sub.state === 'trialing' && sub.trial_ended) {
-          if (options.trialEndFailureTarget === undefined) return {unhandled: 'trial_end_failure_target_unconfigured'};
-          return {sub: next(options.trialEndFailureTarget, {trial_ended: false})};
+          if (options.trialEndFailureTarget === undefined) return { unhandled: 'trial_end_failure_target_unconfigured' };
+          return { sub: next(options.trialEndFailureTarget, { trial_ended: false }) };
         }
         return undefined;
       case 'trial.ended':
-        if (sub.state === 'trialing') return {sub: next('trialing', {trial_ended: true})};
+        if (sub.state === 'trialing') return { sub: next('trialing', { trial_ended: true }) };
         return undefined;
       case 'renewal.succeeded':
-        if (sub.state === 'active' || sub.state === 'past_due') return {sub: next('active')};
+        if (sub.state === 'active' || sub.state === 'past_due') return { sub: next('active') };
         return undefined;
       case 'renewal.failed':
-        if (sub.state === 'active') return {sub: next('past_due')};
+        if (sub.state === 'active') return { sub: next('past_due') };
         return undefined;
       case 'subscription.cancel_requested':
-        if (sub.state === 'active' || sub.state === 'trialing') return {sub: next('canceled_pending_end')};
+        if (sub.state === 'active' || sub.state === 'trialing') return { sub: next('canceled_pending_end') };
         return undefined;
       case 'subscription.resumed':
-        if (sub.state === 'canceled_pending_end') return {sub: next('active')};
+        if (sub.state === 'canceled_pending_end') return { sub: next('active') };
         return undefined;
       case 'refund.succeeded':
-        if (event.refund_scope !== 'full') return {unhandled: 'refund_scope_unsupported'};
-        if (sub.state === 'active' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return {sub: next('refunded', {trial_ended: false, previous_state: null})};
+        if (event.refund_scope !== 'full') return { unhandled: 'refund_scope_unsupported' };
+        if (sub.state === 'active' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('refunded', { trial_ended: false, previous_state: null }) };
         return undefined;
       case 'dispute.opened':  // design table "active 등": paid-capable states enter dispute
-        if (sub.state === 'active' || sub.state === 'trialing' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return {sub: next('disputed', {previous_state: sub.state})};
+        if (sub.state === 'active' || sub.state === 'trialing' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('disputed', { previous_state: sub.state }) };
         return undefined;
       case 'dispute.won':
-        if (sub.state === 'disputed' && sub.previous_state !== null) return {sub: next(sub.previous_state, {previous_state: null})};
+        if (sub.state === 'disputed' && sub.previous_state !== null) return { sub: next(sub.previous_state, { previous_state: null }) };
         return undefined;
       case 'dispute.lost':
-        if (sub.state === 'disputed') return {sub: next('refunded', {trial_ended: false, previous_state: null})};
+        if (sub.state === 'disputed') return { sub: next('refunded', { trial_ended: false, previous_state: null }) };
         return undefined;
     }
   }
 
   function apply(current: StoredSubscription, input: unknown): ApplyResult {
     const parsed = eventSchema.safeParse(input);
-    if (!parsed.success) return {outcome: 'rejected', reason: 'invalid_event', subscription: current};
+    if (!parsed.success) return { outcome: 'rejected', reason: 'invalid_event', subscription: current };
     const event = parsed.data;
     // S1: a seen event id is ignored (the 200-OK replay answer is the caller's transport concern).
-    if (current.applied_event_ids.includes(event.event_id)) return {outcome: 'duplicate_ignored', subscription: current};
+    if (current.applied_event_ids.includes(event.event_id)) return { outcome: 'duplicate_ignored', subscription: current };
     if (event.provider_revision !== undefined && current.revision > event.provider_revision) {
       // S2: an older event never reverts state; it is recorded once and marked seen.
-      return {outcome: 'stale_recorded', subscription: withApplied(record(current, {event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'stale_event_revision'}), event.event_id)};
+      return { outcome: 'stale_recorded', subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'stale_event_revision' }), event.event_id) };
     }
     const moved = transition(current, event, event.occurred_at);
     if (moved === undefined) {
       // S14 guard: table combinations never invented; everything outside the table is recorded verbatim.
-      return {outcome: 'unhandled_recorded', subscription: withApplied(record(current, {event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'unhandled_combination'}), event.event_id)};
+      return { outcome: 'unhandled_recorded', subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'unhandled_combination' }), event.event_id) };
     }
     if ('unhandled' in moved) {
-      return {outcome: 'unhandled_recorded', reason: moved.unhandled, subscription: withApplied(record(current, {event_id: event.event_id, type: event.type, at: event.occurred_at, reason: moved.unhandled}), event.event_id)};
+      return { outcome: 'unhandled_recorded', reason: moved.unhandled, subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: moved.unhandled }), event.event_id) };
     }
-    return {outcome: 'applied', subscription: withApplied(moved.sub, event.event_id)};
+    return { outcome: 'applied', subscription: withApplied(moved.sub, event.event_id) };
   }
 
   function reconcile(current: StoredSubscription, provider: ProviderView, now: number): ApplyResult {
     // Design §5 유실: the reconciliation schedule is undecided (B-07) — this is the pure step only.
     if (provider.revision !== undefined && provider.revision < current.revision) {
-      return {outcome: 'provider_stale', subscription: record(current, {event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_provider_stale'})};
+      return { outcome: 'provider_stale', subscription: record(current, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_provider_stale' }) };
     }
     const local = effectiveState(current, now);
     const periodSame = provider.current_period_end === undefined || provider.current_period_end === current.current_period_end;
-    if (local === provider.state && periodSame) return {outcome: 'no_difference', subscription: current};
+    if (local === provider.state && periodSame) {
+      // §5 순서 역전: a newer provider revision is verified knowledge even when nothing visible
+      // differs; keep it so later stale events stay rejected (a revision-5 event must not revert
+      // a provider-verified revision-10 snapshot).
+      if (provider.revision !== undefined && provider.revision > current.revision) {
+        return { outcome: 'no_difference', subscription: { ...current, revision: provider.revision, last_event_at: now } };
+      }
+      return { outcome: 'no_difference', subscription: current };
+    }
+    // §4 dispute rows: dispute.won restores the pre-dispute state, so reconciliation keeps that
+    // restoration state while disputed and captures the prior state when it adopts a dispute.
+    const previous_state: SubscriptionState | null = provider.state === 'disputed'
+      ? (current.state === 'disputed' ? current.previous_state : current.state)
+      : null;
     const adopted: StoredSubscription = {
       ...current,
       state: provider.state,
       current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
-      revision: provider.revision ?? current.revision + 1,
-      previous_state: null,
+      revision: provider.revision ?? current.revision,
+      previous_state,
       trial_ended: false,
       state_changed_at: now,
       last_event_at: now,
     };
-    return {outcome: 'applied', reason: 'reconcile_adopted_provider', subscription: record(adopted, {event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_adopted_provider'})};
+    return { outcome: 'applied', reason: 'reconcile_adopted_provider', subscription: record(adopted, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_adopted_provider' }) };
   }
 
-  return {emptySubscription, apply, effectiveState, reconcile};
+  return { emptySubscription, apply, effectiveState, reconcile };
 }
 
 export function createSubscriptionEventProcessor(options: StateMachineOptions & {
