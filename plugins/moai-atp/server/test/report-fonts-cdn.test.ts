@@ -10,6 +10,8 @@ import { buildReportInput, renderReportInputHtml } from '../src/report-pipeline.
 
 const PRETENDARD = 'https://cdn.jsdelivr.net/npm/pretendard@1.3.9/';
 const MARUBURI = 'https://cdn.jsdelivr.net/npm/@kfonts/maruburi@0.1.0/';
+const GOWUN = 'https://cdn.jsdelivr.net/npm/@fontsource/gowun-batang@5.3.0/';
+const PINNED = [PRETENDARD, MARUBURI, GOWUN];
 const ossDir = fileURLToPath(new URL('../../../', import.meta.url));
 
 const wrap = (structuredContent: unknown) => ({ structuredContent, content: [{ type: 'text', text: JSON.stringify(structuredContent) }] });
@@ -25,10 +27,11 @@ const first = (): string => html('000660', '검토용 종목', '2026-10-23T04:00
 const csp = (page: string): string => /<meta http-equiv="Content-Security-Policy" content="([^"]+)">/.exec(page)?.[1] ?? '';
 const fontUrls = (page: string): string[] => [...page.matchAll(/url\((https?:[^)]+)\)/g)].map((match) => match[1]!);
 
-test('D6: fonts come only from the two version-pinned CDN paths (Pretendard dynamic subset + MaruBuri 400/700)', () => {
+test('D6: fonts come only from the three version-pinned CDN paths (Pretendard, MaruBuri 400/700, Gowun Batang 400/700)', () => {
   const urls = fontUrls(first());
-  assert.equal(urls.length, 94, '92 Pretendard subset files and 2 MaruBuri weights');
-  assert.deepEqual(urls.filter((url) => !url.startsWith(PRETENDARD) && !url.startsWith(MARUBURI)), [], 'no other external url()');
+  // The report CSS uses exactly these three web fonts (body/numbers, paragraphs, headings via --serif).
+  assert.deepEqual(PINNED.map((path) => urls.filter((url) => url.startsWith(path)).length), [92, 2, 190]);
+  assert.equal(urls.length, 284, 'no other external url()');
   assert.ok(urls.every((url) => url.endsWith('.woff2') && !url.includes('?') && !url.includes('#')), 'plain font files, no query or fragment');
   assert.ok(urls.includes(`${MARUBURI}MaruBuri-Regular.woff2`) && urls.includes(`${MARUBURI}MaruBuri-Bold.woff2`));
 });
@@ -38,11 +41,18 @@ test('D6: font URLs carry nothing about the report — two different reports req
   assert.deepEqual(fontUrls(other), fontUrls(first()));
 });
 
-test('D6: CSP opens font-src to the two pinned CDN paths only; every other directive stays closed', () => {
+test('D6: CSP opens font-src to the three pinned CDN paths only; every other directive stays closed', () => {
   assert.equal(
     csp(first()),
-    `default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; font-src ${PRETENDARD} ${MARUBURI}; object-src 'none'; base-uri 'none'; form-action 'none'`,
+    `default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; font-src ${PINNED.join(' ')}; object-src 'none'; base-uri 'none'; form-action 'none'`,
   );
+});
+
+test('D6: every web font family named in the report CSS has a CDN @font-face', () => {
+  const css = /<style>([\s\S]*?)<\/style>/.exec(first())?.[1] ?? '';
+  const declared = new Set([...css.matchAll(/@font-face\{font-family:'([^']+)'/g)].map((match) => match[1]));
+  assert.deepEqual([...declared].sort(), ['Gowun Batang', 'MaruBuri', 'Pretendard']);
+  for (const family of ['Gowun Batang', 'MaruBuri', 'Pretendard']) assert.ok(css.replace(/@font-face\{[^}]*\}/g, '').includes(family), `${family} is used`);
 });
 
 test('D6: the page sends no Referer with font requests', () => {

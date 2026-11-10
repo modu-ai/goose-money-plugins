@@ -11,9 +11,14 @@ const ORIGINAL_TEMPLATE_CSS = readFileSync(resolve(ASSET_DIR, 'original-report-l
 const STOCK_SAMPLE_CSS=readFileSync(resolve(ASSET_DIR,'stock-sample-report.css'),'utf8');
 const STOCK_SAMPLE_LOGO='data:image/png;base64,'+readFileSync(resolve(ASSET_DIR,'stock-sample-logo.png')).toString('base64');
 const THEME = readFileSync(resolve(ASSET_DIR, 'moai-report-theme.css'), 'utf8');
-// #52 D6 (user decision 2026-11-10): web fonts load from these two version-pinned CDN paths when a report is opened.
+// #52 D6 (user decision 2026-11-10): web fonts load from these version-pinned CDN paths when a report is opened —
+// Pretendard (sans), MaruBuri (paragraph serif) and Gowun Batang (--serif headings).
 // The URLs are fixed (no report or reader data), CSP font-src names only these paths, and the page sends no Referer.
-const FONT_CDN_PATHS = ['https://cdn.jsdelivr.net/npm/pretendard@1.3.9/', 'https://cdn.jsdelivr.net/npm/@kfonts/maruburi@0.1.0/'] as const;
+const FONT_CDN_PATHS = [
+  'https://cdn.jsdelivr.net/npm/pretendard@1.3.9/',
+  'https://cdn.jsdelivr.net/npm/@kfonts/maruburi@0.1.0/',
+  'https://cdn.jsdelivr.net/npm/@fontsource/gowun-batang@5.3.0/',
+] as const;
 const FONT_CSS = readFileSync(resolve(ASSET_DIR, 'report-fonts-cdn.css'), 'utf8');
 if ([...FONT_CSS.matchAll(/url\(([^)]+)\)/g)].some((match) => !FONT_CDN_PATHS.some((path) => match[1]!.startsWith(path)))) throw new Error('unpinned_font_url');
 const PELE_FLOW = readFileSync(resolve(ASSET_DIR, 'data-pipeline-pele.svg'), 'utf8');
