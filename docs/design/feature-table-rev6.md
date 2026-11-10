@@ -73,3 +73,18 @@ Refs #4. 2026-11-10 설계 감사에서 2차 출처로 만든 표를 기능 정�
 
 - 스냅샷이 실제 페이지 최신판인지(sequence undefined).
 - 시험 실행 결과.
+
+## 이후 변경 (main `fc3b16f`, PR #32 병합 — 위 표는 `8711890` 측정 그대로 둠)
+
+`git show fc3b16f:plugins/moai-atp/server/src/report-pipeline.ts`와 `references/catalog.json`으로 확인한 범위만 적습니다.
+
+| 항목 | 8711890 | fc3b16f |
+|---|---|---|
+| `ACTIVE_REPORT_ROUTE_IDS` | R12·R13·R14 포함 | R13·R14 제외 (R01–R03, R05–R12, U01) |
+| catalog R12 / R13 | 공개, 상태 표기 없음 | `availability: conditional` / `release_hold` |
+| catalog R14 | 공개 항목 | 항목 제거 |
+| U02 / U03 | — | 보고서 경로 없는 카탈로그 정의로 명시(주석) |
+
+따라서 F27·F17(R14) 행의 "활성 경로" 불일치는 fc3b16f에서 해소됐고, F26(R12)은 조건부로 바뀌었습니다. `backtest` 모드 제거는 #40에서 다룹니다. 그 밖의 행은 fc3b16f에서 다시 측정하지 않았습니다.
+
+사용자 결정(2026-11-10, #5·#9 이슈 댓글)으로 무료도 로그인 필수(F03), 계좌 자료는 KIS 보유 잔고 읽기 전용 조회 + 수동 입력(F14)으로 정해졌습니다. 설계는 `docs/design/product-tiers.md`, `identity-auth-contract.md`, `privacy-retention.md`에 있습니다.
