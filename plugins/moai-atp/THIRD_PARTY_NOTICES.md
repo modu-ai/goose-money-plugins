@@ -48,3 +48,20 @@ server/assets/report-runtime/content-type-1.0.5-LICENSE.txt.
 Source: https://github.com/jshttp/content-type/blob/v1.0.5/LICENSE
 This supplements the preserved bundled header; it does not resolve the inherited
 report-reference ownership exception above.
+
+## 보고서 CDN 글꼴
+
+보고서를 열 때 글꼴 파일만 cdn.jsdelivr.net에서 내려받습니다. 아래 버전의
+파일을 그대로 참조하며 글꼴 바이너리는 이 저장소에 넣지 않습니다.
+
+| 글꼴 | 고정 패키지 | 사용 굵기 | 라이선스 원문 |
+|---|---|---|---|
+| Pretendard | `pretendard@1.3.9` | 가변 45–920 | [배포본 LICENSE.txt](https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/LICENSE.txt) |
+| 마루 부리 | `@kfonts/maruburi@0.1.0` | 400, 700 | [네이버 저작권·OFL 전문](https://help.naver.com/service/30016/contents/18088?osType=PC&lang=ko) |
+| 고운바탕 | `@fontsource/gowun-batang@5.3.0` | 400, 700 | [배포본 LICENSE](https://cdn.jsdelivr.net/npm/@fontsource/gowun-batang@5.3.0/LICENSE) |
+
+세 글꼴 모두 SIL Open Font License 1.1입니다. Pretendard 저작권자는 Kil
+Hyung-jin, 마루 부리는 NAVER Corporation, 고운바탕은 The Gowun Batang Project
+Authors입니다. 네이버 원문은 마루 부리에도 같은 라이선스가 적용됨을 명시합니다.
+`@kfonts/maruburi` 패키지에는 라이선스 전문 파일이 없어 원저작권자 문서를 연결합니다.
+이 표는 글꼴에 대한 기록이며 위 보고서 참조 자료의 권리 미확인 상태를 바꾸지 않습니다.
