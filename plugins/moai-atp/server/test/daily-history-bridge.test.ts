@@ -12,7 +12,7 @@ const run = (s: unknown, b: unknown, v: TrustedDailyHistoryVerifier | undefined 
 function report(h: any, options: any = { sma_windows: [1, 2], volume_direction: { rule: 'neutral', evidence_ref: 'synthetic:neutral', disclosure: 'Synthetic neutral quantities only.' }, aggregation_windows: [] }) {
   const payload = { contract: 'canonical-history/1.0', cutoff: h.cutoff, request: h.request, histories: { subject: h.history }, options };
   const code = `import json,sys\nfrom jsonschema import Draft202012Validator\nsys.path.insert(0,'contracts/report-history-reference')\nfrom history_semantics import calculate_report\nfrom numeric_core import digest\nx=json.load(sys.stdin)\nDraft202012Validator(json.load(open('contracts/report-history-reference/canonical-history.schema.json'))).validate(x)\nfor p in x['histories']['subject']['points']: assert p['context_sha256']==digest(x['histories']['subject']['context'])\nr=calculate_report(x)\nassert r['actual_source_authenticated'] is False and r['verified_live_provider_bindings']==0 and r['actual_provider_calls']==0\nprint(json.dumps(r))`;
-  const r = spawnSync('python3', ['-B', '-c', code], { cwd: ROOT, input: JSON.stringify(payload), encoding: 'utf8', maxBuffer: 3000000 });
+  const r = spawnSync('python3', ['-X', 'utf8', '-B', '-c', code], { cwd: ROOT, input: JSON.stringify(payload), encoding: 'utf8', maxBuffer: 3000000 });
   assert.equal(r.status, 0, r.stderr); return JSON.parse(r.stdout);
 }
 test('pin: exact authoritative schema, runtime and numeric core bytes unchanged', () => {
@@ -204,7 +204,7 @@ test('fresh verification cannot bypass expired rights; equality remains inclusiv
   await assert.rejects(reverify(h, verifier, () => '2026-10-23T00:00:00.000000001Z'), { code: 'rights_outside_window' });
 });
 test('timezone inventory names work in pinned Python and Node runtime', () => {
-  const r = spawnSync('python3', ['-B', '-c', `import json,zoneinfo\nfor name in json.load(open('contracts/report-history-reference/compatible-timezones.json'))['timezones']: zoneinfo.ZoneInfo(name)`], { cwd: ROOT, encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr);
+  const r = spawnSync('python3', ['-X', 'utf8', '-B', '-c', `import json,zoneinfo\nfor name in json.load(open('contracts/report-history-reference/compatible-timezones.json'))['timezones']: zoneinfo.ZoneInfo(name)`], { cwd: ROOT, encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr);
 });
 test('inventory immutable; no module import adds a provider registration or network fallback', () => {
   assert.ok(Object.isFrozen(DAILY_HISTORY_BRIDGE_AXES)); assert.equal(DAILY_HISTORY_BRIDGE_AXES.length, 12);
@@ -273,5 +273,5 @@ test('shipped synthetic artifact hashes, raw-byte/DTO linkage and fresh persiste
   assert.deepEqual(report(fresh, input.options), JSON.parse(readFileSync(dir + 'SYNTHETIC-report-result.json', 'utf8')));
 });
 test('exported schema artifacts validate only structure and explicitly disclaim verification authority', () => {
-  const r = spawnSync('python3', ['-B', '-c', `import json\nfrom jsonschema import Draft202012Validator\nfor name,fixture in [('binding','SYNTHETIC-binding.json'),('handoff-envelope','SYNTHETIC-handoff.json')]:\n s=json.load(open('contracts/report-history-reference/'+name+'.schema.json'));assert 'STRUCTURAL PROFILE ONLY' in s['description'];Draft202012Validator(s).validate(json.load(open('fixtures/history-bridge/'+fixture)))`], { cwd: ROOT, encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr);
+  const r = spawnSync('python3', ['-X', 'utf8', '-B', '-c', `import json\nfrom jsonschema import Draft202012Validator\nfor name,fixture in [('binding','SYNTHETIC-binding.json'),('handoff-envelope','SYNTHETIC-handoff.json')]:\n s=json.load(open('contracts/report-history-reference/'+name+'.schema.json'));assert 'STRUCTURAL PROFILE ONLY' in s['description'];Draft202012Validator(s).validate(json.load(open('fixtures/history-bridge/'+fixture)))`], { cwd: ROOT, encoding: 'utf8' }); assert.equal(r.status, 0, r.stderr);
 });
