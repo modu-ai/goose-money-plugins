@@ -237,6 +237,10 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     const previous_state_changed_at: number | null = provider.state === 'disputed'
       ? (current.state === 'disputed' ? current.previous_state_changed_at : current.state_changed_at)
       : null;
+    // Restoring the pre-dispute state through the reconciliation view is not a new state change:
+    // carry the saved anchor back like dispute.won does (P2 :248) so an exhausted past_due grace
+    // does not restart without a successful payment.
+    const restoringDisputeState = current.state === 'disputed' && provider.state === current.previous_state && current.previous_state_changed_at !== null;
     const adopted: StoredSubscription = {
       ...current,
       state: provider.state,
@@ -245,7 +249,7 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       previous_state,
       previous_state_changed_at,
       trial_ended: false,
-      state_changed_at: now,
+      state_changed_at: restoringDisputeState ? (current.previous_state_changed_at ?? now) : now,
       last_event_at: now,
     };
     return { outcome: 'applied', reason: 'reconcile_adopted_provider', subscription: record(adopted, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_adopted_provider' }) };

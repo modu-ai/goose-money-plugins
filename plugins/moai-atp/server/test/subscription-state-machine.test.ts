@@ -417,3 +417,21 @@ test('dispute.won restore keeps the original grace anchor so an exhausted past_d
   assert.equal(won.subscription.state_changed_at, T0 + DAY);  // original anchor restored, not the won time
   assert.equal(grace.effectiveState(won.subscription, T0 + DAY + 7 * DAY), 'expired');  // no grace restart
 });
+
+test('reconciliation restoring the pre-dispute state carries back the original grace anchor', () => {
+  // Codex P2 :248 — a dispute resolved through the reconciliation view (e.g. a revision-less
+  // resolution routed here) must restore the saved anchor like dispute.won does, or the
+  // exhausted past_due grace restarts without a successful payment.
+  const grace = createSubscriptionStateMachine({ pastDueGraceMs: 5 * DAY });
+  let sub = grace.apply(grace.emptySubscription('s'), ev('r0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = grace.apply(sub, ev('r1', 'payment.succeeded', { provider_revision: 2, current_period_end: T0 + 30 * DAY })).subscription;
+  sub = grace.apply(sub, ev('r2', 'renewal.failed', { provider_revision: 3, occurred_at: T0 + DAY })).subscription;
+  const opened = grace.apply(sub, ev('r3', 'dispute.opened', { provider_revision: 4, occurred_at: T0 + DAY + 6 * DAY }));
+  assert.equal(state(opened.subscription), 'disputed');
+  assert.equal(grace.effectiveState(opened.subscription, T0 + DAY + 6 * DAY), 'expired');
+  const restored = grace.reconcile(opened.subscription, { state: 'past_due', revision: 5 }, T0 + DAY + 7 * DAY);
+  assert.equal(restored.outcome, 'applied');
+  assert.equal(state(restored.subscription), 'past_due');
+  assert.equal(restored.subscription.state_changed_at, T0 + DAY);  // saved anchor, not the reconcile time
+  assert.equal(grace.effectiveState(restored.subscription, T0 + DAY + 7 * DAY), 'expired');  // no grace restart
+});
