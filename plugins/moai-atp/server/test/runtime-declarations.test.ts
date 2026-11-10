@@ -97,7 +97,7 @@ const firstMatch = (text: string | null, pattern: RegExp): string | null => (tex
 
 function runProbe(root: string): Record<string, string | null> {
   const python = process.platform === "win32" ? "python" : "python3";
-  const run = spawnSync(python, ["-I", join(root, "tests", "runtime_declaration_probe.py"), root], { encoding: "utf8", env: { PATH: process.env.PATH ?? "" }, timeout: 60_000 });
+  const run = spawnSync(python, ["-X", "utf8", "-I", join(root, "tests", "runtime_declaration_probe.py"), root], { encoding: "utf8", env: { PATH: process.env.PATH ?? "" }, timeout: 60_000 });
   try { return JSON.parse(run.stdout.trim().split("\n").pop() ?? "{}") as Record<string, string | null>; } catch { return {}; }
 }
 
