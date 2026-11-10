@@ -295,7 +295,7 @@ async function reportProtocolConnection(server:McpServer) {
   return {initialize,rpc,close:async()=>{for(const item of waiting.values()){clearTimeout(item.timer);item.reject(new Error('closed'));}await server.close();await client.close();}};
 }
 
-test('MCP assembles fourteen active routes and explicitly holds R04 without deleting its template',async()=>{
+test('MCP assembles the eleven non-R01 active routes and refuses R04/R12-without-ETF-evidence/R13/R14 without deleting their templates',async()=>{
   const session=await reportProtocolConnection(createStockMcpServer());
   try{
     assert.ok(session.initialize.result.protocolVersion);
@@ -308,6 +308,9 @@ test('MCP assembles fourteen active routes and explicitly holds R04 without dele
       const calls=report_id==='R01'?[{tool_name:'get_market_snapshot',result:result(syntheticQuote)}]:[fixture!.call];
       const response=await session.rpc('tools/call',{name:'build_report_input',arguments:{report_id,subject,cutoff:received,display_timezone:'Asia/Seoul',calls}});
       if(report_id==='R04'){assert.equal(response.result?.isError,true);continue;}
+      // Issue #2 (revision 6): the route fixture for R12 carries no ETF structure call, R13 is held, R14 is out of scope.
+      const refusal:Record<string,string>={R12:'report_not_applicable',R13:'report_release_hold',R14:'report_out_of_scope'};
+      if(refusal[report_id]){assert.equal(response.result?.isError,true,report_id);assert.match(String(response.result?.content?.[0]?.text),new RegExp('error_code='+refusal[report_id]),report_id);continue;}
       assert.equal(response.result?.isError,undefined,report_id+' MCP call');
       const input=ReportInputSchema.parse(response.result.structuredContent);
       assert.equal(input.report_id,report_id);assert.equal(input.mode,'synthetic');

@@ -239,7 +239,11 @@ export function planGooseRequest(value:unknown){
   if(/보고서|리포트|HTML/i.test(text))modes.add('report');
   if(/(?:종목|기업|수급|실적|공시|재무|ETF|선물).{0,12}(?:분석|비교|점검)|분석.{0,10}(?:종목|기업|ETF|선물)/i.test(text))modes.add('analyze');
  }
+ // Revision 6: futures (R13) is held for the initial release. An explicit exclusion such as '선물은 빼고' is not a futures request.
+ const futuresText=text.replace(/선물\s*(?:은|는|을|를)?\s*(?:빼고|말고|제외하고|없이)/g,'');
+ const reportId=modes.has('report')||modes.has('analyze')?(/ETF/i.test(text)?'R12':/선물/.test(futuresText)?'R13':'R01'):null;
  const unsupported:string[]=[];
+ if(reportId==='R13')unsupported.push('report_release_hold');
  if(/게시|댓글|자료실.{0,8}(?:올려|업로드)/.test(text))unsupported.push('community_service_not_configured');
  if(/(?:조건식|조건).{0,10}(?:자동.{0,3}등록|저장해)/.test(text))unsupported.push('automatic_condition_registration_unavailable');
  if(/전략.{0,6}실행해/.test(text))unsupported.push('strategy_execution_engine_unavailable');
@@ -256,5 +260,5 @@ export function planGooseRequest(value:unknown){
  const clarification=status==='clarification_required'?'어떤 대상에 대해 어떤 도움을 원하시나요?'
   :tradeForms.length||atsForms.length?(fundMovementOnly?GOOSE_SENTENCE_F_T:GOOSE_SENTENCE_F)
   :accountRequest?GOOSE_SENTENCE_ACCOUNT:performanceRequest?GOOSE_SENTENCE_PERFORMANCE:null;
- return {contract:'moai.goose.workflow-plan.v1' as const,status,explicit_mode:explicit??null,migrated_legacy_command:migrated,steps,report_id:modes.has('report')||modes.has('analyze')?(/ETF/i.test(text)?'R12':/선물/.test(text)?'R13':'R01'):null,blocked_actions:blockedActions,unsupported_actions:unsupported,clarification,execution_authority:'plan_only' as const,host_registration:'unverified' as const,provider_dispatches:0,raw_request_retained:false};
+ return {contract:'moai.goose.workflow-plan.v1' as const,status,explicit_mode:explicit??null,migrated_legacy_command:migrated,steps,report_id:reportId,blocked_actions:blockedActions,unsupported_actions:unsupported,clarification,execution_authority:'plan_only' as const,host_registration:'unverified' as const,provider_dispatches:0,raw_request_retained:false};
 }
