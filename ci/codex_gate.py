@@ -174,13 +174,25 @@ def status_for(fail):
     return ('pending' if waiting else 'failure'), description
 
 
+class HeadMoved(Exception):
+    """The PR head changed between reads; the judged head must not receive success."""
+
+
 def run_one(client, number, thumbs_retries=0, sleep=time.sleep):
-    """Judge one PR and publish its status. Any error ends with `failure` on the head, never success."""
-    pr = client.pull_request(number)
-    head = pr['headRefOid']
-    # Mark the head pending first, so a previous success cannot survive a failed judgement.
+    """Judge one PR and publish its status. Any error after the head is known ends with `failure`.
+
+    Limit: the head comes from a minimal REST lookup. If that lookup (or the status write) fails,
+    no status can be written, so an earlier success on that head cannot be cleared here; the
+    exception propagates and the next event or scheduled run judges again.
+    """
+    head = client.head_sha(number)
+    # Mark the head pending before any judging read, so a previous success cannot survive a failure.
     client.post_status(head, 'pending', 'judging Codex review evidence for this head')
+    kind = None
     try:
+        pr = client.pull_request(number)
+        if pr['headRefOid'] != head:
+            raise HeadMoved()
         for attempt in range(thumbs_retries + 1):
             if pr.get('mergeStateStatus') == 'UNKNOWN':
                 # GitHub computes the merge state lazily; the first read is often UNKNOWN. Re-read once.
@@ -196,8 +208,11 @@ def run_one(client, number, thumbs_retries=0, sleep=time.sleep):
             pr = client.pull_request(number)
         state, description = status_for(fail)
         # Re-read the head right before writing so a success never lands on a head we did not judge.
-        if state == 'success' and client.pull_request(number)['headRefOid'] != head:
-            state, description, fail = 'pending', 'head_changed_during_check', ['head_changed_during_check']
+        if state == 'success' and client.head_sha(number) != head:
+            raise HeadMoved()
+    except HeadMoved:
+        kind, fail = None, ['head_changed_during_check']
+        state, description = 'pending', 'head_changed_during_check'
     except Exception as error:  # noqa: BLE001 - any error must end in a non-success status
         kind, fail = None, ['gate_error:' + type(error).__name__]
         state, description = 'failure', 'gate_error:' + type(error).__name__
@@ -228,6 +243,10 @@ class GitHubClient:
             'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'codex-gate'})
         with urllib.request.urlopen(request, timeout=30) as response:
             return json.loads(response.read().decode('utf-8') or 'null')
+
+    def head_sha(self, number):
+        """Minimal REST read of the PR head, used to mark the head pending before judging."""
+        return self._call('GET', '%s/repos/%s/pulls/%d' % (self.api, self.repo, number))['head']['sha']
 
     def pull_request(self, number):
         owner, name = self.repo.split('/', 1)
