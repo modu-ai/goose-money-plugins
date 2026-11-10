@@ -71,6 +71,11 @@ def build(root, output):
  for name in ['CAPABILITIES.json','plugin.json','README.md','THIRD_PARTY_NOTICES.md','LICENSE','COPYING','COPYING.LESSER']:add(root/name)
  mcp=json.loads((root/'mcp.json').read_text());mcp['mcpServers']['moai-kis-readonly']['args']=['${PLUGIN_ROOT}/server/runtime/src/main.mjs']
  add_bytes('mcp.json',(json.dumps(mcp,indent=2)+'\n').encode())
+ claude_path=root/'.claude-plugin/plugin.json'
+ if claude_path.is_symlink() or not claude_path.resolve().is_relative_to(root):raise ValueError('unsafe_bundle_source')
+ if claude_path.is_file():
+  claude=json.loads(claude_path.read_text());claude['mcpServers']['moai-kis-readonly']['args']=['${CLAUDE_PLUGIN_ROOT}/server/runtime/src/main.mjs']
+  add_bytes('.claude-plugin/plugin.json',(json.dumps(claude,ensure_ascii=False,indent=2)+'\n').encode())
  package=json.loads((root/'package.json').read_text());package.pop('devEngines',None);package['scripts']={'setup':'node server/runtime/src/cli.mjs setup','start':'node server/runtime/src/main.mjs'}
  add_bytes('package.json',(json.dumps(package,ensure_ascii=False,indent=2)+'\n').encode())
  server=json.loads((root/'server/package.json').read_text());server.pop('devDependencies',None);server.pop('dependencies',None);server.pop('devEngines',None);server['scripts']={'start':'node runtime/src/main.mjs','setup':'node runtime/src/cli.mjs setup'};server['bin']={'moai-atp':'runtime/src/cli.mjs'}

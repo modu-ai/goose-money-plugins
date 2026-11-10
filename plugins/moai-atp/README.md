@@ -30,6 +30,34 @@ npm run check:package
 node server/dist/src/cli.js setup
 ```
 
+### Claude Code 로컬 패키지
+
+Claude Code용 카탈로그는 저장소 루트의 `.claude-plugin/marketplace.json`,
+플러그인 설명은 `plugins/moai-atp/.claude-plugin/plugin.json`입니다.
+기존 OpenAI용 `plugin.json`·`mcp.json`과 별도로 두며 서버·공개 Goose
+스킬은 공유합니다. Claude의 서버 경로 변수는 `${CLAUDE_PLUGIN_ROOT}`입니다.
+위 소스 빌드를 마친 저장소를 로컬 설치 원본으로 지정할 수 있습니다.
+
+```sh
+claude plugin validate /path/to/moai-atp --json
+claude plugin install moai-atp --marketplace /path/to/moai-atp --scope user
+```
+
+이 명령은 지정한 Claude 프로필의 로컬 설치 설정을 변경합니다. 외부
+마켓에 게시하거나 등록하는 명령이 아닙니다. 실사용 프로필을 보존하려면
+별도 임시 `CLAUDE_CONFIG_DIR`에서만 실행해야 하며, 이 변수만으로 키체인이나
+파일·네트워크 접근까지 격리됐다고 보지 않습니다.
+런타임 ZIP에도 Claude manifest가 포함되고 서버 경로는 MJS 진입점으로
+바뀝니다. ZIP을 펼친 디렉터리를 로컬 카탈로그의 `source` 위치에 두어야 하며,
+Node 실행 파일은 별도로 필요합니다. 소스 ZIP에는 빌드 결과가 없습니다.
+출하 읽기 스위치는 기존 설정과 같으므로 공급자 도구 호출 시의 키·외부
+요청 조건도 같습니다. 검증용 합성 호출이 이를 비활성화하는 설정은 아닙니다.
+
+호스트별 실제 실행 결과와 인증·표시의 남은 조건은
+[호스트·OS 검증표](https://github.com/modu-ai/moai-atp/blob/main/docs/design/host-os-verification.md)를 확인합니다.
+패키지 설치 성공만으로 도구 호출·보고서 표시·서비스 이용 권한을
+검증했다고 보지 않습니다. Desktop·ChatGPT·Windows 지원도 별도입니다.
+
 첫 `/goose setup`에서는 투자 맥락 인터뷰를 한 번 제시합니다. 호스트 slash
 등록은 아직 미검증이므로 위 로컬 CLI가 확인된 실행 경로입니다. 답변 거절·미정·
 중단을 허용하며, 확인되지 않은 답변이나 성향 추정값은 저장하지 않습니다.
