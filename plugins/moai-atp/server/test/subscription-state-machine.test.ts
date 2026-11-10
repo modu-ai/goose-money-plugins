@@ -728,6 +728,47 @@ test('a replacement view that states a period uses it', () => {
   assert.equal(machine.effectiveState(settled.subscription, end + DAY), 'active');
 });
 
+// Codex 미답변 지적(4531973934, sm:243) 수리 — §5.4 N1 전제(정산)·N2 취지(분쟁 중 checkout 배제):
+// 분쟁을 유지하는 뷰는 새 주기의 정산이 아니므로 교체 표지를 소비하지 않는다 (Refs #104).
+
+test('a dispute-maintaining view does not consume the replacement marker on confirmation', () => {
+  // 경로 A(지적 본체) — 저장 disputed(이전 active, 구기간 보유)에서 판본 없는 checkout 이 표지를
+  // 남긴 뒤, 같은 disputed 로 판번만 진전한 뷰가 도달해도 정산 증거가 아니므로 기간·기준점·표지를
+  // 유지(N2·N3). 지우면 dispute.won 복구 뒤 기간 없는 active 로 남아 구기간 경과 후에도 유료 잔존.
+  const end = T0 + 30 * DAY;
+  const disputed = machine.apply(activeWithEnd(end), ev('c0', 'dispute.opened', { provider_revision: 3 })).subscription;
+  assert.equal(state(disputed), 'disputed');
+  const routed = machine.apply(disputed, ev('c1', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  const confirmed = machine.reconcile(routed.subscription, { state: 'disputed', revision: 4 }, end + DAY);
+  assert.equal(confirmed.outcome, 'no_difference');                   // 판번 진전만으로는 기록된 차이 없음
+  assert.equal(confirmed.subscription.current_period_end, end);       // 구기간 보존(N1 전제 위반 않음)
+  assert.equal(confirmed.subscription.state_changed_at, disputed.state_changed_at);  // 기준점 보존(N3)
+  assert.equal(confirmed.subscription.replacement_checkout_pending, true);  // 표지 유지 — 정산 뷰 대기
+  const won = machine.apply(confirmed.subscription, ev('c2', 'dispute.won', { provider_revision: 5, occurred_at: end + 2 * DAY }));
+  assert.equal(state(won.subscription), 'active');
+  assert.equal(won.subscription.current_period_end, end);             // 복구 상태도 구기간과 함께
+  assert.equal(machine.effectiveState(won.subscription, end + 3 * DAY), 'expired');  // 유료 접근 종료
+});
+
+test('a dispute-adopting view does not clear the live period on adoption', () => {
+  // 경로 B(채택 형제) — 라이브 기간 active 에서 판본 없는 checkout 이 표지를 남긴 뒤, 뷰
+  // {disputed, 판번 진전, 기간 미제시} 가 분쟁을 채택해도 구기간을 지우지 않음(N2). 지우면
+  // dispute.won 복구가 기간 없는 active 를 만들어 유료 접근이 무기한이 됨.
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('d1', 'checkout.completed', { occurred_at: T0 + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  const adopted = machine.reconcile(routed.subscription, { state: 'disputed', revision: 3 }, T0 + 2 * DAY);
+  assert.equal(state(adopted.subscription), 'disputed');              // 분쟁 채택 자체는 유효(§4)
+  assert.equal(adopted.subscription.previous_state, 'active');        // 복구 포착
+  assert.equal(adopted.subscription.current_period_end, end);         // 구기간 보존
+  const won = machine.apply(adopted.subscription, ev('d2', 'dispute.won', { provider_revision: 4, occurred_at: end - DAY }));
+  assert.equal(state(won.subscription), 'active');
+  assert.equal(won.subscription.current_period_end, end);             // 복구도 구기간과 함께
+  assert.equal(machine.effectiveState(won.subscription, end + DAY), 'expired');  // 기간이 끝나면 유료 종료
+});
+
 test('an equal-revision event still applies the transition (current behavior, B-11 pending)', () => {
   // 설계 §5.1 P3("저장 판본 이하" 기록만)과 §5 순서 역전 행("오래된"=엄격히 이전)의 경계가
   // 어긋나 동일 판번 처우는 B-11 결정 필요. 결정 전까지 현재 동작 — 엄격히 이전만 기록-only,
