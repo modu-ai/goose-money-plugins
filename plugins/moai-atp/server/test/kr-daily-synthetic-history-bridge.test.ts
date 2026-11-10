@@ -13,7 +13,7 @@ const run = (f = fixture(), v = fixtureVerifier(f), clock = () => VERIFIED) => a
 function report(h: Awaited<ReturnType<typeof run>>) {
   const root = REPORT_ROOT;
   const code = `import sys,json,hashlib\nsys.path.insert(0,sys.argv[1])\nfrom history_semantics import calculate_report\nfrom jsonschema import Draft202012Validator\np=json.load(sys.stdin)\nschema=json.load(open(sys.argv[1]+'/canonical-history.schema.json'))\nDraft202012Validator(schema).validate(p)\nprint(json.dumps(calculate_report(p),ensure_ascii=False))`;
-  const r = spawnSync('python3', ['-B', '-c', code, root], { input: JSON.stringify(reportInput(h)), encoding: 'utf8', maxBuffer: 8_000_000 }); assert.equal(r.status, 0, r.stderr); return JSON.parse(r.stdout);
+  const r = spawnSync('python3', ['-X', 'utf8', '-B', '-c', code, root], { input: JSON.stringify(reportInput(h)), encoding: 'utf8', maxBuffer: 8_000_000 }); assert.equal(r.status, 0, r.stderr); return JSON.parse(r.stdout);
 }
 test('synthetic fixture computes pinned report only; exact decimals, raw blockers, gaps and source-row mapping survive', async () => {
   const f = fixture(), h = await run(f), r = report(h);
