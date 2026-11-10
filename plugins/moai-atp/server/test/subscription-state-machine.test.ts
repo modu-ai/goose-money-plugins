@@ -426,9 +426,12 @@ test('reconciliation restoring the pre-dispute state carries back the original g
   let sub = grace.apply(grace.emptySubscription('s'), ev('r0', 'checkout.completed', { provider_revision: 1 })).subscription;
   sub = grace.apply(sub, ev('r1', 'payment.succeeded', { provider_revision: 2, current_period_end: T0 + 30 * DAY })).subscription;
   sub = grace.apply(sub, ev('r2', 'renewal.failed', { provider_revision: 3, occurred_at: T0 + DAY })).subscription;
+  assert.equal(state(sub), 'past_due');
+  assert.equal(grace.effectiveState(sub, T0 + DAY + 6 * DAY), 'expired');  // grace exhausted before the dispute opens
   const opened = grace.apply(sub, ev('r3', 'dispute.opened', { provider_revision: 4, occurred_at: T0 + DAY + 6 * DAY }));
   assert.equal(state(opened.subscription), 'disputed');
-  assert.equal(grace.effectiveState(opened.subscription, T0 + DAY + 6 * DAY), 'expired');
+  assert.equal(opened.subscription.previous_state, 'past_due');
+  assert.equal(opened.subscription.previous_state_changed_at, T0 + DAY);
   const restored = grace.reconcile(opened.subscription, { state: 'past_due', revision: 5 }, T0 + DAY + 7 * DAY);
   assert.equal(restored.outcome, 'applied');
   assert.equal(state(restored.subscription), 'past_due');
