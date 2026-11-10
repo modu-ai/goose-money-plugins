@@ -48,33 +48,32 @@
     },
     {
       "id": "R04",
-      "title": "내 자산·위험 진단",
+      "title": "수동 입력 보유·리스크 상담",
       "kind": "report",
       "public": true,
       "required_groups": [
-        "identity_calendar",
-        "account_ledger",
-        "etf_structure",
-        "futures_contract"
+        "holdings_snapshot"
       ],
       "end_to_end_status": "not_implemented",
       "actual_data_complete": false,
-      "availability": "planned",
-      "active": false,
-      "availability_note": "지원 예정: 계좌 연결·계좌 기반 보고서는 이번 버전에서 보류하며 기존 소스와 템플릿은 보존합니다."
+      "availability": "manual_input_only",
+      "active": true,
+      "availability_note": "명시 수동 snapshot/연간 비용 가정만 계산합니다. 계좌·공급자·거래 원장을 연결하지 않으며 비공개 출력입니다. 실제 호스트/개인자료 검증은 미완료입니다."
     },
     {
       "id": "R05",
-      "title": "투자 성과·거래비용",
+      "title": "수동 입력 비용 영향 상담",
       "kind": "report",
       "public": true,
       "required_groups": [
-        "identity_calendar",
-        "account_ledger",
-        "futures_contract"
+        "holdings_snapshot",
+        "cost_assumptions"
       ],
       "end_to_end_status": "not_implemented",
-      "actual_data_complete": false
+      "actual_data_complete": false,
+      "availability": "manual_input_only",
+      "active": true,
+      "availability_note": "명시 수동 snapshot/연간 비용 가정만 계산합니다. 계좌·공급자·거래 원장을 연결하지 않으며 비공개 출력입니다. 실제 호스트/개인자료 검증은 미완료입니다."
     },
     {
       "id": "R06",

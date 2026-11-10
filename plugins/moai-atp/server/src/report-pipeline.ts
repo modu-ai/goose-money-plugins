@@ -1,3 +1,4 @@
+import {ManualConsultationInputSchema,ManualConsultationMetadataSchema,buildManualConsultation} from './manual-consultation.js';
 import { createRequire } from 'node:module';
 import { z } from 'zod';
 import { displayInstant, groupIntegerDigits, renderReportTemplate } from './report-template-renderer.js';
@@ -10,11 +11,11 @@ const routeDocument = require('../contracts/report-route-bindings.v1.json') as R
 export const REPORT_ROUTE_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
 // Function definition revision 6: R14 (backtest) is outside the product scope and R13 (futures) is held for the
 // initial release. Their route bindings stay for history; they are not active report routes.
-export const ACTIVE_REPORT_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','U01'] as const;
+export const ACTIVE_REPORT_ROUTE_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','U01'] as const;
 // The 16 revision-6 catalogue entries (R14 excluded). U02/U03 are catalogue definitions without a report route.
 export const REPORT_CATALOG_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','U01','U02','U03'] as const;
 // Routes the report builder accepts as a request: active routes plus R13/R14, which are refused with a coded answer.
-export const BUILD_REQUEST_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
+export const BUILD_REQUEST_ROUTE_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
 /** Route ids as human-readable text, e.g. 'R01–R03, R05–R12, U01' (issue #3: descriptions take the list from the enum). */
 export function formatRouteList(ids: readonly string[]): string {
   const parts: string[] = [];
@@ -31,7 +32,7 @@ export function formatRouteList(ids: readonly string[]): string {
 export type ReportRouteId = typeof REPORT_ROUTE_IDS[number];
 export type DataMode = 'synthetic' | 'supplied' | 'actual' | 'mixed';
 export type Provider = 'kis' | 'opendart' | 'sec' | 'public_web';
-export type GroupId = 'identity_calendar' | 'price_history' | 'equity_fundamentals' | 'equity_estimates' | 'market_flow' | 'claims_events' | 'macro_industry' | 'etf_structure' | 'account_ledger' | 'futures_contract' | 'backtest_experiment' | 'analysis_narrative';
+export type GroupId = 'identity_calendar' | 'price_history' | 'equity_fundamentals' | 'equity_estimates' | 'market_flow' | 'claims_events' | 'macro_industry' | 'etf_structure' | 'account_ledger' | 'futures_contract' | 'backtest_experiment' | 'analysis_narrative' | 'holdings_snapshot' | 'cost_assumptions';
 
 type Readiness = 'registered_default_rights_blocked' | 'registered_official_request_conflict' | 'registered_source_disabled' | 'registered_host_injected' | 'registered_partial' | 'not_implemented';
 type ToolBinding = { name: string; provider: Provider; readiness: Readiness; note: string };
@@ -42,6 +43,8 @@ type RouteBindingDocument = { contract_version: string; scope: string[]; routes:
 
 const T = (name: string, provider: Provider, readiness: Readiness, note: string): ToolBinding => ({name,provider,readiness,note});
 export const GROUP_BINDINGS: Readonly<Record<GroupId, GroupBinding>> = {
+  holdings_snapshot:{tools:[],note:'사용자 수동 입력 snapshot만 사용합니다. 계좌·공급자를 조회하지 않습니다.'},
+  cost_assumptions:{tools:[],note:'명시한 연간 비용 가정의 정적 계산만 제공합니다. 거래/성과 원장을 받지 않습니다.'},
   identity_calendar: {tools:[
     T('search_instruments','kis','registered_host_injected','주입된 디렉터리 후보 검색이며 결과를 자동 확정하지 않습니다.'),
     T('resolve_instrument','kis','registered_host_injected','호환 진입점이며 독립 식별 검증은 아닙니다.'),
@@ -186,6 +189,7 @@ export const ReportInputSchema = z.object({
   visuals:z.array(ReportVisualSchema).max(40).optional(),chart:z.union([ChartSchema,z.null()]),time_series:z.union([TimeSeriesSchema,z.null()]),execution_status:z.enum(['template_only','not_run','provided_unverified','synthetic_fixture_rendered','actual_input_unvalidated','actual_data_partial']),
   analysis_claims:z.array(ClaimSchema).max(300),
   comparison:ComparisonBlockSchema.optional(),
+  consultation:ManualConsultationMetadataSchema.optional(),
 }).strict().superRefine((v,c)=>{
   if((v.mode==='actual'||v.mode==='mixed')&&!['actual_input_unvalidated','actual_data_partial'].includes(v.execution_status))c.addIssue({code:'custom',message:'actual_mode_status_mismatch'});
   const allowed=(sourceId:string)=>{const source=v.sources.find(item=>item.id===sourceId);if(!source)return false;if(v.mode==='synthetic')return source.kind==='synthetic'&&source.rights==='synthetic_only'&&source.validation_status==='synthetic_fixture';if(source.kind==='user_supplied')return (v.mode==='supplied'||v.mode==='mixed')&&source.rights==='local_view'&&source.validation_status==='unverified';return source.rights==='local_view'&&['provider_shape_checked','independently_reconciled'].includes(source.validation_status??'');};
@@ -211,7 +215,13 @@ export const ReportInputSchema = z.object({
   if(v.time_series){if(!allowed(v.time_series.source_id))c.addIssue({code:'custom',message:'time_series_source_not_displayable'});const base=v.time_series.series[0];if(!base||base.field_id!=='history.close'||base.derived_from||base.calculation_ref)c.addIssue({code:'custom',message:'time_series_base_series_invalid'});for(const series of v.time_series.series.slice(1)){const match=series.field_id.match(/^history\.sma_(5|20|60|120)$/);if(!match||series.derived_from!=='history.close'||series.calculation_ref!==`sma.${match[1]}.v1`)c.addIssue({code:'custom',message:'time_series_derived_series_invalid'});}}
   for(const message of comparisonInvariantIssues(v))c.addIssue({code:'custom',message});
 });
-export const ActiveReportInputSchema = ReportInputSchema.safeExtend({report_id:z.enum(ACTIVE_REPORT_ROUTE_IDS)});
+export const ActiveReportInputSchema = ReportInputSchema.safeExtend({report_id:z.enum(ACTIVE_REPORT_ROUTE_IDS)}).superRefine((doc,ctx)=>{
+ if(doc.report_id==='R04'||doc.report_id==='R05'){
+  const meta=doc.consultation;
+  if(meta&&(meta.origin==='synthetic_fixture'&&(doc.mode!=='synthetic'||doc.sources.some(s=>s.kind!=='synthetic'))||meta.origin==='manual'&&(doc.mode!=='supplied'||doc.sources.some(s=>s.kind!=='user_supplied'))||meta.origin==='missing'&&(doc.sources.length>0||doc.metrics.length>0||doc.execution_status!=='not_run')))ctx.addIssue({code:'custom',message:'manual_consultation_origin_mismatch'});
+  if(!meta||meta.kind!==(doc.report_id==='R04'?'holdings_snapshot':'cost_impact')||!['synthetic','supplied'].includes(doc.mode)||doc.sources.some(s=>!['synthetic','user_supplied'].includes(s.kind)||s.operation_ref!=='local.manual-consultation.v1')||doc.metrics.some(m=>!m.field_id.startsWith('manual.')))ctx.addIssue({code:'custom',message:'manual_consultation_only'});
+ }else if(doc.consultation)ctx.addIssue({code:'custom',message:'manual_consultation_route_mismatch'});
+});
 export type ReportInput = z.infer<typeof ReportInputSchema>;
 
 type ToolResultLike = {isError?:boolean;structuredContent?:unknown;content?:unknown};
@@ -654,7 +664,7 @@ export function getReportPlan(reportId:string):ReportPlan {
 
 export type BuildReportInputArgs = {
   report_id:string;subject?:{id:string;name:string;venue:string;currency:string}|undefined;subjects?:readonly ComparisonSubjectInput[]|undefined;cutoff:string;display_timezone:ReportInput['display_timezone'];
-  calls?:readonly {tool_name:string;result:unknown}[];received_at?:string;trustedLocalReceipts?:ReadonlyMap<number,{receivedAt:string}>;user_supplied?:z.infer<typeof UserSuppliedFinanceSchema>;
+  calls?:readonly {tool_name:string;result:unknown}[];received_at?:string;trustedLocalReceipts?:ReadonlyMap<number,{receivedAt:string}>;user_supplied?:z.infer<typeof UserSuppliedFinanceSchema>;manual_consultation?:z.input<typeof ManualConsultationInputSchema>|undefined;
 };
 
 const ReportPipelineCallSchema = z.object({
@@ -674,7 +684,11 @@ export const ReportPipelineToolInputSchema = z.object({
   display_timezone:z.enum(['Asia/Seoul','UTC','America/New_York','Europe/London','Asia/Tokyo']),
   calls:z.array(ReportPipelineCallSchema).max(100).default([]),
   source_receipts:z.array(z.string().uuid()).max(12).optional(),
+  manual_consultation:ManualConsultationInputSchema.optional(),
 }).strict().superRefine((value,ctx)=>{
+  const consultation=value.report_id==='R04'||value.report_id==='R05';
+  if(consultation&&(!value.manual_consultation||value.calls.length||value.source_receipts?.length||value.subjects))ctx.addIssue({code:'custom',message:'manual_consultation_input_only'});
+  if(!consultation&&value.manual_consultation)ctx.addIssue({code:'custom',message:'manual_consultation_route_mismatch'});
   const bytes=Buffer.byteLength(JSON.stringify(value.calls??[]),'utf8');
   if(bytes>220_000)ctx.addIssue({code:'custom',message:'report_input_too_large'});
 });
@@ -769,6 +783,11 @@ function comparisonPayload(resultValue:unknown):Record<string,unknown>|null {
 export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   const reportId=args.report_id as ReportRouteId;const plan=getReportPlan(reportId);
   const cutoff=timestamp.parse(args.cutoff);const receivedAt=args.received_at??new Date().toISOString();timestamp.parse(receivedAt);
+  if(reportId==='R04'||reportId==='R05'){
+    if(args.calls?.length||args.trustedLocalReceipts?.size||args.subjects||args.user_supplied)throw Error('manual_consultation_input_only');
+    return ActiveReportInputSchema.parse(buildManualConsultation({reportId,input:args.manual_consultation,cutoff,receivedAt,displayTimezone:args.display_timezone,plan,math:{add:addDecimal,subtract:subtractDecimal,multiply:multiplyDecimal,compare:compareDecimal,ratio:roundedRatio}}));
+  }
+  if(args.manual_consultation)throw Error('manual_consultation_route_mismatch');
   // Explicit subjects select the comparison path (report R02); without them this function is the single-subject path.
   const comparisonSubjects=args.subjects!==undefined?validateComparisonSubjects(args.report_id,args.subject,args.subjects):undefined;
   if(comparisonSubjects===undefined&&args.subject===undefined)throw new Error('comparison_subjects_invalid');
@@ -849,6 +868,7 @@ function routeChartSectionId(reportId:ReportRouteId,metricIds:string[]):string|u
 
 export function renderReportInputHtml(value:unknown):string {
   const doc=ReportInputSchema.parse(value);
+  if(doc.report_id==='R04'||doc.report_id==='R05')ActiveReportInputSchema.parse(doc);
   // A comparison document (contract 1.2) takes no host narrative: free prose could name one subject's data as another's.
   if(doc.contract_version==='atp.template/1.2'&&doc.analysis_claims.some(claim=>claim.id.includes('.NARRATIVE.')||claim.id.includes('.GOOSE_OPINION.')))throw new Error('comparison_narrative_not_supported');
   return renderReportTemplate(doc,getReportPlan(doc.report_id));
