@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline/promises";
 import { readTerminalChoice } from "./terminal-choice.js";
 import { homedir } from "node:os";
-import { deleteLocalCredentials } from "./local-credentials.js";
+import { deleteLocalCredentials, SafeCredentialError } from "./local-credentials.js";
 import { deleteHoldings, HoldingsError } from "./user-holdings.js";
 import { readInvestorContext, saveInvestorContext, deleteInvestorContext, deleteOnboardingMarker, setupWasPresented, markSetupPresented, UserContextError, type InvestorContextAnswers } from "./user-context.js";
 
@@ -41,9 +41,23 @@ export async function runSetupFlow(projectRoot: string, ask: (question: string) 
       output.write("holdings_deleted=false\n");
       return 0;
     }
-    output.write(`credentials_deleted=${await deleteLocalCredentials(projectRoot, { confirmed, homeDir })}\n`);
-    output.write(`profile_deleted=${await deleteInvestorContext(projectRoot, { confirmed, homeDir })}\n`);
-    output.write(`holdings_deleted=${await deleteHoldings(projectRoot, { confirmed, homeDir })}\n`);
+    // #118: one store erroring must not swallow the remaining result lines — each call is
+    // wrapped so the failing store still gets an explicit fixed-code failure line, the
+    // other stores keep running, and the failure is reported at the end with the existing
+    // failure exit code (2, as in runSetup's catch).
+    const failures: string[] = [];
+    const report = async (store: string, run: () => Promise<boolean>): Promise<void> => {
+      try { output.write(`${store}_deleted=${await run()}\n`); }
+      catch (e) {
+        const code = e instanceof SafeCredentialError || e instanceof UserContextError || e instanceof HoldingsError ? e.code : "setup_failed";
+        output.write(`${store}_deleted=error:${code}\n`);
+        failures.push(code);
+      }
+    };
+    await report("credentials", () => deleteLocalCredentials(projectRoot, { confirmed, homeDir }));
+    await report("profile", () => deleteInvestorContext(projectRoot, { confirmed, homeDir }));
+    await report("holdings", () => deleteHoldings(projectRoot, { confirmed, homeDir }));
+    if (failures.length) { output.write(`deletion_errors=${failures.join(",")}\n`); return 2; }
     return 0;
   }
   if (action === "delete-holdings") {
