@@ -45,7 +45,9 @@ Refs #6.
 | requireReady 동시 요구 | kis·opendart **둘 다** `connected`여야 ready — §6의 공급자별 분리 요구와 모순. 실행 경로 미연결(src 쪽 `installMemberAccess` 호출처 0, test만 존재)이라 현재 실행 영향 0 | `member-access.ts:18` |
 | 자격증명 env 우선 경로 | 환경변수(`KIS_APP_KEY` 등)가 파일보다 우선하고, 부분 env는 fail-closed. 보존 지도 반영은 `privacy-retention.md` §3a와 공유 | `local-credentials.ts:93-101` |
 
-문서에만 있고 코드에 없는 것(전부 **미구현**): refresh 회전·재사용 감지(§3), JWKS kid 재조회·캐시(§3), entitlement 조회 API(§3), 철회 운영 구현(§3), §4 상태 전이 표 전체, principal 도구 인자 무시의 부정 시험(N12), 로그아웃 = 로컬 토큰 삭제(§4).
+문서에만 있고 코드에 없는 것(전부 **미구현**): refresh 회전·재사용 감지(§3), JWKS 캐시 수명(§3, A-08 미결정), entitlement 조회 API(§3), 철회 운영 구현(§3), §4 상태 전이 표 전체, 로그아웃 = 로컬 토큰 삭제(§4).
+
+2026-11-11 갱신(#131, 원격 main `90565a4` 대조): 위 목록에서 두 항목이 구현됨 — unknown kid 1회 재조회(`member-token-verifier.ts:35`, 시험 `member-token-kid-refetch.test.ts`, PR #115), principal 도구 인자 무시의 부정 시험 N12(`entitlement-arg-injection.test.ts`, PR #112). JWKS kid 재조회의 캐시 수명 정책(A-08)은 여전히 미결정·미구현.
 
 ## 2. 먼저 정해야 할 구조 문제 — stdio 로컬 서버와 OAuth
 
@@ -106,10 +108,10 @@ HEAD에 이미 있는 것은 ✓, 새로 필요한 것은 ＋.
 | N6 | 만료·과수명·미래 iat/nbf | `expired`/`invalid_time` | ✓ (test:12) |
 | N7 | 서명 불일치·EC 아닌 키·다른 곡선 | `invalid_signature` | ✓ (test:12) |
 | N8 | 철회됨 / 철회 확인 불가 | `revoked` / `revocation_unconfirmed` | ✓ (test:13) |
-| N9 | `alg:none`, HS256(키 혼동) | 거부 | ＋ (헤더 스키마가 ES256 literal이라 구조상 거부될 것으로 보이나 전용 시험 없음) |
-| N10 | 알 수 없는 kid → 재조회 후에도 없음 | `invalid_signature` | ＋ |
+| N9 | `alg:none`, HS256(키 혼동) | 거부 | ✓ (test:11 — `alg:none`·`HS256`·`typ`·`jku`·`crit` 헤더 거부 고정. 2026-11-11 갱신 #131) |
+| N10 | 알 수 없는 kid → 재조회 후에도 없음 | `invalid_signature` | ✓ (`member-token-kid-refetch.test.ts` — 재조회 후에도 없으면 `invalid_signature`, 키 조회 정확히 2회. PR #115, 2026-11-11 갱신 #131) |
 | N11 | 교차 사용자: A 토큰으로 B의 보고서 자원 URI 읽기 | 차단 | ＋ |
-| N12 | 도구 인자에 user_id·tier 주입 | 판정 불변 | ＋ |
+| N12 | 도구 인자에 user_id·tier 주입 | 판정 불변 | ✓ (`entitlement-arg-injection.test.ts` — 유료·무료·미등록 도구·위장 resource URI 4건. PR #112, 2026-11-11 갱신 #131) |
 | N13 | 실행 중 철회 → 다음 호출·자원 읽기 차단, 진행 작업 취소 | 차단 | ＋ |
 | N14 | 결속 변경 후 이전 공급자 검사 결과 재사용 | 거부(재검사) | 일부(`member-access.test.ts` `member_session_changed`) |
 | N15 | refresh 재사용 감지 | 세션 전체 철회 | ＋ |
