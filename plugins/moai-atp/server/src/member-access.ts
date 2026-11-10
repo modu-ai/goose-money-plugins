@@ -1,3 +1,6 @@
+// Status (issue #10): kept for reuse, not wired; sign-in is decided for every tier (#1) but not implemented.
+// Design: docs/design/identity-auth-contract.md. This gate is not reusable as-is: requireReady demands both KIS and OpenDART
+// connected, while the contract checks only the provider a request needs, so identity and provider checks must be split first.
 import type {McpServer} from '@modelcontextprotocol/server';
 import {createMemberOnboarding} from './member-onboarding.js';
 export type MemberAccess = Pick<ReturnType<typeof createMemberOnboarding>,'status'>;
