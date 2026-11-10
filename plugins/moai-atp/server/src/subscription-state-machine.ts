@@ -256,7 +256,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     const adopted: StoredSubscription = {
       ...current,
       state: provider.state,
-      current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
+      // A provider 'pending' view is a checkout in progress: without a stated period the previous
+      // subscription's expired end must not carry over (:118's reconciliation twin, P2 :259).
+      current_period_end: provider.current_period_end === undefined
+        ? (provider.state === 'pending' ? null : current.current_period_end)
+        : provider.current_period_end,
       revision: provider.revision ?? current.revision,
       previous_state,
       previous_state_changed_at,
@@ -277,21 +281,28 @@ export function createSubscriptionEventProcessor(options: StateMachineOptions & 
   const machine = createSubscriptionStateMachine(options);
   const store = new Map<string, StoredSubscription>();
   const queues = new Map<string, Promise<unknown>>();
+  // Design §5 동시 처리: same-subscription work serializes per subscription_id (S11) — apply and
+  // reconcile share one queue so a reconciled record can never interleave a late event.
+  const enqueue = (id: string, step: (current: StoredSubscription) => Promise<ApplyResult>): Promise<ApplyResult> => {
+    const run = (queues.get(id) ?? Promise.resolve()).then(async () => {
+      const loaded = await options.load?.(id);
+      const current = loaded ?? store.get(id) ?? machine.emptySubscription(id);
+      const result = await step(current);
+      store.set(id, result.subscription);
+      await options.save?.(result.subscription);
+      return result;
+    });
+    queues.set(id, run.then(() => undefined, () => undefined));
+    return run;
+  };
   return {
     machine,
     get: (id: string): StoredSubscription | undefined => store.get(id),
-    submit: (id: string, event: unknown): Promise<ApplyResult> => {
-      // Design §5 동시 처리: same-subscription events serialize per subscription_id (S11).
-      const run = (queues.get(id) ?? Promise.resolve()).then(async () => {
-        const loaded = await options.load?.(id);
-        const current = loaded ?? store.get(id) ?? machine.emptySubscription(id);
-        const result = machine.apply(current, event);
-        store.set(id, result.subscription);
-        await options.save?.(result.subscription);
-        return result;
-      });
-      queues.set(id, run.then(() => undefined, () => undefined));
-      return run;
-    },
+    submit: (id: string, event: unknown): Promise<ApplyResult> =>
+      enqueue(id, (current) => Promise.resolve(machine.apply(current, event))),
+    // reconcile_required results (out-of-table, revision-less events) have no other recovery path
+    // on the default in-memory store: the processor installs the reconciled record itself (P2 :283).
+    reconcile: (id: string, provider: ProviderView, now: number): Promise<ApplyResult> =>
+      enqueue(id, (current) => Promise.resolve(machine.reconcile(current, provider, now))),
   };
 }

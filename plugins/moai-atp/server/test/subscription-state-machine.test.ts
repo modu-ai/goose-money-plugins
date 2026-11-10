@@ -541,3 +541,31 @@ test('a new checkout does not inherit the expired period', () => {
   const explicit = machine.apply(activeWithEnd(end), ev('k2', 'checkout.completed', { provider_revision: 5, occurred_at: end + DAY, current_period_end: end + 40 * DAY }));
   assert.equal(explicit.subscription.current_period_end, end + 40 * DAY);  // event-supplied period kept
 });
+
+test('the processor exposes reconciliation through the same per-subscription queue', async () => {
+  // Codex P2 :283 — a reconcile_required outcome (revision-less checkout) has no recovery path on
+  // the default in-memory store unless the processor can install the reconciled record itself.
+  const proc = createSubscriptionEventProcessor();
+  const routed = await proc.submit('s', ev('q0', 'checkout.completed'));
+  assert.equal(routed.outcome, 'reconcile_required');
+  const reconciled = await proc.reconcile('s', { state: 'active', revision: 1 }, T0 + DAY);
+  assert.equal(reconciled.outcome, 'applied');
+  assert.equal(state(proc.get('s')!), 'active');  // the store now holds the reconciled record
+  const cancel = await proc.submit('s', ev('q1', 'subscription.cancel_requested', { provider_revision: 2 }));
+  assert.equal(cancel.outcome, 'applied');  // revisioned events transition normally afterwards
+  assert.equal(state(cancel.subscription), 'canceled_pending_end');
+});
+
+test('reconciliation starting a new checkout clears the expired period like apply does', () => {
+  // Codex P2 :259 — a revision-less checkout routes to the view without committing the transition;
+  // a confirming pending view (no period stated) must not inherit the expired period.
+  const end = T0 + 30 * DAY;
+  let sub = activeWithEnd(end);
+  sub = machine.apply(sub, ev('m0', 'checkout.completed', { occurred_at: end + DAY })).subscription;  // revision-less → routed
+  assert.equal(state(sub), 'active');  // unchanged, waiting for the view
+  const adopted = machine.reconcile(sub, { state: 'pending', revision: 5 }, end + 2 * DAY);
+  assert.equal(adopted.outcome, 'applied');
+  assert.equal(state(adopted.subscription), 'pending');
+  assert.equal(adopted.subscription.current_period_end, null);
+  assert.equal(machine.effectiveState(adopted.subscription, end + 3 * DAY), 'pending');
+});
