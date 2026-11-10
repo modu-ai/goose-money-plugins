@@ -6,8 +6,9 @@ Refs #25 · 2026-11-10 KST 작성
 이 문서는 확인한 근거와 남은 검증을 정리합니다. 최초 지원 호스트·OS나
 내장 미리보기 채택을 확정하지 않습니다.
 초기 작성 때는 호스트 실행을 하지 않았습니다. 이후 이 Mac의 Claude Code만
-임시 프로필에서 설치·업데이트·제거 명령을 실행했습니다(E5). 설치가 실패해
-도구 호출·보고서 표시는 미검증이며, 다섯 단계 모두 통과했다는 뜻은 아닙니다.
+임시 프로필에서 설치·업데이트·제거 명령을 실행했습니다. E5의 설치 실패 뒤
+Claude용 구성을 추가해 E6에서 로컬 설치·갱신·제거를 확인했습니다.
+보고서 요청은 인증 단계에서 멈춰 도구 호출·호스트 안 표시는 미검증입니다.
 
 ## 호스트 × OS
 
@@ -17,7 +18,7 @@ Refs #25 · 2026-11-10 KST 작성
 
 | 호스트 | OS | 설치 | 도구 호출 | 보고서 표시 | 업데이트 | 제거 | 확인한 근거와 한계 |
 |---|---|---|---|---|---|---|---|
-| Claude Code | macOS | 실패(E5) | 차단·미검증(E5) | 차단·미검증(E5) | 미설치로 차단(E5) | 미설치로 차단(E5) | Claude Code 2.1.322 · macOS 27.0.1 arm64 · dev.6 소스. 임시 프로필의 로컬 설치 경로만 측정, 지원 확정 아님 |
+| Claude Code | macOS | 로컬 설치 확인(E6) | 인증 차단·미검증(E6) | 미검증(E6) | 로컬 시험 갱신 확인(E6) | 설치 기록 제거 확인(E6) | Claude Code 2.1.322 · macOS 27.0.1 arm64 · dev.6 런타임. MCP 연결 확인, 로그인 세션의 호출·표시나 실제 출시 버전 간 갱신은 별도 |
 | Claude Code | Windows | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E3. Windows용 키 파일 저장 거부는 소스 정책이며 호스트 설치 시험이 아님 |
 | Claude Desktop | macOS | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E2. Claude Code 결과와도 별도 검증 필요 |
 | Claude Desktop | Windows | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E3. macOS 관찰로 대체하지 않음 |
@@ -35,6 +36,7 @@ ChatGPT의 웹/데스크톱 실행 형태, Claude Code의 터미널/앱 실행 �
 | E1 | [CAPABILITIES.json](../../plugins/moai-atp/CAPABILITIES.json) | 기준 소스의 `host_installed=false`, `independent_host_verification=false`, `test_targets=[macOS, Windows]` | 실제 기기의 현재 설치 상태, 호스트 검증 통과 |
 | E2 | [report-html-mcp.ts](../../plugins/moai-atp/server/src/report-html-mcp.ts) | `delivery=mcp_resource_link`, `host_rendering=not_observed`, `mime_type=text/html`; 메모리 자원은 최대 5분·3개 | 호스트가 링크를 실제로 표시·다운로드했다는 증거 |
 | E3 | [local-credentials.ts](../../plugins/moai-atp/server/src/local-credentials.ts), [README](../../plugins/moai-atp/README.md) | Windows에서는 키 파일 저장을 `secure_file_storage_unsupported`로 거부하는 소스와 안내가 있음 | Windows에서 ATP 전체가 동작하지 않는다는 판정, 실제 Windows 실행 결과 |
+| E6 | 아래 Claude용 패키지 추가 후 재실측 | 로컬 설치·MCP 연결·시험 메타데이터 갱신·설치 기록 제거 | 인증된 도구 호출·호스트 안 HTML 표시·기존 실행 세션 갱신/제거 |
 | E5 | 아래 Claude Code 임시 프로필 실측 | 로컬 소스 설치 실패, 업데이트·제거 미설치 오류, 전후 플러그인 목록 비어 있음 | 도구 호출·보고서 표시, 버전 간 업데이트·설치된 플러그인 제거 성공 |
 | E4 | 과거 로컬 `host-preview-review/RESULT.md`·`installed-contract.json` | 아래 과거 관측 요약을 읽어 확인 | 현재 main·현재 설치본의 재측정, 여섯 호스트 조합의 실제 실행 |
 
@@ -124,6 +126,51 @@ Claude용 manifest·카탈로그를 새로 만들거나 기존 형식을 변환�
 미추적이며 다른 환경에서는 위 기준 커밋과 명령으로 재현해야 합니다.
 실제 도구 호출·화면 표시·업데이트·제거까지 완료한 지원 조합은 아직 없습니다.
 다른 호스트·OS의 25칸은 미검증을 유지하고 #25를 닫지 않습니다.
+
+## E6 · Claude용 패키지 추가 후 임시 프로필 재실측
+
+2026-11-11 00:17~00:19 KST, 같은 Mac의 Claude Code 2.1.322 /
+macOS 27.0.1 arm64에서 사용자 결정 2차를 실행했습니다. 기준 main은
+`06b7eef3b60e23abf036d68d7801a1bb89d5e47a`이며, 그 위에 Claude용
+카탈로그·manifest·런타임 ZIP 반입을 추가한 작업 트리로 측정했습니다.
+기존 OpenAI용 설정과 저장소 버전 `0.1.0-dev.6`는 바꾸지 않았습니다.
+
+새 임시 프로필·빈 작업 폴더에서 허용 목록 환경과 `--bare --setting-sources user`를
+사용했습니다. E5와 같이 OS 샌드박스로 실사용 홈·키체인 접근, 임시 경로 밖
+쓰기와 모든 네트워크를 차단했고 합성 읽기·쓰기·loopback 거부를 재확인했습니다.
+기존 dev.5·실사용 설정·키를 읽거나 변경하지 않았습니다. 로컬 카탈로그의
+설치 정보는 이 임시 프로필에만 저장했고 외부 게시·마켓 등록은 하지 않았습니다.
+
+검증용 ZIP은 Node 24.22.1로 만든 MJS 런타임이며 Node 실행 파일을 포함하지
+않습니다. Claude가 실행한 Node는 22.22.3입니다. ZIP SHA-256은
+`92bd76b8990c99639ccdc714db85727a135305f7e77c7fbb242f6c5bd0c02bcd`입니다.
+검증 시 사본을 로컬 카탈로그의 `plugins/moai-atp`에 펼쳤습니다. 소스용
+manifest는 `server/dist/src/main.js`, ZIP용은 `server/runtime/src/main.mjs`를
+가리킵니다. 경로 변수는 모두 `${CLAUDE_PLUGIN_ROOT}`입니다.
+
+아래 `$CATALOG`와 `$CACHE`는 임시 카탈로그와 설치 후 반환된 캐시 경로입니다.
+모든 명령은 위 격리 안에서 실행했습니다.
+
+| 단계 | 실행과 관측 | 확인 범위·한계 |
+|---|---|---|
+| 설치 | 카탈로그·플러그인 각각 `claude plugin validate <path> --strict --json`: 종료 0, errors/warnings 비어 있음. `claude plugin install moai-atp --marketplace "$CATALOG" --scope user --json`: 종료 0, outcome ok | `plugin list --json`에서 dev.6 enabled 확인. `plugin details`는 Goose 스킬 1개·MCP 서버 1개 인식 |
+| 호출 | `claude --plugin-dir "$CACHE" mcp list`: 종료 0, `Connected`. 이어 `claude --plugin-dir "$CACHE" --print --max-turns 1 <합성 R01 요청>`: 종료 1, `Not logged in · Please run /login` | 호스트의 MCP 연결까지만 확인. 실제 보고서 도구 호출은 인증 차단·미검증이며 로그인·키 읽기를 진행하지 않음 |
+| 표시 | 위 요청이 보고서 결과를 만들지 못해 호스트 안 표시를 실행하지 못함 | 미검증. 별도 stdio의 HTML 반환을 호스트 화면 성공으로 세지 않음 |
+| 업데이트 | 변경 없는 `plugin update ... --json`: 종료 0, up_to_date. 임시 사본의 메타데이터를 시험 표식 `0.1.0-dev.6-localprobe.1`로 바꾼 뒤 같은 명령: 종료 0, updated. 새 캐시 버전·경로와 MCP 재연결 확인 | 저장소·출시 버전 변경 없음. 시험 표식으로 로컬 갱신 경로만 검증했으며 실제 두 출시 버전의 교체·기존 실행 세션 전환은 미검증 |
+| 제거 | `claude plugin uninstall moai-atp@moai-atp-claude-local --scope user --json`: 종료 0. 설치 목록 `[]`, 같은 ID의 `plugin details`는 종료 1/not found. 임시 카탈로그 제거 후 카탈로그 목록도 `[]` | 설치 기록·컴포넌트 조회에서 제거 확인. 기존 대화 세션 안에서 도구가 사라지는 동작은 미검증 |
+
+보조 시험은 설치된 캐시의 실제 manifest를 읽어 지정된 MJS 진입점을 별도
+stdio 클라이언트로 실행했습니다. `tools/list` 36개, 합성 `build_report_input`
+→ `render_report_html` → `resources/read`의 HTML 읽기가 성공했습니다.
+네트워크 차단을 유지했고 공급자 실호출은 0입니다. 이 경로는 Claude Code가
+도구를 호출하거나 보고서를 화면에 표시한 근거가 아닙니다.
+
+설치·갱신·제거에 대한 이전 E5의 미설치 차단은 이 로컬 패키지 경로에서
+해소됐습니다. 인증된 보고서 호출·표시를 실제로 측정할 허용 환경은 별도
+조건으로 남습니다. `Not logged in`은 인증을 가져오지 않은 이 임시 프로필의
+결과이며 실사용 계정의 로그인 상태를 판정한 것이 아닙니다. Desktop·ChatGPT·Windows 25칸은 미검증을 유지하고
+#25를 닫지 않습니다. 원시 로그·격리 정책·합성 응답은 E5와 같이 로컬
+증거 폴더에만 보존하며 Git·이슈·PR에는 올리지 않습니다.
 
 ## ChatGPT 내장 미리보기 선택지 — 결정 필요
 
