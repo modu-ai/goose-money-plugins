@@ -1,4 +1,7 @@
-export type ConnectionState = 'unchecked'|'connected'|'credential_missing'|'expired'|'permission_denied'|'network_error'|'quota_exceeded';
+// Status (issue #10): kept for reuse, not wired; sign-in is decided for every tier (#1) but not implemented.
+// Design: docs/design/identity-auth-contract.md. The session-binding reset matches the contract; `ready` still requires both
+// providers and the denial code is member_login_required (the contract drafts auth_required), both open before reuse.
+export type ConnectionState ='unchecked'|'connected'|'credential_missing'|'expired'|'permission_denied'|'network_error'|'quota_exceeded';
 export type Provider = 'kis'|'opendart';
 export interface Membership { readonly verified: true; readonly expires_at: number; readonly session_binding:string; }
 export interface ConnectionCheck { readonly state: ConnectionState; readonly checked_at: number; }
