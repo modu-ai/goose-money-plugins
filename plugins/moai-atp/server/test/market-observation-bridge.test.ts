@@ -19,7 +19,7 @@ const pin = JSON.parse(readFileSync(REF + 'pin.json', 'utf8'));
 const clone = f.clone;
 function report(input: unknown, reference = REPORT_REFERENCE) {
   for (const name of ['market_metrics.py', 'financial_core.py']) assert.equal(createHash('sha256').update(readFileSync(reference + name)).digest('hex'), pin.files[name]);
-  const p = spawnSync('python3', ['-B', '-c', 'import json,sys;from market_metrics import calculate;print(json.dumps(calculate(json.load(sys.stdin)),sort_keys=True))'], { cwd: reference, input: JSON.stringify(input), encoding: 'utf8' });
+  const p = spawnSync('python3', ['-X', 'utf8', '-B', '-c', 'import json,sys;from market_metrics import calculate;print(json.dumps(calculate(json.load(sys.stdin)),sort_keys=True))'], { cwd: reference, input: JSON.stringify(input), encoding: 'utf8' });
   assert.equal(p.status, 0, p.stderr); return JSON.parse(p.stdout);
 }
 const assemble = (x: f.SyntheticMarketFixture, verifier = f.syntheticMarketVerifier(x), clock = () => f.VERIFIED) => b.assembleMarketObservationReportInput(x.candidate, x.binding, verifier, clock);
@@ -258,7 +258,7 @@ test('fresh report results and portable schema fixtures reproduce exact shipped 
   }
 });
 test('exported JSON Schemas are explicitly structural and validate portable synthetic examples', () => {
-  const p = spawnSync('python3', ['-B', '-c', `import json\nfrom pathlib import Path\nfrom jsonschema import Draft202012Validator\nr=Path('contracts/report-market-observation-reference'); d=Path('fixtures/market-observation-bridge')\nfor case in json.loads((d/'manifest.json').read_text())['cases']:\n for name,fixture in [('candidate','SYNTHETIC-candidate.json'),('binding','SYNTHETIC-binding.json'),('handoff-envelope','SYNTHETIC-handoff.json')]:\n  schema=json.loads((r/(name+'.schema.json')).read_text()); assert 'STRUCTURAL PROFILE ONLY' in schema['description']; Draft202012Validator.check_schema(schema); Draft202012Validator(schema).validate(json.loads((d/case/fixture).read_text()))\n Draft202012Validator(json.loads((r/'input.schema.json').read_text())).validate(json.loads((d/case/'SYNTHETIC-report-input.json').read_text()))`], { cwd: ROOT, encoding: 'utf8' });
+  const p = spawnSync('python3', ['-X', 'utf8', '-B', '-c', `import json\nfrom pathlib import Path\nfrom jsonschema import Draft202012Validator\nr=Path('contracts/report-market-observation-reference'); d=Path('fixtures/market-observation-bridge')\nfor case in json.loads((d/'manifest.json').read_text())['cases']:\n for name,fixture in [('candidate','SYNTHETIC-candidate.json'),('binding','SYNTHETIC-binding.json'),('handoff-envelope','SYNTHETIC-handoff.json')]:\n  schema=json.loads((r/(name+'.schema.json')).read_text()); assert 'STRUCTURAL PROFILE ONLY' in schema['description']; Draft202012Validator.check_schema(schema); Draft202012Validator(schema).validate(json.loads((d/case/fixture).read_text()))\n Draft202012Validator(json.loads((r/'input.schema.json').read_text())).validate(json.loads((d/case/'SYNTHETIC-report-input.json').read_text()))`], { cwd: ROOT, encoding: 'utf8' });
   assert.equal(p.status, 0, p.stderr);
 });
 test('shipped negative fixtures are deterministically rejected under independent positive truth', async () => {

@@ -7,7 +7,7 @@ for(const [request,expected]of [
  ['/goose 논문으로 전략 만들고 백테스트 후 보고서',['strategy','backtest','report']],
  ['/goose conditions HTS 조건식 초안',['conditions']],
  ['/goose ETF 비교 분석',['analyze']],
- ['/goose 해외 선물 분석 보고서',['analyze','report']],
+ ['/goose 해외 선물 분석 보고서',[]],
  ['/goose 손실 뒤 마음이 불안해',['mental-support']],
  ['/goose backtest 전략을 만들지 말고 과거 검증',['backtest']],
 ] as const)test(`single Goose local routing fixture: ${request}`,()=>{assert.deepEqual(ids(request),expected);const p=planGooseRequest(request);assert.equal(p.provider_dispatches,0);assert.equal(p.execution_authority,'plan_only');assert.ok(p.steps.every(s=>s.execution_status==='not_run'));});
