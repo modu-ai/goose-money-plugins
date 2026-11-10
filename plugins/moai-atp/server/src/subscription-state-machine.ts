@@ -248,7 +248,7 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       revision: provider.revision ?? current.revision,
       previous_state,
       previous_state_changed_at,
-      trial_ended: false,
+      trial_ended: restoringDisputeState ? current.trial_ended : false,
       state_changed_at: restoringDisputeState ? (current.previous_state_changed_at ?? now) : now,
       last_event_at: now,
     };

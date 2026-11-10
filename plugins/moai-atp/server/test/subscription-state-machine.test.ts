@@ -438,3 +438,23 @@ test('reconciliation restoring the pre-dispute state carries back the original g
   assert.equal(restored.subscription.state_changed_at, T0 + DAY);  // saved anchor, not the reconcile time
   assert.equal(grace.effectiveState(restored.subscription, T0 + DAY + 7 * DAY), 'expired');  // no grace restart
 });
+
+test('reconciliation restoring a pre-dispute trialing state keeps the trial settlement marker', () => {
+  // Codex P2 :251 — dispute.opened after trial.ended, then the dispute resolved through the
+  // reconciliation view: the restoration must carry the marker back like dispute.won does, or
+  // the settling payment lands unhandled and the subscription stays trialing.
+  let sub = machine.apply(empty(), ev('x0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('x1', 'payment.succeeded', { provider_revision: 2, trial: true })).subscription;
+  sub = machine.apply(sub, ev('x2', 'trial.ended', { provider_revision: 3, occurred_at: T0 + 7 * DAY })).subscription;
+  assert.equal(sub.trial_ended, true);
+  const opened = machine.apply(sub, ev('x3', 'dispute.opened', { provider_revision: 4 }));
+  assert.equal(state(opened.subscription), 'disputed');
+  assert.equal(opened.subscription.trial_ended, true);
+  const restored = machine.reconcile(opened.subscription, { state: 'trialing', revision: 5 }, T0 + 8 * DAY);
+  assert.equal(restored.outcome, 'applied');
+  assert.equal(state(restored.subscription), 'trialing');
+  assert.equal(restored.subscription.trial_ended, true);
+  const paid = machine.apply(restored.subscription, ev('x4', 'payment.succeeded', { provider_revision: 6, occurred_at: T0 + 9 * DAY }));
+  assert.equal(paid.outcome, 'applied');
+  assert.equal(state(paid.subscription), 'active');
+});
