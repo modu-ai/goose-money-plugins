@@ -3,8 +3,8 @@ export type GooseMode=typeof GOOSE_MODES[number];
 const refs:Record<GooseMode,string>={setup:'SKILL.md',analyze:'references/catalog.json',conditions:'references/workflows/conditions.md',strategy:'references/workflows/strategy.md',backtest:'references/workflows/backtest.md','mental-support':'references/workflows/mental-support.md',report:'references/report-writing.md'};
 
 // SPEC-ATP-ROLES-001 design.md 3.2 / 3.5. Fixed answers for plans that carry no steps.
-/** Fixed sentence F: trade-execution and ATS-class requests (ATS wording plus strategy / backtest alternatives). */
-export const GOOSE_SENTENCE_F='이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다. 대신 전략 수립(매매 전략 명세로 정리)이나 백테스트(과거 자료 검증 계획)는 다시 요청해 주시면 도와드릴 수 있습니다. 실거래는 사용자께서 직접 판단·실행하십시오.';
+/** Fixed sentence F: trade-execution and ATS-class requests, with research-only alternatives. */
+export const GOOSE_SENTENCE_F='이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다. 대신 기업·시장 조사나 투자 관점과 반증 조건 정리는 다시 요청해 주시면 도와드릴 수 있습니다. 실거래는 사용자께서 직접 판단·실행하십시오.';
 /** Fixed sentence F_T: transfer / deposit / withdrawal commands only. Names no ATS and offers no strategy alternative. */
 export const GOOSE_SENTENCE_F_T='이 플러그인은 이체·입출금을 지원하지 않습니다. 자금 이동은 사용자께서 직접 하십시오.';
 export const GOOSE_SENTENCE_ACCOUNT='읽기 전용 보유·계좌 수익률 조회는 아직 제공하지 않습니다(별도 승인 뒤 제공 예정)';
@@ -234,7 +234,7 @@ export function planGooseRequest(value:unknown){
  if(!explicit||explicit!=='setup'){
   if(/조건식|HTS|MTS/i.test(text))modes.add('conditions');
   if((/논문|전략.{0,10}(?:설계|만들)/.test(text))&&!/전략.{0,10}(?:만들지|설계하지)/.test(text))modes.add('strategy');
-  if(/백테스트|과거.{0,8}검증|walk.?forward/i.test(text))modes.add('backtest');
+  if(/백테스트|과거.{0,8}검증|walk.?forward/i.test(text.replace(/백테스트\s*(?:(?:는|를|은|을)\s*)?(?:하지\s*(?:말고|않고)|말고|없이|제외하고|빼고)/g,'')))modes.add('backtest');
   if(/멘탈|불안|마음|후회|만회.{0,8}충동/.test(text))modes.add('mental-support');
   if(/보고서|리포트|HTML/i.test(text))modes.add('report');
   if(/(?:종목|기업|수급|실적|공시|재무|ETF|선물).{0,12}(?:분석|비교|점검)|분석.{0,10}(?:종목|기업|ETF|선물)/i.test(text))modes.add('analyze');
@@ -248,6 +248,8 @@ export function planGooseRequest(value:unknown){
  if(/(?:조건식|조건).{0,10}(?:자동.{0,3}등록|저장해)/.test(text))unsupported.push('automatic_condition_registration_unavailable');
  if(/전략.{0,6}실행해/.test(text))unsupported.push('strategy_execution_engine_unavailable');
  if(atsForms.length)unsupported.push('ats_scope_unsupported');
+ // Revision 6: backtest (R14/F17) is out of the product scope; the mode is detected only to classify the request.
+ if(modes.has('backtest'))unsupported.push('backtest_out_of_product_scope');
  // The account rule decides first when a request asks for holdings or account returns; a backtest / strategy request about simulated results is not a performance request.
  const performanceRequest=!accountRequest&&matchesAny(PERFORMANCE_FORMS,text)&&!PERFORMANCE_INPUT.test(text.toLowerCase())&&!modes.has('backtest')&&!modes.has('strategy');
  if(performanceRequest)unsupported.push('performance_inputs_missing');

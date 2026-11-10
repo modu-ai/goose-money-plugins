@@ -29,7 +29,7 @@ test('15 templates render exact consumer section IDs with honest not-run status'
     assert.deepEqual(parsed.sections.map(section=>section.id),plan.sections.map(section=>section.id),report_id);
     totalSections+=parsed.sections.length;
     const html=renderReportInputHtml(parsed);
-    assert.ok(html.includes(`<h1>검토용 종목</h1>`)&&html.includes(`<h2>${plan.title}</h2>`),report_id);
+    assert.ok(html.includes(`<h1>${input.subject.name}</h1>`)&&html.includes(`<h2>${plan.title}</h2>`),report_id);
     for(const section of plan.sections)assert.ok(html.includes(`id="${section.id}"`),`${report_id}/${section.id}`);
     assert.match(html,/미실행/);
     assert.match(html,/source_as_of/);

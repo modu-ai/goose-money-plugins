@@ -353,7 +353,7 @@
       "R12",
       "U01"
     ],
-    "input_contract": "previous_mcp_result_envelopes; caller_cannot_override_received_at",
+    "input_contract": "validated provider results/receipts for research; strict private manual_consultation only for R04/R05; caller_cannot_override_received_at",
     "output_contract": "atp.template/1.1 ReportInput (single subject) or atp.template/1.2 ReportInput (R02 comparison, explicit subjects input)",
     "synthetic_values": "explicitly labeled synthetic_fixture",
     "unreconciled_provider_values": "hidden; rights_pending",
@@ -365,6 +365,7 @@
     "read_only": true,
     "default_denied": false,
     "external_requests": false,
+    "opened_report_font_requests": "Opening the rendered HTML fetches web fonts only, from three version-pinned cdn.jsdelivr.net paths (pretendard@1.3.9, @kfonts/maruburi@0.1.0, @fontsource/gowun-batang@5.3.0); fixed URLs with no report or user data, referrer policy no-referrer, CSP font-src limited to those paths with connect-src 'none'; installed fallback fonts when blocked or offline",
     "file_writes": false,
     "input_contract": "validated atp.template/1.1 ReportInput (single subject) or atp.template/1.2 ReportInput (R02 comparison, explicit subjects input)",
     "output_contract": "moai.stock.report-html.v1 + MCP resource_link",
@@ -380,6 +381,7 @@
     "R01",
     "R02",
     "R03",
+    "R04",
     "R05",
     "R06",
     "R07",
@@ -390,9 +392,7 @@
     "R12",
     "U01"
   ],
-  "planned_report_routes": [
-    "R04"
-  ],
+  "planned_report_routes": [],
   "report_catalog": {
     "source": "function definition revision 6",
     "ids": [

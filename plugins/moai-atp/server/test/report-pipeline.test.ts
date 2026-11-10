@@ -4,6 +4,7 @@ import test from 'node:test';
 import {buildReportInput,getReportPlan,normalizeMcpToolResult,renderReportInputHtml,REPORT_ROUTE_IDS,ReportInputSchema} from '../src/report-pipeline.js';
 import { InMemoryTransport, type McpServer } from '@modelcontextprotocol/server';
 import { createStockMcpServer } from './synthetic-member-access.js';
+import {snapshotFixture,costsFixture} from './manual-consultation-fixtures.js';
 
 const received='2026-10-23T03:00:00.000Z';
 const subject={id:'000660',name:'시험 종목',venue:'KRX',currency:'KRW'};
@@ -26,8 +27,9 @@ test('route binding exposes known blockers instead of treating all registered to
   const plan=getReportPlan('R01');
   assert.ok(plan.groups.some(g=>g.tools.some(t=>t.name==='get_price_history'&&t.readiness==='registered_default_rights_blocked')));
   assert.ok(plan.groups.some(g=>g.tools.some(t=>t.name==='get_market_flows'&&t.readiness==='registered_partial'&&t.note.includes('inquire-investor'))));
-  const account=getReportPlan('R04').groups.find(g=>g.id==='account_ledger');
+  const account=getReportPlan('R04').groups.find(g=>g.id==='holdings_snapshot');
   assert.equal(account?.tools.length,0);
+  assert.ok(!getReportPlan('R04').groups.some(g=>g.id==='account_ledger'));
 });
 
 test('MCP success normalizes synthetic quote with explicit synthetic lineage and exact decimal strings',()=>{
@@ -193,22 +195,8 @@ test('historical routes calculate SMA20 and rebased price from ordered mapped ba
   assert.equal(report.mode,'synthetic');
 });
 
-test('R04 calculates local user-supplied NAV and concentration without account calls',()=>{
-  const report=buildReportInput({report_id:'R04',subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,user_supplied:{account_ledger:{as_of:'2026-10-22',currency:'KRW',cash:'20',liabilities:'5',positions:[{label:'포지션 A',market_value:'60'},{label:'포지션 B',market_value:'40'}]}}});
-  assert.equal(report.mode,'supplied');
-  assert.equal(report.execution_status,'provided_unverified');
-  assert.equal(report.sources[0]?.kind,'user_supplied');
-  assert.equal(report.sources[0]?.validation_status,'unverified');
-  assert.equal(report.metrics.find(metric=>metric.field_id==='metric.NAV')?.value,'115');
-  assert.equal(report.metrics.find(metric=>metric.field_id==='metric.HHI')?.value,'0.52');
-  assert.equal(report.visuals?.[0]?.section_id,'R04.S01');
-  assert.ok(report.sections.find(section=>section.id==='R04.S01')?.source_ids?.includes(report.sources[0]!.id));
-  const html=renderReportInputHtml(report);
-  assert.match(html,/사용자 제공 입력 · 외부 대사 전/);
-  assert.match(html,/외부 원장·가격·체결과 대사하지 않았으므로/);
-  assert.match(html,/115/);
-  assert.equal(report.sources.length,1,'local user input is the only source');
-  assert.equal(report.sections.find(section=>section.id==='R04.S01')?.status,'partial');
+test('R04 rejects the archived liabilities/account-ledger family instead of presenting it as snapshot consultation',()=>{
+  assert.throws(()=>buildReportInput({report_id:'R04',subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,user_supplied:{account_ledger:{as_of:'2026-10-22',currency:'KRW',cash:'20',liabilities:'5',positions:[{label:'포지션 A',market_value:'60'},{label:'포지션 B',market_value:'40'}]}}}),/manual_consultation_input_only/);
 });
 
 test('R14 computes drawdown from a user-supplied equity curve and refuses mixed MCP calls',()=>{
@@ -304,10 +292,11 @@ test('MCP assembles the eleven non-R01 active routes and refuses R04/R12-without
     const tool=listed.result.tools.find((item:any)=>item.name==='build_report_input');
     assert.ok(tool);assert.equal(tool.inputSchema.additionalProperties,false);assert.ok(tool.outputSchema);
     for(const report_id of REPORT_ROUTE_IDS){
-      const fixture=report_id==='R01'?undefined:perReportFixture(report_id,'synthetic');
-      const calls=report_id==='R01'?[{tool_name:'get_market_snapshot',result:result(syntheticQuote)}]:[fixture!.call];
-      const response=await session.rpc('tools/call',{name:'build_report_input',arguments:{report_id,subject,cutoff:received,display_timezone:'Asia/Seoul',calls}});
-      if(report_id==='R04'){assert.equal(response.result?.isError,true);continue;}
+      const manual=report_id==='R04'||report_id==='R05';
+      const fixture=report_id==='R01'||manual?undefined:perReportFixture(report_id,'synthetic');
+      const calls=manual?[]:report_id==='R01'?[{tool_name:'get_market_snapshot',result:result(syntheticQuote)}]:[fixture!.call];
+      const local=structuredClone(report_id==='R05'?costsFixture:snapshotFixture);local.snapshot.as_of='2026-10-22';
+      const response=await session.rpc('tools/call',{name:'build_report_input',arguments:{report_id,subject,cutoff:received,display_timezone:'Asia/Seoul',calls,...(manual?{manual_consultation:local}:{})}});
       // Issue #2 (revision 6): the route fixture for R12 carries no ETF structure call, R13 is held, R14 is out of scope.
       const refusal:Record<string,string>={R12:'report_not_applicable',R13:'report_release_hold',R14:'report_out_of_scope'};
       if(refusal[report_id]){assert.equal(response.result?.isError,true,report_id);assert.match(String(response.result?.content?.[0]?.text),new RegExp('error_code='+refusal[report_id]),report_id);continue;}
@@ -316,7 +305,7 @@ test('MCP assembles the eleven non-R01 active routes and refuses R04/R12-without
       assert.equal(input.report_id,report_id);assert.equal(input.mode,'synthetic');
       const html=renderReportInputHtml(input);
       assert.match(html,/합성 fixture · 실제 자료 아님/,report_id+' provenance notice');
-      assert.ok(html.includes(`<h1>${subject.name}</h1>`)&&html.includes(`<h2>${getReportPlan(report_id).title}</h2>`),report_id+' route template');
+      assert.ok(html.includes(`<h1>${input.subject.name}</h1>`)&&html.includes(`<h2>${getReportPlan(report_id).title}</h2>`),report_id+' route template');
     }
     const actualQuote={...syntheticQuote,origin:'actual',provenance:{...syntheticQuote.provenance,origin:'actual',validation_status:'provider_shape_checked'}};
     const blocked=await session.rpc('tools/call',{name:'build_report_input',arguments:{report_id:'R01',subject,cutoff:received,display_timezone:'Asia/Seoul',calls:[{tool_name:'get_market_snapshot',result:result(actualQuote)}]}});
@@ -357,6 +346,10 @@ test('each of the 14 non-R01 retained report routes runs normalize-to-chart succ
   const routes=REPORT_ROUTE_IDS.filter(id=>id!=='R01');
   assert.equal(routes.length,14);
   for(const report_id of routes){
+    if(report_id==='R04'||report_id==='R05'){
+      assert.throws(()=>buildReportInput({report_id,subject,cutoff:received,display_timezone:'Asia/Seoul',calls:[{tool_name:'get_market_snapshot',result:result(syntheticQuote)}]}),/manual_consultation_input_only/);
+      continue; // Manual success, missing, currency and chart paths are in manual-consultation.test.ts.
+    }
     const fixture=perReportFixture(report_id,'synthetic');
     const input=buildReportInput({report_id,subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,calls:[fixture.call]});
     assert.equal(ReportInputSchema.parse(input).mode,'synthetic',report_id);
