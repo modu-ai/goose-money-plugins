@@ -1,3 +1,6 @@
+// Status (issue #10): kept for reuse, not wired; sign-in is decided for every tier (#1) but not implemented.
+// Design: docs/design/identity-auth-contract.md. Header, claims, 900 s lifetime and revocation rules match the drafted contract;
+// issuer, audience, client, scopes and token format stay open decisions (A-01..A-07) until the identity service is chosen.
 import {createHash,randomBytes,verify as verifySignature,type KeyObject} from 'node:crypto';
 import {z} from 'zod';
 import type {Membership} from './member-onboarding.js';
