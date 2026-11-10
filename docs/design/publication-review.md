@@ -5,7 +5,8 @@ Refs #23.
 - 상태: **초안(제안)**. 실제 게시·서비스 등록·DB migration은 하지 않습니다. 보존 기간·신고 처리·유료판 공개 기본값은 "결정 필요"로 둡니다.
 - 1차 출처: 기능 정의서 공식 Page 읽기 스냅샷(sequence undefined, updated_at 2026-11-08) F19(370–383행), 2장(42행), 7장(603·606행), 9장(640행). 대조표: `docs/design/feature-table-rev6.md`.
 - 관련 문서: `docs/design/product-tiers.md`(#5), `docs/design/privacy-retention.md`(#9), `docs/design/identity-auth-contract.md`(#6).
-- 코드 기준: main `fc3b16f`. 게시 기능은 코드에 없습니다 — `plugins/moai-atp/server/src/goose-routing.ts`가 게시·댓글 요청에 `community_service_not_configured`만 반환합니다.
+- 기존 설계 기준: main `fc3b16f`. #45에서 `plugins/moai-atp/server/src/community-draft.ts`를 반입했습니다. 초안·미리보기·승인·게시/철회 상태를 다루는 **미연결 로컬 하네스**이며, 기본 어댑터·네트워크 구현·MCP 등록은 없습니다. `goose-routing.ts`의 게시·댓글 요청은 여전히 `community_service_not_configured`로 막습니다.
+- #45 반입 범위: `oss/`의 소스와 합성 시험 8개를 복사한 것입니다. 신원/권한 호스트 연결, 실제 게시 검수·재배포권 확인·게시 서비스 동작을 검증한 것은 아닙니다. 비공개 정보 제거는 알려진 패턴을 찾는 휴리스틱이며 완전한 유출 방지를 보장하지 않습니다. 실제 게시 정책은 아래 설계와 별도로 연결·검증해야 합니다.
 - 작성: 2026-11-10 설계 감사.
 
 ## 1. 공개 범위 규칙과 출처

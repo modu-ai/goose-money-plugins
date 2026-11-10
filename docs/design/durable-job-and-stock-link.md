@@ -20,7 +20,9 @@ Refs #29.
 | 영속 상태 | **없음** — 결과는 호출 반환값뿐, 프로세스가 끝나면 사라짐 |
 | 중복 실행 방지 | **없음** — 같은 `run_id`를 두 번 실행해도 막지 않음 |
 | 예산 | **없음** |
-| Stock 연계 | **없음** — 게시·댓글 요청은 `goose-routing.ts`에서 `community_service_not_configured` |
+| Stock 연계 | **실제 서비스 연결 없음** — #45로 `community-draft.ts`의 미연결 로컬 초안·승인 하네스와 합성 시험을 반입. 기본 네트워크 어댑터·MCP 등록은 없고 게시·댓글 요청은 `goose-routing.ts`에서 `community_service_not_configured` |
+
+#45의 초안 하네스는 위 durable job 실행기와 연결하지 않았습니다. 프로세스 메모리에서만 승인·멱등 키·게시 결과 불명 상태를 다루며, 실제 DB·영속 복구·Stock 게시 서비스 구현을 뜻하지 않습니다. 이 반입은 아래 설계안을 실행하거나 예산·보존기간을 확정하지 않습니다.
 
 ## 2. durable job 상태 계약
 
