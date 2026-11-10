@@ -525,3 +525,19 @@ test('an early revisioned payment before its checkout requests the view and neve
   const aligned = machine.reconcile(checkedOut.subscription, { state: 'active', revision: 3 }, T0 + DAY);
   assert.equal(state(aligned.subscription), 'active');  // the provider view completes the settlement
 });
+
+test('a new checkout does not inherit the expired period', () => {
+  // Codex P2 :118 — the old subscription's period must not survive into the new pending: carrying
+  // it made the pending state effectively expired (repeat checkouts accepted, settlement reported
+  // expired). Only a period the event itself states survives the checkout.
+  const end = T0 + 30 * DAY;
+  let sub = machine.apply(activeWithEnd(end), ev('k0', 'checkout.completed', { provider_revision: 3, occurred_at: end + DAY })).subscription;
+  assert.equal(state(sub), 'pending');
+  assert.equal(sub.current_period_end, null);
+  assert.equal(machine.effectiveState(sub, end + 2 * DAY), 'pending');  // no immediate expiry
+  const paid = machine.apply(sub, ev('k1', 'payment.succeeded', { provider_revision: 4, occurred_at: end + 2 * DAY }));
+  assert.equal(paid.outcome, 'applied');
+  assert.equal(state(paid.subscription), 'active');
+  const explicit = machine.apply(activeWithEnd(end), ev('k2', 'checkout.completed', { provider_revision: 5, occurred_at: end + DAY, current_period_end: end + 40 * DAY }));
+  assert.equal(explicit.subscription.current_period_end, end + 40 * DAY);  // event-supplied period kept
+});

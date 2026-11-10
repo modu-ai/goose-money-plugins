@@ -115,7 +115,13 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
         // would erase the restoration state — combinations outside the table keep the state and are
         // recorded verbatim (§4, S14 guard).
         const effective = effectiveState(sub, now);
-        if (sub.state !== 'disputed' && (effective === 'none' || effective === 'expired')) return { sub: next('pending', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
+        if (sub.state !== 'disputed' && (effective === 'none' || effective === 'expired')) {
+          // The old subscription's period must not survive into the new checkout: a carried expired
+          // end made the fresh pending effectively expired (repeat checkouts, settlement reported
+          // expired — P2 :118). Keep only a period the event itself states (next() would otherwise
+          // re-carry the stored one after the extra spread).
+          return { sub: { ...next('pending', { trial_ended: false, previous_state: null, previous_state_changed_at: null }), current_period_end: event.current_period_end ?? null } };
+        }
         return undefined;
       }
       case 'payment.succeeded':
