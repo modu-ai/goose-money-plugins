@@ -15,7 +15,7 @@ import {UsQuoteInputSchema,UsQuoteResultSchema,FuturesQuoteInputSchema,FuturesQu
 import {CreditInputSchema,RiskRangeInputSchema,MarketRiskResultSchema,requestMarketRisk,type MarketRiskTransport} from './market-risk-data.js';
 import { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
-import { assertReportRouteAvailable, buildReportInput, ActiveReportInputSchema, ReportInputSchema, ReportPipelineToolInputSchema } from "./report-pipeline.js";
+import { ACTIVE_REPORT_ROUTE_IDS, assertReportRouteAvailable, buildReportInput, formatRouteList, ActiveReportInputSchema, ReportInputSchema, ReportPipelineToolInputSchema } from "./report-pipeline.js";
 import { registerReportHtmlTool } from "./report-html-mcp.js";
 import { QuoteInputSchema, QuoteSnapshotSchema, type QuoteSnapshot } from "./domain.js";
 import { normalizeKrQuote } from "./normalize-kr-quote.js";
@@ -145,7 +145,7 @@ export function createStockMcpServer(options: ServerOptions = {}): McpServer {
   server.registerTool('get_market_orderbook',{title:'국내 원천 호가 후보',description:'고정된 읽기 전용 호가 endpoint의 제한된 원천 JSON만 보존합니다. 체결가능·동시호가·단위·종목·시각 검증을 주장하지 않으며 예상체결 output2를 호가로 변환하지 않습니다. 서버 기본값(읽기 스위치 꺼짐)에서는 차단됩니다. 출하 플러그인 설정(mcp.json)은 KIS 읽기 스위치를 켜므로 로컬 키가 있으면 호출 시 KIS로 요청이 나갑니다.',inputSchema:MarketOrderbookInputSchema,outputSchema:MarketOrderbookResultSchema,annotations},async input=>providerResult("get_market_orderbook",async()=>{marketGate();return requestMarketOrderbook(input,options.marketOrderbookTransport,clock);}));
   server.registerTool("build_report_input", {
     title: "보고서 입력 조립 · 로컬 분석",
-    description: "R01–R03, R05–R12, U01 중 하나에 대해 앞서 받은 MCP 응답을 정규화된 보고서 입력으로 조립합니다. R12 ETF는 ETF 구조 근거가 있을 때만 조립하고, R13 선물은 초기 출시 보류(report_release_hold), R14 백테스트는 제품 범위 밖(report_out_of_scope)으로 거부합니다. 이 도구 자체는 외부 데이터 요청이나 파일 저장을 하지 않습니다. 합성 자료는 합성으로 표시하고, 권리 미확인 공급자 값은 숨기며 rights_pending을 유지합니다. 계좌 원장 입력·주문·이체는 받지 않습니다.",
+    description: formatRouteList(ACTIVE_REPORT_ROUTE_IDS) + " 중 하나에 대해 앞서 받은 MCP 응답을 정규화된 보고서 입력으로 조립합니다. R12 ETF는 ETF 구조 근거가 있을 때만 조립하고, R13 선물은 초기 출시 보류(report_release_hold), R14 백테스트는 제품 범위 밖(report_out_of_scope)으로 거부합니다. 이 도구 자체는 외부 데이터 요청이나 파일 저장을 하지 않습니다. 합성 자료는 합성으로 표시하고, 권리 미확인 공급자 값은 숨기며 rights_pending을 유지합니다. 계좌 원장 입력·주문·이체는 받지 않습니다.",
     inputSchema: ReportPipelineToolInputSchema,
     outputSchema: ActiveReportInputSchema,
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
