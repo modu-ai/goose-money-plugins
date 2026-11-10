@@ -39,6 +39,7 @@ const BASE_CSS = `
 ${ORIGINAL_TEMPLATE_CSS}${SPECIAL_VISUAL_CSS}${THEME}
 .table-wrap td.unit,.rs .table-wrap td.unit{white-space:nowrap}
 .table-wrap td.source-id,.rs .table-wrap td.source-id{white-space:nowrap}
+@media screen{#comparison .table-wrap th:first-child,#comparison .table-wrap td:first-child{min-width:8em}}
 @media(max-width:760px){.shell{padding:24px 20px 44px}.layout{grid-template-columns:1fr;gap:14px}.rail{position:static;display:flex;gap:4px 14px;flex-wrap:wrap;padding:12px 0}.rail strong{width:100%}.rail a{padding:3px 0}.hero{padding:26px 0 16px}.panel{padding:20px 0}.panel p,.panel li{font-size:17px}.echart,.lwc-chart{height:300px}}
 @media(max-width:420px){.shell{padding:20px 16px 36px}.topline{align-items:flex-start}.hero h1{font-size:30px}.meta{display:block}.meta span{display:block;margin:3px 0}.table-wrap{max-width:100%;margin-right:0;overflow-x:auto;overscroll-behavior-inline:contain}th,td{padding:10px 12px;font-size:inherit}table{font-size:18px}th{font-size:17px}td{font-size:18px}}
 @media print{.shell{max-width:none;padding:0}.layout{display:block}.rail,.actions{display:none}.panel{break-inside:auto;padding:16px 0}.hero{padding:16px 0}.chart-box,figure,.diagram{break-inside:avoid}.echart,.lwc-chart{height:300px}.table-wrap{overflow:visible}th,td{white-space:normal;font-size:9pt}.panel p,.panel li{font-size:11pt;line-height:1.6}}
