@@ -394,3 +394,26 @@ test('reconciliation confirming the stored state preserves every local-only anch
   assert.equal(disputedConfirmed.subscription.revision, 8);               // view-carried revision still updates
   assert.equal(disputedConfirmed.outcome, 'no_difference');
 });
+
+// Codex 3차 인라인 지적 수리 (head 77f8969) — Refs #104.
+
+test('dispute.won restore keeps the original grace anchor so an exhausted past_due grace stays expired', () => {
+  // Codex P2 :154 — with pastDueGraceMs configured, past_due -> dispute.opened -> dispute.won
+  // restores the prior state; the restore must carry back the original failure timestamp, or the
+  // already-exhausted grace restarts without any successful payment.
+  const grace = createSubscriptionStateMachine({ pastDueGraceMs: 5 * DAY });
+  let sub = grace.apply(grace.emptySubscription('s'), ev('p0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = grace.apply(sub, ev('p1', 'payment.succeeded', { provider_revision: 2, current_period_end: T0 + 30 * DAY })).subscription;
+  sub = grace.apply(sub, ev('p2', 'renewal.failed', { provider_revision: 3, occurred_at: T0 + DAY })).subscription;
+  assert.equal(state(sub), 'past_due');
+  assert.equal(grace.effectiveState(sub, T0 + DAY + 5 * DAY), 'expired');  // grace exhausted
+  const opened = grace.apply(sub, ev('p3', 'dispute.opened', { provider_revision: 4, occurred_at: T0 + DAY + 6 * DAY }));
+  assert.equal(state(opened.subscription), 'disputed');
+  assert.equal(opened.subscription.previous_state, 'past_due');
+  assert.equal(opened.subscription.previous_state_changed_at, T0 + DAY);
+  const won = grace.apply(opened.subscription, ev('p4', 'dispute.won', { provider_revision: 5, occurred_at: T0 + DAY + 7 * DAY }));
+  assert.equal(won.outcome, 'applied');
+  assert.equal(state(won.subscription), 'past_due');
+  assert.equal(won.subscription.state_changed_at, T0 + DAY);  // original anchor restored, not the won time
+  assert.equal(grace.effectiveState(won.subscription, T0 + DAY + 7 * DAY), 'expired');  // no grace restart
+});

@@ -36,6 +36,7 @@ export type StoredSubscription = {
   current_period_end: number | null;          // stored provider period end; expiry is computed from this, not from late events (S3)
   revision: number;                           // last applied provider order (0 while none seen); a revision-less event never advances it
   previous_state: SubscriptionState | null;   // remembered for dispute.won restore
+  previous_state_changed_at: number | null;   // the restored state's own anchor (B-04 grace), kept across a dispute round-trip
   trial_ended: boolean;                       // trial.ended seen, awaiting the settling payment
   state_changed_at: number;
   last_event_at: number;
@@ -63,6 +64,7 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     current_period_end: null,
     revision: 0,
     previous_state: null,
+    previous_state_changed_at: null,
     trial_ended: false,
     state_changed_at: 0,
     last_event_at: 0,
@@ -113,11 +115,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
         // would erase the restoration state — combinations outside the table keep the state and are
         // recorded verbatim (§4, S14 guard).
         const effective = effectiveState(sub, now);
-        if (sub.state !== 'disputed' && (effective === 'none' || effective === 'expired')) return { sub: next('pending', { trial_ended: false, previous_state: null }) };
+        if (sub.state !== 'disputed' && (effective === 'none' || effective === 'expired')) return { sub: next('pending', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
         return undefined;
       }
       case 'payment.succeeded':
-        if (sub.state === 'pending') return { sub: next(event.trial === true ? 'trialing' : 'active', { trial_ended: false, previous_state: null }) };
+        if (sub.state === 'pending') return { sub: next(event.trial === true ? 'trialing' : 'active', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
         if (sub.state === 'trialing' && sub.trial_ended) return { sub: next('active', { trial_ended: false }) };
         if (sub.state === 'past_due') return { sub: next('active') };
         return undefined;
@@ -145,16 +147,21 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
         return undefined;
       case 'refund.succeeded':
         if (event.refund_scope !== 'full') return { unhandled: 'refund_scope_unsupported' };
-        if (sub.state === 'active' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('refunded', { trial_ended: false, previous_state: null }) };
+        if (sub.state === 'active' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('refunded', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
         return undefined;
       case 'dispute.opened':  // design table "active 등": paid-capable states enter dispute
-        if (sub.state === 'active' || sub.state === 'trialing' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('disputed', { previous_state: sub.state }) };
+        if (sub.state === 'active' || sub.state === 'trialing' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('disputed', { previous_state: sub.state, previous_state_changed_at: sub.state_changed_at }) };
         return undefined;
       case 'dispute.won':
-        if (sub.state === 'disputed' && sub.previous_state !== null) return { sub: next(sub.previous_state, { previous_state: null }) };
+        if (sub.state === 'disputed' && sub.previous_state !== null) {
+          // §4 disputed -> won -> previous state: restoring is not a new state change, so the
+          // restored state keeps its original anchor — an already-exhausted past_due grace
+          // (B-04) must not restart without a successful payment (P2 :154).
+          return { sub: { ...next(sub.previous_state, { previous_state: null, previous_state_changed_at: null }), state_changed_at: sub.previous_state_changed_at ?? now } };
+        }
         return undefined;
       case 'dispute.lost':
-        if (sub.state === 'disputed') return { sub: next('refunded', { trial_ended: false, previous_state: null }) };
+        if (sub.state === 'disputed') return { sub: next('refunded', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
         return undefined;
     }
   }
@@ -227,12 +234,16 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     const previous_state: SubscriptionState | null = provider.state === 'disputed'
       ? (current.state === 'disputed' ? current.previous_state : current.state)
       : null;
+    const previous_state_changed_at: number | null = provider.state === 'disputed'
+      ? (current.state === 'disputed' ? current.previous_state_changed_at : current.state_changed_at)
+      : null;
     const adopted: StoredSubscription = {
       ...current,
       state: provider.state,
       current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
       revision: provider.revision ?? current.revision,
       previous_state,
+      previous_state_changed_at,
       trial_ended: false,
       state_changed_at: now,
       last_event_at: now,
