@@ -58,8 +58,11 @@ test('the memo bound is injected: 7 chars rejected, 6 passes, and an absent memo
 
 test('control characters are rejected in claim, evidence items and memo',()=>{
  assert.throws(()=>Schema.parse({as_of:'2026-02-28',claim:'a\u0000b'}));
+ assert.equal(Schema.parse({as_of:'2026-02-28',claim:'a b'}).claim,'a b');
  assert.throws(()=>Schema.parse({...valid,supporting_evidence:['a\u0000b']}));
+ assert.deepEqual(Schema.parse({...valid,supporting_evidence:['a b']}).supporting_evidence,['a b']);
  assert.throws(()=>Schema.parse({...valid,memo:'a\u0000b'}));
+ assert.equal(Schema.parse({...valid,memo:'a b'}).memo,'a b');
 });
 
 test('as_of must be a real calendar date written as YYYY-MM-DD',()=>{
