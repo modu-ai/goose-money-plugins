@@ -571,9 +571,9 @@ test('reconciliation starting a new checkout clears the expired period like appl
 });
 
 test('a reconciled replacement checkout restarts the pending timeout', () => {
-  // Codex P2 :225 — a timed-out pending confirmed as pending by the view is a replacement
-  // checkout: the timeout anchor restarts, or the new checkout stays effectively none immediately
-  // and further checkout events remain eligible instead of waiting for its timeout.
+  // Codex P2 :225 — a timed-out pending confirmed as pending by a view with an ADVANCED revision
+  // is a replacement checkout: the timeout anchor restarts, or the new checkout stays effectively
+  // none immediately and further checkout events remain eligible.
   const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 100 });
   let sub = timed.apply(timed.emptySubscription('s'), ev('t0', 'checkout.completed', { provider_revision: 1 })).subscription;
   assert.equal(timed.effectiveState(sub, T0 + 1000), 'none');  // anchor 0 + 100 <= 1000
@@ -581,6 +581,18 @@ test('a reconciled replacement checkout restarts the pending timeout', () => {
   assert.equal(routed.outcome, 'reconcile_required');
   const confirmed = timed.reconcile(routed.subscription, { state: 'pending', revision: 2 }, T0 + 1200);
   assert.equal(confirmed.outcome, 'no_difference');
-  assert.equal(confirmed.subscription.state_changed_at, T0 + 1200);  // anchor restarted, not preserved
+  assert.equal(confirmed.subscription.state_changed_at, T0 + 1200);  // evidence: revision 1 → 2
   assert.equal(timed.effectiveState(confirmed.subscription, T0 + 1200), 'pending');
+});
+
+test('an unchanged pending snapshot does not revive an abandoned checkout', () => {
+  // Codex P2 :225 (2차) — same-revision confirmation carries no replacement evidence: periodic
+  // reconciliation must not reverse effective none back to pending.
+  const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 100 });
+  let sub = timed.apply(timed.emptySubscription('s'), ev('u0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  assert.equal(timed.effectiveState(sub, T0 + 1000), 'none');
+  const same = timed.reconcile(sub, { state: 'pending', revision: 1 }, T0 + 1200);
+  assert.equal(same.outcome, 'no_difference');
+  assert.equal(same.subscription.state_changed_at, T0);  // original anchor untouched (not the reconcile time)
+  assert.equal(timed.effectiveState(same.subscription, T0 + 1200), 'none');
 });

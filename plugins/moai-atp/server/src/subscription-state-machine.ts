@@ -217,12 +217,15 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       // overwriting them restarts the grace on every pass (P2 :211), drops the pending trial
       // settlement (P2 :210), or breaks dispute.won restore. Keep them; update only the carried
       // fields.
-      // Exception (:118 family, P2 :225): a timed-out pending confirmed as pending by the view is
-      // a replacement checkout — its timeout anchor restarts, like apply()'s checkout path stamps
-      // state_changed_at. Keeping the dead anchor would leave the new checkout effectively none.
+      // Exception (:118 family, P2 :225): a timed-out pending confirmed as pending by a view whose
+      // revision ADVANCED is a replacement checkout — its timeout anchor restarts, like apply()'s
+      // checkout path stamps state_changed_at. An unchanged snapshot carries no replacement
+      // evidence, so periodic reconciliation must not revive the abandoned checkout (P2 :225 2차).
       const confirmedReplacementCheckout = current.state === 'pending'
         && options.pendingTimeoutMs !== undefined
-        && current.state_changed_at + options.pendingTimeoutMs <= now;
+        && current.state_changed_at + options.pendingTimeoutMs <= now
+        && provider.revision !== undefined
+        && provider.revision > current.revision;
       const updated: StoredSubscription = {
         ...current,
         current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
