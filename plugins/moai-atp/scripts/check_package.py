@@ -68,7 +68,7 @@ route_path = root/('server/runtime/contracts/report-route-bindings.v1.json' if a
 if route_path.is_file():
     routes = json.loads(route_path.read_text(encoding='utf-8'))['routes']
     for entry in catalog:
-        if entry['id'] in ['R12', 'R13']:
+        if entry['id'] in ['R04', 'R05', 'R12', 'R13']:
             assert set(entry['required_groups']) == set(routes[entry['id']]['field_groups']), 'route group mismatch: '+entry['id']
 
 print('Local package component checks passed; account upload/host installation not performed.')
