@@ -113,10 +113,10 @@ storeTest("concurrent first writes never overwrite another confirmed profile", a
 
 test("CLI accepts only setup modes; canceled interview route and unknown arguments never execute or echo", async () => {
   const actions: string[] = [], errors = sink();
-  for (const args of [["setup"], ["/goose", "setup", "--edit-profile"], ["setup", "--delete-profile"]]) {
+  for (const args of [["setup"], ["/goose", "setup", "--edit-profile"], ["setup", "--delete-profile"], ["setup", "--delete-onboarding"]]) {
     assert.equal(await dispatchGooseCommand(args, async mode => { actions.push(mode); return 0; }, errors, async () => 0), 0);
   }
-  assert.deepEqual(actions, ["reuse", "edit", "delete"]);
+  assert.deepEqual(actions, ["reuse", "edit", "delete", "delete-onboarding"]);
   for (const args of [["interview"], ["/goose", "interview"], ["setup", "SYNTHETIC_SECRET_ARGUMENT"]]) {
     assert.equal(await dispatchGooseCommand(args, async () => { throw new Error("must not run"); }, errors), 64);
   }
