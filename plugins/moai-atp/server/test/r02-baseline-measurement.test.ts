@@ -2,9 +2,11 @@
 // <T17> tree (b855fa1) answers for single-subject inputs, so that REQ-SUB-003 ("no subjects list ->
 // the same ReportInput, contract atp.template/1.1") has a recorded baseline. It holds NO comparison
 // input, so it stays green after a correct M1 and turns red only if M1 changes a path outside the
-// comparison. The golden file was generated once from the <T17> build and is never regenerated.
+// comparison. The original <T17> baseline is retained; approved #52 section-body presentation
+// amendments are recorded in the fixture metadata. Full output equality remains enforced.
 // Synthetic data only; the pipeline functions called here cannot reach a provider.
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import test from 'node:test';
 import {buildReportInput,ReportInputSchema} from '../src/report-pipeline.js';
 import golden from './fixtures/r02-single-subject-golden.json' with {type:'json'};
@@ -18,6 +20,13 @@ const EXPECTED_IDS=[
   'r02-e2e-synthetic-quote-rights-on',
   'r02-e2e-quote-rights-off',
 ];
+
+test('#52 presentation amendment preserves every baseline field except section prose',()=>{
+  const entries=structuredClone(golden.entries);
+  for(const entry of entries)for(const section of entry.expected.sections)delete (section as {body?:string}).body;
+  // Measured from the unchanged fixture at 8e3d4c0 before the approved body-text amendment.
+  assert.equal(createHash('sha256').update(JSON.stringify(entries)).digest('hex'),'8d8caf956e994d9feefa7dd621fe154903f5ce4da7d599b1546149031a0696db');
+});
 
 test('golden holds the planned single-subject entries and none of them names a subjects list',()=>{
   assert.equal(golden.generated_from,'b855fa141e7e28300e86ef3e497e596a551503ae');
