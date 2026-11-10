@@ -160,14 +160,17 @@ test('pending timeout expires only when the grace value is injected', () => {
   assert.equal(timed.effectiveState(sub, T0 + 6 * DAY), 'none');
 });
 
-test('unhandled combinations keep the state and are recorded', () => {
+test('out-of-table combinations keep the state and request the provider view', () => {
+  // Design §4 row "표에 없는 (상태, 사건) 조합" + P2 :189: the combination is recorded, the event
+  // is marked seen, and the outcome requests the reconciliation view instead of dead-ending.
   const end = T0 + 30 * DAY;
   let sub = machine.apply(activeWithEnd(end), ev('e2', 'refund.succeeded', { provider_revision: 3, refund_scope: 'full' })).subscription;
   assert.equal(state(sub), 'refunded');
   const r = machine.apply(sub, ev('e5', 'renewal.succeeded', { provider_revision: 4, current_period_end: end + 30 * DAY }));
-  assert.equal(r.outcome, 'unhandled_recorded');
+  assert.equal(r.outcome, 'reconcile_required');
   assert.equal(state(r.subscription), 'refunded');
-  assert.equal(r.subscription.unhandled.at(-1)?.reason, 'unhandled_combination');
+  assert.equal(r.subscription.unhandled.at(-1)?.reason, 'out_of_table_reconcile');
+  assert.ok(r.subscription.applied_event_ids.includes('e5'));
 });
 
 test('checkout after time-based expiration starts a new pending checkout', () => {
@@ -187,7 +190,7 @@ test('checkout after time-based expiration starts a new pending checkout', () =>
   assert.equal(state(restart.subscription), 'pending');
 
   const live = machine.apply(activeWithEnd(end), ev('e4', 'checkout.completed', { provider_revision: 3, occurred_at: end - DAY }));
-  assert.equal(live.outcome, 'unhandled_recorded');
+  assert.equal(live.outcome, 'reconcile_required');  // out-of-table: requests the provider view (:189)
   assert.equal(state(live.subscription), 'active');
 });
 
@@ -319,7 +322,7 @@ test('a live dispute stays out of new checkouts even past its period end', () =>
   assert.equal(state(disputed), 'disputed');
   assert.equal(machine.effectiveState(disputed, end + DAY), 'expired');
   const checkout = machine.apply(disputed, ev('e3', 'checkout.completed', { provider_revision: 4, occurred_at: end + DAY }));
-  assert.equal(checkout.outcome, 'unhandled_recorded');
+  assert.equal(checkout.outcome, 'reconcile_required');  // out-of-table: requests the provider view (:189)
   assert.equal(state(checkout.subscription), 'disputed');
   assert.equal(checkout.subscription.previous_state, 'active');
 });
@@ -506,4 +509,19 @@ test('a revision-less trial settlement never dead-ends in unhandled', () => {
   const paid = machine.apply(confirmed.subscription, ev('w3', 'payment.succeeded'));
   assert.equal(paid.outcome, 'reconcile_required');
   assert.equal(state(paid.subscription), 'trialing');
+});
+
+test('an early revisioned payment before its checkout requests the view and never dead-ends', () => {
+  // Codex P2 :189 — payment.succeeded (rev 2) arriving before checkout (rev 1): the out-of-table
+  // combo is marked seen AND requests reconciliation, so the caller can align with the provider
+  // instead of leaving a paid subscription stuck in pending behind a duplicate_ignored replay.
+  const early = machine.apply(empty(), ev('v0', 'payment.succeeded', { provider_revision: 2 }));
+  assert.equal(early.outcome, 'reconcile_required');
+  assert.equal(state(early.subscription), 'none');
+  const checkedOut = machine.apply(early.subscription, ev('v1', 'checkout.completed', { provider_revision: 1 }));
+  assert.equal(state(checkedOut.subscription), 'pending');
+  const replay = machine.apply(checkedOut.subscription, ev('v0', 'payment.succeeded', { provider_revision: 2 }));
+  assert.equal(replay.outcome, 'duplicate_ignored');
+  const aligned = machine.reconcile(checkedOut.subscription, { state: 'active', revision: 3 }, T0 + DAY);
+  assert.equal(state(aligned.subscription), 'active');  // the provider view completes the settlement
 });

@@ -178,15 +178,12 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     }
     const moved = transition(current, event, event.occurred_at);
     if (moved === undefined) {
-      // A revision-less event cannot judge order at all (design §5 순서 역전): "no transition from
-      // the local state" may only mean the local state is stale, so it routes to the provider view
-      // instead of being finalised as unhandled (P2 :182 — the event must not be marked seen as a
-      // dead end).
-      if (event.provider_revision === undefined) {
-        return { outcome: 'reconcile_required', reason: 'revision_less_reconcile', subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'revision_less_reconcile' }), event.event_id) };
-      }
-      // S14 guard: table combinations never invented; everything outside the table is recorded verbatim.
-      return { outcome: 'unhandled_recorded', subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'unhandled_combination' }), event.event_id) };
+      // Design §4 row "표에 없는 (상태, 사건) 조합": the state is kept, the combination is
+      // recorded, and the caller aligns through the provider view (§5 유실 대사 경로). The event
+      // is marked seen, so the outcome must request that view — otherwise a settled payment
+      // arriving out of order is finalised as a dead end (P2 :189, :182).
+      const reason = event.provider_revision === undefined ? 'revision_less_reconcile' : 'out_of_table_reconcile';
+      return { outcome: 'reconcile_required', reason, subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason }), event.event_id) };
     }
     if ('unhandled' in moved) {
       return { outcome: 'unhandled_recorded', reason: moved.unhandled, subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: moved.unhandled }), event.event_id) };
