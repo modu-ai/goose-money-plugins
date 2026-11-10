@@ -8,7 +8,7 @@
       "name": "moai-atp",
       "source": {
         "source": "local",
-        "path": "./oss"
+        "path": "./plugins/moai-atp"
       },
       "policy": {
         "installation": "AVAILABLE",
