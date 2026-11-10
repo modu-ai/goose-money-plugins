@@ -38,8 +38,7 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 *.db
-*.sqlite
-*.sqlite3
+*.sqlite*
 *.rdb
 *.dbm
 
@@ -171,8 +170,8 @@ secret-*.*
 # ===========================================
 # Claude Code Configuration
 # ===========================================
-/AGENTS.local.md
-/CLAUDE.local.md
+AGENTS.local.md
+CLAUDE.local.md
 .claude/settings.local.json
 .claude/settings.local.json.lock
 .claude/settings.local.*.json
@@ -359,13 +358,12 @@ dist-ssr/
 **/.venv/
 .goose/
 *.key
-credentials.json
+**/*credentials*.json
 *.zip
 *.tar.xz
 /plugins/moai-atp/server/runtime/
 /plugins/moai-atp/server/.bundle-*/
-/oss/server/runtime/
-/oss/server/.bundle-*/
+/oss/
 /.claude/
 /.moai/
 /.codex/
@@ -376,3 +374,9 @@ credentials.json
 /.github/*
 !/.github/workflows/
 /.local/
+
+# Local execution data and private-key files (public repository protection)
+id_rsa*
+id_ed25519*
+**/.r17-run/
+**/secrets/
