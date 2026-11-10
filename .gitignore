@@ -373,5 +373,6 @@ credentials.json
 /.worktreeinclude
 /.claudeignore
 /.git_hooks/
-/.github/
+/.github/*
+!/.github/workflows/
 /.local/
