@@ -9,6 +9,10 @@ Refs #25 · 2026-11-10 KST 작성
 임시 프로필에서 설치·업데이트·제거 명령을 실행했습니다. E5의 설치 실패 뒤
 Claude용 구성을 추가해 E6에서 로컬 설치·갱신·제거를 확인했습니다.
 보고서 요청은 인증 단계에서 멈춰 도구 호출·호스트 안 표시는 미검증입니다.
+2026-11-11에는 같은 조건(로그인 없음·임시 프로필)으로 병합 main
+`9d96b939dd627ca1abee40b6a781ceebed2ef19f`에서 설치·갱신·제거를 다시
+실행했습니다(E7). 남은 27칸은 "로그인·Windows 없이 채울 수 없는 칸" 절에
+사유와 채우는 데 필요한 사람 작업으로 정리했습니다.
 
 ## 호스트 × OS
 
@@ -18,7 +22,7 @@ Claude용 구성을 추가해 E6에서 로컬 설치·갱신·제거를 확인�
 
 | 호스트 | OS | 설치 | 도구 호출 | 보고서 표시 | 업데이트 | 제거 | 확인한 근거와 한계 |
 |---|---|---|---|---|---|---|---|
-| Claude Code | macOS | 로컬 설치 확인(E6) | 인증 차단·미검증(E6) | 미검증(E6) | 로컬 시험 갱신 확인(E6) | 설치 기록 제거 확인(E6) | Claude Code 2.1.322 · macOS 27.0.1 arm64 · dev.6 런타임. MCP 연결 확인, 로그인 세션의 호출·표시나 실제 출시 버전 간 갱신은 별도 |
+| Claude Code | macOS | 로컬 설치 확인(E6) | 인증 차단·미검증(E6) | 미검증(E6) | 로컬 시험 갱신 확인(E6) | 설치 기록 제거 확인(E6) | Claude Code 2.1.322 · macOS 27.0.1 arm64 · dev.6 런타임. MCP 연결 확인, 로그인 세션의 호출·표시나 실제 출시 버전 간 갱신은 별도. E7(2026-11-11)에서 병합 main 기준 설치·MCP 연결·갱신·제거 재확인 |
 | Claude Code | Windows | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E3. Windows용 키 파일 저장 거부는 소스 정책이며 호스트 설치 시험이 아님 |
 | Claude Desktop | macOS | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E2. Claude Code 결과와도 별도 검증 필요 |
 | Claude Desktop | Windows | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E3. macOS 관찰로 대체하지 않음 |
@@ -37,6 +41,7 @@ ChatGPT의 웹/데스크톱 실행 형태, Claude Code의 터미널/앱 실행 �
 | E2 | [report-html-mcp.ts](../../plugins/moai-atp/server/src/report-html-mcp.ts) | `delivery=mcp_resource_link`, `host_rendering=not_observed`, `mime_type=text/html`; 메모리 자원은 최대 5분·3개 | 호스트가 링크를 실제로 표시·다운로드했다는 증거 |
 | E3 | [local-credentials.ts](../../plugins/moai-atp/server/src/local-credentials.ts), [README](../../plugins/moai-atp/README.md) | Windows에서는 키 파일 저장을 `secure_file_storage_unsupported`로 거부하는 소스와 안내가 있음 | Windows에서 ATP 전체가 동작하지 않는다는 판정, 실제 Windows 실행 결과 |
 | E6 | 아래 Claude용 패키지 추가 후 재실측 | 로컬 설치·MCP 연결·시험 메타데이터 갱신·설치 기록 제거 | 인증된 도구 호출·호스트 안 HTML 표시·기존 실행 세션 갱신/제거 |
+| E7 | 아래 병합 main 재실측(2026-11-11) | 병합 main `9d96b93` 기준 로컬 설치·MCP Connected·시험 표식 갱신·설치 기록 제거 재확인. E1·E2·E3의 소스 근거와 MCP Apps 부재 검색도 같은 커밋에서 재확인 | OS 샌드박스 미적용(E6과의 격리 차이는 E7 절에 기술), 인증된 호출·표시, Windows·Desktop·ChatGPT 칸 |
 | E5 | 아래 Claude Code 임시 프로필 실측 | 로컬 소스 설치 실패, 업데이트·제거 미설치 오류, 전후 플러그인 목록 비어 있음 | 도구 호출·보고서 표시, 버전 간 업데이트·설치된 플러그인 제거 성공 |
 | E4 | 과거 로컬 `host-preview-review/RESULT.md`·`installed-contract.json` | 아래 과거 관측 요약을 읽어 확인 | 현재 main·현재 설치본의 재측정, 여섯 호스트 조합의 실제 실행 |
 
@@ -172,6 +177,80 @@ stdio 클라이언트로 실행했습니다. `tools/list` 36개, 합성 `build_r
 #25를 닫지 않습니다. 원시 로그·격리 정책·합성 응답은 E5와 같이 로컬
 증거 폴더에만 보존하며 Git·이슈·PR에는 올리지 않습니다.
 
+## E7 · 병합 main 재실측 (2026-11-11, 로그인 없음)
+
+2026-11-11 02:41~02:51 KST, 같은 Mac의 Claude Code 2.1.322 /
+macOS 27.0.1 arm64 / Node 22.14.0에서 병합 main
+`9d96b939dd627ca1abee40b6a781ceebed2ef19f`을 Git worktree로 추출해
+`npm ci` → `npm run build`(둘 다 종료 0)한 뒤 소스 모드로 재실측했습니다.
+플러그인 카탈로그는 worktree 사본(`.claude-plugin/marketplace.json` +
+`plugins/moai-atp`, node_modules 포함)을 임시 디렉터리에 두고 사용했습니다.
+저장소 버전은 바꾸지 않았습니다.
+
+같은 조건의 소스 재확인(모두 `9d96b93` 직접 측정): E1
+`CAPABILITIES.json`의 `host_installed=false`(144행)·
+`independent_host_verification=false`(194행), E2
+`report-html-mcp.ts`의 `mime_type: text/html`(28·143행)·
+`delivery: mcp_resource_link`(31·146행)·
+`host_rendering: not_observed`(32·147행), E3
+`local-credentials.ts`의 win32 저장 거부(28행)는 모두 그대로였고,
+`@modelcontextprotocol/ext-apps`·`registerApp`·`resourceUri`·
+`text/html;profile=mcp-app` 검색 일치도 0건이었습니다.
+
+### 격리와 한계
+
+- 새 임시 디렉터리에 `CLAUDE_CONFIG_DIR`와 `CLAUDE_CODE_TMPDIR`를
+  지정했고, 세션 환경의 인증·세션 변수(ANTHROPIC_*·CLAUDE_*·Z_AI_*·
+  공급자 키 계열)를 **이름 목록으로 제거**했습니다. 값은 읽거나 기록하지
+  않았고 PATH를 목록으로 한정했습니다. 모든 명령은
+  `claude --bare --setting-sources user`로 실행했습니다.
+- **E6과의 차이**: OS 샌드박스(sandbox-exec)는 적용하지 않았습니다.
+  격리는 설정 경로 전환·변수 제거·`--bare`에 한정되며 네트워크를 OS
+  수준에서 강제하지 못합니다. 다만 이번 단계는 모두 로컬 경로만 읽는
+  명령이고 네트워크를 부르는 단계가 없으며, `--print` 호출은 인증 부재로
+  즉시 종료됐습니다. 실사용 프로필·키·dev.5 설치본은 읽거나 쓰지
+  않았습니다(설정 경로가 임시 디렉터리).
+- 측정 준비 실수 1건: 첫 카탈로그 사본에서 `node_modules`를 뺐더니
+  설치는 성공(`outcome ok`)했고 `mcp list`는 `CONNECTION_CLOSED`로
+  실패했습니다. 캐시 진입점을 직접 실행해 `server_load_failed`와
+  `node_modules` 부재를 확인했고, 사본에 의존성을 포함해 재설치하자
+  아래 표의 결과를 얻었습니다. 제품 동작이 아니라 측정 준비 문제였음을
+  구분해 기록합니다.
+- 갱신 표식은 임시 사본의 설치 기록과 카탈로그 manifest 버전만 바꿨고
+  저장소·출시 버전은 그대로입니다. 원시 로그는 이 머신의
+  `/tmp/lane2-e7/*.log`에만 두며 Git 미추적입니다.
+
+### 다섯 단계의 재관측
+
+| 단계 | 명령 또는 선행 조건 | 실제 결과 | 판정 |
+|---|---|---|---|
+| 설치 | `plugin list --json` 사전 확인(종료 0, `[]`) → 카탈로그·플러그인 `plugin validate <경로> --strict --json`(둘 다 success true, errors/warnings 비어 있음) → `plugin install moai-atp --marketplace <임시 카탈로그> --scope user --json` | 종료 0, `outcome ok`. `plugin list`에서 `0.1.0-dev.6` enabled, MCP 서버 `moai-kis-readonly` 인식, `plugin details`는 Skills(1) goose · MCP servers(1) | E6 재확인. 이번에도 로그인 없이 설치 단계만으로 완결됨 |
+| 도구 호출 | `claude --plugin-dir <캐시> --print --max-turns 1 <합성 R01 요청>` | 종료 1, `Not logged in · Please run /login` | 인증 차단 재관측. 로그인 없이는 채울 수 없음 |
+| 보고서 표시 | 위 호출이 결과를 만들지 못해 실행하지 않음 | 미검증 유지 | 별도 stdio의 HTML 반환을 호스트 표시로 세지 않음 |
+| 업데이트 | 변경 없는 `plugin update --json`: `up_to_date`. 설치 기록·카탈로그 사본의 버전을 `0.1.0-dev.6-localprobe.1`로 바꾼 뒤 같은 명령 | 종료 0, `updated from 0.1.0-dev.6 to 0.1.0-dev.6-localprobe.1`. 새 캐시 버전 디렉터리 생성, 그 경로의 `mcp list` `✔ Connected` | 로컬 갱신 경로 재확인. 실제 출시 버전 간 교체·기존 세션 전환은 미검증 |
+| 제거 | `plugin uninstall moai-atp@moai-atp-claude-local --scope user --json` | 종료 0, `outcome ok`(`keptData:false`). 이후 `plugin list` `[]`, 같은 ID `plugin details` 종료 1 `not found` | 설치 기록 제거 재확인 |
+
+`check_package.py`(빌드 트리 기본 모드)는
+"Local package component checks passed; account upload/host installation
+not performed." 종료 0이고 `python3 -m unittest discover -s scripts -p
+test_claude_package.py`는 Ran 2 tests / OK였습니다. `--source-only`는
+빌드 산출물이 있는 트리에서 설계대로 거부(AssertionError)했고, 산출물
+없는 순수 사본에서의 재실행은 이번 세션의 도구 가드 거절로 수행하지
+못했습니다(이 문서의 E7 근거에서 제외).
+
+## 로그인·Windows 없이 채울 수 없는 칸 (2026-11-11 정리)
+
+남은 27칸(호출·표시 2칸 + 미검증 25칸)은 아래 사유 없이는 채울 수
+없습니다. 이 표는 채움 가능성을 닫는 것이 아니라, 각 칸에 무엇이 필요한지를
+남기기 위한 것입니다.
+
+| 칸 묶음 | 칸 수 | 로그인·Windows 기기 없이 채울 수 없는 이유 | 채우는 데 필요한 사람 작업 |
+|---|---|---|---|
+| Claude Code × macOS 도구 호출·보고서 표시 | 2 | 도구 호출은 로그인된 Claude 세션이 필요. E6·E7 모두 인증을 가져오지 않은 임시 프로필이라 `Not logged in`으로 종료(E7 02:44 KST 재관측) | 로그인된 상태의 격리 실측 허용 여부 사용자 결정(실사용 프로필·설치본 노출 감수). 또는 테스트 전용 계정·자격 준비 |
+| Claude Code × Windows 5단계 전체 | 5 | Windows 환경 부재. 키 파일 저장이 Windows에서 거부되는 것은 소스 정책(E3)까지 확인됐지만 호스트 설치·호출 동작은 측정한 적이 없음 | Windows 기기에서 E6·E7과 같은 절차 실행. GitHub 호스팅 Windows runner로 설치·갱신·제거 3단계만 측정하는 방안은 claude CLI를 runner에 설치하는 CI 워크플로 추가가 전제라 별도 결정 대상(이번 PR에서 수행하지 않음) |
+| Claude Desktop × macOS·Windows 5단계 전체 | 10 | Claude Desktop 앱과 로그인 필요. 플러그인 설치 경로가 Claude Code CLI와 달라 E6·E7 절차를 그대로 쓸 수 없음 | Claude Desktop이 설치된 기기와 로그인 세션에서 5단계 실행(기기·계정 확보는 사용자 몫) |
+| ChatGPT × macOS·Windows 5단계 전체 | 10 | ChatGPT 앱(웹·데스크톱 형태 포함)과 로그인 필요. ChatGPT의 MCP 지원 범위·설치 경로 자체가 아직 확인되지 않음 | 검증할 실행 형태를 먼저 지정하고, 실제 ChatGPT 세션에서 5단계 실행. 아래 MCP Apps 채택 여부 결정에 따라 검증 설계가 달라짐 |
+
 ## ChatGPT 내장 미리보기 선택지 — 결정 필요
 
 일반 HTML 링크의 반환과 대화 안에 포함되는 UI는 별도 계약입니다.
@@ -189,6 +268,15 @@ ATP의 ChatGPT 내장 미리보기가 구현·검증됐다는 근거가 아닙�
 개인 보고서를 전역의 ‘마지막 보고서’로 공유하거나 TTL·권리 검사를 느슨하게
 만드는 방식은 대안으로 삼지 않습니다. 지원하지 않는 호스트의 처리와
 CDN 글꼴 허용 범위도 호스트별로 검증해야 합니다.
+
+2026-11-11 현재(병합 main `9d96b93` 재확인): 위 두 선택지의 비교는
+그대로이며 채택 여부는 여전히 결정 필요입니다. 이번 재확인에서
+`@modelcontextprotocol/ext-apps`·`registerApp`·`resourceUri`·
+`text/html;profile=mcp-app` 검색 일치는 0건이었고, E2의 일반 HTML 자원
+계약(`delivery=mcp_resource_link`, `host_rendering=not_observed`)도
+`report-html-mcp.ts` 28·31·32·143·146·147행에서 그대로 확인됐습니다.
+즉 MCP Apps UI 쪽 선택지는 아직 구현·검증이 시작되지 않은 상태이고,
+일반 HTML 자원 유지 쪽도 호스트 표시가 미검증인 상태입니다.
 
 공식 제품 문서는 검증 경로를 조사하는 참고 자료입니다.
 [Claude Code 설치 안내](https://code.claude.com/docs/en/setup)와
