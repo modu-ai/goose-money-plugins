@@ -706,3 +706,24 @@ test('a consumed replacement marker does not clear twice', () => {
   assert.equal(again.subscription.current_period_end, null);
   assert.equal(machine.effectiveState(again.subscription, end + DAY), 'active');
 });
+
+test('a replacement view without revision advance keeps the stored period', () => {
+  // §5.4 N3: 교체 판정은 판번 진전 등 증거가 있을 때만 — 동일 스냅샷 확인은 구기간을 건드리지 않음.
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('x2', 'checkout.completed', { occurred_at: end + DAY }));
+  const same = machine.reconcile(routed.subscription, { state: 'active', revision: 2 }, end + 2 * DAY);
+  assert.equal(same.outcome, 'no_difference');
+  assert.equal(same.subscription.current_period_end, end);
+  assert.equal(machine.effectiveState(same.subscription, end + 2 * DAY), 'expired');
+});
+
+test('a replacement view that states a period uses it', () => {
+  // 뷰가 기간을 주면 그 값이 새 주기의 기간 — 소거가 아니라 반영(회귀 가드).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('y2', 'checkout.completed', { occurred_at: end + DAY }));
+  const settled = machine.reconcile(routed.subscription, { state: 'active', revision: 4, current_period_end: end + 30 * DAY }, end + DAY);
+  assert.equal(settled.subscription.current_period_end, end + 30 * DAY);
+  assert.equal(machine.effectiveState(settled.subscription, end + DAY), 'active');
+});
