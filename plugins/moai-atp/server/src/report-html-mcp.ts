@@ -14,6 +14,7 @@ const REPORT_RESOURCE_URI_PATTERN = /^moai-atp:\/\/reports\/[0-9a-f-]{36}$/i;
 export const RenderReportHtmlInputSchema = z.object({
   report_input: ActiveReportInputSchema,
   narrative_draft: NarrativeDraftSchema.optional(),
+  template: z.enum(["existing", "artboard-v2"]).optional(),
 }).strict();
 
 export const RenderReportHtmlOutputSchema = z.object({
@@ -84,12 +85,12 @@ export function registerReportHtmlTool(server: McpServer, clock: () => string, t
       outputSchema: RenderReportHtmlOutputSchema,
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
-    async ({ report_input, narrative_draft }) => {
+    async ({ report_input, narrative_draft, template }) => {
       const base = await safeResult(async () => {
         const doc = ReportInputSchema.parse(report_input);
         if(doc.sources.some(source=>source.kind!=='synthetic'&&source.kind!=='user_supplied'&&source.rights==='local_view')&&!trustedReport(doc))throw new Error('invalid_provenance');
         const narrativeDoc=narrative_draft?applyNarrativeDraft(doc,narrative_draft):doc;
-        const html = renderReportInputHtml(narrativeDoc);
+        const html = renderReportInputHtml(narrativeDoc, template);
         const sizeBytes = Buffer.byteLength(html, "utf8");
         if (sizeBytes < 1 || sizeBytes > REPORT_HTML_MAX_BYTES) throw new Error("error_code=response_too_large");
         const now = currentTimeMs();
