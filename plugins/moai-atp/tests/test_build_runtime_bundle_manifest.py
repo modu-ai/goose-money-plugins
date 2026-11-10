@@ -98,5 +98,42 @@ class ReceiptAndPackages(unittest.TestCase):
             self.assertNotIn('devEngines', package, name)
 
 
+
+class ArtboardAssets(unittest.TestCase):
+    build_with = ManifestValidation.build_with
+
+    def add_logo(self, root, name='artboard-wordmark.webp', mutate=False):
+        data=(HERE.parent/'server/assets/report-runtime/artboard-wordmark.webp').read_bytes()
+        if mutate:
+            data += b'EXIF:unapproved-metadata'
+        target=root/'server/assets/report-runtime'/name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+
+    def test_artboard_pinned_wordmark_is_included_in_manifest(self):
+        root, output=self.build_with()
+        self.add_logo(root)
+        bundle.build(root, output)
+        from zipfile import ZipFile
+        with ZipFile(output) as z:
+            name='server/assets/report-runtime/artboard-wordmark.webp'
+            self.assertEqual(z.read(name),(HERE.parent/name).read_bytes())
+            self.assertIn(name,json.loads(z.read('runtime-bundle-manifest.json'))['files'])
+
+    def test_artboard_mutated_wordmark_is_rejected(self):
+        root, output=self.build_with()
+        self.add_logo(root, mutate=True)
+        with self.assertRaisesRegex(ValueError,'unexpected_binary'):
+            bundle.build(root, output)
+        self.assertFalse(output.exists())
+
+    def test_artboard_wordmark_does_not_authorize_another_path(self):
+        root, output=self.build_with()
+        self.add_logo(root,name='unreviewed.webp')
+        with self.assertRaisesRegex(ValueError,'unexpected_binary'):
+            bundle.build(root, output)
+        self.assertFalse(output.exists())
+
+
 if __name__ == '__main__':
     unittest.main()

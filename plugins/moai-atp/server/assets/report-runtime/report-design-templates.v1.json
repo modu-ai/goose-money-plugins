@@ -1,0 +1,119 @@
+{
+  "contract": "moai.report.design-templates.v1",
+  "templates": [
+    {
+      "id": "existing",
+      "default": true,
+      "report_ids": [
+        "R01",
+        "R02",
+        "R03",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "U01"
+      ]
+    },
+    {
+      "id": "artboard-v2",
+      "default": false,
+      "report_ids": [
+        "R01",
+        "R02",
+        "R03",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R09",
+        "R10",
+        "R11",
+        "R12",
+        "R13",
+        "R14",
+        "U01"
+      ],
+      "css": "artboard-report-v2.css",
+      "logo": "artboard-wordmark.webp",
+      "source": "https://claude.ai/chat/ef2940c3-24e1-4ce3-84d7-3d2db3e3a087?artifact=eac2ae43-e439-4f5f-90fd-bfe10e288454"
+    }
+  ],
+  "ui_crosswalk": [
+    {
+      "ui_id": "R1",
+      "title": "기업 심층 분석",
+      "report_ids": [
+        "R01"
+      ],
+      "status": "supported"
+    },
+    {
+      "ui_id": "R2",
+      "title": "기업 비교 분석",
+      "report_ids": [
+        "R02"
+      ],
+      "status": "supported"
+    },
+    {
+      "ui_id": "R3",
+      "title": "실적 분석",
+      "report_ids": [
+        "R07"
+      ],
+      "status": "shared_route"
+    },
+    {
+      "ui_id": "R4",
+      "title": "주요 사건 분석",
+      "report_ids": [
+        "R07"
+      ],
+      "status": "shared_route"
+    },
+    {
+      "ui_id": "R5",
+      "title": "포트폴리오 점검",
+      "report_ids": [
+        "R04"
+      ],
+      "status": "blocked"
+    },
+    {
+      "ui_id": "R6",
+      "title": "근거 검증",
+      "report_ids": [
+        "U03"
+      ],
+      "status": "internal_qa"
+    },
+    {
+      "ui_id": "R7",
+      "title": "리서치 브리핑 · 증시 마감",
+      "report_ids": [
+        "R06"
+      ],
+      "status": "partial"
+    },
+    {
+      "ui_id": "R8",
+      "title": "관심종목 재점검",
+      "report_ids": [
+        "R09"
+      ],
+      "status": "supported"
+    }
+  ],
+  "restrictions": {
+    "R04": "blocked",
+    "U03": "internal_qa",
+    "host_rendering": "not_observed"
+  }
+}

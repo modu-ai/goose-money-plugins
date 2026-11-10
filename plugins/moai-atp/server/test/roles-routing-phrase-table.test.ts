@@ -219,7 +219,7 @@ for(const [request,sentence] of [
  assert.ok(p.blocked_actions.includes('orders_or_transfers'),request);assert.equal(p.clarification,sentence,request);assert.equal(p.provider_dispatches,0);
 });
 for(const [request,mode] of [['goose-strategy 논문으로 설계','strategy'],['/goose goose-backtest 과거 검증','backtest'],['goose-backtest 과거 검증','backtest'],['goose-report 삼성전자 실적 분석 보고서','report']] as const)test(`dash legacy form without a trade word still migrates to its non-trading mode: ${request}`,()=>{
- const p=planGooseRequest(request);assert.equal(p.status,'ready',request);assert.equal(p.migrated_legacy_command,true,request);assert.equal(p.explicit_mode,mode,request);assert.ok(p.steps.some(s=>s.id===mode),request);assert.deepEqual(p.blocked_actions,[]);
+ const p=planGooseRequest(request);assert.equal(p.status,mode==='backtest'?'unsupported':'ready',request);assert.equal(p.migrated_legacy_command,true,request);assert.equal(p.explicit_mode,mode,request);if(mode==='backtest'){assert.deepEqual(p.steps,[]);assert.deepEqual(p.unsupported_actions,['backtest_out_of_product_scope']);}else assert.ok(p.steps.some(s=>s.id===mode),request);assert.deepEqual(p.blocked_actions,[]);
 });
 
 // Known unclassified gaps (OBSERVATIONS ONLY, no status asserted). The planner is pattern-based; these were measured and deliberately not forced:

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "moai-atp",
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.5",
   "description": "모두의 주식 · MoAI ATP는 투자 자료 분석과 근거 중심 보고서, 전략 검증을 돕는 읽기 전용 분석 플러그인입니다. 자동 주문과 수익을 보장하지 않습니다.",
   "extensions": {
     "com.openai": {

@@ -1,3 +1,4 @@
+import { ARTBOARD_ADAPTER_CSS, REPORT_TYPOGRAPHY_CSS } from './report-artboard.js';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +11,8 @@ const LWC = readFileSync(resolve(ASSET_DIR, 'lightweight-charts-5.2.1.js'), 'utf
 const ORIGINAL_TEMPLATE_CSS = readFileSync(resolve(ASSET_DIR, 'original-report-layout.css'), 'utf8');
 const STOCK_SAMPLE_CSS=readFileSync(resolve(ASSET_DIR,'stock-sample-report.css'),'utf8');
 const STOCK_SAMPLE_LOGO='data:image/png;base64,'+readFileSync(resolve(ASSET_DIR,'stock-sample-logo.png')).toString('base64');
+const ARTBOARD_CSS=readFileSync(resolve(ASSET_DIR,'artboard-report-v2.css'),'utf8');
+const ARTBOARD_LOGO='data:image/webp;base64,'+readFileSync(resolve(ASSET_DIR,'artboard-wordmark.webp')).toString('base64');
 const THEME = readFileSync(resolve(ASSET_DIR, 'moai-report-theme.css'), 'utf8');
 const PELE_FLOW = readFileSync(resolve(ASSET_DIR, 'data-pipeline-pele.svg'), 'utf8');
 if (/<script\b|<foreignObject\b|\son[a-z]+\s*=|javascript:/i.test(PELE_FLOW)) throw new Error('unsafe_pele_asset');
@@ -32,7 +35,19 @@ ${ORIGINAL_TEMPLATE_CSS}${SPECIAL_VISUAL_CSS}${THEME}
 
 const E = (value: unknown): string => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 const jsonForScript = (value: unknown): string => JSON.stringify(value).replaceAll('<', '\\u003c').replaceAll('>', '\\u003e').replaceAll('&', '\\u0026').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
-const STATUS_LABEL: Record<string, string> = { partial:'부분 입력', error:'오류', not_run:'미실행', rights_pending:'권리 확인 대기' };
+const STATUS_LABEL: Record<string, string> = { partial:'부분 입력', error:'오류', not_run:'미실행', rights_pending:'권리 확인 대기', missing:'미제공', synthetic:'합성값', provided:'제공값', provided_unverified:'수신값 · 독립 검증 전' };
+
+function displayDecimal(value: string): string {
+  const match = /^([+-]?)(\d+)(\.\d+)?$/.exec(value);
+  return match ? match[1]! + match[2]!.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (match[3] ?? '') : value;
+}
+const UNIT_LABEL: Record<string,string> = { 'KRW/share':'원/주', shares:'주', percent:'%' };
+const displayUnit = (unit: string): string => UNIT_LABEL[unit] ?? unit;
+function displayPeriod(metric: ReportInput['metrics'][number], source: ReportInput['sources'][number] | undefined): string {
+  if (metric.period_kind === 'observation' && source?.source_as_of == null && metric.period === (source?.received_at ?? source?.observed_at)) return '기준일 미확인 · 수집시각은 출처 참조';
+  const annual = /^(\d{4}):FY:(CFS|OFS):(IS|BS|CF):(.+):(\d{14})$/.exec(metric.period);
+  return annual ? `${annual[1]}년 연간 · ${annual[2] === 'CFS' ? '연결' : '별도'} · ${annual[4]}` : metric.period;
+}
 
 function sourceMayDisplay(doc: ReportInput, sourceId: string): boolean {
   const source = doc.sources.find((item) => item.id === sourceId);
@@ -40,6 +55,24 @@ function sourceMayDisplay(doc: ReportInput, sourceId: string): boolean {
   if (doc.mode === 'synthetic') return source.kind === 'synthetic' && source.rights === 'synthetic_only' && source.validation_status === 'synthetic_fixture';
   if (source.kind === 'user_supplied') return (doc.mode === 'supplied' || doc.mode === 'mixed') && source.rights === 'local_view' && source.validation_status === 'unverified';
   return source.rights === 'local_view' && ['provider_shape_checked','independently_reconciled'].includes(source.validation_status ?? '');
+}
+/** Shared by HTML and text delivery; masked values use exactly the same rights checks. */
+export function reportMetricDisplayRows(doc: ReportInput, metrics = doc.metrics): string[][] {
+  const seen = new Set<string>();
+  const displayed = metrics.filter(metric => {
+    if (!/^(?:reported|provider_finance)\.(?:revenue|operating_profit)$/.test(metric.field_id)) return true;
+    const field = metric.field_id.replace(/^provider_finance\./, 'reported.');
+    const key = JSON.stringify([field,metric.label,metric.value,metric.unit,metric.currency,metric.status,metric.source_id,metric.period,metric.scale,metric.period_kind,metric.scope,metric.missing_reason ?? null]);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return displayed.map(metric => {
+    const source = doc.sources.find(item => item.id === metric.source_id);
+    const authorized = sourceMayDisplay(doc, metric.source_id) && !['rights_pending','error','not_run','missing'].includes(metric.status);
+    const status = authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status);
+    return [metric.label, authorized ? displayDecimal(metric.value ?? '—') : '—', displayUnit(metric.unit), displayPeriod(metric,source), STATUS_LABEL[status] ?? status, metric.missing_reason ?? ''];
+  });
 }
 function numericSeries(values: readonly (string | null)[]): number[] | null {
   const result: number[] = [];
@@ -98,7 +131,7 @@ function chartFigure(spec:RenderChart,doc:ReportInput):string {
     ?reportTable(['대상','X 원수치',xUnit,'Y 원수치',yUnit],rows)
     :reportTable(['구분','원수치',spec.unit??'단위'],rows);
   const caption=`${spec.kind==='scatter'?'Apache ECharts 6.1.0 · 산점도':'Apache ECharts 6.1.0 · '+spec.kind} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · 표의 원수치가 기준입니다.`;
-  return `<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="${E(spec.title)} 차트 가로 탐색"><div id="${E(spec.id)}" class="echart ${spec.kind==='scatter'?'wide-chart':''}" role="img" aria-label="${E(spec.title)} · ${E(doc.mode)}"></div></div><figcaption class="chart-caption">${caption}</figcaption></figure>${table}`;
+  return `<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="${E(spec.title)} 차트 가로 탐색"><div id="${E(spec.id)}" class="echart ${spec.kind==='scatter'?'wide-chart':''}" role="img" aria-label="${E(spec.title)} · ${E(doc.mode)}"></div></div><p class="chart-runtime-status" role="status">차트 입력은 있으나 화면 생성은 아직 확인되지 않았습니다. 아래 원수치를 확인하세요.</p><figcaption class="chart-caption">${caption}</figcaption></figure>${table}`;
 }
 function sourceCaption(doc:ReportInput,sourceId:string):string {
   const source=doc.sources.find(item=>item.id===sourceId);
@@ -196,23 +229,21 @@ function chartSections(specs:ReturnType<typeof makeChartSpecs>,doc:ReportInput):
   for(const spec of specs.lwc){
     const source=doc.sources.find(item=>item.id===spec.source_id);
     const rows=spec.dates.map((date,index)=>[date,...doc.time_series!.series.map(series=>series.values[index]??'—')]);
-    const html=`<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="Lightweight Charts 가격 시계열"><div id="${spec.id}" class="lwc-chart" role="img" aria-label="${E(spec.title)} · ${E(spec.unit)} · ${E(doc.mode)}"></div></div><figcaption class="chart-caption">Lightweight Charts 5.2.1 · ${E(spec.unit)} · ${E(spec.adjustment)} 가격 기준 · 거래일 기준축 · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')}.</figcaption><div class="legend" data-legend-for="${spec.id}"></div></figure>${reportTable(['거래일',...doc.time_series!.series.map(series=>series.label)],rows)}`;
+    const html=`<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="Lightweight Charts 가격 시계열"><div id="${spec.id}" class="lwc-chart" role="img" aria-label="${E(spec.title)} · ${E(spec.unit)} · ${E(doc.mode)}"></div></div><p class="chart-runtime-status" role="status">차트 입력은 있으나 화면 생성은 아직 확인되지 않았습니다. 아래 원수치를 확인하세요.</p><figcaption class="chart-caption">Lightweight Charts 5.2.1 · ${E(spec.unit)} · ${E(spec.adjustment)} 가격 기준 · 거래일 기준축 · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')}.</figcaption><div class="legend" data-legend-for="${spec.id}"></div></figure>${reportTable(['거래일',...doc.time_series!.series.map(series=>series.label)],rows)}`;
     add(spec.section_id,'line',html);
   }
   return {bySection,count:specs.echart.length+specs.lwc.length};
 }
 
-export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string {
+export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, template: 'existing' | 'artboard-v2' = 'existing'): string {
+  if(!['existing','artboard-v2'].includes(template))throw new Error('invalid_report_template');
+  if((doc.report_id==='R04'||doc.report_id==='R05')&&!doc.consultation)throw new Error('manual_consultation_only');
   const specs = makeChartSpecs(doc,plan);
   const sourceMap = new Map(doc.sources.map((source)=>[source.id,source]));
   const sourceRows = doc.sources.map((source)=>[
     source.id,source.provider ?? source.kind,source.operation_ref ?? '',source.source_as_of ?? '미제공',source.received_at ?? source.observed_at,source.validation_status ?? '미검증',source.rights,
   ]);
-  const metricsRows = doc.metrics.map((metric)=>{
-    const source = sourceMap.get(metric.source_id);
-    const authorized = sourceMayDisplay(doc,metric.source_id) && metric.status !== 'rights_pending' && metric.status !== 'error' && metric.status !== 'not_run' && metric.status !== 'missing';
-    return [metric.label,authorized ? metric.value ?? '—' : '—',metric.unit,metric.period,authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status),metric.missing_reason ?? ''];
-  });
+  const metricsRows = reportMetricDisplayRows(doc);
   const visualOutput = chartSections(specs,doc);
   const specialOutput = specialVisualSections(doc);
   const sectionHtml = doc.sections.map((section)=>{
@@ -222,7 +253,7 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string
     const linkedSources = section.source_ids?.map((id)=>sourceMap.get(id)).filter((source)=>source!==undefined) ?? [];
     const sourceLabel = linkedSources.length ? '근거 '+linkedSources.map((source)=>E(source.id)).join(', ') : '연결된 응답 없음';
     const linkedTable = linkedMetrics.length
-      ? reportTable(['지표','표시값','단위','기간','상태','비고'],linkedMetrics.map((metric)=>{const visible=sourceMayDisplay(doc,metric.source_id)&&!['rights_pending','error','not_run','missing'].includes(metric.status);return [metric.label,visible?metric.value??'—':'—',metric.unit,metric.period,visible?metric.status:(sourceMap.get(metric.source_id)?.rights==='pending'?'rights_pending':metric.status),metric.missing_reason??''];}))
+      ? reportTable(['지표','표시값','단위','기간','상태','비고'],reportMetricDisplayRows(doc,linkedMetrics))
       : '<p class="muted">이 섹션의 필수 원천 필드에 대응하는 구조화 지표가 아직 없습니다.</p>';
     let blockHtml = linkedTable;
     if(layoutSection){
@@ -250,7 +281,9 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string
   const claims = doc.analysis_claims.filter(claim=>!claim.id.includes(".NARRATIVE.")&&!claim.id.includes(".GOOSE_OPINION.")).map((claim)=>`<li><strong>${E(claim.kind)} · ${E(claim.status)} · 신뢰도 ${E(claim.confidence)}</strong><p>${E(claim.text)}</p><small>출처: ${E(claim.source_ids.join(', ') || '없음')} · 필드: ${E(claim.metric_ids.join(', ') || '없음')}</small></li>`).join('');
   const nav = plan.sections.map((section)=>`<a href="#${E(section.id)}">${E(section.title)}</a>`).join('');
   const modeLabel = doc.mode==='synthetic'?'합성 fixture · 실제 자료 아님':doc.mode==='actual'?'실제 입력 · 검증 상태 표시':doc.mode==='mixed'?'혼합 입력 · 출처별 상태 표시':doc.sources.some(source=>source.kind==='user_supplied')?'사용자 제공 입력 · 외부 대사 전':'제공 입력 · 독립 검증 전';
-  const notice = doc.mode==='synthetic'
+  const notice = doc.consultation
+    ? '개인 수동 입력 · 비공개. 공급자/계좌 확인값이 아니며 공개용 보고서로 재사용하지 않습니다. 실제 사용자 자료와 합성 fixture를 구분합니다.'
+    : doc.mode==='synthetic'
     ? '이 문서는 합성 fixture로 생성했습니다. 실 KIS·DART 응답, 실제 시세 보고서 또는 투자 권고가 아닙니다.'
     : doc.sources.some(source=>source.kind==='user_supplied')
       ? '사용자가 이 보고서 생성에 직접 제공한 입력입니다. 외부 원장·가격·체결과 대사하지 않았으므로 제공 입력으로 표시하며, 계좌 조회나 주문은 수행하지 않습니다.'
@@ -261,13 +294,13 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string
   const pipelineDiagram = doc.report_id==='R01' ? `<figure class="diagram"><figcaption>자료 처리 단계 설명 · 수치·기업 관계·분석 근거가 아닌 일반 흐름도 · Pele 1.7.0 선렌더 SVG</figcaption>${PELE_FLOW}</figure>` : '';
   const chartJson = jsonForScript(specs);
   const sourceRowsHtml = reportTable(['출처 ID','공급자','작업','source_as_of','received_at','검증','권리'],sourceRows);
-  const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고'],metricsRows);
-  const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records"><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows)}</details>`).join('');
+  const metricsHtml = (metricsRows.length < doc.metrics.length ? '<p class="block-note">같은 출처·기간·값의 매핑 별칭은 한 번만 표시하며 원자료는 보존합니다.</p>' : '') + reportTable(['지표','표시값','단위','기간','상태','비고'],metricsRows);
+  const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records" open><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows)}</details>`).join('');
   const opinionClaims=doc.analysis_claims.filter(claim=>claim.id.includes('.GOOSE_OPINION.'));
   const opinionLabels:Record<string,string>={conclusion:'종합 결론',rationale:'판단 이유',risks:'반대 신호와 한계',next_checks:'다음 확인'};
   const opinionConclusion=opinionClaims.find(claim=>claim.id.includes('.conclusion.'))?.text;
   const opinion=opinionClaims.length?`<section class="moai-column panel" id="goose-opinion"><h2>Goose 오피니언</h2><div class="opinion"><div class="opinion-label">종합 결론 <span>AI 해석 · 원천 사실과 구분</span></div><p class="decision-lead"><strong>${E(opinionConclusion??'판단에 필요한 근거를 확인하십시오.')}</strong></p></div>${['rationale','risks','next_checks'].map(group=>`<h3>${E(opinionLabels[group]??'분석 의견')}</h3>${opinionClaims.filter(claim=>claim.id.includes(`.${group}.`)).map(claim=>`<p>${E(claim.text)}</p>`).join('')}`).join('')}<p class="caption">모델이 작성한 해석은 독립 검증된 사실이 아닙니다. 자료가 부족한 부분은 전망을 확정하지 않습니다.</p></section>`:'';
-  const grouped=(value:string)=>value.replace(/\B(?=(\d{3})+(?!\d))/g,',');
+  const grouped=displayDecimal;
   // A hero card is one value under a fixed label; a comparison document has several subjects, so its table carries the data and the hero shows no card.
   const kpiCards=doc.comparison?[]:[['quote.last','수신 스냅샷 가격'],['quote.change_percent','스냅샷 전일 대비율'],['quote.volume','스냅샷 누적 거래량'],['metric.operating_margin','공시 연간 영업이익률']].flatMap(([field,label])=>{
     const found=doc.metrics.filter(metric=>metric.field_id===field&&metric.value!==null&&['synthetic','provided','provided_unverified'].includes(metric.status)&&sourceMayDisplay(doc,metric.source_id));if(found.length!==1)return [];const metric=found[0]!;const unit=metric.unit==='KRW/share'?'원/주':metric.unit==='shares'?'주':metric.unit;
@@ -275,10 +308,10 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string
   });
   const providers=[...new Set(doc.sources.map(source=>source.kind==='opendart'?'DART':source.kind==='kis'?'KIS':source.kind==='synthetic'?'합성 계약 자료':source.kind==='user_supplied'?'사용자 제공 자료':source.kind.toUpperCase()))].join(' · ');
   const heroSummary=opinionConclusion??doc.sections[0]?.body??'자료의 출처와 확인 범위를 먼저 살펴보십시오.';
-  const body=`<a class="skip" href="#report-content">본문으로 이동</a><main id="report"><header class="masthead"><div class="brand-lockup"><span class="logo-window"><img src="${STOCK_SAMPLE_LOGO}" alt="모두의 주식 — Stock for Everyone"></span><div class="brand-description"><strong>모두의 주식 · MoAI ATP</strong>근거를 확인하는 투자 자료 분석</div></div><div class="edition"><strong>${E(plan.title)}</strong><span>${E(modeLabel)}</span></div></header><section class="report-hero"><div class="eyebrow">${E(doc.subject.venue)} · ${E(doc.comparison?`비교 대상 ${doc.comparison.subjects.length}개`:doc.subject.id)}</div><h1>${E(doc.subject.name)}</h1><h2>${E(plan.title)}</h2><p>보고서 기준시각 ${E(doc.cutoff)} · 표시 시간대 ${E(doc.display_timezone)}</p><blockquote><p>${E(heroSummary)}</p></blockquote>${kpiCards.length?`<div class="kpis">${kpiCards.join('')}</div>`:''}<p class="caption">${E(notice)}</p></section><div class="reading-layout"><aside class="reading-rail"><div class="rail-inner"><details open><summary>보고서 목차</summary><nav aria-label="보고서 목차">${doc.comparison?'<a href="#comparison">종목 비교</a>':''}${nav}<a href="#charts">차트와 계산</a><a href="#sources">수신 자료와 출처</a>${opinion?'<a href="#goose-opinion">Goose 오피니언</a>':''}</nav></details><p class="rail-note">관측한 사실, 계산과 해석을 구분해 읽으십시오. 출처별 기준일·수집시각·자료 범위가 다를 수 있습니다.</p></div></aside><article id="report-content">${comparisonSectionHtml(doc)}<section class="lead-summary"><h3>먼저 확인할 자료 범위</h3><p><strong>자료 출처</strong> ${E(providers||'아직 연결된 자료가 없습니다.')}</p><p><strong>해석의 기준</strong> 기간·단위·회계 범위가 맞는 비교만 계산하고, 미확인 자료를 확정된 값으로 바꾸지 않습니다.</p><p>원문과 상세 검증 기록은 아래의 접힌 자료표에서 확인할 수 있습니다.</p></section>${sectionHtml}<section class="panel" id="charts"><h2>차트와 계산 근거</h2>${htmlCharts}${pipelineDiagram}</section><section class="panel" id="claims"><details class="source-records"><summary>계산 방법과 남은 불확실성</summary><ul>${claims||'<li>검증 가능한 근거가 입력되지 않았습니다.</li>'}</ul></details></section><section class="panel" id="sources"><h2>수신 자료와 출처</h2>${rawSourceTables}<details class="source-records"><summary>출처·시각·검증 장부</summary>${sourceRowsHtml}<h3>연결된 전체 지표</h3>${metricsHtml}</details></section>${opinion}</article></div><footer class="stock-footer">모두의 주식 · MoAI ATP · 근거와 해석을 구분한 보고서입니다. 제공되지 않거나 검증이 끝나지 않은 항목은 임의로 채우지 않았습니다. 주문·이체를 실행하지 않습니다.</footer></main>`;
+  const body=`<a class="skip" href="#report-content">본문으로 이동</a><main id="report"${template==='artboard-v2'?' class="rs-main"':''}><header class="masthead"><div class="brand-lockup"><span class="logo-window"><img src="${template==='artboard-v2'?ARTBOARD_LOGO:STOCK_SAMPLE_LOGO}" alt="모두의 주식 — Stock for Everyone"></span><div class="brand-description"><strong>모두의 주식 · MoAI ATP</strong>근거를 확인하는 투자 자료 분석</div></div><div class="edition"><strong>${E(plan.title)}</strong><span>${E(modeLabel)}</span></div></header><section class="report-hero"><div class="eyebrow">${E(doc.subject.venue)} · ${E(doc.comparison?`비교 대상 ${doc.comparison.subjects.length}개`:doc.subject.id)}</div><h1>${E(doc.subject.name)}</h1><h2>${E(plan.title)}</h2><p>보고서 기준시각 ${E(doc.cutoff)} · 표시 시간대 ${E(doc.display_timezone)}</p><blockquote><p>${E(heroSummary)}</p></blockquote>${kpiCards.length?`<div class="kpis">${kpiCards.join('')}</div>`:''}<p class="caption">${E(notice)}</p></section><div class="reading-layout"><aside class="reading-rail"><div class="rail-inner"><details open><summary>보고서 목차</summary><nav aria-label="보고서 목차">${doc.comparison?'<a href="#comparison">종목 비교</a>':''}${nav}<a href="#charts">차트와 계산</a><a href="#sources">수신 자료와 출처</a>${opinion?'<a href="#goose-opinion">Goose 오피니언</a>':''}</nav></details><p class="rail-note">관측한 사실, 계산과 해석을 구분해 읽으십시오. 출처별 기준일·수집시각·자료 범위가 다를 수 있습니다.</p></div></aside><article id="report-content">${comparisonSectionHtml(doc)}<section class="lead-summary"><h3>먼저 확인할 자료 범위</h3><p><strong>자료 출처</strong> ${E(providers||'아직 연결된 자료가 없습니다.')}</p><p><strong>해석의 기준</strong> 기간·단위·회계 범위가 맞는 비교만 계산하고, 미확인 자료를 확정된 값으로 바꾸지 않습니다.</p><p>원문과 상세 검증 기록은 아래의 접힌 자료표에서 확인할 수 있습니다.</p></section>${sectionHtml}<section class="panel" id="charts"><h2>차트와 계산 근거</h2>${htmlCharts}${pipelineDiagram}</section><section class="panel" id="claims"><details class="source-records" open><summary>계산 방법과 남은 불확실성</summary><ul>${claims||'<li>검증 가능한 근거가 입력되지 않았습니다.</li>'}</ul></details></section><section class="panel" id="sources"><h2>수신 자료와 출처</h2>${rawSourceTables}<details class="source-records" open><summary>출처·시각·검증 장부</summary>${sourceRowsHtml}<h3>연결된 전체 지표</h3>${metricsHtml}</details></section>${opinion}${template==='artboard-v2'?'<p class="print-guidance">인쇄 / PDF 저장: 브라우저 인쇄 메뉴에서 PDF로 저장을 선택하세요. 인쇄 결과는 브라우저와 서체에 따라 달라질 수 있습니다.</p>':''}</article></div><footer class="stock-footer">모두의 주식 · MoAI ATP · 근거와 해석을 구분한 보고서입니다. 제공되지 않거나 검증이 끝나지 않은 항목은 임의로 채우지 않았습니다. 주문·이체를 실행하지 않습니다.</footer></main>`;
   const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">`;
-  const chartRuntime = `(()=>{const specs=JSON.parse(document.getElementById('chart-specs').textContent);const palette=['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5'].map((name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim());for(const b of specs.echart){const el=document.getElementById(b.id);if(!el||!window.echarts)continue;const chart=echarts.init(el,null,{renderer:'svg'});let option;if(b.kind==='scatter'){option={animation:false,color:[palette[0]],aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},grid:{left:70,right:24,top:36,bottom:54,containLabel:true},xAxis:{type:'value',name:b.x_unit||'',scale:true},yAxis:{type:'value',name:b.y_unit||'',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:'scatter',name:b.title,data:b.x_values.map((x,i)=>[x,b.y_values[i]]),symbolSize:10}]}}else if(b.kind==='donut'){option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},legend:{type:'scroll',bottom:0},series:[{type:'pie',name:b.title,radius:['42%','68%'],avoidLabelOverlap:true,label:{show:true,formatter:'{b}: {d}%'},data:b.labels.map((name,i)=>({name,value:b.values[i]}))}]}}else{option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'axis',renderMode:'richText',confine:true},grid:{left:60,right:24,top:24,bottom:54,containLabel:true},xAxis:{type:'category',data:b.labels,axisLabel:{interval:0,hideOverlap:true}},yAxis:{type:'value',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:b.kind,name:b.title,data:b.values,itemStyle:{borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:12}}]}}chart.setOption(option);new ResizeObserver(()=>chart.resize()).observe(el);window.__moaiEcharts??=[];window.__moaiEcharts.push(chart)}for(const b of specs.lwc){const el=document.getElementById(b.id);if(!el||!window.LightweightCharts)continue;const chart=LightweightCharts.createChart(el,{width:el.clientWidth,height:360,layout:{background:{type:'solid',color:'#FFFFFF'},textColor:'#393C41',fontFamily:'Pretendard',fontSize:12,attributionLogo:true},grid:{vertLines:{color:'#E8E8E8'},horzLines:{color:'#E8E8E8'}},timeScale:{borderColor:'#D4D6D8',timeVisible:false},rightPriceScale:{borderColor:'#D4D6D8'},handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},handleScale:{mouseWheel:false,pinch:true}});const colors=palette,lines=[];for(let i=0;i<b.series.length;i++){const s=b.series[i];const line=chart.addSeries(LightweightCharts.LineSeries,{title:s.name,color:colors[i%colors.length],lineWidth:2,lineStyle:/SMA/.test(s.name)?LightweightCharts.LineStyle.Dashed:LightweightCharts.LineStyle.Solid,priceLineVisible:false,lastValueVisible:true});line.setData(s.values.map((v,k)=>v===null?{time:b.dates[k]}:{time:b.dates[k],value:Number(v)}));lines.push({name:s.name,line})}const legend=el.closest('figure')?.querySelector('.legend');if(legend){for(const item of lines){const button=document.createElement('button');button.type='button';button.textContent=item.name;button.setAttribute('aria-pressed','true');button.addEventListener('click',()=>{const visible=button.getAttribute('aria-pressed')!=='true';item.line.applyOptions({visible});button.setAttribute('aria-pressed',String(visible))});legend.append(button)}}chart.timeScale().fitContent();new ResizeObserver(()=>chart.resize(el.clientWidth,360)).observe(el);el.dataset.rendered='lightweight-5.2.1';window.__moaiLwc??=[];window.__moaiLwc.push(chart)}})();`;
+  const chartRuntime = `(()=>{const specs=JSON.parse(document.getElementById('chart-specs').textContent);const updateStatus=(el,state)=>{el.dataset.renderStatus=state;const note=el.closest('figure')?.querySelector('.chart-runtime-status');if(note)note.textContent=state==='ready'?'차트가 생성되었습니다. 아래 원수치와 함께 확인하세요.':state==='engine_missing'?'차트 엔진을 불러오지 못했습니다. 아래 원수치를 확인하세요.':'차트를 그리지 못했습니다. 아래 원수치를 확인하세요.';};const palette=['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5'].map((name)=>getComputedStyle(document.body).getPropertyValue(name).trim());for(const b of specs.echart){const el=document.getElementById(b.id);if(!el)continue;if(!window.echarts){updateStatus(el,'engine_missing');continue;}try{const chart=echarts.init(el,null,{renderer:'svg'});let option;if(b.kind==='scatter'){option={animation:false,color:[palette[0]],aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},grid:{left:70,right:24,top:36,bottom:54,containLabel:true},xAxis:{type:'value',name:b.x_unit||'',scale:true},yAxis:{type:'value',name:b.y_unit||'',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:'scatter',name:b.title,data:b.x_values.map((x,i)=>[x,b.y_values[i]]),symbolSize:10}]}}else if(b.kind==='donut'){option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},legend:{type:'scroll',bottom:0},series:[{type:'pie',name:b.title,radius:['42%','68%'],avoidLabelOverlap:true,label:{show:true,formatter:'{b}: {d}%'},data:b.labels.map((name,i)=>({name,value:b.values[i]}))}]}}else{option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'axis',renderMode:'richText',confine:true},grid:{left:60,right:24,top:24,bottom:54,containLabel:true},xAxis:{type:'category',data:b.labels,axisLabel:{interval:0,hideOverlap:true}},yAxis:{type:'value',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:b.kind,name:b.title,data:b.values,itemStyle:{borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:12}}]}}chart.setOption(option);if(typeof ResizeObserver==='function')new ResizeObserver(()=>chart.resize()).observe(el);window.__moaiEcharts??=[];window.__moaiEcharts.push(chart);updateStatus(el,'ready');}catch{updateStatus(el,'failed');}}for(const b of specs.lwc){const el=document.getElementById(b.id);if(!el)continue;if(!window.LightweightCharts){updateStatus(el,'engine_missing');continue;}try{const chart=LightweightCharts.createChart(el,{width:el.clientWidth,height:360,layout:{background:{type:'solid',color:'#FFFFFF'},textColor:'#393C41',fontFamily:'Pretendard',fontSize:12,attributionLogo:true},grid:{vertLines:{color:'#E8E8E8'},horzLines:{color:'#E8E8E8'}},timeScale:{borderColor:'#D4D6D8',timeVisible:false},rightPriceScale:{borderColor:'#D4D6D8'},handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},handleScale:{mouseWheel:false,pinch:true}});const colors=palette,lines=[];for(let i=0;i<b.series.length;i++){const s=b.series[i];const line=chart.addSeries(LightweightCharts.LineSeries,{title:s.name,color:colors[i%colors.length],lineWidth:2,lineStyle:/SMA/.test(s.name)?LightweightCharts.LineStyle.Dashed:LightweightCharts.LineStyle.Solid,priceLineVisible:false,lastValueVisible:true});line.setData(s.values.map((v,k)=>v===null?{time:b.dates[k]}:{time:b.dates[k],value:Number(v)}));lines.push({name:s.name,line})}const legend=el.closest('figure')?.querySelector('.legend');if(legend){for(const item of lines){const button=document.createElement('button');button.type='button';button.textContent=item.name;button.setAttribute('aria-pressed','true');button.addEventListener('click',()=>{const visible=button.getAttribute('aria-pressed')!=='true';item.line.applyOptions({visible});button.setAttribute('aria-pressed',String(visible))});legend.append(button)}}chart.timeScale().fitContent();if(typeof ResizeObserver==='function')new ResizeObserver(()=>chart.resize(el.clientWidth,360)).observe(el);el.dataset.rendered='lightweight-5.2.1';window.__moaiLwc??=[];window.__moaiLwc.push(chart);updateStatus(el,'ready');}catch{updateStatus(el,'failed');}}})();`;
   const chartAssets=`${specs.echart.length?`<script>${ECHARTS}</script>`:''}${specs.lwc.length?`<script>${LWC}</script>`:''}`;
   const chartScripts=specs.echart.length||specs.lwc.length?`<script id="chart-specs" type="application/json">${chartJson}</script><script>${chartRuntime}</script>`:'';
-  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">${csp}<title>${E(plan.title)} · ${E(doc.subject.name)} · MoAI ATP</title><style>${BASE_CSS}${STOCK_SAMPLE_CSS}${STOCK_ADAPTER_CSS}</style></head><body>${body}${chartAssets}${chartScripts}</body></html>`;
+  return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">${csp}<title>${E(plan.title)} · ${E(doc.subject.name)} · MoAI ATP</title><style>${BASE_CSS}${STOCK_SAMPLE_CSS}${STOCK_ADAPTER_CSS}${template==='artboard-v2'?ARTBOARD_CSS+ARTBOARD_ADAPTER_CSS:''}${REPORT_TYPOGRAPHY_CSS}</style></head><body${template==='artboard-v2'?' class="rs atp-artboard"':''}>${body}${chartAssets}${chartScripts}</body></html>`;
 }

@@ -145,13 +145,12 @@ export function createStockMcpServer(options: ServerOptions = {}): McpServer {
   server.registerTool('get_market_orderbook',{title:'국내 원천 호가 후보',description:'고정된 읽기 전용 호가 endpoint의 제한된 원천 JSON만 보존합니다. 체결가능·동시호가·단위·종목·시각 검증을 주장하지 않으며 예상체결 output2를 호가로 변환하지 않습니다. 서버 기본값(읽기 스위치 꺼짐)에서는 차단됩니다. 출하 플러그인 설정(mcp.json)은 KIS 읽기 스위치를 켜므로 로컬 키가 있으면 호출 시 KIS로 요청이 나갑니다.',inputSchema:MarketOrderbookInputSchema,outputSchema:MarketOrderbookResultSchema,annotations},async input=>providerResult("get_market_orderbook",async()=>{marketGate();return requestMarketOrderbook(input,options.marketOrderbookTransport,clock);}));
   server.registerTool("build_report_input", {
     title: "보고서 입력 조립 · 로컬 분석",
-    description: "R01–R03, R05–R11, R14, U01 중 하나에 대해 앞서 받은 MCP 응답을 정규화된 보고서 입력으로 조립합니다. 이 도구 자체는 외부 데이터 요청이나 파일 저장을 하지 않습니다. 합성 자료는 합성으로 표시하고, 권리 미확인 공급자 값은 숨기며 rights_pending을 유지합니다. 계좌 원장 입력·주문·이체는 받지 않습니다.",
+    description: "R01–R13, U01 보고서 입력을 조립합니다. R04/R05는 manual_consultation의 사용자 수동 입력 snapshot·명시 연간 비용 가정만 받으며 공급자 calls/receipt·계좌/거래 원장·주문·이체는 받지 않습니다. R14 백테스트는 제품 범위 제외입니다. 이 도구 자체는 외부 요청이나 파일 저장을 하지 않고 권리 미확인 공급자 값은 숨깁니다.",
     inputSchema: ReportPipelineToolInputSchema,
     outputSchema: ActiveReportInputSchema,
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
   }, async (input) => safeResult(async () => {
     const args = ReportPipelineToolInputSchema.parse(input);
-    if(String(args.report_id)==='R04')throw new Error('source_not_enabled');
     const ids=args.source_receipts??[];
     if(ids.length&&options.localReportViewEnabled!==true)throw new Error('invalid_provenance');
     const resolved=evidence.resolve(ids);
@@ -159,7 +158,7 @@ export function createStockMcpServer(options: ServerOptions = {}): McpServer {
     const trustedLocalReceipts=new Map(resolved.map((row,i)=>[args.calls.length+i,{receivedAt:row.receivedAt}]));
     const report=ReportInputSchema.parse(buildReportInput({...args,calls,trustedLocalReceipts,received_at:clock()}));
     evidence.consume(ids);evidence.rememberReport(report);return report;
-  }));
+  },{compactStructuredText:input.report_id==='R04'||input.report_id==='R05'}));
   registerReportHtmlTool(server, clock,doc=>evidence.acceptsReport(doc));
   registerSourceInputTools(server, options, clock);
   registerNativePeriodTools(server, options, clock);

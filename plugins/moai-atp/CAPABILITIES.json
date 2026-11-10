@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.5",
   "tools": [
     "get_market_snapshot",
     "get_market_orderbook",
@@ -350,10 +350,11 @@
       "R09",
       "R10",
       "R11",
-      "R14",
+      "R12",
+      "R13",
       "U01"
     ],
-    "input_contract": "previous_mcp_result_envelopes; caller_cannot_override_received_at",
+    "input_contract": "validated provider results/receipts for research; strict private manual_consultation only for R04/R05; caller_cannot_override_received_at",
     "output_contract": "atp.template/1.1 ReportInput (single subject) or atp.template/1.2 ReportInput (R02 comparison, explicit subjects input)",
     "synthetic_values": "explicitly labeled synthetic_fixture",
     "unreconciled_provider_values": "hidden; rights_pending",
@@ -380,6 +381,7 @@
     "R01",
     "R02",
     "R03",
+    "R04",
     "R05",
     "R06",
     "R07",
@@ -389,12 +391,17 @@
     "R11",
     "R12",
     "R13",
-    "R14",
     "U01"
   ],
-  "planned_report_routes": [
-    "R04"
-  ],
+  "planned_report_routes": [],
+  "report_route_scope": {
+    "meaning": "callable local assembly contracts; not actual-data or host completion",
+    "private_manual_only": ["R04", "R05"],
+    "conditional_expansion": ["R12"],
+    "retained_outside_initial_launch": ["R13"],
+    "excluded_historical": ["R14"],
+    "visual_host_QA": "not_verified"
+  },
   "local_read_settings": {
     "source": "mcp.json env (non-secret switches only)",
     "credential_source": "user keystore or existing environment",

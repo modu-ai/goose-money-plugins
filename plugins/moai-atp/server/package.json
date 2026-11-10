@@ -1,6 +1,6 @@
 {
   "name": "@moai-atp/server",
-  "version": "0.1.0-dev.3",
+  "version": "0.1.0-dev.5",
   "private": true,
   "type": "module",
   "engines": {

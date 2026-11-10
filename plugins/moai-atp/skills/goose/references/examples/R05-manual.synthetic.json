@@ -1,0 +1,48 @@
+{
+  "report_id": "R05",
+  "cutoff": "2026-11-08T07:49:34.193Z",
+  "display_timezone": "Asia/Seoul",
+  "manual_consultation": {
+    "origin": "synthetic_fixture",
+    "snapshot": {
+      "as_of": "2026-11-07",
+      "currency": "KRW",
+      "cash": "100",
+      "target_cash_weight_percent": "20",
+      "positions": [
+        {
+          "id": "A",
+          "label": "합성 종목 A",
+          "currency": "KRW",
+          "market_value": "300",
+          "target_weight_percent": "50"
+        },
+        {
+          "id": "B",
+          "label": "합성 종목 B",
+          "currency": "KRW",
+          "market_value": "100",
+          "target_weight_percent": "30"
+        }
+      ]
+    },
+    "costs": [
+      {
+        "id": "base",
+        "label": "합성 비용 가정 A",
+        "currency": "KRW",
+        "basis_amount": "3000",
+        "annual_fee_percent": "0.5",
+        "annual_fixed_cost": "2"
+      },
+      {
+        "id": "other",
+        "label": "합성 비용 가정 B",
+        "currency": "KRW",
+        "basis_amount": "3000",
+        "annual_fee_percent": "0.8",
+        "annual_fixed_cost": "0"
+      }
+    ]
+  }
+}

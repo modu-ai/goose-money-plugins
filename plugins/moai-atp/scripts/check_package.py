@@ -61,18 +61,36 @@ for path in (root/'skills').glob('*/SKILL.md'):
         assert resolved.is_relative_to(root) and resolved.is_file(), f'bad skill reference: {path.name}'
 catalog = json.loads((root/'skills/goose/references/catalog.json').read_text())['entries']
 if args.runtime:
-    assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,15) if i != 4] + ['U01']
+    assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,14)] + ['U01']
     assert all(x['public'] for x in catalog)
 else:
     assert [x['id'] for x in catalog] == [f'R{i:02}' for i in range(1,15)] + ['U01','U02','U03']
-    assert sum(x['public'] for x in catalog) == 16
+    assert sum(x['public'] for x in catalog) == 15
     assert catalog[-1]['kind'] == 'internal_qa' and not catalog[-1]['public']
 assert all(x['actual_data_complete'] is False for x in catalog)
+workflow_path = root/('server/runtime/contracts/report-workflows.v1.json' if args.runtime else 'server/contracts/report-workflows.v1.json')
+workflows = json.loads(workflow_path.read_text())
+assert workflows['contract'] == 'moai.report-workflows.v1'
+assert [r['id'] for r in workflows['reports']] == [f'R{i:02}' for i in range(1,14)]
+for report in workflows['reports']:
+    rid = report['id']
+    assert report['command'] == f'/goose report {rid}' and report['alias'] == f'/goose {rid.lower()}'
+    assert report['workflow_ref'] == f'references/reports/{rid}.md'
+    document = (root/'skills/goose'/report['workflow_ref']).read_text()
+    assert report['command'] in document and report['skill'] in document
+    assert all(f'`{name}`' in document for name in report['provider_tools'])
+    assert all(f'`{section}`' in document for section in report['sections'])
+    if not args.runtime:
+        source = root/'skill-sources'/report['skill']/'SKILL.md'
+        assert source.is_file() and report['command'] in source.read_text()
+    if rid in ['R04','R05','R13']:
+        assert report['provider_tools'] == []
+assert workflows['reports'][-1]['scope'] == 'deferred'
 route_path = root/('server/runtime/contracts/report-route-bindings.v1.json' if args.runtime else 'server/contracts/report-route-bindings.v1.json')
 if route_path.is_file():
     routes = json.loads(route_path.read_text())['routes']
     for entry in catalog:
-        if entry['id'] in ['R12', 'R13']:
+        if entry['id'] in ['R04', 'R05', 'R12', 'R13']:
             assert set(entry['required_groups']) == set(routes[entry['id']]['field_groups']), 'route group mismatch: '+entry['id']
 
 print('Local package component checks passed; account upload/host installation not performed.')

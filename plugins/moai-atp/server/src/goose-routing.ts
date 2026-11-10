@@ -1,10 +1,12 @@
+import {getReportWorkflow} from './report-workflows.js';
+
 export const GOOSE_MODES=['setup','analyze','conditions','strategy','backtest','mental-support','report'] as const;
 export type GooseMode=typeof GOOSE_MODES[number];
 const refs:Record<GooseMode,string>={setup:'SKILL.md',analyze:'references/catalog.json',conditions:'references/workflows/conditions.md',strategy:'references/workflows/strategy.md',backtest:'references/workflows/backtest.md','mental-support':'references/workflows/mental-support.md',report:'references/report-writing.md'};
 
 // SPEC-ATP-ROLES-001 design.md 3.2 / 3.5. Fixed answers for plans that carry no steps.
-/** Fixed sentence F: trade-execution and ATS-class requests (ATS wording plus strategy / backtest alternatives). */
-export const GOOSE_SENTENCE_F='이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다. 대신 전략 수립(매매 전략 명세로 정리)이나 백테스트(과거 자료 검증 계획)는 다시 요청해 주시면 도와드릴 수 있습니다. 실거래는 사용자께서 직접 판단·실행하십시오.';
+/** Fixed sentence F: trade-execution and ATS-class requests, with research-only alternatives. */
+export const GOOSE_SENTENCE_F='이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다. 대신 기업·시장 조사나 투자 관점과 반증 조건 정리는 다시 요청해 주시면 도와드릴 수 있습니다. 실거래는 사용자께서 직접 판단·실행하십시오.';
 /** Fixed sentence F_T: transfer / deposit / withdrawal commands only. Names no ATS and offers no strategy alternative. */
 export const GOOSE_SENTENCE_F_T='이 플러그인은 이체·입출금을 지원하지 않습니다. 자금 이동은 사용자께서 직접 하십시오.';
 export const GOOSE_SENTENCE_ACCOUNT='읽기 전용 보유·계좌 수익률 조회는 아직 제공하지 않습니다(별도 승인 뒤 제공 예정)';
@@ -226,20 +228,32 @@ export function planGooseRequest(value:unknown){
    if(explicit)text=text.slice(first.length).trim();
   }
  }
+ // A report subcommand is an exact ID, never a hint for the natural-language classifier.
+ let requestedReport:string|undefined;
+ const reportToken=text.split(/\s+/)[0]??'';
+ if((!explicit||explicit==='report')&&/^[RU]\d/i.test(reportToken)){
+  requestedReport=reportToken.toUpperCase();explicit='report';text=text.slice(reportToken.length).trim();
+ }
+ const reportWorkflow=requestedReport?getReportWorkflow(requestedReport):undefined;
  const blockedActions:string[]=[];
  if(tradeForms.length)blockedActions.push('orders_or_transfers');
- const accountRequest=matchesAccount(text);
+ const manualRoute=(!explicit||explicit==='analyze'||explicit==='report')&&!tradeForms.length&&!atsForms.length&&!/계좌|잔고|예수금|조회|연결|api/i.test(text)?(reportWorkflow?.scope==='manual_only'?reportWorkflow.id:/상담|점검|영향|비교/.test(text)?(/^수동\s*입력\s+보유/.test(text)?'R04':/^수동\s*입력\s+비용/.test(text)?'R05':undefined):undefined):undefined;
+ const accountRequest=!manualRoute&&matchesAccount(text);
  if(accountRequest)blockedActions.push('account_access');
  const modes=new Set<GooseMode>();if(explicit)modes.add(explicit);
+ if(manualRoute||reportWorkflow){modes.add('analyze');modes.add('report');}
  if(!explicit||explicit!=='setup'){
   if(/조건식|HTS|MTS/i.test(text))modes.add('conditions');
   if((/논문|전략.{0,10}(?:설계|만들)/.test(text))&&!/전략.{0,10}(?:만들지|설계하지)/.test(text))modes.add('strategy');
-  if(/백테스트|과거.{0,8}검증|walk.?forward/i.test(text))modes.add('backtest');
+  if(/백테스트|과거.{0,8}검증|walk.?forward/i.test(text.replace(/백테스트\s*(?:(?:는|를|은|을)\s*)?(?:하지\s*말고|말고|없이|제외하고)/g,'')))modes.add('backtest');
   if(/멘탈|불안|마음|후회|만회.{0,8}충동/.test(text))modes.add('mental-support');
   if(/보고서|리포트|HTML/i.test(text))modes.add('report');
   if(/(?:종목|기업|수급|실적|공시|재무|ETF|선물).{0,12}(?:분석|비교|점검)|분석.{0,10}(?:종목|기업|ETF|선물)/i.test(text))modes.add('analyze');
  }
  const unsupported:string[]=[];
+ if(requestedReport&&!reportWorkflow)unsupported.push('report_id_not_supported');
+ if(reportWorkflow?.scope==='deferred')unsupported.push('report_scope_deferred');
+ if(modes.has('backtest'))unsupported.push('backtest_out_of_product_scope');
  if(/게시|댓글|자료실.{0,8}(?:올려|업로드)/.test(text))unsupported.push('community_service_not_configured');
  if(/(?:조건식|조건).{0,10}(?:자동.{0,3}등록|저장해)/.test(text))unsupported.push('automatic_condition_registration_unavailable');
  if(/전략.{0,6}실행해/.test(text))unsupported.push('strategy_execution_engine_unavailable');
@@ -251,10 +265,10 @@ export function planGooseRequest(value:unknown){
  const chosen=order.filter(mode=>modes.has(mode));
  const status=blockedActions.length?'blocked':unsupported.length?'unsupported':chosen.length?'ready':'clarification_required';
  // Every blocked or unsupported plan has zero steps, whatever its reason code or mode word.
- const steps=status==='blocked'||status==='unsupported'?[]:chosen.map((mode,index)=>({id:mode,workflow_ref:refs[mode],depends_on:index?[chosen[index-1]!]:[],execution_status:'not_run' as const,requirements:mode==='backtest'?['explicit_rules','validated_history','cost_model','supported_execution_engine']:mode==='report'?['validated_source_receipts','cutoff_and_units','report_input_validation']:[]}));
+ const steps=status==='blocked'||status==='unsupported'?[]:chosen.map((mode,index)=>({id:mode,workflow_ref:reportWorkflow&&(mode==='analyze'||mode==='report')?reportWorkflow.workflow_ref:refs[mode],depends_on:index?[chosen[index-1]!]:[],execution_status:'not_run' as const,requirements:manualRoute?['explicit_manual_snapshot','private_output','no_provider_calls']:mode==='backtest'?['explicit_rules','validated_history','cost_model','supported_execution_engine']:mode==='report'?['validated_source_receipts','cutoff_and_units','report_input_validation']:[]}));
  const fundMovementOnly=tradeForms.length>0&&atsForms.length===0&&tradeForms.every(id=>FUND_MOVEMENT_FORM_IDS.has(id));
  const clarification=status==='clarification_required'?'어떤 대상에 대해 어떤 도움을 원하시나요?'
   :tradeForms.length||atsForms.length?(fundMovementOnly?GOOSE_SENTENCE_F_T:GOOSE_SENTENCE_F)
   :accountRequest?GOOSE_SENTENCE_ACCOUNT:performanceRequest?GOOSE_SENTENCE_PERFORMANCE:null;
- return {contract:'moai.goose.workflow-plan.v1' as const,status,explicit_mode:explicit??null,migrated_legacy_command:migrated,steps,report_id:modes.has('report')||modes.has('analyze')?(/ETF/i.test(text)?'R12':/선물/.test(text)?'R13':'R01'):null,blocked_actions:blockedActions,unsupported_actions:unsupported,clarification,execution_authority:'plan_only' as const,host_registration:'unverified' as const,provider_dispatches:0,raw_request_retained:false};
+ return {contract:'moai.goose.workflow-plan.v1' as const,status,explicit_mode:explicit??null,migrated_legacy_command:migrated,steps,report_id:requestedReport?(reportWorkflow?.id??null):manualRoute??(modes.has('report')||modes.has('analyze')?(/ETF/i.test(text)?'R12':/선물/.test(text)?'R13':!/["'“”‘’]/.test(text)&&/(?:(?:두|세|네|[234]\s*개)\s*종목|[가-힣A-Za-z0-9]+(?:와|과)\s*[가-힣A-Za-z0-9]+\s*종목)\s*비교(?!\s*(?:(?:는|를|은|을)\s*)?(?:하지|말))/.test(text)?'R02':'R01'):null),...(reportWorkflow?{report_workflow:reportWorkflow}:{}),blocked_actions:blockedActions,unsupported_actions:unsupported,clarification,execution_authority:'plan_only' as const,host_registration:'unverified' as const,provider_dispatches:0,raw_request_retained:false};
 }
