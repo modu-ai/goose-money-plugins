@@ -120,7 +120,8 @@ const SourceSchema = z.object({
   provider:z.string().min(1).optional(),operation_ref:z.string().min(1).optional(),source_as_of:sourceAsOf.optional(),received_at:timestamp.optional(),
   validation_status:z.enum(['synthetic_fixture','unverified','provider_shape_checked','independently_reconciled','rights_pending','stale']).optional(),
 }).strict().superRefine((s,c)=>{if(['kis','opendart','sec','public_web'].includes(s.kind)&&(!s.provider||!s.operation_ref||s.source_as_of===undefined||!s.received_at||!s.validation_status))c.addIssue({code:'custom',message:'provider_provenance_required'});});
-const MetricSchema = z.object({field_id:z.string(),label:z.string(),value:z.union([z.string().regex(/^-?(0|[1-9]\d*)(\.\d+)?$/),z.null()]),unit:z.string().min(1),currency:z.union([z.string(),z.null()]),status:z.enum(['synthetic','provided','provided_unverified','missing','stale','error','not_run','rights_pending']),source_id:z.string(),period:z.string().min(1),missing_reason:z.string().optional(),scale:z.enum(['1','100','1000','1000000','100000000']),period_kind:z.enum(['observation','quarter','FY','YTD']),scope:z.enum(['consolidated','standalone','not_applicable'])}).strict();
+const SourceIdsSchema=z.array(z.string().min(1)).min(1).max(100).refine(ids=>new Set(ids).size===ids.length,'duplicate_source_ids');
+const MetricSchema = z.object({field_id:z.string(),label:z.string(),value:z.union([z.string().regex(/^-?(0|[1-9]\d*)(\.\d+)?$/),z.null()]),unit:z.string().min(1),currency:z.union([z.string(),z.null()]),status:z.enum(['synthetic','provided','provided_unverified','missing','stale','error','not_run','rights_pending']),source_id:z.string(),source_ids:SourceIdsSchema.optional(),period:z.string().min(1),missing_reason:z.string().optional(),scale:z.enum(['1','100','1000','1000000','100000000']),period_kind:z.enum(['observation','quarter','FY','YTD']),scope:z.enum(['consolidated','standalone','not_applicable'])}).strict();
 const SectionSchema = z.object({id:z.string().regex(/^(R\d{2}|U0[12])\.[SX]\d{2}$/),status:z.enum(['partial','error','not_run','rights_pending']),required_fields:z.array(z.string()),missing_reason:z.string().min(1),body:z.string().optional(),source_ids:z.array(z.string()).optional(),metric_ids:z.array(z.string()).optional()}).strict();
 const ClaimSchema = z.object({id:z.string(),kind:z.enum(['fact','interpretation','counterevidence','uncertainty','condition','method']),text:z.string().min(1),status:z.enum(['supported','partial','missing','not_run','rights_pending','error']),confidence:z.enum(['high','medium','low','unrated']),source_ids:z.array(z.string()),metric_ids:z.array(z.string())}).strict();
 const DecimalValue = z.string().regex(/^-?(0|[1-9]\d*)(\.\d+)?$/).max(32);
@@ -141,7 +142,7 @@ const UserSuppliedFinanceSchema = z.object({account_ledger:UserAccountLedgerSche
 });
 const VisualSectionId = z.string().regex(/^(R\d{2}|U0[12])\.[SX]\d{2}$/);
 const VisualLabel = z.string().min(1).max(160);
-const CategoryVisualSchema = z.object({section_id:VisualSectionId,kind:z.enum(['bar','line','donut']),title:VisualLabel,labels:z.array(VisualLabel).min(2).max(50),values:z.array(DecimalValue).min(2).max(50),unit:z.string().min(1).max(80),source_id:z.string(),metric_ids:z.array(z.string().min(1)).min(2).max(50)}).strict().superRefine((v,c)=>{if(v.labels.length!==v.values.length||v.labels.length!==v.metric_ids.length)c.addIssue({code:'custom',message:'visual_dimension_mismatch'});});
+const CategoryVisualSchema = z.object({section_id:VisualSectionId,kind:z.enum(['bar','line','donut']),title:VisualLabel,labels:z.array(VisualLabel).min(2).max(50),values:z.array(DecimalValue).min(2).max(50),unit:z.string().min(1).max(80),source_id:z.string(),source_ids:SourceIdsSchema.optional(),metric_ids:z.array(z.string().min(1)).min(2).max(50)}).strict().superRefine((v,c)=>{if(v.labels.length!==v.values.length||v.labels.length!==v.metric_ids.length)c.addIssue({code:'custom',message:'visual_dimension_mismatch'});});
 const ScatterVisualSchema = z.object({section_id:VisualSectionId,kind:z.literal('scatter'),title:VisualLabel,labels:z.array(VisualLabel).min(2).max(50),x_values:z.array(DecimalValue).min(2).max(50),y_values:z.array(DecimalValue).min(2).max(50),x_unit:z.string().min(1).max(80),y_unit:z.string().min(1).max(80),source_id:z.string(),metric_ids:z.array(z.string().min(1)).min(4).max(100)}).strict().superRefine((v,c)=>{if(v.labels.length!==v.x_values.length||v.labels.length!==v.y_values.length||v.metric_ids.length!==v.labels.length*2)c.addIssue({code:'custom',message:'scatter_dimension_mismatch'});});
 const MatrixCore = {
   section_id:VisualSectionId,kind:z.literal('matrix'),title:VisualLabel,
@@ -194,14 +195,22 @@ export const ReportInputSchema = z.object({
   if((v.mode==='actual'||v.mode==='mixed')&&!['actual_input_unvalidated','actual_data_partial'].includes(v.execution_status))c.addIssue({code:'custom',message:'actual_mode_status_mismatch'});
   const allowed=(sourceId:string)=>{const source=v.sources.find(item=>item.id===sourceId);if(!source)return false;if(v.mode==='synthetic')return source.kind==='synthetic'&&source.rights==='synthetic_only'&&source.validation_status==='synthetic_fixture';if(source.kind==='user_supplied')return (v.mode==='supplied'||v.mode==='mixed')&&source.rights==='local_view'&&source.validation_status==='unverified';return source.rights==='local_view'&&['provider_shape_checked','independently_reconciled'].includes(source.validation_status??'');};
   const displayableMetric=(m:ReportInput['metrics'][number])=>m.status==='synthetic'||m.status==='provided'||(m.status==='provided_unverified'&&v.sources.some(source=>source.id===m.source_id&&source.rights==='local_view'&&(source.kind==='user_supplied'&&source.validation_status==='unverified'||source.validation_status==='provider_shape_checked')));
+  for(const metric of v.metrics){
+    const ids=metric.source_ids??[metric.source_id];
+    if(!ids.includes(metric.source_id)||ids.some(id=>!v.sources.some(source=>source.id===id)))c.addIssue({code:'custom',message:'metric_source_lineage_invalid'});
+    if(ids.length>1&&metric.value!==null&&(ids.some(id=>!allowed(id))||new Set(ids.map(id=>v.sources.find(source=>source.id===id)?.kind==='synthetic')).size>1))c.addIssue({code:'custom',message:'metric_cross_source_not_displayable'});
+  }
   for(const table of v.source_tables??[])if(!allowed(table.source_id))c.addIssue({code:'custom',message:'source_table_not_displayable'});
   const chart=v.chart;if(chart){if(!allowed(chart.source_id))c.addIssue({code:'custom',message:'chart_source_not_displayable'});for(let i=0;i<chart.metric_ids.length;i++){const metric=v.metrics.find(m=>m.field_id===chart.metric_ids[i]&&m.source_id===chart.source_id&&m.unit===chart.unit&&m.value===chart.values[i]&&displayableMetric(m));if(!metric)c.addIssue({code:'custom',message:'chart_point_missing_metric_lineage'});}}
   const routeSectionIds=new Set(routeDocument.routes[v.report_id]?.sections.map(section=>section.id)??[]);
   for(const visual of v.visuals??[]){
-    if(!allowed(visual.source_id))c.addIssue({code:'custom',message:'visual_source_not_displayable'});
+    if(!allowed(visual.source_id)||('source_ids' in visual&&visual.source_ids?.some(id=>!allowed(id))))c.addIssue({code:'custom',message:'visual_source_not_displayable'});
     if(!routeSectionIds.has(visual.section_id))c.addIssue({code:'custom',message:'visual_section_not_in_report_route'});
     if(visual.kind==='bar'||visual.kind==='line'||visual.kind==='donut'){
-      for(let i=0;i<visual.metric_ids.length;i++){const match=v.metrics.some(m=>m.field_id===visual.metric_ids[i]&&m.source_id===visual.source_id&&m.unit===visual.unit&&m.value===visual.values[i]&&displayableMetric(m));if(!match)c.addIssue({code:'custom',message:'visual_point_missing_metric_lineage'});}
+      const ids=visual.source_ids??[visual.source_id];const normalizedFinancial=visual.source_ids!==undefined&&['R07.S03','R11.S04'].includes(visual.section_id);const matched:ReportInput['metrics']=[];
+      for(let i=0;i<visual.metric_ids.length;i++){const match=v.metrics.find(m=>m.field_id===visual.metric_ids[i]&&ids.includes(m.source_id)&&(normalizedFinancial?normalizedComparisonMetric(m)?.unit===visual.unit&&normalizedComparisonMetric(m)?.value===visual.values[i]:m.unit===visual.unit&&m.value===visual.values[i])&&displayableMetric(m));if(!match)c.addIssue({code:'custom',message:'visual_point_missing_metric_lineage'});else matched.push(match);}
+      if(!ids.includes(visual.source_id)||ids.some(id=>!matched.some(m=>m.source_id===id)))c.addIssue({code:'custom',message:'visual_source_lineage_invalid'});
+      if((ids.length>1||normalizedFinancial)&&(visual.kind!=='bar'||!['R07.S03','R11.S04'].includes(visual.section_id)||comparisonPairReason(matched,v.sources,v.mode)!==undefined))c.addIssue({code:'custom',message:'visual_cross_source_basis_invalid'});
     }else if(visual.kind==='scatter'){
       for(let i=0;i<visual.metric_ids.length;i++){const expectedValue=i%2===0?visual.x_values[Math.floor(i/2)]:visual.y_values[Math.floor(i/2)];const expectedUnit=i%2===0?visual.x_unit:visual.y_unit;const match=v.metrics.some(m=>m.field_id===visual.metric_ids[i]&&m.source_id===visual.source_id&&m.unit===expectedUnit&&m.value===expectedValue&&displayableMetric(m));if(!match)c.addIssue({code:'custom',message:'visual_point_missing_metric_lineage'});}
     }else if(visual.kind==='matrix'){
@@ -375,12 +384,19 @@ const ROUTE_BAR_FIELDS:Partial<Record<ReportRouteId,Record<string,string[]>>>= {
   R08:{'R08.S02':['macro.actual','macro.expected','macro.previous']},
   R11:{'R11.S04':['provider_finance.operating_profit','estimates.consensus']},
 };
-function routeBarVisuals(reportId:ReportRouteId,metrics:ReportInput['metrics'],sources:ReportInput['sources'],existing:NonNullable<ReportInput['visuals']>):NonNullable<ReportInput['visuals']> {
+function routeBarVisuals(reportId:ReportRouteId,metrics:ReportInput['metrics'],sources:ReportInput['sources'],existing:NonNullable<ReportInput['visuals']>,mode:DataMode):NonNullable<ReportInput['visuals']> {
   const route=routeDocument.routes[reportId];const presentation=getReportPresentation(reportId);if(!route||!presentation)return [];
   const sourceById=new Map(sources.map(source=>[source.id,source]));const output:NonNullable<ReportInput['visuals']>=[];
   for(const section of route.sections){
     const layout=presentation.sections.find(item=>item.id===section.id);if(!layout?.blocks.includes('bar')||existing.some(item=>item.section_id===section.id&&item.kind==='bar'))continue;
     const allowedFields=ROUTE_BAR_FIELDS[reportId]?.[section.id];if(!allowedFields)continue;
+    if(['R07.S03','R11.S04'].includes(section.id)){
+      const pair=metrics.filter(item=>['provider_finance.operating_profit','estimates.consensus'].includes(item.field_id));
+      if(comparisonPairReason(pair,sources,mode)!==undefined)continue;
+      const points=pair.map(item=>normalizedComparisonMetric(item)!);const ids=[...new Set(pair.map(item=>item.source_id))];
+      output.push({section_id:section.id,kind:'bar',title:'동일 기준으로 환산한 실적·추정치 비교',labels:points.map(item=>item.label),values:points.map(item=>item.value!),unit:points[0]!.unit,source_id:ids[0]!,source_ids:ids,metric_ids:points.map(item=>item.field_id)});
+      continue;
+    }
     const candidates=metrics.filter(item=>allowedFields.includes(item.field_id)&&(section.field_ids.includes(item.field_id)||section.metric_ids.includes(item.field_id))).filter(item=>{
       if(item.value===null)return false;const source=sourceById.get(item.source_id);if(!source)return false;
       if(source.kind==='synthetic')return item.status==='synthetic'&&source.rights==='synthetic_only'&&source.validation_status==='synthetic_fixture';
@@ -447,7 +463,31 @@ function scaledDecimal(value:string,scale:string):string|null {
   const parsed=parseDecimalParts(value);if(!parsed)return null;
   const multiplier=BigInt(scale);return formatScaled(parsed.coefficient*multiplier,parsed.scale);
 }
-function deriveReportMetrics(reportId:ReportRouteId,metrics:ReportInput['metrics']):ReportInput['metrics'] {
+// #58: only explicit financial periods/currency units can be compared across source boundaries.
+// Raw provider labels (including DART receipt/statement strings) are deliberately not guessed.
+function normalizedComparisonMetric(item:ReportInput['metrics'][number]):ReportInput['metrics'][number]|null {
+  const period=item.period.trim().toUpperCase().replace(':','-');
+  if(!(item.period_kind==='FY'&&/^\d{4}-FY$/.test(period)||item.period_kind==='quarter'&&/^\d{4}-Q[1-4]$/.test(period)))return null;
+  const currency=item.currency?.trim().toUpperCase();const unit=item.unit.trim().toUpperCase();
+  if(!currency||!['KRW','USD','EUR','JPY','CNY','GBP','HKD'].includes(currency)||unit!==currency||item.scope==='not_applicable')return null;
+  const value=item.value===null?null:scaledDecimal(item.value,item.scale);
+  if(value!==null&&value.length>32)return null;
+  return {...item,period,currency,unit,scale:'1',value};
+}
+function comparisonPairReason(pair:ReportInput['metrics'],sources:ReportInput['sources'],mode:DataMode):string|undefined {
+  if(pair.length!==2||!pair.some(item=>item.field_id==='provider_finance.operating_profit')||!pair.some(item=>item.field_id==='estimates.consensus'))return 'cross_source_ambiguous_inputs';
+  const lineage=pair.map(item=>sources.find(source=>source.id===item.source_id));
+  if(lineage.some(source=>!source))return 'cross_source_provenance_missing';
+  if(pair.some(item=>item.status==='rights_pending')||lineage.some(source=>source?.rights==='pending'))return 'display_rights_not_confirmed';
+  if(new Set(lineage.map(source=>source?.kind==='synthetic')).size!==1)return 'cross_source_origin_mismatch';
+  if(mode!=='synthetic'&&lineage.some(source=>source?.kind==='synthetic'))return 'cross_source_origin_mismatch';
+  if(lineage.some(source=>source!.kind==='synthetic'?source!.rights!=='synthetic_only'||source!.validation_status!=='synthetic_fixture':source!.rights!=='local_view'||!['provider_shape_checked','independently_reconciled'].includes(source!.validation_status??'')))return 'cross_source_provenance_unverified';
+  const normalized=pair.map(normalizedComparisonMetric);
+  if(normalized.some(item=>item===null)||!sameBasis(normalized[0]!,normalized[1]!))return 'cross_source_basis_mismatch';
+  if(!pair.every(canCalculate))return 'required_calculation_inputs_missing_or_incompatible';
+  return undefined;
+}
+function deriveReportMetrics(reportId:ReportRouteId,metrics:ReportInput['metrics'],sourceRecords:ReportInput['sources'],mode:DataMode):ReportInput['metrics'] {
   const plan=routeDocument.routes[reportId]!;const needed=new Set([...plan.sections.flatMap(section=>section.metric_ids),...Object.values(plan.field_groups).flat()]);
   const output=[...metrics];
   const by=(field:string,sourceId:string)=>output.find(item=>item.field_id===field&&item.source_id===sourceId);
@@ -504,10 +544,10 @@ function deriveReportMetrics(reportId:ReportRouteId,metrics:ReportInput['metrics
     }
     const actual=by('provider_finance.operating_profit',sourceId),estimate=by('estimates.consensus',sourceId);
     const macroActual=by('macro.actual',sourceId),macroExpected=by('macro.expected',sourceId);
-    if(actual&&estimate&&!(reportId==='R08'&&macroActual&&macroExpected)){
+    if(actual&&estimate&&!['R07','R11'].includes(reportId)&&!(reportId==='R08'&&macroActual&&macroExpected)){
       const compatible=sameBasis(actual,estimate);
       const delta=compatible&&canCalculate(actual)&&canCalculate(estimate)?subtractDecimal(actual.value!,estimate.value!):null;
-      const absoluteEstimate=absDecimal(estimate.value!);const value=delta!==null&&absoluteEstimate!==null&&parseDecimalParts(absoluteEstimate)?.coefficient!==0n?roundedRatio(delta,absoluteEstimate,100):null;
+      const absoluteEstimate=estimate.value===null?null:absDecimal(estimate.value);const value=delta!==null&&absoluteEstimate!==null&&parseDecimalParts(absoluteEstimate)?.coefficient!==0n?roundedRatio(delta,absoluteEstimate,100):null;
       add('metric.surprise','예상 대비 차이',value,'%',null,[actual,estimate]);
     }
     if(reportId==='R08'&&macroActual&&macroExpected){
@@ -526,6 +566,17 @@ function deriveReportMetrics(reportId:ReportRouteId,metrics:ReportInput['metrics
       const positive=deltaParts!==null&&deltaParts.coefficient>=0n;
       const value=delta!==null&&sum!==null&&sumParts!==null&&sumParts.coefficient>0n&&positive?roundedRatio(delta,sum,20000):null;
       add('metric.spread_bps','매수·매도 호가 차이',value,'bp',null,[bid,ask]);
+    }
+  }
+  if(['R07','R11'].includes(reportId)&&!output.some(item=>item.field_id==='metric.surprise')){
+    const pair=metrics.filter(item=>['provider_finance.operating_profit','estimates.consensus'].includes(item.field_id));
+    if(pair.some(item=>item.field_id==='provider_finance.operating_profit')&&pair.some(item=>item.field_id==='estimates.consensus')){
+      const reason=comparisonPairReason(pair,sourceRecords,mode);const actual=pair.find(item=>item.field_id==='provider_finance.operating_profit')!;
+      const normalized=pair.map(normalizedComparisonMetric);const left=normalized.find(item=>item?.field_id==='provider_finance.operating_profit');const right=normalized.find(item=>item?.field_id==='estimates.consensus');
+      const delta=!reason&&left?.value!==null&&right?.value!==null?subtractDecimal(left!.value!,right!.value!):null;
+      const denominator=right?.value?absDecimal(right.value):null;const value=delta!==null&&denominator!==null&&parseDecimalParts(denominator)?.coefficient!==0n?roundedRatio(delta,denominator,100):null;
+      const status=reason==='display_rights_not_confirmed'?'rights_pending':value===null?'missing':pair.every(item=>item.status==='synthetic')?'synthetic':pair.every(item=>item.status==='provided')?'provided':'provided_unverified';
+      output.push({...derivedMetric('metric.surprise','실적의 예상 대비 차이',value,'%',null,status,left??actual,reason??(value===null?'required_calculation_inputs_missing_or_incompatible':undefined)),source_ids:[...new Set(pair.map(item=>item.source_id))]});
     }
   }
   return output;
@@ -803,15 +854,17 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   });
   if(localUserData&&normalized.length)throw new Error('user_supplied_local_input_cannot_be_mixed_with_mcp_results');
   const sources=[...normalized.flatMap(c=>c.source?[c.source]:[]),...(localUserData?[localUserData.source]:[])];
+  const origins=new Set(normalized.filter(c=>c.source).map(c=>c.origin));
+  const mode:DataMode=localUserData?'supplied':origins.size===1&&origins.has('synthetic')?'synthetic':origins.size===1&&origins.has('actual')?'actual':origins.has('synthetic')||origins.has('actual')?'mixed':normalized.length?'supplied':'synthetic';
   const routeFields=new Set([...plan.groups.flatMap(group=>group.required_fields),...plan.sections.flatMap(section=>section.metric_ids)]);
   // Project validated adapter metrics onto this route; client local input remains strict below.
   const normalizedMetrics=normalized.flatMap(c=>c.metrics.filter(item=>routeFields.has(item.field_id)));
   const allInputMetrics=[...normalizedMetrics,...(localUserData?.metrics??[])];
   if(allInputMetrics.some(item=>!routeFields.has(item.field_id)))throw new Error('field_not_required_by_report_route');
-  const derivedMetrics=deriveHistoryReportMetrics(reportId,normalized,deriveReportMetrics(reportId,allInputMetrics));
+  const derivedMetrics=deriveHistoryReportMetrics(reportId,normalized,deriveReportMetrics(reportId,allInputMetrics,sources,mode));
   const allowedVisualBlocks=new Map((plan.presentation?.sections??[]).map(section=>[section.id,new Set(section.blocks)]));
   const suppliedVisuals=[...normalized.flatMap(c=>c.visuals??[]),...(localUserData?.visuals??[])];
-  const visuals=[...suppliedVisuals,...routeBarVisuals(reportId,allInputMetrics,sources,suppliedVisuals)].filter(visual=>{
+  const visuals=[...suppliedVisuals,...routeBarVisuals(reportId,allInputMetrics,sources,suppliedVisuals,mode)].filter(visual=>{
     const blocks=allowedVisualBlocks.get(visual.section_id);
     if(!blocks||!blocks.has(visual.kind))throw new Error('visual_not_declared_by_report_layout');
     const section=plan.sections.find(item=>item.id===visual.section_id);if(!section)throw new Error('visual_route_section_missing');
@@ -822,8 +875,6 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   const analysis=comparisonSubjects?analyzeComparison(comparisonSubjects,normalized.map((call,i):ComparisonCall=>({tool_name:call.tool_name,outcome:call.outcome,source:call.source,origin:call.origin,trusted:Boolean(args.trustedLocalReceipts?.get(i)),payload:comparisonPayload(args.calls![i]!.result)}))):undefined;
   const attributed=comparisonSubjects&&analysis?attributeComparison(comparisonSubjects,analysis,{sources,metrics:derivedMetrics,source_tables:normalized.flatMap(call=>call.source_tables??[]),visuals}):undefined;
   const metrics=attributed?attributed.metrics:derivedMetrics;
-  const origins=new Set(normalized.filter(c=>c.source).map(c=>c.origin));
-  const mode:DataMode=localUserData?'supplied':origins.size===1&&origins.has('synthetic')?'synthetic':origins.size===1&&origins.has('actual')?'actual':origins.has('synthetic')||origins.has('actual')?'mixed':normalized.length?'supplied':'synthetic';
   const executionStatus:ReportInput['execution_status']=localUserData?'provided_unverified':mode==='synthetic'?(normalized.length?'synthetic_fixture_rendered':'template_only'):(mode==='actual'||mode==='mixed'?'actual_data_partial':normalized.length?'provided_unverified':'not_run');
   const sections:ReportInput['sections']=[];
   const claims:ReportInput['analysis_claims']=[];

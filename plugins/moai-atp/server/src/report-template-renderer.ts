@@ -78,20 +78,20 @@ function reportTable(headers: string[], rows: Array<Array<TableCell>>): string {
   return `<div class="table-wrap" tabindex="0" role="region" aria-label="가로 스크롤 표"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 type RenderChart = {
-  id:string;section_id:string;kind:'bar'|'line'|'donut'|'scatter';title:string;source_id:string;unit?:string;
+  id:string;section_id:string;kind:'bar'|'line'|'donut'|'scatter';title:string;source_id:string;source_ids?:string[];unit?:string;
   labels:string[];values?:number[];metric_ids:string[];x_values?:number[];y_values?:number[];x_unit?:string;y_unit?:string;
 };
 function makeChartSpecs(doc: ReportInput, plan: ReportPlan) {
   const echart:RenderChart[]=[];
   for(const [index,visual] of (doc.visuals??[]).entries()){
-    if(!sourceMayDisplay(doc,visual.source_id))continue;
+    if(!sourceMayDisplay(doc,visual.source_id)||('source_ids' in visual&&visual.source_ids?.some(id=>!sourceMayDisplay(doc,id))))continue;
     if(visual.kind==='matrix'||visual.kind==='timeline'||visual.kind==='pele')continue;
     if(visual.kind==='scatter'){
       const x=numericSeries(visual.x_values),y=numericSeries(visual.y_values);if(!x||!y)continue;
       echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:'scatter',title:visual.title,source_id:visual.source_id,labels:visual.labels,x_values:x,y_values:y,x_unit:visual.x_unit,y_unit:visual.y_unit,metric_ids:visual.metric_ids});
     }else{
       const values=numericSeries(visual.values);if(!values)continue;
-      echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:visual.kind,title:visual.title,source_id:visual.source_id,labels:visual.labels,values,unit:visual.unit,metric_ids:visual.metric_ids});
+      echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:visual.kind,title:visual.title,source_id:visual.source_id,...(visual.source_ids?{source_ids:visual.source_ids}:{}),labels:visual.labels,values,unit:visual.unit,metric_ids:visual.metric_ids});
     }
   }
   if(doc.chart&&sourceMayDisplay(doc,doc.chart.source_id)){
@@ -108,7 +108,6 @@ function makeChartSpecs(doc: ReportInput, plan: ReportPlan) {
   return {echart,lwc};
 }
 function chartFigure(spec:RenderChart,doc:ReportInput):string {
-  const source=doc.sources.find(item=>item.id===spec.source_id);
   const xUnit=spec.x_unit??spec.unit??'';const yUnit=spec.y_unit??spec.unit??'';
   const rows=spec.kind==='scatter'
     ?spec.labels.map((label,index)=>[label,groupIntegerDigits(String(spec.x_values?.[index]??'—')),xUnit,groupIntegerDigits(String(spec.y_values?.[index]??'—')),yUnit])
@@ -116,12 +115,12 @@ function chartFigure(spec:RenderChart,doc:ReportInput):string {
   const table=spec.kind==='scatter'
     ?reportTable(['대상','X 원수치',xUnit,'Y 원수치',yUnit],rows)
     :reportTable(['구분','원수치',spec.unit??'단위'],rows);
-  const caption=`${spec.kind==='scatter'?'Apache ECharts 6.1.0 · 산점도':'Apache ECharts 6.1.0 · '+spec.kind} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · 표의 원수치가 기준입니다.`;
+  const caption=`${spec.kind==='scatter'?'Apache ECharts 6.1.0 · 산점도':'Apache ECharts 6.1.0 · '+spec.kind} · ${(spec.source_ids??[spec.source_id]).map(id=>sourceCaption(doc,id)).join(' / ')} · ${spec.source_ids?'확인된 배율로 환산한 표시값입니다.':'표의 원수치가 기준입니다.'}`;
   return `<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="${E(spec.title)} 차트 가로 탐색"><div id="${E(spec.id)}" class="echart ${spec.kind==='scatter'?'wide-chart':''}" role="img" aria-label="${E(spec.title)} · ${E(doc.mode)}"></div></div><p class="chart-runtime-status" role="status">차트 입력은 있으나 화면 생성은 아직 확인되지 않았습니다. 아래 원수치를 확인하세요.</p><figcaption class="chart-caption">${caption}</figcaption></figure>${table}`;
 }
 function sourceCaption(doc:ReportInput,sourceId:string):string {
   const source=doc.sources.find(item=>item.id===sourceId);
-  return `source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · ${E(source?.id??'출처 없음')}`;
+  return `${E(source?.provider?.toUpperCase()??source?.kind??'출처 없음')} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · ${E(source?.id??'출처 없음')}`;
 }
 function matrixVisualHtml(visual:Extract<NonNullable<ReportInput['visuals']>[number],{kind:'matrix'}>,doc:ReportInput):string {
   const rows=visual.rows.map((label,row)=>[label,...visual.columns.map((_,column)=>visual.values[row*visual.columns.length+column]??'—')]);
@@ -231,7 +230,7 @@ const METRIC_STATUS_LABELS: Record<string, string> = {
   provided: '제공값', provided_unverified: '제공값(미검증)', missing: '없음', not_run: '미실행', error: '오류',
   stale: '기준 시각 지남', rights_pending: '권리 확인 대기', synthetic: '합성 자료',
 };
-const METRIC_NOTE_LABELS: Record<string, string> = { provider_field_missing_or_invalid: '공급자 응답에 값이 없거나 형식이 맞지 않음' };
+const METRIC_NOTE_LABELS: Record<string, string> = { cross_source_origin_mismatch:'합성 자료와 실제 자료는 함께 계산하지 않음',cross_source_basis_mismatch:'기간·회계 범위·통화·단위의 기준이 맞지 않거나 정규화되지 않음',cross_source_ambiguous_inputs:'실적 또는 추정치가 여러 개라 비교 대상을 확정할 수 없음',cross_source_provenance_missing:'계산에 필요한 출처 기록이 없음',cross_source_provenance_unverified:'출처의 표시 권한·검증 상태가 확인되지 않음',display_rights_not_confirmed:'자료 표시 권리 확인 대기', provider_field_missing_or_invalid: '공급자 응답에 값이 없거나 형식이 맞지 않음' };
 export const metricStatusLabel = (code: string): string => METRIC_STATUS_LABELS[code] ?? code;
 export const metricNoteLabel = (code: string): string => METRIC_NOTE_LABELS[code] ?? code;
 /** An ISO instant as "YYYY-MM-DD HH:mm KST" in the document time zone; any other text is returned unchanged. */
@@ -259,7 +258,7 @@ function metricBodyRows(doc: ReportInput, metrics = doc.metrics): TableCell[][] 
     return true;
   }).map(metric => {
     const source = doc.sources.find(item => item.id === metric.source_id);
-    const visible = sourceMayDisplay(doc,metric.source_id) && !['rights_pending','error','not_run','missing'].includes(metric.status);
+    const visible = (metric.source_ids??[metric.source_id]).every(id=>sourceMayDisplay(doc,id)) && !['rights_pending','error','not_run','missing'].includes(metric.status);
     const status = visible ? metric.status : source?.rights === 'pending' ? 'rights_pending' : metric.status;
     const note = metric.missing_reason ?? '';
     const unit = metric.unit === 'KRW/share' ? '원/주' : metric.unit === 'shares' ? '주' : metric.unit === 'percent' ? '%' : metric.unit;
@@ -284,8 +283,8 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, templat
   ]);
   const metricsRows = doc.metrics.map((metric)=>{
     const source = sourceMap.get(metric.source_id);
-    const authorized = sourceMayDisplay(doc,metric.source_id) && metric.status !== 'rights_pending' && metric.status !== 'error' && metric.status !== 'not_run' && metric.status !== 'missing';
-    return [metric.label,authorized && metric.value !== null ? groupIntegerDigits(metric.value) : '—',metric.unit,metric.period,authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status),metric.missing_reason ?? ''];
+    const authorized = (metric.source_ids??[metric.source_id]).every(id=>sourceMayDisplay(doc,id)) && metric.status !== 'rights_pending' && metric.status !== 'error' && metric.status !== 'not_run' && metric.status !== 'missing';
+    return [metric.label,authorized && metric.value !== null ? groupIntegerDigits(metric.value) : '—',metric.unit,metric.period,authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status),metric.missing_reason ?? '',metric.scale,(metric.source_ids??[metric.source_id]).join(', ')];
   });
   const visualOutput = chartSections(specs,doc);
   const specialOutput = specialVisualSections(doc);
@@ -339,7 +338,7 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, templat
   const sourceRowsHtml = reportTable(['출처 ID','공급자','작업','source_as_of','received_at','검증','권리'],sourceRows);
   const cutoffShown = displayInstant(doc.cutoff, doc.display_timezone);
   const cutoffHtml = cutoffShown === doc.cutoff ? E(doc.cutoff) : `<time datetime="${E(doc.cutoff)}" title="${E(doc.cutoff)}">${E(cutoffShown)}</time>`;
-  const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고'],metricsRows);
+  const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고','입력 배율','출처'],metricsRows);
   const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records"><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows)}</details>`).join('');
   const opinionClaims=doc.analysis_claims.filter(claim=>claim.id.includes('.GOOSE_OPINION.'));
   const opinionLabels:Record<string,string>={conclusion:'종합 결론',rationale:'판단 이유',risks:'반대 신호와 한계',next_checks:'다음 확인'};
