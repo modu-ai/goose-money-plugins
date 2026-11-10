@@ -596,3 +596,34 @@ test('an unchanged pending snapshot does not revive an abandoned checkout', () =
   assert.equal(same.subscription.state_changed_at, T0);  // original anchor untouched (not the reconcile time)
   assert.equal(timed.effectiveState(same.subscription, T0 + 1200), 'none');
 });
+
+test('a confirmed replacement checkout clears the expired period in reconciliation', () => {
+  // Codex P2 :231 — same-state confirmation of a replacement checkout must clear a stored expired
+  // period like apply() does, or the new pending stays effectively expired.
+  const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 100 });
+  let sub = timed.apply(timed.emptySubscription('s'), ev('s0', 'checkout.completed', { provider_revision: 1, current_period_end: T0 + 200 })).subscription;
+  assert.equal(timed.effectiveState(sub, T0 + 250), 'expired');  // stored period elapsed
+  const routed = timed.apply(sub, ev('s1', 'checkout.completed', { occurred_at: T0 + 250 }));  // revision-less → view
+  assert.equal(routed.outcome, 'reconcile_required');
+  const confirmed = timed.reconcile(routed.subscription, { state: 'pending', revision: 2 }, T0 + 300);
+  assert.equal(confirmed.outcome, 'applied');
+  assert.equal(confirmed.subscription.state_changed_at, T0 + 300);  // replacement anchor restarted
+  assert.equal(confirmed.subscription.current_period_end, null);    // old period cleared
+  assert.equal(timed.effectiveState(confirmed.subscription, T0 + 300), 'pending');
+});
+
+test('a provider-confirmed expired dispute is adopted instead of looping in no_difference', () => {
+  // Codex P2 :250 — a disputed record past its period end has effective expired; a provider
+  // expired view used to match it and return no_difference forever, trapping the dispute (no
+  // checkout, no exit). Adopting the provider's terminal state clears the dispute.
+  const end = T0 + 30 * DAY;
+  const disputed = machine.apply(activeWithEnd(end), ev('n0', 'dispute.opened', { provider_revision: 3 })).subscription;
+  assert.equal(machine.effectiveState(disputed, end + DAY), 'expired');
+  const confirmed = machine.reconcile(disputed, { state: 'expired', revision: 4 }, end + DAY);
+  assert.equal(confirmed.outcome, 'applied');
+  assert.equal(state(confirmed.subscription), 'expired');
+  assert.equal(confirmed.subscription.previous_state, null);
+  const checkout = machine.apply(confirmed.subscription, ev('n1', 'checkout.completed', { provider_revision: 5, occurred_at: end + 2 * DAY }));
+  assert.equal(checkout.outcome, 'applied');  // the dispute trap is gone
+  assert.equal(state(checkout.subscription), 'pending');
+});

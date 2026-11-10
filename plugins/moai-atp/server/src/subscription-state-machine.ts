@@ -228,7 +228,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
         && provider.revision > current.revision;
       const updated: StoredSubscription = {
         ...current,
-        current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
+        // A confirmed replacement checkout clears a stored expired period, like apply()'s checkout
+        // path does (P2 :231) — otherwise the new pending stays effectively expired.
+        current_period_end: provider.current_period_end === undefined
+          ? (confirmedReplacementCheckout ? null : current.current_period_end)
+          : provider.current_period_end,
         revision: provider.revision ?? current.revision,
         last_event_at: now,
         state_changed_at: confirmedReplacementCheckout ? now : current.state_changed_at,
@@ -240,7 +244,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     }
     const local = effectiveState(current, now);
     const periodSame = provider.current_period_end === undefined || provider.current_period_end === current.current_period_end;
-    if (local === provider.state && periodSame) {
+    // A provider-confirmed terminal state must not be masked by the effective comparison when the
+    // stored state is a live dispute: both table exits (dispute.won/lost) are unreachable then,
+    // and every later reconcile would return no_difference forever (P2 :250). Adopting the
+    // provider's terminal state clears the dispute the way dispute.lost does.
+    if (local === provider.state && periodSame && !(current.state === 'disputed' && provider.state !== 'disputed')) {
       // §5 순서 역전: a newer provider revision is verified knowledge even when nothing visible
       // differs; keep it so later stale events stay rejected (a revision-5 event must not revert
       // a provider-verified revision-10 snapshot).
