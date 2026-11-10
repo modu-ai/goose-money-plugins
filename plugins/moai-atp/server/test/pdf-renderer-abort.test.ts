@@ -17,7 +17,7 @@ test('PDF renderer abort force-kills an unresponsive SIGTERM-ignoring child and 
  let ready!:()=>void;const started=new Promise<void>(resolve=>{ready=resolve;});
  let closed=false,settled=false;
  const controller=new AbortController();
- rendering=chromeRenderer(process.execPath,{html:'<html></html>',network:'deny_all',page:'A4',font_policy:'decision_required',signal:controller.signal},(_executable:string,args:string[],options:Parameters<typeof spawn>[2])=>{
+ rendering=chromeRenderer(process.execPath,{html:'<html></html>',network:'fonts_cdn_only',page:'A4',font_policy:'cdn_load_then_pdf',signal:controller.signal},(_executable:string,args:string[],options:Parameters<typeof spawn>[2])=>{
   profile=args.find(arg=>arg.startsWith('--user-data-dir='))?.slice('--user-data-dir='.length);
   child=spawn(process.execPath,[fixture],{...options,stdio:['ignore','pipe','ignore','pipe','pipe']});
   child.once('close',()=>{closed=true;});
