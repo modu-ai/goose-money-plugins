@@ -36,6 +36,21 @@ for(const [route,section] of [['R07','R07.S03'],['R11','R11.S04']]){
   const doc=build(route!,[actual(),estimate({origin:'actual'})],true);const m=doc.metrics.find(m=>m.field_id==='metric.surprise');
   assert.ok(m);assert.equal(m.value,null);assert.equal(m.missing_reason,'cross_source_origin_mismatch');assert.ok(!doc.visuals?.some(v=>v.section_id===section));
  });
+ for(const separate of [true,false])test(`${route} withholds synthetic comparison in a mixed report (${separate?'separate':'same'} source)`,()=>{
+  const a=actual(),e=estimate();
+  if(!separate)a.result.structuredContent.observations.push(...e.result.structuredContent.observations);
+  const doc=build(route!,[a,...(separate?[e]:[]),call('get_fundamentals','provider_finance.revenue','200',{origin:'actual'})],true);
+  assert.equal(doc.mode,'mixed');
+  const m=doc.metrics.find(m=>m.field_id==='metric.surprise');
+  assert.ok(m);assert.equal(m.value,null);assert.equal(m.missing_reason,'cross_source_origin_mismatch');
+  assert.ok(!doc.visuals?.some(v=>v.section_id===section));
+  assert.doesNotThrow(()=>renderReportInputHtml(doc));
+ });
+ test(`${route} retains actual comparison in a mixed report with unrelated synthetic input`,()=>{
+  const doc=build(route!,[actual({origin:'actual'}),estimate({origin:'actual'}),call('get_fundamentals','provider_finance.revenue','200')],true);
+  assert.equal(doc.mode,'mixed');assert.equal(doc.metrics.find(m=>m.field_id==='metric.surprise')?.value,'10');
+  assert.ok(doc.visuals?.some(v=>v.section_id===section));
+ });
  test(`${route} refuses pending rights`,()=>{
   const doc=build(route!,[actual({origin:'actual'}),estimate({origin:'actual',rights:'pending'})],true);const m=doc.metrics.find(m=>m.field_id==='metric.surprise');
   assert.ok(m);assert.equal(m.value,null);assert.equal(m.status,'rights_pending');assert.ok(!doc.visuals?.some(v=>v.section_id===section));
