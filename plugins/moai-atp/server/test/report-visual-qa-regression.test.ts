@@ -46,3 +46,18 @@ for (const template of ['existing', 'artboard-v2'] as const) {
     assert.match(ledger, /2026-11-10T04:00:00.000Z/);
   });
 }
+
+for (const template of ['existing', 'artboard-v2'] as const) {
+  test(`D10: ${template} keeps ledger source identifiers intact without changing raw input`, () => {
+    const original = input();
+    const doc = JSON.parse(JSON.stringify(original).replaceAll(original.sources[0]!.id, 'SYNTHETIC-FY25'));
+    const before = JSON.stringify(doc), html = renderReportInputHtml(doc, template);
+    const ledger = html.slice(html.indexOf('<summary>출처·시각·검증 장부</summary>'));
+    const ids = [...ledger.matchAll(/<td class="source-id" title="SYNTHETIC-FY25">SYNTHETIC-FY25<\/td>/g)];
+    assert.ok(ids.length >= 2, 'both the source table and metric ledger keep complete identifiers');
+    assert.doesNotMatch(ledger, /<td>SYNTHETIC-FY25<\/td>/);
+    assert.match(html, /\.table-wrap td\.source-id,\.rs \.table-wrap td\.source-id\{white-space:nowrap\}/);
+    assert.equal(JSON.stringify(doc), before);
+    assert.match(html, /class="unit" title="KRW\/share">원\/주/);
+  });
+}
