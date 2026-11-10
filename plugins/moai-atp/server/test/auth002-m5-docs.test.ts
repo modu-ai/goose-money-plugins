@@ -2,6 +2,12 @@
 // only authentication for analysis and report features, and carries no statement that MoAI-AI login or member
 // verification is required (REQ-DOC-001, REQ-RDY-004 document side).
 //
+// Redefined by issue #10 (2026-11-10): the #1 product decision makes MoAI-AI sign-in required for every tier, so these
+// pins no longer say "login is not part of the product". They say "the current build has no sign-in, so the docs must
+// not describe one": a user reading README or SKILL.md today must not be told to log in to a feature that does not
+// exist. The strictness is unchanged. The '#10' coupling test ties the pins to member_onboarding.status, so they are
+// rewritten together with the sign-in implementation and its docs, never dropped on their own.
+//
 // Every predicate below is the AC-006 predicate of acceptance.md, restated as a count or a parse over repository
 // files. The tests only read files under the repository tree (plugins/moai-atp/README.md, plugins/moai-atp/skills/goose/SKILL.md,
 // plugins/moai-atp/skills/goose/references/**, plugins/moai-atp/CAPABILITIES.json); no network, no HOME, no key is touched. The one child
@@ -105,6 +111,21 @@ const ACCEPTANCE_PYTHON_PREDICATE =
 const MEMBER_VOCABULARY = /member_login_required|provider_checks_required|로그인 연결|회원 인증/;
 const CONNECTED_STATUS_WORDING = /연결됨|연결 완료|검증됨|both connected/;
 const LICENSE_SENTENCE = '회원 인증은 서비스';
+
+// Issue #10: every wording pin below describes the current build, where sign-in is decided but not implemented.
+// This test ties them to that build state: when member_onboarding stops saying "not connected", the pins are
+// rewritten together with the implementation and the user-facing docs, never deleted on their own.
+test('#10: the wording pins hold only while CAPABILITIES says the member feature is decided but not connected', () => {
+  const block = capabilities().member_onboarding;
+  assert.ok(isObject(block), 'member_onboarding is kept as an object');
+  assert.equal(
+    block.status,
+    'member_feature_not_connected',
+    'member_onboarding.status changed: rewrite the auth002 wording pins together with the sign-in implementation and its docs',
+  );
+  assert.equal(typeof block.decided_direction, 'string', 'the 2026-11-10 decision is recorded in decided_direction');
+  assert.ok(String(block.decided_direction).includes('Not implemented in this build'), 'the decision says it is not implemented yet');
+});
 
 test('AC-006 E-04: "모두의AI 로그인" appears in neither README nor SKILL.md', () => {
   assert.deepEqual(grepLines(readme(), /모두의AI 로그인/), []);

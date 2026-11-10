@@ -26,7 +26,7 @@ for(const scenario of [{route:'R01',enabled:true},{route:'R02',enabled:true},{ro
   const built=(await rpc('tools/call',{name:'build_report_input',arguments:{report_id:scenario.route,subject:{id:'KRX:005930',name:'합성 종목',venue:'KRX',currency:'KRW'},cutoff,display_timezone:'Asia/Seoul',calls:[{tool_name:'get_market_snapshot',result:observed}]}})).result;assert.ok(!built.isError,JSON.stringify(built));assert.equal(built.structuredContent.mode,scenario.enabled?'synthetic':'supplied');
   if(!scenario.enabled)assert.ok(!JSON.stringify(built.structuredContent.metrics).includes('70000'));
   const rendered=(await rpc('tools/call',{name:'render_report_html',arguments:{report_input:built.structuredContent}})).result;assert.ok(!rendered.isError,JSON.stringify(rendered));assert.equal(rendered.structuredContent.host_rendering,'not_observed');
-  const link=rendered.content.find((x:any)=>x.type==='resource_link');const html=(await rpc('resources/read',{uri:link.uri})).result.contents[0].text;if(scenario.enabled)assert.match(html,/합성/);else{assert.match(html,/권리|rights_pending/);assert.ok(!html.includes('70000'));}assert.ok(html.includes(scenario.route));
+  const link=rendered.content.find((x:any)=>x.type==='resource_link');const html=(await rpc('resources/read',{uri:link.uri})).result.contents[0].text;if(scenario.enabled)assert.match(html,/합성/);else{assert.match(html,/권리|rights_pending/);assert.ok(!html.includes('70000'));assert.ok(!html.includes('70,000'),'a hidden value stays hidden after #52 digit grouping');}assert.ok(html.includes(scenario.route));
  }finally{await server.close();await client.close();}
 });
 test('public role validation rejects held tool claims instead of trusting runner declarations (synthetic)',async()=>{
