@@ -1,7 +1,7 @@
 import { createInterface } from "node:readline/promises";
 import { readTerminalChoice } from "./terminal-choice.js";
 import { homedir } from "node:os";
-import { defaultCredentialFilePath, loadLocalCredentials, saveLocalCredentials, SafeCredentialError, type CredentialProviders } from "./local-credentials.js";
+import { defaultCredentialFilePath, deleteLocalCredentials, loadLocalCredentials, saveLocalCredentials, SafeCredentialError, type CredentialProviders } from "./local-credentials.js";
 
 type Output = { write(value: string): unknown };
 /** No echo, no shell/argv/environment entry. Only an interactive local terminal. */
@@ -73,6 +73,13 @@ export async function runCredentialSetupFlow(projectRoot: string, ask: (question
   await saveLocalCredentials(patch, projectRoot, { confirmed: true, homeDir });
   output.write("credentials_saved=true\n"); return 0;
 }
+/** Deletion flow for the stored provider keys (#43). Local file only; the provider-side key always survives. */
+export async function runCredentialDeleteFlow(projectRoot: string, ask: (question: string) => Promise<string>, output: Output, homeDir = homedir()): Promise<number> {
+  output.write(`모두의 주식 · MoAI ATP — 공급자 키 삭제\n저장 위치: ${defaultCredentialFilePath(homeDir)}\n삭제는 이 파일에만 적용되며 공급자 측 키·발급 이력은 사라지지 않습니다. API 호출·토큰 발급은 수행하지 않습니다.\n`);
+  if (await ask("저장된 공급자 키를 삭제하려면 DELETE를 입력하세요: ") !== "DELETE") { output.write("credentials_deleted=false\n"); return 0; }
+  output.write(`credentials_deleted=${await deleteLocalCredentials(projectRoot, { confirmed: true, homeDir })}\n`);
+  return 0;
+}
 export async function runCredentialSetup(): Promise<number> {
   if (!process.stdin.isTTY || !process.stdout.isTTY) { process.stderr.write("setup_requires_interactive_terminal\n"); return 2; }
   // Never keep readline attached during hidden input: it would echo raw data.
@@ -84,5 +91,14 @@ export async function runCredentialSetup(): Promise<number> {
     const choice = await readTerminalChoice(process.stdin, process.stdout, `${label} 키 재사용`, ["기존 키 사용 (기본)", "새로 입력"], false, false);
     return choice.kind === "cancelled" ? "cancel" : choice.kind === "selected" && choice.values[0] === 0 ? "reuse" : "replace";
   }); }
+  catch (e) { process.stderr.write(`${e instanceof SafeCredentialError ? e.code : "setup_failed"}\n`); return 2; }
+}
+export async function runCredentialDelete(): Promise<number> {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) { process.stderr.write("setup_requires_interactive_terminal\n"); return 2; }
+  const ask = async (question: string) => {
+    const terminal = createInterface({ input: process.stdin, output: process.stdout });
+    try { return await terminal.question(question); } finally { terminal.close(); }
+  };
+  try { return await runCredentialDeleteFlow(process.cwd(), ask, process.stdout, homedir()); }
   catch (e) { process.stderr.write(`${e instanceof SafeCredentialError ? e.code : "setup_failed"}\n`); return 2; }
 }

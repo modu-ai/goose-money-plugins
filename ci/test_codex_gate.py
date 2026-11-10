@@ -531,7 +531,9 @@ class OnePrOneQueue(unittest.TestCase):
     def test_judging_job_is_grouped_per_pr_number_for_every_trigger(self):
         jobs = self.text().split('jobs:', 1)[1]
         self.assertIn('group: codex-gate-pr-${{ matrix.pr }}', jobs)
-        self.assertIn('fromJSON(needs.targets.outputs.prs)', jobs)
+        # Issue #62: the matrix takes the schedule's target list or the event's own PR numbers.
+        self.assertIn('fromJSON(', jobs)
+        self.assertIn('needs.targets.outputs.prs', jobs)
         self.assertIn('cancel-in-progress: false', jobs)
 
 
@@ -558,6 +560,65 @@ class ObservedLoginForms(unittest.TestCase):
 
     def test_reaction_user_carries_the_bot_suffix(self):
         self.assertEqual(run(clean_pr())[1], [])
+
+class ActionsBudget(unittest.TestCase):
+    """Issue #62: cut Actions minutes without changing what is judged.
+    Measured on 2026-11-10: every judgement ran two jobs (targets + gate) on windows-latest,
+    each ~19 s but billed as a whole minute. Billing per GitHub docs: per-job minutes rounded up,
+    Linux 2-core $0.006/min, Windows 2-core $0.010/min."""
+    path = DefaultBranchOnly.path
+    test_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.github', 'workflows', 'test.yml')
+
+    def text(self):
+        with open(self.path, encoding='utf-8') as handle:
+            return handle.read()
+
+    def job(self, name):
+        jobs = self.text().split('\njobs:\n', 1)[1]
+        start = jobs.index('\n  %s:\n' % name) if not jobs.startswith('  %s:\n' % name) else 0
+        rest = jobs[start + 1:]
+        nxt = [i for i in (rest.find('\n  targets:\n'), rest.find('\n  gate:\n')) if i > 0]
+        return rest[:min(nxt)] if nxt else rest
+
+    def test_judging_runs_on_the_cheaper_linux_runner(self):
+        text = self.text()
+        self.assertNotIn('windows-latest', text)
+        self.assertNotIn('macos-latest', text)
+        self.assertEqual(text.count('runs-on: ubuntu-latest'), 2)
+
+    def test_product_tests_stay_on_macos_and_windows_only(self):
+        with open(self.test_path, encoding='utf-8') as handle:
+            text = handle.read()
+        self.assertIn('os: [macos-latest, windows-latest]', text)
+        self.assertNotIn('ubuntu', text)
+
+    def test_targets_job_runs_only_for_the_schedule(self):
+        targets = self.job('targets')
+        self.assertIn("github.event_name == 'schedule'", targets)
+        self.assertIn("github.ref == 'refs/heads/main'", targets)
+
+    def test_event_runs_pass_their_pr_numbers_straight_to_gate(self):
+        gate = self.job('gate')
+        self.assertIn("needs.targets.result == 'skipped'", gate)
+        self.assertIn('!cancelled()', gate)
+        self.assertIn('needs.targets.outputs.prs', gate)
+        self.assertIn('toJSON(github.event.workflow_run.pull_requests.*.number)', gate)
+        self.assertIn("format('[{0}]', github.event.pull_request.number || github.event.issue.number)", gate)
+
+    def test_gate_keeps_the_default_branch_and_codex_comment_filters(self):
+        gate = self.job('gate')
+        self.assertIn("github.ref == 'refs/heads/main'", gate)
+        self.assertIn("github.event.comment.user.login == 'chatgpt-codex-connector[bot]'", gate)
+        self.assertIn("contains(github.event.comment.body, 'codex-pull-request-review-summary')", gate)
+
+    def test_gate_skips_runs_with_nothing_to_judge(self):
+        gate = self.job('gate')
+        self.assertIn("toJSON(github.event.workflow_run.pull_requests) != '[]'", gate)
+        self.assertIn("needs.targets.outputs.prs != '[]'", gate)
+
+    def test_schedule_runs_every_30_minutes(self):
+        self.assertIn("- cron: '*/30 * * * *'", self.text())
+        self.assertNotIn("*/15", self.text())
 
 if __name__ == '__main__':
     unittest.main(verbosity=1)
