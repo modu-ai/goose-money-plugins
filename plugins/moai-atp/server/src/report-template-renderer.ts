@@ -92,8 +92,8 @@ function chartFigure(spec:RenderChart,doc:ReportInput):string {
   const source=doc.sources.find(item=>item.id===spec.source_id);
   const xUnit=spec.x_unit??spec.unit??'';const yUnit=spec.y_unit??spec.unit??'';
   const rows=spec.kind==='scatter'
-    ?spec.labels.map((label,index)=>[label,String(spec.x_values?.[index]??'—'),xUnit,String(spec.y_values?.[index]??'—'),yUnit])
-    :spec.labels.map((label,index)=>[label,String(spec.values?.[index]??'—'),spec.unit??'']);
+    ?spec.labels.map((label,index)=>[label,groupIntegerDigits(String(spec.x_values?.[index]??'—')),xUnit,groupIntegerDigits(String(spec.y_values?.[index]??'—')),yUnit])
+    :spec.labels.map((label,index)=>[label,groupIntegerDigits(String(spec.values?.[index]??'—')),spec.unit??'']);
   const table=spec.kind==='scatter'
     ?reportTable(['대상','X 원수치',xUnit,'Y 원수치',yUnit],rows)
     :reportTable(['구분','원수치',spec.unit??'단위'],rows);

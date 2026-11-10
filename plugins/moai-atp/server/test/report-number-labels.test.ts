@@ -42,6 +42,16 @@ test('#52: raw received tables group amount, quantity and balance columns only',
   assert.deepEqual(sourceRecordCells(htmlWithSourceTable()), ['20261106', '20261106000440', '566,942,110,000,000', '1,234,567', '0012345', '1234.5']);
 });
 
+test('#52: the value table under a chart shows the same grouped numbers as the chart labels', () => {
+  const html = htmlWithSourceTable();
+  const table = /<th scope="col">원수치<\/th>[\s\S]*?<\/table>/.exec(html)?.[0];
+  assert.ok(table, 'the bar chart value table is rendered');
+  const values = [...table.matchAll(/<td class="numeric">([^<]*)<\/td>/g)].map((match) => match[1]);
+  assert.ok(values.length > 0, 'the value table has numeric cells');
+  assert.ok(values.includes('12,000') && values.includes('12,345'), `grouped values: ${JSON.stringify(values)}`);
+  assert.ok(values.every((value) => !/^[+-]?[1-9]\d{3,}/.test(value ?? '')), `no ungrouped value: ${JSON.stringify(values)}`);
+});
+
 test('#52: bar value labels use digit grouping on the client', () => {
   const html = htmlWithSourceTable();
   assert.match(html, /label:\{show:true,position:'top',fontSize:12,formatter:\(p\)=>groupLabel\(p\.value\)\}/);
