@@ -29,4 +29,6 @@ test('D8: the diagram may shrink to 320 px, so a 390 px phone (340 px content) s
   const html = r01Html();
   assert.match(html, /\.diagram svg\{width:100%;height:auto;display:block;min-width:320px\}/);
   assert.ok(!html.includes('min-width:380px'), 'the 380 px floor that forced a scroll on phones is gone');
+  // The phone rule gives every figure 16 px side padding (content 308 px at 390 px); the diagram takes 6 px so its 320 px fit.
+  assert.match(html, /@media\(max-width:520px\)\{\.diagram\{padding-left:6px;padding-right:6px\}\}/);
 });
