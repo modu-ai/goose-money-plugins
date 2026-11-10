@@ -13,8 +13,8 @@ const ev = (id: string, type: ProviderEventType, extra: Record<string, unknown> 
   event_id: id, type, occurred_at: T0, verified_signature: true as const, ...extra,
 });
 function activeWithEnd(end: number): StoredSubscription {
-  const checkedOut = machine.apply(empty(), ev('e0', 'checkout.completed')).subscription;
-  return machine.apply(checkedOut, ev('e1', 'payment.succeeded', { current_period_end: end })).subscription;
+  const checkedOut = machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  return machine.apply(checkedOut, ev('e1', 'payment.succeeded', { provider_revision: 2, current_period_end: end })).subscription;
 }
 function deferred<T>(): { promise: Promise<T>; resolve: (v: T) => void } {
   let resolve!: (v: T) => void;
@@ -23,7 +23,7 @@ function deferred<T>(): { promise: Promise<T>; resolve: (v: T) => void } {
 }
 
 test('S1 duplicate payment.succeeded transitions once', () => {
-  const first = machine.apply(machine.apply(empty(), ev('e0', 'checkout.completed')).subscription, ev('e1', 'payment.succeeded'));
+  const first = machine.apply(machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription, ev('e1', 'payment.succeeded', { provider_revision: 2 }));
   assert.equal(state(first.subscription), 'active');
   const again = machine.apply(first.subscription, ev('e1', 'payment.succeeded'));
   assert.equal(again.outcome, 'duplicate_ignored');
@@ -69,11 +69,11 @@ test('S5 checkout redirect parameters are not provider events', () => {
 
 test('S6 cancel keeps paid access until the stored period end', () => {
   const end = T0 + 30 * DAY;
-  let sub = machine.apply(activeWithEnd(end), ev('e2', 'subscription.cancel_requested', { occurred_at: T0 })).subscription;
+  let sub = machine.apply(activeWithEnd(end), ev('e2', 'subscription.cancel_requested', { provider_revision: 3, occurred_at: T0 })).subscription;
   assert.equal(state(sub), 'canceled_pending_end');
   assert.equal(machine.effectiveState(sub, end - 1), 'canceled_pending_end');
   assert.equal(machine.effectiveState(sub, end + 1), 'expired');
-  sub = machine.apply(sub, ev('e3', 'subscription.resumed', { occurred_at: end - 2 * DAY })).subscription;
+  sub = machine.apply(sub, ev('e3', 'subscription.resumed', { provider_revision: 4, occurred_at: end - 2 * DAY })).subscription;
   assert.equal(state(sub), 'active');
 });
 
@@ -83,7 +83,7 @@ test('S7 full refund ends paid access immediately; undecided refund scope stays 
   assert.equal(unspecced.outcome, 'unhandled_recorded');
   assert.equal(unspecced.subscription.unhandled.at(-1)?.reason, 'refund_scope_unsupported');
   assert.equal(state(unspecced.subscription), 'active');
-  const refunded = machine.apply(unspecced.subscription, ev('e3', 'refund.succeeded', { refund_scope: 'full' }));
+  const refunded = machine.apply(unspecced.subscription, ev('e3', 'refund.succeeded', { provider_revision: 3, refund_scope: 'full' }));
   assert.equal(state(refunded.subscription), 'refunded');
   assert.equal(machine.effectiveState(refunded.subscription, T0 + 1), 'refunded');
 });
@@ -95,8 +95,8 @@ test('S11 same-subscription events apply serially even when loads overlap', asyn
     load: async (id) => { await gate.promise; return store.get(id); },
     save: async (sub) => { store.set(sub.subscription_id, sub); },
   });
-  const first = proc.submit('sub-1', ev('e0', 'checkout.completed'));
-  const second = proc.submit('sub-1', ev('e1', 'payment.succeeded'));
+  const first = proc.submit('sub-1', ev('e0', 'checkout.completed', { provider_revision: 1 }));
+  const second = proc.submit('sub-1', ev('e1', 'payment.succeeded', { provider_revision: 2 }));
   gate.resolve();
   const [r1, r2] = await Promise.all([first, second]);
   assert.equal(r1.outcome, 'applied');
@@ -126,9 +126,9 @@ test('S13 no payment instrument raw data is accepted or stored', () => {
 
 test('S14 renewal failure then late retry succeeds with no unhandled combinations', () => {
   const end1 = T0 + 30 * DAY;
-  let sub = machine.apply(activeWithEnd(end1), ev('e2', 'renewal.failed', { occurred_at: end1 - DAY })).subscription;
+  let sub = machine.apply(activeWithEnd(end1), ev('e2', 'renewal.failed', { provider_revision: 3, occurred_at: end1 - DAY })).subscription;
   assert.equal(state(sub), 'past_due');
-  const retry = machine.apply(sub, ev('e3', 'renewal.succeeded', { occurred_at: end1 + DAY, current_period_end: T0 + 60 * DAY }));
+  const retry = machine.apply(sub, ev('e3', 'renewal.succeeded', { provider_revision: 4, occurred_at: end1 + DAY, current_period_end: T0 + 60 * DAY }));
   assert.equal(retry.outcome, 'applied');
   assert.equal(state(retry.subscription), 'active');
   assert.equal(retry.subscription.current_period_end, T0 + 60 * DAY);
@@ -137,24 +137,24 @@ test('S14 renewal failure then late retry succeeds with no unhandled combination
 });
 
 test('trial path follows the transition table and keeps the undecided failure target undecided', () => {
-  let sub = machine.apply(empty(), ev('e0', 'checkout.completed')).subscription;
-  sub = machine.apply(sub, ev('e1', 'payment.succeeded', { trial: true })).subscription;
+  let sub = machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('e1', 'payment.succeeded', { provider_revision: 2, trial: true })).subscription;
   assert.equal(state(sub), 'trialing');
-  sub = machine.apply(sub, ev('e2', 'trial.ended', { occurred_at: T0 + 7 * DAY })).subscription;
+  sub = machine.apply(sub, ev('e2', 'trial.ended', { provider_revision: 3, occurred_at: T0 + 7 * DAY })).subscription;
   assert.equal(sub.trial_ended, true);
   assert.equal(state(sub), 'trialing');
-  const unconfigured = machine.apply(sub, ev('e3', 'payment.failed'));
+  const unconfigured = machine.apply(sub, ev('e3', 'payment.failed', { provider_revision: 4 }));
   assert.equal(unconfigured.outcome, 'unhandled_recorded');
   assert.equal(unconfigured.subscription.unhandled.at(-1)?.reason, 'trial_end_failure_target_unconfigured');
   const configured = createSubscriptionStateMachine({ trialEndFailureTarget: 'past_due' });
-  const pastDue = configured.apply(sub, ev('e3', 'payment.failed'));
+  const pastDue = configured.apply(sub, ev('e3', 'payment.failed', { provider_revision: 4 }));
   assert.equal(state(pastDue.subscription), 'past_due');
-  const recovered = configured.apply(pastDue.subscription, ev('e4', 'payment.succeeded', { current_period_end: T0 + 37 * DAY }));
+  const recovered = configured.apply(pastDue.subscription, ev('e4', 'payment.succeeded', { provider_revision: 5, current_period_end: T0 + 37 * DAY }));
   assert.equal(state(recovered.subscription), 'active');
 });
 
 test('pending timeout expires only when the grace value is injected', () => {
-  const sub = machine.apply(empty(), ev('e0', 'checkout.completed')).subscription;
+  const sub = machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
   assert.equal(machine.effectiveState(sub, T0 + 10 * DAY), 'pending');
   const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 5 * DAY });
   assert.equal(timed.effectiveState(sub, T0 + 6 * DAY), 'none');
@@ -162,7 +162,7 @@ test('pending timeout expires only when the grace value is injected', () => {
 
 test('unhandled combinations keep the state and are recorded', () => {
   const end = T0 + 30 * DAY;
-  let sub = machine.apply(activeWithEnd(end), ev('e2', 'refund.succeeded', { refund_scope: 'full' })).subscription;
+  let sub = machine.apply(activeWithEnd(end), ev('e2', 'refund.succeeded', { provider_revision: 3, refund_scope: 'full' })).subscription;
   assert.equal(state(sub), 'refunded');
   const r = machine.apply(sub, ev('e5', 'renewal.succeeded', { current_period_end: end + 30 * DAY }));
   assert.equal(r.outcome, 'unhandled_recorded');
@@ -172,17 +172,17 @@ test('unhandled combinations keep the state and are recorded', () => {
 
 test('checkout after time-based expiration starts a new pending checkout', () => {
   const end = T0 + 30 * DAY;
-  const again = machine.apply(activeWithEnd(end), ev('e2', 'checkout.completed', { occurred_at: end + DAY }));
+  const again = machine.apply(activeWithEnd(end), ev('e2', 'checkout.completed', { provider_revision: 3, occurred_at: end + DAY }));
   assert.equal(again.outcome, 'applied');
   assert.equal(state(again.subscription), 'pending');
   assert.equal(again.subscription.previous_state, null);
-  const paid = machine.apply(again.subscription, ev('e3', 'payment.succeeded', { occurred_at: end + DAY, current_period_end: end + 30 * DAY }));
+  const paid = machine.apply(again.subscription, ev('e3', 'payment.succeeded', { provider_revision: 4, occurred_at: end + DAY, current_period_end: end + 30 * DAY }));
   assert.equal(state(paid.subscription), 'active');
   assert.equal(paid.subscription.current_period_end, end + 30 * DAY);
 
   const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 5 * DAY });
-  const pending = timed.apply(timed.emptySubscription('sub-1'), ev('e0', 'checkout.completed', { occurred_at: T0 })).subscription;
-  const restart = timed.apply(pending, ev('e1', 'checkout.completed', { occurred_at: T0 + 6 * DAY }));
+  const pending = timed.apply(timed.emptySubscription('sub-1'), ev('e0', 'checkout.completed', { provider_revision: 1, occurred_at: T0 })).subscription;
+  const restart = timed.apply(pending, ev('e1', 'checkout.completed', { provider_revision: 2, occurred_at: T0 + 6 * DAY }));
   assert.equal(restart.outcome, 'applied');
   assert.equal(state(restart.subscription), 'pending');
 
@@ -205,7 +205,7 @@ test('reconciliation keeps a newer provider revision on no difference so stale e
 
 test('reconciliation preserves the dispute restoration state so dispute.won still restores', () => {
   const end = T0 + 30 * DAY;
-  let sub = machine.apply(activeWithEnd(end), ev('e2', 'dispute.opened')).subscription;
+  let sub = machine.apply(activeWithEnd(end), ev('e2', 'dispute.opened', { provider_revision: 3 })).subscription;
   assert.equal(state(sub), 'disputed');
   assert.equal(sub.previous_state, 'active');
   const reconciled = machine.reconcile(sub, { state: 'disputed', current_period_end: end + 10 * DAY, revision: 9 }, T0 + DAY);
@@ -213,13 +213,13 @@ test('reconciliation preserves the dispute restoration state so dispute.won stil
   assert.equal(state(reconciled.subscription), 'disputed');
   assert.equal(reconciled.subscription.previous_state, 'active');
   assert.equal(reconciled.subscription.current_period_end, end + 10 * DAY);
-  const won = machine.apply(reconciled.subscription, ev('e3', 'dispute.won'));
+  const won = machine.apply(reconciled.subscription, ev('e3', 'dispute.won', { provider_revision: 10 }));
   assert.equal(won.outcome, 'applied');
   assert.equal(state(won.subscription), 'active');
 
   const missed = machine.reconcile(activeWithEnd(end), { state: 'disputed', current_period_end: end, revision: 7 }, T0 + 2 * DAY);
   assert.equal(missed.subscription.previous_state, 'active');
-  const wonLate = machine.apply(missed.subscription, ev('e4', 'dispute.won'));
+  const wonLate = machine.apply(missed.subscription, ev('e4', 'dispute.won', { provider_revision: 8 }));
   assert.equal(state(wonLate.subscription), 'active');
 });
 
@@ -227,10 +227,10 @@ test('an effective-expired stored state accepts a new checkout and its payment a
   const end = T0 + 30 * DAY;
   const sub = activeWithEnd(end);
   assert.equal(machine.effectiveState(sub, end + DAY), 'expired');
-  const checkout = machine.apply(sub, ev('e2', 'checkout.completed', { occurred_at: end + DAY }));
+  const checkout = machine.apply(sub, ev('e2', 'checkout.completed', { provider_revision: 3, occurred_at: end + DAY }));
   assert.equal(checkout.outcome, 'applied');
   assert.equal(state(checkout.subscription), 'pending');
-  const paid = machine.apply(checkout.subscription, ev('e3', 'payment.succeeded', { occurred_at: end + 2 * DAY, current_period_end: end + 32 * DAY }));
+  const paid = machine.apply(checkout.subscription, ev('e3', 'payment.succeeded', { provider_revision: 4, occurred_at: end + 2 * DAY, current_period_end: end + 32 * DAY }));
   assert.equal(paid.outcome, 'applied');
   assert.equal(state(paid.subscription), 'active');
   assert.equal(paid.subscription.current_period_end, end + 32 * DAY);
@@ -238,9 +238,9 @@ test('an effective-expired stored state accepts a new checkout and its payment a
 
 test('a timed-out pending accepts a new checkout when the timeout is injected', () => {
   const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 5 * DAY });
-  const sub = timed.apply(timed.emptySubscription('sub-1'), ev('e0', 'checkout.completed')).subscription;
+  const sub = timed.apply(timed.emptySubscription('sub-1'), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
   assert.equal(timed.effectiveState(sub, T0 + 6 * DAY), 'none');
-  const checkout = timed.apply(sub, ev('e1', 'checkout.completed', { occurred_at: T0 + 6 * DAY }));
+  const checkout = timed.apply(sub, ev('e1', 'checkout.completed', { provider_revision: 2, occurred_at: T0 + 6 * DAY }));
   assert.equal(checkout.outcome, 'applied');
   assert.equal(state(checkout.subscription), 'pending');
 });
@@ -259,16 +259,16 @@ test('reconciliation stores a newer provider revision even without a state diffe
 test('reconciliation keeps the dispute restoration state; dispute.won and dispute.lost still resolve', () => {
   const end = T0 + 30 * DAY;
   const sub = activeWithEnd(end);
-  const disputed = machine.apply(sub, ev('e2', 'dispute.opened')).subscription;
+  const disputed = machine.apply(sub, ev('e2', 'dispute.opened', { provider_revision: 3 })).subscription;
   assert.equal(state(disputed), 'disputed');
   assert.equal(disputed.previous_state, 'active');
   const reconciled = machine.reconcile(disputed, { state: 'disputed', current_period_end: end + 30 * DAY, revision: 10 }, T0 + 1);
   assert.equal(reconciled.outcome, 'applied');
   assert.equal(reconciled.subscription.previous_state, 'active');
-  const won = machine.apply(reconciled.subscription, ev('e3', 'dispute.won', { occurred_at: T0 + 2 * DAY }));
+  const won = machine.apply(reconciled.subscription, ev('e3', 'dispute.won', { provider_revision: 11, occurred_at: T0 + 2 * DAY }));
   assert.equal(won.outcome, 'applied');
   assert.equal(state(won.subscription), 'active');
-  const lost = machine.apply(reconciled.subscription, ev('e4', 'dispute.lost', { occurred_at: T0 + 2 * DAY }));
+  const lost = machine.apply(reconciled.subscription, ev('e4', 'dispute.lost', { provider_revision: 12, occurred_at: T0 + 2 * DAY }));
   assert.equal(lost.outcome, 'applied');
   assert.equal(state(lost.subscription), 'refunded');
 });
@@ -280,41 +280,117 @@ test('reconciliation entering a dispute captures the restoration state', () => {
   assert.equal(reconciled.outcome, 'applied');
   assert.equal(reconciled.subscription.state, 'disputed');
   assert.equal(reconciled.subscription.previous_state, 'active');
-  const won = machine.apply(reconciled.subscription, ev('e3', 'dispute.won'));
+  const won = machine.apply(reconciled.subscription, ev('e3', 'dispute.won', { provider_revision: 11 }));
   assert.equal(won.outcome, 'applied');
   assert.equal(state(won.subscription), 'active');
 });
 
 test('applied event ids survive beyond the old replay cap', () => {
-  let sub = machine.apply(empty(), ev('e0', 'checkout.completed')).subscription;
-  sub = machine.apply(sub, ev('e1', 'payment.succeeded')).subscription;
+  let sub = machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('e1', 'payment.succeeded', { provider_revision: 2 })).subscription;
   assert.equal(state(sub), 'active');
   for (let i = 0; i < 1001; i++) {
-    sub = machine.apply(sub, ev(`r${i}`, 'renewal.succeeded')).subscription;
+    sub = machine.apply(sub, ev(`r${i}`, 'renewal.succeeded', { provider_revision: 10 + i })).subscription;
   }
   const replay = machine.apply(sub, ev('e1', 'payment.succeeded'));
   assert.equal(replay.outcome, 'duplicate_ignored');
   assert.equal(state(replay.subscription), 'active');
 });
 
-test('events without a provider revision never feed the revision comparison', () => {
-  let sub = machine.apply(empty(), ev('e0', 'checkout.completed')).subscription;
-  sub = machine.apply(sub, ev('e1', 'payment.succeeded')).subscription;
+test('events without a provider revision never feed the revision comparison and require the view', () => {
+  // Design §5 순서 역전: order-less events neither apply nor touch the revision space — the
+  // caller aligns through the reconciliation view instead of arrival order.
+  let sub = machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('e1', 'payment.succeeded', { provider_revision: 2 })).subscription;
   assert.equal(state(sub), 'active');
-  assert.equal(sub.revision, 0);
-  const failed = machine.apply(sub, ev('e2', 'renewal.failed', { provider_revision: 1 }));
+  const routed = machine.apply(sub, ev('e2', 'renewal.succeeded'));
+  assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(state(routed.subscription), 'active');
+  assert.equal(routed.subscription.revision, 2);  // revision space untouched by order-less events
+  const failed = machine.apply(routed.subscription, ev('e3', 'renewal.failed', { provider_revision: 3 }));
   assert.equal(failed.outcome, 'applied');
   assert.equal(state(failed.subscription), 'past_due');
-  assert.equal(failed.subscription.revision, 1);
+  assert.equal(failed.subscription.revision, 3);
 });
 
 test('a live dispute stays out of new checkouts even past its period end', () => {
   const end = T0 + 30 * DAY;
-  const disputed = machine.apply(activeWithEnd(end), ev('e2', 'dispute.opened')).subscription;
+  const disputed = machine.apply(activeWithEnd(end), ev('e2', 'dispute.opened', { provider_revision: 3 })).subscription;
   assert.equal(state(disputed), 'disputed');
   assert.equal(machine.effectiveState(disputed, end + DAY), 'expired');
   const checkout = machine.apply(disputed, ev('e3', 'checkout.completed', { occurred_at: end + DAY }));
   assert.equal(checkout.outcome, 'unhandled_recorded');
   assert.equal(state(checkout.subscription), 'disputed');
   assert.equal(checkout.subscription.previous_state, 'active');
+});
+
+// Codex 2차 인라인 지적 수리 (head a7f7523, TDD RED) — Refs #104.
+
+test('a delayed revision-less renewal.failed must not revert a renewed subscription on arrival order', () => {
+  // Codex P2 :172 — design §5 순서 역전: "순번이 없으면 사건을 받은 뒤 공급자 API로 현재 구독
+  // 상태를 조회해 그 값으로 맞춤". Arrival order is not the authority; the module must require
+  // the reconciliation view instead of applying the order-less event's table transition.
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const delayed = machine.apply(sub, ev('e2', 'renewal.failed', { occurred_at: end + DAY }));
+  assert.equal(delayed.outcome, 'reconcile_required');
+  assert.equal(state(delayed.subscription), 'active');
+  assert.ok(delayed.subscription.applied_event_ids.includes('e2'));  // marked seen — replay-safe
+  const aligned = machine.reconcile(delayed.subscription, { state: 'active', current_period_end: end + 30 * DAY }, end + 2 * DAY);
+  assert.equal(state(aligned.subscription), 'active');
+});
+
+test('reconciliation confirming trialing keeps the trial settlement marker so the payment still settles', () => {
+  // Codex P2 :210 — trial.ended already set the marker; a reconcile that only updates the
+  // period must not erase it, or the settling payment lands in unhandled and the subscription
+  // stays trialing despite a successful payment.
+  let sub = machine.apply(empty(), ev('e0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('e1', 'payment.succeeded', { provider_revision: 2, trial: true })).subscription;
+  sub = machine.apply(sub, ev('e2', 'trial.ended', { provider_revision: 3, occurred_at: T0 + 7 * DAY })).subscription;
+  assert.equal(sub.trial_ended, true);
+  const reconciled = machine.reconcile(sub, { state: 'trialing', current_period_end: T0 + 10 * DAY, revision: 5 }, T0 + 8 * DAY);
+  assert.equal(reconciled.subscription.trial_ended, true);
+  assert.equal(state(reconciled.subscription), 'trialing');
+  assert.equal(reconciled.subscription.current_period_end, T0 + 10 * DAY);
+  const paid = machine.apply(reconciled.subscription, ev('e3', 'payment.succeeded', { provider_revision: 6, occurred_at: T0 + 9 * DAY }));
+  assert.equal(paid.outcome, 'applied');
+  assert.equal(state(paid.subscription), 'active');
+});
+
+test('reconciliation confirming past_due keeps the grace anchor so no reconcile restarts the grace', () => {
+  // Codex P2 :211 — with pastDueGraceMs configured, a reconcile of an elapsed-grace past_due
+  // against an unchanged provider past_due must keep the original failure timestamp; resetting
+  // state_changed_at makes the effective state past_due again without any successful payment.
+  const grace = createSubscriptionStateMachine({ pastDueGraceMs: 5 * DAY });
+  let sub = grace.apply(grace.emptySubscription('s'), ev('g0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = grace.apply(sub, ev('g1', 'payment.succeeded', { provider_revision: 2, current_period_end: T0 + 30 * DAY })).subscription;
+  sub = grace.apply(sub, ev('g2', 'renewal.failed', { provider_revision: 3, occurred_at: T0 + DAY })).subscription;
+  assert.equal(sub.state_changed_at, T0 + DAY);
+  assert.equal(grace.effectiveState(sub, T0 + DAY + 5 * DAY), 'expired');
+  const reconciled = grace.reconcile(sub, { state: 'past_due', revision: 4 }, T0 + DAY + 6 * DAY);
+  assert.equal(state(reconciled.subscription), 'past_due');
+  assert.equal(reconciled.subscription.state_changed_at, T0 + DAY);
+  assert.equal(grace.effectiveState(reconciled.subscription, T0 + DAY + 6 * DAY), 'expired');
+});
+
+test('reconciliation confirming the stored state preserves every local-only anchor (class scan)', () => {
+  // Same-class scan for the :210/:211 root: the confirm path must keep every field the provider
+  // view does not carry (trial marker, grace anchor, dispute restoration pointer) while still
+  // updating the fields the view does carry (period end, revision).
+  const grace = createSubscriptionStateMachine({ pastDueGraceMs: 5 * DAY });
+  let sub = grace.apply(grace.emptySubscription('s'), ev('c0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = grace.apply(sub, ev('c1', 'payment.succeeded', { provider_revision: 2, current_period_end: T0 + 30 * DAY })).subscription;
+  sub = grace.apply(sub, ev('c2', 'renewal.failed', { provider_revision: 3, occurred_at: T0 + DAY })).subscription;
+  const confirmedWithNewPeriod = grace.reconcile(sub, { state: 'past_due', current_period_end: T0 + 40 * DAY, revision: 4 }, T0 + DAY + 6 * DAY);
+  assert.equal(confirmedWithNewPeriod.outcome, 'applied');
+  assert.equal(state(confirmedWithNewPeriod.subscription), 'past_due');
+  assert.equal(confirmedWithNewPeriod.subscription.state_changed_at, T0 + DAY);  // anchor kept even when the period updates
+  assert.equal(confirmedWithNewPeriod.subscription.current_period_end, T0 + 40 * DAY);
+
+  const disputed = machine.apply(activeWithEnd(T0 + 30 * DAY), ev('d1', 'dispute.opened', { provider_revision: 7 })).subscription;
+  assert.equal(disputed.previous_state, 'active');
+  const disputedConfirmed = machine.reconcile(disputed, { state: 'disputed', revision: 8 }, T0 + DAY);
+  assert.equal(disputedConfirmed.subscription.previous_state, 'active');  // restoration pointer kept on confirm
+  assert.equal(disputedConfirmed.subscription.revision, 8);               // view-carried revision still updates
+  assert.equal(disputedConfirmed.outcome, 'no_difference');
 });

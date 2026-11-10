@@ -43,7 +43,7 @@ export type StoredSubscription = {
   unhandled: { event_id: string; type: string; at: number; reason: string }[];  // recorded-only events (S2, unknown combinations, undecided values), bounded
 };
 
-export type ApplyOutcome = 'applied' | 'duplicate_ignored' | 'stale_recorded' | 'unhandled_recorded' | 'rejected' | 'no_difference' | 'provider_stale';
+export type ApplyOutcome = 'applied' | 'duplicate_ignored' | 'stale_recorded' | 'unhandled_recorded' | 'rejected' | 'no_difference' | 'provider_stale' | 'reconcile_required';
 export type ApplyResult = { outcome: ApplyOutcome; reason?: string; subscription: StoredSubscription };
 
 export type ProviderView = { state: SubscriptionState; current_period_end?: number | null; revision?: number };
@@ -99,8 +99,8 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       state_changed_at: now,
       last_event_at: now,
       // Design §5: the revision space belongs to the provider's order. A revision-less event advances
-      // nothing — comparing it against a provider order is undefined, and §5 routes order-less events
-      // through the reconciliation view instead (아래 reconcile).
+      // nothing — comparing it against a provider order is undefined, and apply() routes order-less
+      // events to the reconciliation view instead (reconcile_required 반환).
       revision: event.provider_revision ?? sub.revision,
       current_period_end: event.current_period_end ?? sub.current_period_end,
     });
@@ -177,6 +177,14 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     if ('unhandled' in moved) {
       return { outcome: 'unhandled_recorded', reason: moved.unhandled, subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: moved.unhandled }), event.event_id) };
     }
+    if (event.provider_revision === undefined) {
+      // Design §5 순서 역전: without a provider order the arrival sequence proves nothing — a
+      // delayed renewal.failed after a newer renewal.succeeded would revert paid access (P2 :172).
+      // Mark the event seen and require the reconciliation view (the provider-verified current
+      // state) instead of treating arrival order as authoritative; the table above runs only where
+      // the stale guard can actually judge order.
+      return { outcome: 'reconcile_required', reason: 'revision_less_reconcile', subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'revision_less_reconcile' }), event.event_id) };
+    }
     return { outcome: 'applied', subscription: withApplied(moved.sub, event.event_id) };
   }
 
@@ -184,6 +192,24 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
     // Design §5 유실: the reconciliation schedule is undecided (B-07) — this is the pure step only.
     if (provider.revision !== undefined && provider.revision < current.revision) {
       return { outcome: 'provider_stale', subscription: record(current, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_provider_stale' }) };
+    }
+    if (provider.state === current.state) {
+      // Provider-confirms-stored: the view speaks only to the fields it carries (period end,
+      // revision). The local-only anchors — the trial settlement marker, the grace/state-change
+      // anchor, the dispute restoration pointer — are knowledge the view does not carry, and
+      // overwriting them restarts the grace on every pass (P2 :211), drops the pending trial
+      // settlement (P2 :210), or breaks dispute.won restore. Keep them; update only the carried
+      // fields.
+      const updated: StoredSubscription = {
+        ...current,
+        current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
+        revision: provider.revision ?? current.revision,
+        last_event_at: now,
+      };
+      if (updated.current_period_end !== current.current_period_end) {
+        return { outcome: 'applied', reason: 'reconcile_confirmed_state', subscription: record(updated, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_confirmed_state' }) };
+      }
+      return { outcome: 'no_difference', subscription: updated };
     }
     const local = effectiveState(current, now);
     const periodSame = provider.current_period_end === undefined || provider.current_period_end === current.current_period_end;
