@@ -1,6 +1,6 @@
 // Status (issue #10): kept for reuse, not wired; sign-in is decided for every tier (#1) but not implemented.
 // Design: docs/design/identity-auth-contract.md. Header, claims, the 900 s lifetime and fail-closed revocation match the draft;
-// every contract decision A-01..A-09 is still open (topology, issuer, audience, client, scopes, token format, refresh, JWKS, revocation).
+// every contract decision A-01..A-09 is still open (topology, issuer, audience, client, scopes, token format, refresh, JWKS cache time (A-08), revocation).
 import {createHash,randomBytes,verify as verifySignature,type KeyObject} from 'node:crypto';
 import {z} from 'zod';
 import type {Membership} from './member-onboarding.js';
@@ -32,7 +32,7 @@ export function createLocalMemberTokenVerifier(options:Options={}){
    const actual=c.scope.split(' ');if(actual.some(s=>!s||s.startsWith('admin:')||s.includes('*'))||!scopes!.every(s=>actual.includes(s)))return deny('scope_denied');
    const now=Math.floor((options.now??Date.now)()/1000);if(!Number.isSafeInteger(now))return deny('invalid_time');
    if(c.exp<=now)return deny('expired');if(c.iat>now+30||c.exp<=c.iat||c.exp-c.iat>900||(c.nbf!==undefined&&(c.nbf>now+30||c.nbf>=c.exp)))return deny('invalid_time');
-   const key=await options.resolveKey!(head.kid);
+   let key=await options.resolveKey!(head.kid);if(!key)key=await options.resolveKey!(head.kid);
    if(!key||key.type!=='public'||key.asymmetricKeyType!=='ec'||key.asymmetricKeyDetails?.namedCurve!=='prime256v1'||!verifySignature('sha256',Buffer.from(parts[0]+'.'+parts[1]),{key,dsaEncoding:'ieee-p1363'},sig))return deny('invalid_signature');
    if(!options.revocationState)return deny('revocation_unconfirmed');
    const active=await options.revocationState(c.jti);if(active==='revoked')return deny('revoked');if(active!=='active')return deny('revocation_unconfirmed');
