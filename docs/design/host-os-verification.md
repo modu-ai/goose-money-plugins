@@ -4,8 +4,10 @@ Refs #25 · 2026-11-10 KST 작성
 
 소스 확인 기준은 main `e67a635c70b25b95c0b27c1eb3d793c8602ea210`입니다.
 이 문서는 확인한 근거와 남은 검증을 정리합니다. 최초 지원 호스트·OS나
-내장 미리보기 채택을 확정하지 않습니다. 현재 문서 작성 과정에서는
-호스트 설치·호출·화면 조작·업데이트·제거를 실행하지 않았습니다.
+내장 미리보기 채택을 확정하지 않습니다.
+초기 작성 때는 호스트 실행을 하지 않았습니다. 이후 이 Mac의 Claude Code만
+임시 프로필에서 설치·업데이트·제거 명령을 실행했습니다(E5). 설치가 실패해
+도구 호출·보고서 표시는 미검증이며, 다섯 단계 모두 통과했다는 뜻은 아닙니다.
 
 ## 호스트 × OS
 
@@ -15,7 +17,7 @@ Refs #25 · 2026-11-10 KST 작성
 
 | 호스트 | OS | 설치 | 도구 호출 | 보고서 표시 | 업데이트 | 제거 | 확인한 근거와 한계 |
 |---|---|---|---|---|---|---|---|
-| Claude Code | macOS | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E2. 로컬 서버 시험을 Claude Code 내 실행으로 세지 않음 |
+| Claude Code | macOS | 실패(E5) | 차단·미검증(E5) | 차단·미검증(E5) | 미설치로 차단(E5) | 미설치로 차단(E5) | Claude Code 2.1.322 · macOS 27.0.1 arm64 · dev.6 소스. 임시 프로필의 로컬 설치 경로만 측정, 지원 확정 아님 |
 | Claude Code | Windows | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E3. Windows용 키 파일 저장 거부는 소스 정책이며 호스트 설치 시험이 아님 |
 | Claude Desktop | macOS | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E2. Claude Code 결과와도 별도 검증 필요 |
 | Claude Desktop | Windows | 미검증 | 미검증 | 미검증 | 미검증 | 미검증 | E1·E3. macOS 관찰로 대체하지 않음 |
@@ -33,6 +35,7 @@ ChatGPT의 웹/데스크톱 실행 형태, Claude Code의 터미널/앱 실행 �
 | E1 | [CAPABILITIES.json](../../plugins/moai-atp/CAPABILITIES.json) | 기준 소스의 `host_installed=false`, `independent_host_verification=false`, `test_targets=[macOS, Windows]` | 실제 기기의 현재 설치 상태, 호스트 검증 통과 |
 | E2 | [report-html-mcp.ts](../../plugins/moai-atp/server/src/report-html-mcp.ts) | `delivery=mcp_resource_link`, `host_rendering=not_observed`, `mime_type=text/html`; 메모리 자원은 최대 5분·3개 | 호스트가 링크를 실제로 표시·다운로드했다는 증거 |
 | E3 | [local-credentials.ts](../../plugins/moai-atp/server/src/local-credentials.ts), [README](../../plugins/moai-atp/README.md) | Windows에서는 키 파일 저장을 `secure_file_storage_unsupported`로 거부하는 소스와 안내가 있음 | Windows에서 ATP 전체가 동작하지 않는다는 판정, 실제 Windows 실행 결과 |
+| E5 | 아래 Claude Code 임시 프로필 실측 | 로컬 소스 설치 실패, 업데이트·제거 미설치 오류, 전후 플러그인 목록 비어 있음 | 도구 호출·보고서 표시, 버전 간 업데이트·설치된 플러그인 제거 성공 |
 | E4 | 과거 로컬 `host-preview-review/RESULT.md`·`installed-contract.json` | 아래 과거 관측 요약을 읽어 확인 | 현재 main·현재 설치본의 재측정, 여섯 호스트 조합의 실제 실행 |
 
 E1–E3은 이 기준 트리의 소스를 읽어 확인한 사실입니다. 특정 OS의 현재
@@ -55,6 +58,72 @@ Mac의 설치 캐시 dev.5를 Node 22.22.3으로 초기화해 도구·자원 목
 근거이며, 글꼴 실제 로드·Referer·차단/오프라인 대체·390px 레이아웃을
 호스트 화면에서 확인한 근거로 쓰지 않습니다. 접근 거부를 다른 경로로
 우회하지 않습니다.
+
+## E5 · 이 Mac의 Claude Code 임시 프로필 실측
+
+사용자 결정에 따라 2026-11-10 22:55 KST에 Claude Code 터미널 CLI
+2.1.322 / macOS 27.0.1 arm64에서 측정했습니다. 대상은 main
+`83441146cdbd0c6dbceb4f13405abd5152fe8617`의 Git 추적 파일로 추출한
+`0.1.0-dev.6` 소스이며, 런타임 번들 설치 시험이 아닙니다. 기존 dev.5
+설치본을 검사·수정하거나 실사용 설정을 복사하지 않았습니다.
+
+### 격리와 실행 범위
+
+- 새 임시 디렉터리에 프로필·빈 작업 폴더·소스 사본을 만들고
+  `CLAUDE_CONFIG_DIR`와 `CLAUDE_CODE_TMPDIR`를 그 안으로 지정했습니다.
+  환경은 허용 목록으로 새로 구성해 인증·공급자 관련 변수를 전달하지 않았습니다.
+- 모든 측정 명령은 `sandbox-exec` 안에서 `claude --bare --setting-sources user`로
+  실행했습니다. 설치된 CLI의 `--bare` 설명은 키체인 읽기·훅·자동 탐색을
+  건너뛴다고 명시합니다. OS 샌드박스는 네트워크, 실사용 홈 경로 읽기,
+  키체인 파일·서비스 접근, 임시 경로 밖 쓰기를 차단했습니다. 실행 파일의
+  읽기만 명시적으로 허용했으며 호스트 바이너리를 업데이트하지 않았습니다.
+- 합성 파일 읽기 거부·허용 경로 밖 쓰기 거부가 각각 종료 1로 관측됐고,
+  loopback 연결도 `Operation not permitted`로 거부됐습니다. 키·토큰을
+  읽어 검증하지 않았으며 공급자 실호출을 하지 않았습니다.
+- 시작·종료의 `claude plugin list --json`은 모두 종료 0과 `[]`였습니다.
+  이 관측은 임시 프로필에만 해당합니다. 실사용 프로필을 읽어 전후 비교하지
+  않았으며, 해당 경로의 변경 방지는 샌드박스 쓰기 제한으로 보장했습니다.
+
+설정 경로의 근거는 [Claude Code 설정 문서](https://code.claude.com/docs/en/settings),
+CLI 동작은 설치 버전의 `--help`·`plugin <명령> --help`를 확인했습니다.
+`--bare`는 일반 사용자 세션과 다른 최소 모드이므로 정상 로그인 세션의
+플러그인 자동 로드나 화면 동작을 통과로 판정하지 않습니다.
+
+### 다섯 단계의 관측
+
+아래 `$SOURCE`는 추출한 소스 사본의 루트입니다. 모든 명령 앞에 위 격리
+설정이 적용됐으며 개인 경로·응답 원문·화면 캡처는 Git에 넣지 않았습니다.
+
+| 단계 | 명령 또는 선행 조건 | 실제 결과 | 판정 |
+|---|---|---|---|
+| 설치 | `claude plugin install moai-atp --marketplace "$SOURCE" --scope user --json` | 종료 1, `manifest_missing`. `.claude-plugin/marketplace.json` 없음 | 이 로컬 소스 경로의 설치 실패 |
+| 설치 경로 추가 확인 | `claude plugin install moai-atp --marketplace "$SOURCE/.agents/plugins/marketplace.json" --scope user --json` | 종료 1, `manifest_invalid`. `owner` 누락 오류 | 기존 카탈로그를 직접 지정해도 실패 |
+| 도구 호출 | 설치 완료 후 같은 Claude Code에서 합성 입력 호출 | 설치된 ATP가 없어 실행하지 않음 | 선행 설치 실패로 차단·미검증 |
+| 보고서 표시 | 같은 호스트의 호출 결과로 보고서 표시 | 도구 호출 결과가 없어 실행하지 않음. 외부 브라우저의 로컬 HTML 표시로 대체하지 않음 | 차단·미검증 |
+| 업데이트 | `claude plugin update moai-atp --scope user --json` | 종료 1, `not_installed` | 명령 실행만 확인. 버전 전환 검증 아님 |
+| 제거 | `claude plugin uninstall moai-atp --scope user --json` | 종료 1, `not_installed` | 명령 실행만 확인. 설치된 연결·도구 제거 검증 아님 |
+
+추가로 기존 카탈로그를 `claude plugin validate ... --json`으로 검사한 결과는
+종료 1이며 `owner`와 `plugins.0.source` 오류였습니다. 플러그인 디렉터리만
+검사하면 종료 0이지만 `manifest: null`, `contents: []`였으므로 이를 ATP
+플러그인 인식·설치 성공으로 세지 않습니다. 현재 manifest는
+[OpenAI 확장](../../plugins/moai-atp/plugin.json)을 사용합니다. 이번 작업은
+Claude용 manifest·카탈로그를 새로 만들거나 기존 형식을 변환하지 않았습니다.
+그런 배포 경로의 추가 여부·패키징은 별도 범위 결정이 필요합니다.
+
+재현 아티팩트의 SHA-256:
+
+| 파일 | SHA-256 |
+|---|---|
+| `.agents/plugins/marketplace.json` | `b64fcd3f40d2e5e121d721feb4cfd6bcad81cea4ec85324ca5f1eb891be5de5b` |
+| `plugins/moai-atp/plugin.json` | `8ecaa778daf40c0ba3070c9b2a9f7b77c71b12cf27980267db3d3734e925e4e3` |
+| `plugins/moai-atp/mcp.json` | `878f11b7b996e6ac98d4a0614653239a68729746b8a2cb2b65f2c02b6e47bbd0` |
+
+민감정보를 제외한 원시 명령 로그·격리 정책·실측 요약은 검증자의 로컬
+`codex-6/STAGE.md`에 기록한 증거 폴더에만 보존합니다. 그 폴더는 Git
+미추적이며 다른 환경에서는 위 기준 커밋과 명령으로 재현해야 합니다.
+실제 도구 호출·화면 표시·업데이트·제거까지 완료한 지원 조합은 아직 없습니다.
+다른 호스트·OS의 25칸은 미검증을 유지하고 #25를 닫지 않습니다.
 
 ## ChatGPT 내장 미리보기 선택지 — 결정 필요
 
