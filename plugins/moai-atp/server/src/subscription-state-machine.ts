@@ -217,11 +217,18 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       // overwriting them restarts the grace on every pass (P2 :211), drops the pending trial
       // settlement (P2 :210), or breaks dispute.won restore. Keep them; update only the carried
       // fields.
+      // Exception (:118 family, P2 :225): a timed-out pending confirmed as pending by the view is
+      // a replacement checkout — its timeout anchor restarts, like apply()'s checkout path stamps
+      // state_changed_at. Keeping the dead anchor would leave the new checkout effectively none.
+      const confirmedReplacementCheckout = current.state === 'pending'
+        && options.pendingTimeoutMs !== undefined
+        && current.state_changed_at + options.pendingTimeoutMs <= now;
       const updated: StoredSubscription = {
         ...current,
         current_period_end: provider.current_period_end === undefined ? current.current_period_end : provider.current_period_end,
         revision: provider.revision ?? current.revision,
         last_event_at: now,
+        state_changed_at: confirmedReplacementCheckout ? now : current.state_changed_at,
       };
       if (updated.current_period_end !== current.current_period_end) {
         return { outcome: 'applied', reason: 'reconcile_confirmed_state', subscription: record(updated, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_confirmed_state' }) };

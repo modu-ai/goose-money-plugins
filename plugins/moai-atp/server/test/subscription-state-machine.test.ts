@@ -569,3 +569,18 @@ test('reconciliation starting a new checkout clears the expired period like appl
   assert.equal(adopted.subscription.current_period_end, null);
   assert.equal(machine.effectiveState(adopted.subscription, end + 3 * DAY), 'pending');
 });
+
+test('a reconciled replacement checkout restarts the pending timeout', () => {
+  // Codex P2 :225 — a timed-out pending confirmed as pending by the view is a replacement
+  // checkout: the timeout anchor restarts, or the new checkout stays effectively none immediately
+  // and further checkout events remain eligible instead of waiting for its timeout.
+  const timed = createSubscriptionStateMachine({ pendingTimeoutMs: 100 });
+  let sub = timed.apply(timed.emptySubscription('s'), ev('t0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  assert.equal(timed.effectiveState(sub, T0 + 1000), 'none');  // anchor 0 + 100 <= 1000
+  const routed = timed.apply(sub, ev('t1', 'checkout.completed', { occurred_at: T0 + 1200 }));  // revision-less → view
+  assert.equal(routed.outcome, 'reconcile_required');
+  const confirmed = timed.reconcile(routed.subscription, { state: 'pending', revision: 2 }, T0 + 1200);
+  assert.equal(confirmed.outcome, 'no_difference');
+  assert.equal(confirmed.subscription.state_changed_at, T0 + 1200);  // anchor restarted, not preserved
+  assert.equal(timed.effectiveState(confirmed.subscription, T0 + 1200), 'pending');
+});
