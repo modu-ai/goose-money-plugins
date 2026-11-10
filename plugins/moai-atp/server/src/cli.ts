@@ -16,6 +16,7 @@ export async function dispatchGooseCommand(args: string[], action: (mode: SetupA
     if (flag === "--edit-profile") return action("edit");
     if (flag === "--delete-profile") return action("delete");
     if (flag === "--delete-onboarding") return action("delete-onboarding");
+    if (flag === "--delete-holdings") return action("delete-holdings");
     if (flag === "--credentials") return credentials();
     if (flag === "--delete-credentials") return credentialDelete();
   }
@@ -24,7 +25,7 @@ export async function dispatchGooseCommand(args: string[], action: (mode: SetupA
     if(plan.status!=='clarification_required'){output.write(JSON.stringify(plan)+'\n');return plan.status==='ready'?0:64;}
   }
   // Never echo arbitrary argv: callers sometimes mistakenly pass a secret there.
-  errors.write("usage: moai-atp [ /goose ] setup [--edit-profile|--delete-profile|--delete-onboarding|--credentials|--delete-credentials]\n"); return 64;
+  errors.write("usage: moai-atp [ /goose ] setup [--edit-profile|--delete-profile|--delete-onboarding|--delete-holdings|--credentials|--delete-credentials]\n"); return 64;
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   void dispatchGooseCommand(process.argv.slice(2)).then(code => { process.exitCode = code; }, () => { process.stderr.write("command_failed\n"); process.exitCode = 2; });
