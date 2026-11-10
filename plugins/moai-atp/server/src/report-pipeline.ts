@@ -8,7 +8,13 @@ const require = createRequire(import.meta.url);
 const routeDocument = require('../contracts/report-route-bindings.v1.json') as RouteBindingDocument;
 
 export const REPORT_ROUTE_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
-export const ACTIVE_REPORT_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
+// Function definition revision 6: R14 (backtest) is outside the product scope and R13 (futures) is held for the
+// initial release. Their route bindings stay for history; they are not active report routes.
+export const ACTIVE_REPORT_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','U01'] as const;
+// The 16 revision-6 catalogue entries (R14 excluded). U02/U03 are catalogue definitions without a report route.
+export const REPORT_CATALOG_IDS = ['R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','U01','U02','U03'] as const;
+// Routes the report builder accepts as a request: active routes plus R13/R14, which are refused with a coded answer.
+export const BUILD_REQUEST_ROUTE_IDS = ['R01','R02','R03','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','U01'] as const;
 export type ReportRouteId = typeof REPORT_ROUTE_IDS[number];
 export type DataMode = 'synthetic' | 'supplied' | 'actual' | 'mixed';
 export type Provider = 'kis' | 'opendart' | 'sec' | 'public_web';
@@ -613,6 +619,13 @@ export function normalizeMcpToolResult(toolName:string,resultValue:unknown,recei
   }
 }
 
+/** Public-entry availability gate for revision 6: R14 out of scope, R13 release hold, R12 only with ETF structure evidence. */
+export function assertReportRouteAvailable(reportId:string,calls:readonly {tool_name:string}[]):void {
+  if(reportId==='R14')throw new Error('report_out_of_scope');
+  if(reportId==='R13')throw new Error('report_release_hold');
+  if(reportId==='R12'){const etf=new Set(GROUP_BINDINGS.etf_structure.tools.map(t=>t.name));if(!calls.some(c=>etf.has(c.tool_name)))throw new Error('report_not_applicable');}
+}
+
 export function getReportPlan(reportId:string):ReportPlan {
   if(!REPORT_ROUTE_IDS.includes(reportId as ReportRouteId))throw new Error('unsupported_report_route');
   const route=routeDocument.routes[reportId];if(!route)throw new Error('route_binding_missing');
@@ -641,7 +654,7 @@ const ComparisonSubjectInputSchema = z.object({id:z.string().min(1).max(200),nam
 type ComparisonSubjectInput = z.infer<typeof ComparisonSubjectInputSchema>;
 /** Input schema for the local-only MCP report assembler. It accepts prior MCP results; it never invokes providers. */
 export const ReportPipelineToolInputSchema = z.object({
-  report_id:z.enum(ACTIVE_REPORT_ROUTE_IDS),
+  report_id:z.enum(BUILD_REQUEST_ROUTE_IDS),
   subject:z.object({id:z.string().min(1).max(200),name:z.string().min(1).max(200),venue:z.string().min(1).max(200),currency:z.string().min(1).max(200)}).strict().optional(),
   subjects:z.array(ComparisonSubjectInputSchema).max(100).optional(),
   cutoff:timestamp,

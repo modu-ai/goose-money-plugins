@@ -122,7 +122,12 @@ test('AC-009 control: a child holds only the allowed variables and its profile i
   assert.equal(run.exitCode, 0);
   const seen = JSON.parse(run.stdout) as { keys: string[]; values: Record<string, string>; osHome: string };
   // macOS libSystem adds __CF_USER_TEXT_ENCODING to every process; it is not forwarded by the helper.
-  const OS_INJECTED = ['__CF_USER_TEXT_ENCODING'];
+  // On Windows, Node's libuv copies its required process variables into every child env that lacks them
+  // (libuv src/win/process.c required_vars); they are not forwarded by the helper either. The profile and
+  // credential checks below still hold on every platform.
+  const OS_INJECTED = process.platform === 'win32'
+    ? ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'SYSTEMDRIVE', 'TEMP', 'USERDOMAIN', 'USERNAME', 'WINDIR']
+    : ['__CF_USER_TEXT_ENCODING'];
   const keys = seen.keys.filter((key) => !OS_INJECTED.includes(key));
   assert.deepEqual(keys, [...allowedEnvKeys()].sort());
   assert.deepEqual(keys.filter((key) => /^(GOOSE_|KIS_|OPENDART_)/.test(key)), []);
