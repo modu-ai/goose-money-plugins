@@ -185,15 +185,21 @@ def _evidence(pr):
 
 def _publish(client, head, state, description):
     """Write the status only when it differs from the current one (GitHub keeps at most 1000
-    statuses per SHA and context). If the current status cannot be read, write anyway."""
+    statuses per SHA and context). If the current status cannot be read, every write may be one
+    more toward that limit, so a success is never added then: it is written as pending
+    (current_status_unknown), and exhausting the limit can only freeze a non-success.
+    Returns (written, state) with the state actually published."""
     try:
         current = client.current_status(head)
-    except Exception:  # noqa: BLE001 - unknown current status means write
-        current = None
+    except Exception:  # noqa: BLE001 - unknown current status
+        if state == 'success':
+            state, description = 'pending', 'current_status_unknown'
+        client.post_status(head, state, description)
+        return True, state
     if current == (state, description):
-        return False
+        return False, state
     client.post_status(head, state, description)
-    return True
+    return True, state
 
 
 def run_one(client, number, thumbs_retries=0, sleep=time.sleep):
@@ -239,7 +245,7 @@ def run_one(client, number, thumbs_retries=0, sleep=time.sleep):
     except Exception as error:  # noqa: BLE001 - any error must end in a non-success status
         kind, fail = None, ['gate_error:' + type(error).__name__]
         state, description = 'failure', 'gate_error:' + type(error).__name__
-    written = _publish(client, head, state, description)
+    written, state = _publish(client, head, state, description)
     return {'pr': number, 'head': head, 'receipt': kind, 'state': state, 'fail': fail, 'written': written}
 
 
