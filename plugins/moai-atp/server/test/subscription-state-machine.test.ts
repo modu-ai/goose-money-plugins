@@ -164,7 +164,7 @@ test('unhandled combinations keep the state and are recorded', () => {
   const end = T0 + 30 * DAY;
   let sub = machine.apply(activeWithEnd(end), ev('e2', 'refund.succeeded', { provider_revision: 3, refund_scope: 'full' })).subscription;
   assert.equal(state(sub), 'refunded');
-  const r = machine.apply(sub, ev('e5', 'renewal.succeeded', { current_period_end: end + 30 * DAY }));
+  const r = machine.apply(sub, ev('e5', 'renewal.succeeded', { provider_revision: 4, current_period_end: end + 30 * DAY }));
   assert.equal(r.outcome, 'unhandled_recorded');
   assert.equal(state(r.subscription), 'refunded');
   assert.equal(r.subscription.unhandled.at(-1)?.reason, 'unhandled_combination');
@@ -186,7 +186,7 @@ test('checkout after time-based expiration starts a new pending checkout', () =>
   assert.equal(restart.outcome, 'applied');
   assert.equal(state(restart.subscription), 'pending');
 
-  const live = machine.apply(activeWithEnd(end), ev('e4', 'checkout.completed', { occurred_at: end - DAY }));
+  const live = machine.apply(activeWithEnd(end), ev('e4', 'checkout.completed', { provider_revision: 3, occurred_at: end - DAY }));
   assert.equal(live.outcome, 'unhandled_recorded');
   assert.equal(state(live.subscription), 'active');
 });
@@ -318,7 +318,7 @@ test('a live dispute stays out of new checkouts even past its period end', () =>
   const disputed = machine.apply(activeWithEnd(end), ev('e2', 'dispute.opened', { provider_revision: 3 })).subscription;
   assert.equal(state(disputed), 'disputed');
   assert.equal(machine.effectiveState(disputed, end + DAY), 'expired');
-  const checkout = machine.apply(disputed, ev('e3', 'checkout.completed', { occurred_at: end + DAY }));
+  const checkout = machine.apply(disputed, ev('e3', 'checkout.completed', { provider_revision: 4, occurred_at: end + DAY }));
   assert.equal(checkout.outcome, 'unhandled_recorded');
   assert.equal(state(checkout.subscription), 'disputed');
   assert.equal(checkout.subscription.previous_state, 'active');
@@ -477,4 +477,33 @@ test('reconciliation entering a dispute keeps the trial settlement marker for th
   const paid = machine.apply(won.subscription, ev('y4', 'payment.succeeded', { provider_revision: 6, occurred_at: T0 + 10 * DAY }));
   assert.equal(paid.outcome, 'applied');
   assert.equal(state(paid.subscription), 'active');
+});
+
+test('a revision-less event with no local transition still requires the provider view', () => {
+  // Codex P2 :182 — payment.succeeded arriving before its checkout must not be finalised as
+  // unhandled (the event id is marked seen forever); the provider view decides instead.
+  const before = machine.apply(empty(), ev('z0', 'payment.succeeded'));
+  assert.equal(before.outcome, 'reconcile_required');
+  assert.equal(state(before.subscription), 'none');
+  assert.ok(before.subscription.applied_event_ids.includes('z0'));  // seen, replay-safe
+  const aligned = machine.reconcile(before.subscription, { state: 'pending', revision: 1 }, T0 + DAY);
+  assert.equal(state(aligned.subscription), 'pending');
+});
+
+test('a revision-less trial settlement never dead-ends in unhandled', () => {
+  // Codex P2 :182 — trial.ended without a revision routes to the view without setting the
+  // marker; when the view only confirms trialing, the settling payment must still route to the
+  // view instead of being recorded as an unhandled combination.
+  let sub = machine.apply(empty(), ev('w0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = machine.apply(sub, ev('w1', 'payment.succeeded', { provider_revision: 2, trial: true })).subscription;
+  const ended = machine.apply(sub, ev('w2', 'trial.ended'));
+  assert.equal(ended.outcome, 'reconcile_required');
+  assert.equal(state(ended.subscription), 'trialing');
+  assert.equal(ended.subscription.trial_ended, false);
+  const confirmed = machine.reconcile(ended.subscription, { state: 'trialing', revision: 3 }, T0 + 8 * DAY);
+  assert.equal(state(confirmed.subscription), 'trialing');
+  assert.equal(confirmed.subscription.trial_ended, false);
+  const paid = machine.apply(confirmed.subscription, ev('w3', 'payment.succeeded'));
+  assert.equal(paid.outcome, 'reconcile_required');
+  assert.equal(state(paid.subscription), 'trialing');
 });
