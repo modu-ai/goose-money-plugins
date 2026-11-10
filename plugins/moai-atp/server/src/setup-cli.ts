@@ -1,10 +1,10 @@
 import { createInterface } from "node:readline/promises";
 import { readTerminalChoice } from "./terminal-choice.js";
 import { homedir } from "node:os";
-import { readInvestorContext, saveInvestorContext, deleteInvestorContext, setupWasPresented, markSetupPresented, UserContextError, type InvestorContextAnswers } from "./user-context.js";
+import { readInvestorContext, saveInvestorContext, deleteInvestorContext, deleteOnboardingMarker, setupWasPresented, markSetupPresented, UserContextError, type InvestorContextAnswers } from "./user-context.js";
 
 type Output = { write(value: string): unknown };
-export type SetupAction = "reuse" | "edit" | "delete";
+export type SetupAction = "reuse" | "edit" | "delete" | "delete-onboarding";
 const choices = {
   objectives: ["long_term_growth", "income", "capital_preservation", "learning"],
   timeHorizon: ["under_1y", "1_3y", "3_5y", "5y_plus", "unspecified"],
@@ -33,6 +33,11 @@ export async function runSetupFlow(projectRoot: string, ask: (question: string) 
     const confirmed = await ask("모든 프로젝트에서 공유하는 프로필을 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
     if (!confirmed) { output.write("profile_deleted=false\n"); return 0; }
     output.write(`profile_deleted=${await deleteInvestorContext(projectRoot, { confirmed, homeDir })}\n`); return 0;
+  }
+  if (action === "delete-onboarding") {
+    const confirmed = await ask("온보딩 제시 표시를 삭제하려면 DELETE를 입력하세요: ") === "DELETE";
+    if (!confirmed) { output.write("onboarding_deleted=false\n"); return 0; }
+    output.write(`onboarding_deleted=${await deleteOnboardingMarker(projectRoot, { confirmed, homeDir })}\n`); return 0;
   }
   if (existing && action === "reuse") {
     output.write(`profile_reused=true revision=${existing.revision}\n`); return 0;

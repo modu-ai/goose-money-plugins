@@ -89,6 +89,14 @@ export async function saveLocalCredentials(patch: CredentialProviders, projectRo
     if (temporary) await fsx.unlink(temporary).catch((e: unknown) => { if (errno(e) !== "ENOENT") throw e; });
   }
 }
+/** Local deletion command (#9 user decision, #43): explicit confirmation, validated-path unlink only. */
+export async function deleteLocalCredentials(projectRoot = process.cwd(), options: { confirmed: boolean; homeDir?: string }): Promise<boolean> {
+  if (!options.confirmed) throw new SafeCredentialError("credential_confirmation_required");
+  const home = options.homeDir ?? homedir();
+  if (!await loadLocalCredentials(projectRoot, home)) return false;
+  await unlink(defaultCredentialFilePath(await realpath(home)));
+  return true;
+}
 /** Complete environment provider values override the file; partial values fail closed. */
 export async function resolveProviderCredentials<P extends keyof CredentialProviders>(provider: P, options: { projectRoot?: string; homeDir?: string; env?: NodeJS.ProcessEnv } = {}): Promise<NonNullable<CredentialProviders[P]>> {
   const env = options.env ?? process.env;
