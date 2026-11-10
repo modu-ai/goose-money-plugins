@@ -169,7 +169,10 @@
         "analysis_narrative"
       ],
       "end_to_end_status": "partial_input_render_path_synthetic_verified_live_incomplete",
-      "actual_data_complete": false
+      "actual_data_complete": false,
+      "availability": "conditional",
+      "active": true,
+      "availability_note": "조건부: ETF 구조 근거(get_domestic_etf_snapshot·get_us_product_profile·get_us_market_snapshot)가 있을 때만 조립하고, 없으면 report_not_applicable로 대상외 처리합니다."
     },
     {
       "id": "R13",
@@ -183,21 +186,10 @@
         "analysis_narrative"
       ],
       "end_to_end_status": "partial_input_render_path_synthetic_verified_live_incomplete",
-      "actual_data_complete": false
-    },
-    {
-      "id": "R14",
-      "title": "전략 검증·백테스트",
-      "kind": "report",
-      "public": true,
-      "required_groups": [
-        "identity_calendar",
-        "backtest_experiment",
-        "account_ledger",
-        "futures_contract"
-      ],
-      "end_to_end_status": "not_implemented",
-      "actual_data_complete": false
+      "actual_data_complete": false,
+      "availability": "release_hold",
+      "active": false,
+      "availability_note": "초기 출시 보류: 선물 보고서는 별도 범위 결정 전까지 조립하지 않으며(report_release_hold) 기존 소스와 템플릿은 보존합니다."
     },
     {
       "id": "U01",
