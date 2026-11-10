@@ -85,10 +85,9 @@ test('R12 still assembles when ETF structure evidence is supplied (synthetic)',a
   assert.equal(reply.result.structuredContent.report_id,'R12');
 });
 
-// Observed at 8711890: the SDK input validation rejects R04 before the handler, so the handler's
-// source_not_enabled branch is not reached. Issue #13 owns R04; this test pins the current answer.
-test('R04 keeps its existing refusal (issue #13 owns R04)',async()=>{
-  assert.match(outcome(await build('R04')),/^isError:Input validation error: .*report_id: Invalid option/);
+test('R04 requires explicit manual input after issue #13 acceptance',async()=>{
+  assert.ok((ACTIVE_REPORT_ROUTE_IDS as readonly string[]).includes('R04'));
+  assert.match(outcome(await build('R04')),/manual_consultation_input_only/);
 });
 
 test('U02 stays a catalogue definition without a report route',()=>{
