@@ -1,0 +1,20 @@
+{
+  "name": "moai-atp-local",
+  "interface": {
+    "displayName": "모두의 주식 · MoAI ATP"
+  },
+  "plugins": [
+    {
+      "name": "moai-atp",
+      "source": {
+        "source": "local",
+        "path": "./oss"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Finance"
+    }
+  ]
+}
