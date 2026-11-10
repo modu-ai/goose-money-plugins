@@ -3,20 +3,27 @@ import {spawn} from 'node:child_process';
 import {mkdtemp,rm,stat} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join,isAbsolute} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {exportSyntheticReportPdf} from '../dist/src/report-pdf-export.js';
 import {buildReportInput} from '../dist/src/report-pipeline.js';
 
 let inspection=null;
-async function chromeRenderer(executable,request){
+export async function chromeRenderer(executable,request,spawnProcess=spawn){
  if(request.network!=='deny_all'||request.signal.aborted)throw Error('renderer_policy');
  const profile=await mkdtemp(join(tmpdir(),'atp-pdf-chrome-'));
- const child=spawn(executable,['--headless','--remote-debugging-pipe',`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check','--disable-background-networking','--disable-component-update','--disable-sync','--disable-extensions','--disable-crash-reporter','--metrics-recording-only','--no-proxy-server','--host-resolver-rules=MAP * ~NOTFOUND'],{stdio:['ignore','ignore','ignore','pipe','pipe']});
+ const child=spawnProcess(executable,['--headless','--remote-debugging-pipe',`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check','--disable-background-networking','--disable-component-update','--disable-sync','--disable-extensions','--disable-crash-reporter','--metrics-recording-only','--no-proxy-server','--host-resolver-rules=MAP * ~NOTFOUND'],{stdio:['ignore','ignore','ignore','pipe','pipe']});
  const closed=new Promise(resolve=>child.once('close',resolve));
  let sequence=0,buffer=Buffer.alloc(0),dead=false,remoteResponses=0;
  const pending=new Map();
  function fail(){dead=true;for(const entry of pending.values())entry.reject(Error('renderer_transport'));pending.clear();}
  child.once('error',fail);child.once('close',fail);
- const stop=()=>child.kill('SIGTERM');request.signal.addEventListener('abort',stop,{once:true});
+ let hardStop;
+ const stop=()=>{
+  fail();child.kill('SIGTERM');
+  hardStop??=setTimeout(()=>child.kill('SIGKILL'),1000);
+ };
+ request.signal.addEventListener('abort',stop,{once:true});
+ if(request.signal.aborted)stop();
  child.stdio[4].on('error',fail);child.stdio[3].on('error',fail);
  child.stdio[4].on('data',chunk=>{
   buffer=Buffer.concat([buffer,chunk]);if(buffer.length>48*1024*1024){fail();stop();return;}
@@ -55,12 +62,11 @@ async function chromeRenderer(executable,request){
   return Buffer.from(pdf.data,'base64');
  }finally{
   request.signal.removeEventListener('abort',stop);stop();
-  const hardStop=setTimeout(()=>child.kill('SIGKILL'),1000);
   try{await closed;}finally{clearTimeout(hardStop);await rm(profile,{recursive:true,force:true});}
  }
 }
 
-try{
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)try{
  const args=process.argv.slice(2);
  if(args.length!==4||args[0]!=='--chrome'||args[2]!=='--output-dir'||!isAbsolute(args[1])||!isAbsolute(args[3])||!(await stat(args[1])).isFile())throw Error('arguments');
  const at='2026-11-10T03:00:00Z';
