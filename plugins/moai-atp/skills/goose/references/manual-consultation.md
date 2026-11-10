@@ -1,6 +1,6 @@
 # 수동 입력 보유·비용 상담
 
-R04는 수동 입력 보유 상담, R05는 수동 입력 비용 영향 상담입니다. `build_report_input`에 report_id와 manual_consultation을 전달한 뒤 render_report_html → resources/read로 확인합니다. 계획만으로 실행·설치·호스트 연결 완료를 주장하지 않습니다.
+R04는 수동 입력 보유 상담, R05는 수동 입력 비용 영향 상담입니다. `build_report_input`에 report_id와 manual_consultation을 전달한 뒤 render_report_html → resources/read로 확인합니다. 계획 출력만으로 실행이나 설치가 끝났다고 판단하지 않으며, 실제 호스트 화면은 별도로 검수합니다.
 
 입력은 `manual_consultation={origin,snapshot,context?,costs?}`입니다. origin은 실제 사용자 수동 입력인 manual 또는 시험용 synthetic_fixture이며 공급자 actual로 승격하지 않습니다. snapshot은 as_of(실제 달력 날짜), currency(ISO 3자), cash(decimal string/null), positions 1~50개를 받습니다. 각 포지션은 id(ASCII 1~32자), label, currency, market_value(decimal string/null), 선택적 target_weight_percent입니다. target_cash_weight_percent도 선택적입니다. 현금·평가액은 비음수이고 미입력은 null로 명시하며 short/차입/계좌 원장을 받지 않습니다.
 
