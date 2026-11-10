@@ -247,6 +247,7 @@ export function displayInstant(value: string, timeZone: string): string {
 /** A body-table cell that shows a readable form and keeps the raw value in title when the two differ. */
 const readableCell = (raw: string, shown: string): TableCell => (shown === raw ? raw : { text: shown, title: raw });
 export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string {
+  if((doc.report_id==='R04'||doc.report_id==='R05')&&!doc.consultation)throw new Error('manual_consultation_only');
   const specs = makeChartSpecs(doc,plan);
   const sourceMap = new Map(doc.sources.map((source)=>[source.id,source]));
   const sourceRows = doc.sources.map((source)=>[
@@ -294,7 +295,9 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string
   const claims = doc.analysis_claims.filter(claim=>!claim.id.includes(".NARRATIVE.")&&!claim.id.includes(".GOOSE_OPINION.")).map((claim)=>`<li><strong>${E(claim.kind)} · ${E(claim.status)} · 신뢰도 ${E(claim.confidence)}</strong><p>${E(claim.text)}</p><small>출처: ${E(claim.source_ids.join(', ') || '없음')} · 필드: ${E(claim.metric_ids.join(', ') || '없음')}</small></li>`).join('');
   const nav = plan.sections.map((section)=>`<a href="#${E(section.id)}">${E(section.title)}</a>`).join('');
   const modeLabel = doc.mode==='synthetic'?'합성 fixture · 실제 자료 아님':doc.mode==='actual'?'실제 입력 · 검증 상태 표시':doc.mode==='mixed'?'혼합 입력 · 출처별 상태 표시':doc.sources.some(source=>source.kind==='user_supplied')?'사용자 제공 입력 · 외부 대사 전':'제공 입력 · 독립 검증 전';
-  const notice = doc.mode==='synthetic'
+  const notice = doc.consultation
+    ? '개인 수동 입력 · 비공개. 공급자/계좌 확인값이 아니며 공개용 보고서로 재사용하지 않습니다. 실제 사용자 자료와 합성 fixture를 구분합니다.'
+    : doc.mode==='synthetic'
     ? '이 문서는 합성 fixture로 생성했습니다. 실 KIS·DART 응답, 실제 시세 보고서 또는 투자 권고가 아닙니다.'
     : doc.sources.some(source=>source.kind==='user_supplied')
       ? '사용자가 이 보고서 생성에 직접 제공한 입력입니다. 외부 원장·가격·체결과 대사하지 않았으므로 제공 입력으로 표시하며, 계좌 조회나 주문은 수행하지 않습니다.'

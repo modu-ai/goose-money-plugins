@@ -41,7 +41,7 @@ def build(root, output):
    for entry in catalog['entries']:entry['required_groups']=[g for g in entry.get('required_groups',[]) if g not in {'account_ledger'}]
    return (json.dumps(catalog,ensure_ascii=False,indent=2)+'\n').encode()
   if name=='README.md':
-   data += '\n\nR04/R05는 수동 snapshot·연간 비용 가정의 비공개 상담 전용입니다. 거래/성과 원장·주문·이체·R14 백테스트는 제외합니다. ETF는 조건부 확장, 선물은 초기 범위 밖이며 원천 계약의 존재를 지원 완료로 보지 않습니다.\n'.encode()
+   data += '\n\n수동 입력 R04/R05 상담은 비공개입니다. 수동 snapshot·명시 연간 비용 가정만 받으며 계좌 연결·거래/성과 원장·주문·이체·R14 백테스트는 제외합니다. ETF는 조건부 확장, 선물은 초기 범위 밖이며 원천 계약의 존재를 지원 완료로 보지 않습니다.\n'.encode()
   if name=='CAPABILITIES.json':
    excluded={'get_account_snapshot'}
    def clean(v):
@@ -51,7 +51,7 @@ def build(root, output):
    return (json.dumps(clean(json.loads(data)),ensure_ascii=False,indent=2)+'\n').encode()
   if name.startswith('skills/') and name.endswith(('.md','.yaml')):
    text=data.decode()
-   text+='\n수동 입력 R04/R05 상담은 비공개이며 거래/성과 원장·주문·이체·백테스트를 제공하지 않습니다. ETF는 조건부, 선물은 초기 범위 밖입니다.\n' if name.endswith('SKILL.md') else ''
+   text+='\n수동 입력 R04/R05 상담은 비공개이며 계좌 연결·거래/성과 원장·주문·이체·백테스트를 제공하지 않습니다. ETF는 조건부, 선물은 초기 범위 밖입니다.\n' if name.endswith('SKILL.md') else ''
    return text.encode()
   if name=='skills/goose/SKILL.md':
    return data.decode().replace('R01–R11/R14/U01','R01–R03/R05–R11/R14/U01').encode()

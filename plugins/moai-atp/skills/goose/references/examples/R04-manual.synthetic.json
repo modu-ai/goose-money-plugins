@@ -1,0 +1,30 @@
+{
+  "report_id": "R04",
+  "cutoff": "2026-11-08T07:49:34.124Z",
+  "display_timezone": "Asia/Seoul",
+  "manual_consultation": {
+    "origin": "synthetic_fixture",
+    "snapshot": {
+      "as_of": "2026-11-07",
+      "currency": "KRW",
+      "cash": "100",
+      "target_cash_weight_percent": "20",
+      "positions": [
+        {
+          "id": "A",
+          "label": "합성 종목 A",
+          "currency": "KRW",
+          "market_value": "300",
+          "target_weight_percent": "50"
+        },
+        {
+          "id": "B",
+          "label": "합성 종목 B",
+          "currency": "KRW",
+          "market_value": "100",
+          "target_weight_percent": "30"
+        }
+      ]
+    }
+  }
+}
