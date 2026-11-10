@@ -466,10 +466,38 @@ class NoRedundantStatusWrites(unittest.TestCase):
         self.assertEqual(client.posted[-1][1], 'pending')
         self.assertLessEqual(len(client.posted), 2)
 
-    def test_unknown_current_status_still_writes(self):
+    def test_unknown_current_status_writes_non_success(self):
+        # The current status cannot be read, so this write may be one more of 1000; never add a success.
         client = FakeClient(clean_pr(), checks(), error_on='current_status')
         gate.run_one(client, 46)
-        self.assertEqual([p[1] for p in client.posted], ['success'])
+        self.assertEqual(client.posted, [(HEAD, 'pending', 'current_status_unknown')])
+
+    def test_unreadable_status_then_limit_never_freezes_success(self):
+        # Leader repro on 0ed2981: status GET always fails, POST works. Previously every run added a
+        # success, the 1000-status limit was reached, and the last status stayed success after the
+        # review turned running. Now no success is written while the current status is unknown.
+        client = FakeClient(clean_pr(), checks(), error_on='current_status')
+        for _ in range(1100):
+            try:
+                gate.run_one(client, 46)
+            except OSError:
+                pass  # the synthetic 1000-status limit
+        client.pr['comments']['nodes'][0]['body'] = summary_body(code_status='running')
+        try:
+            gate.run_one(client, 46)
+        except OSError:
+            pass
+        self.assertNotIn('success', {p[1] for p in client.posted})
+        self.assertNotEqual(client.posted[-1][1], 'success')
+
+    def test_readable_status_keeps_normal_repeat_path(self):
+        # Distinct from the unreadable path: 1100 unchanged judgements then running -> two writes.
+        client = FakeClient(clean_pr(), checks())
+        for _ in range(1100):
+            gate.run_one(client, 46)
+        client.pr['comments']['nodes'][0]['body'] = summary_body(code_status='running')
+        gate.run_one(client, 46)
+        self.assertEqual([p[1] for p in client.posted], ['success', 'pending'])
 
 
 class OpenPullRequestPages(unittest.TestCase):
