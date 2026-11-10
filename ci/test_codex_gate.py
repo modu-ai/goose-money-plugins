@@ -33,20 +33,35 @@ def summary_body(head=HEAD, code_status='completed', any_findings=False, unresol
             '| Security Review | Completed <relative-time datetime="' + sec_time + '">x</relative-time> |\n')
 
 
+def conn(nodes, prev=False, nxt=False):
+    """A GraphQL connection with complete pagination by default."""
+    return {'pageInfo': {'hasPreviousPage': prev, 'hasNextPage': nxt}, 'nodes': nodes}
+
+
 def clean_pr():
     """A PR whose current head has a clean Codex review (no findings, bot +1 after completion)."""
     return {
         'state': 'OPEN', 'baseRefName': 'main', 'headRefOid': HEAD, 'mergeStateStatus': 'BLOCKED',
-        'comments': {'nodes': [{'author': {'login': BOT}, 'body': summary_body()}]},
-        'reviews': {'nodes': []},
-        'reviewThreads': {'nodes': []},
-        'reactions': {'nodes': [{'user': {'login': BOT + '[bot]'}, 'createdAt': '2026-11-10T01:35:48Z'}]},
+        'comments': conn([{'author': {'login': BOT}, 'body': summary_body()}]),
+        'reviews': conn([]),
+        'reviewThreads': conn([]),
+        'reactions': conn([{'user': {'login': BOT + '[bot]'}, 'createdAt': '2026-11-10T01:35:48Z'}]),
     }
 
 
-def checks(head=HEAD, mac='success', win='success'):
-    return [{'name': 'test (macos-latest)', 'conclusion': mac, 'head_sha': head},
-            {'name': 'test (windows-latest)', 'conclusion': win, 'head_sha': head}]
+def thread(ids, resolved):
+    return {'isResolved': resolved, 'comments': conn([{'id': i} for i in ids])}
+
+
+def check_run(run_id, name, conclusion='success', status='completed', head=HEAD):
+    return {'id': run_id, 'name': name, 'status': status, 'conclusion': conclusion, 'head_sha': head}
+
+
+def checks(head=HEAD, mac='success', win='success', extra=()):
+    runs = [check_run(10, 'test (macos-latest)', mac, 'completed' if mac else 'in_progress', head),
+            check_run(11, 'test (windows-latest)', win, 'completed' if win else 'in_progress', head)]
+    runs += list(extra)
+    return {'total_count': len(runs), 'check_runs': runs}
 
 
 def run(pr, chk=None, head_again=HEAD):
@@ -92,7 +107,7 @@ class CleanReview(unittest.TestCase):
 class Summary(unittest.TestCase):
     def test_missing_summary(self):
         pr = clean_pr()
-        pr['comments']['nodes'] = []
+        pr['comments'] = conn([])
         self.assertIn('summary_missing_or_malformed', run(pr)[1])
 
     def test_malformed_state_json(self):
@@ -148,10 +163,10 @@ class Receipt(unittest.TestCase):
     def pr_with_receipt(self, oid=HEAD, comment_ids=('c1',), resolved=True):
         pr = clean_pr()
         pr['comments']['nodes'][0]['body'] = summary_body(any_findings=True, unresolved=False)
-        pr['reactions']['nodes'] = []
-        pr['reviews']['nodes'] = [{'author': {'login': BOT}, 'body': 'x <!-- codex-review-receipt:v1 --> y',
-                                   'commit': {'oid': oid}, 'comments': {'nodes': [{'id': i} for i in comment_ids]}}]
-        pr['reviewThreads']['nodes'] = [{'isResolved': resolved, 'comments': {'nodes': [{'id': i}]}} for i in comment_ids]
+        pr['reactions'] = conn([])
+        pr['reviews'] = conn([{'author': {'login': BOT}, 'body': 'x <!-- codex-review-receipt:v1 --> y',
+                               'commit': {'oid': oid}, 'comments': conn([{'id': i} for i in comment_ids])}])
+        pr['reviewThreads'] = conn([thread([i], resolved) for i in comment_ids])
         return pr
 
     def test_receipt_with_all_findings_resolved_passes(self):
@@ -177,7 +192,7 @@ class Receipt(unittest.TestCase):
 class PullRequestState(unittest.TestCase):
     def test_unresolved_thread_fails(self):
         pr = clean_pr()
-        pr['reviewThreads']['nodes'] = [{'isResolved': False, 'comments': {'nodes': [{'id': 'h1'}]}}]
+        pr['reviewThreads'] = conn([thread(['h1'], False)])
         self.assertIn('unresolved_threads_1', run(pr)[1])
 
     def test_not_open_and_wrong_base(self):
@@ -203,7 +218,7 @@ class RequiredChecks(unittest.TestCase):
         self.assertIn('check_not_success:test (windows-latest)', run(clean_pr(), checks(win='failure'))[1])
         self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), checks(mac=None))[1])
         self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), checks(head=OLD))[1])
-        self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), [])[1])
+        self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), {'total_count': 0, 'check_runs': []})[1])
 
 
 class StatusMapping(unittest.TestCase):
@@ -228,6 +243,158 @@ class Integrity(unittest.TestCase):
         run(pr)
         self.assertEqual(pr, before)
 
+
+class DefaultBranchOnly(unittest.TestCase):
+    """Item 1: every trigger runs the default-branch workflow and judging code only."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.github', 'workflows', 'codex-gate.yml')
+
+    def text(self):
+        with open(self.path, encoding='utf-8') as handle:
+            return handle.read()
+
+    def triggers(self):
+        lines = self.text().split('\n')
+        start = lines.index('on:') + 1
+        names = []
+        for line in lines[start:]:
+            if line and not line.startswith(' '):
+                break
+            if line.startswith('  ') and not line.startswith('   ') and line.strip().endswith(':'):
+                names.append(line.strip()[:-1])
+        return names
+
+    def test_triggers_are_default_branch_events_without_manual_dispatch(self):
+        self.assertEqual(sorted(self.triggers()), ['issue_comment', 'pull_request_target', 'schedule', 'workflow_run'])
+
+    def test_job_runs_only_on_the_default_branch_ref(self):
+        self.assertIn("github.ref == 'refs/heads/main'", self.text())
+
+    def test_checkout_pins_main_and_never_the_pr_head(self):
+        text = self.text()
+        checkouts = text.count('uses: actions/checkout@')
+        self.assertGreater(checkouts, 0)
+        self.assertEqual(text.count('ref: main'), checkouts)
+        for forbidden in ('github.event.pull_request.head', 'github.head_ref', 'refs/pull/'):
+            self.assertNotIn(forbidden, text)
+
+
+class Pagination(unittest.TestCase):
+    """Item 2: an unread page is never a pass."""
+    def test_hundred_resolved_threads_with_a_next_page_fail(self):
+        pr = clean_pr()
+        pr['reviewThreads'] = conn([thread(['t%d' % i], True) for i in range(100)], nxt=True)
+        self.assertIn('pagination_incomplete:reviewThreads', run(pr)[1])
+
+    def test_every_connection_is_checked(self):
+        cases = [('comments', 'prev'), ('reviews', 'prev'), ('reactions', 'prev'), ('reviewThreads', 'nxt')]
+        for name, side in cases:
+            pr = clean_pr()
+            pr[name] = conn(pr[name]['nodes'], **{side: True})
+            self.assertIn('pagination_incomplete:' + name, run(pr)[1], name)
+
+    def test_nested_thread_and_review_comments_are_checked(self):
+        pr = clean_pr()
+        nested = thread(['x'], True)
+        nested['comments']['pageInfo']['hasNextPage'] = True
+        pr['reviewThreads'] = conn([nested])
+        self.assertIn('pagination_incomplete:thread_comments', run(pr)[1])
+        pr = clean_pr()
+        pr['reviews'] = conn([{'author': {'login': 'GoosLab'}, 'body': '', 'commit': {'oid': HEAD},
+                               'comments': conn([{'id': 'r'}], nxt=True)}])
+        self.assertIn('pagination_incomplete:review_comments', run(pr)[1])
+
+    def test_missing_page_info_fails_closed(self):
+        pr = clean_pr()
+        del pr['reviewThreads']['pageInfo']
+        self.assertIn('pagination_incomplete:reviewThreads', run(pr)[1])
+
+    def test_check_runs_beyond_the_first_page_fail(self):
+        chk = checks()
+        chk['total_count'] = 101
+        self.assertIn('pagination_incomplete:check_runs', run(clean_pr(), chk)[1])
+
+
+class LatestCheckRunOnly(unittest.TestCase):
+    """Item 3: only the most recent run per required name counts."""
+    def test_older_success_and_newer_failure_fail(self):
+        chk = checks(extra=[check_run(20, 'test (windows-latest)', 'failure')])
+        self.assertIn('check_failed:test (windows-latest)', run(clean_pr(), chk)[1])
+
+    def test_older_success_and_newer_running_fail(self):
+        chk = checks(extra=[check_run(20, 'test (windows-latest)', None, 'in_progress')])
+        self.assertIn('check_not_success:test (windows-latest)', run(clean_pr(), chk)[1])
+
+    def test_older_failure_and_newer_success_pass(self):
+        chk = checks(win='success')
+        chk['check_runs'].append(check_run(5, 'test (windows-latest)', 'failure'))
+        chk['total_count'] += 1
+        self.assertEqual(run(clean_pr(), chk)[1], [])
+
+    def test_latest_failure_is_a_definite_failure_status(self):
+        self.assertEqual(gate.status_for(['check_failed:test (windows-latest)'])[0], 'failure')
+
+
+class FakeClient:
+    def __init__(self, pr=None, chk=None, error_on=None):
+        self.pr, self.chk, self.error_on, self.posted = pr, chk, error_on, []
+
+    def pull_request(self, number):
+        if self.error_on == 'pull_request':
+            raise OSError('synthetic api timeout')
+        return copy.deepcopy(self.pr)
+
+    def checks(self, head):
+        if self.error_on == 'checks':
+            raise OSError('synthetic api error')
+        return copy.deepcopy(self.chk)
+
+    def post_status(self, head, state, description):
+        self.posted.append((head, state, description))
+
+
+class ErrorsNeverLeaveSuccess(unittest.TestCase):
+    """Item 4: an API error or exception ends with a non-success status on the judged head."""
+    def test_pass_posts_pending_then_success(self):
+        client = FakeClient(clean_pr(), checks())
+        gate.run_one(client, 46)
+        self.assertEqual([p[1] for p in client.posted], ['pending', 'success'])
+
+    def test_check_api_error_overwrites_with_failure(self):
+        client = FakeClient(clean_pr(), checks(), error_on='checks')
+        gate.run_one(client, 46)
+        self.assertEqual(client.posted[0][:2], (HEAD, 'pending'))
+        self.assertEqual(client.posted[-1][:2], (HEAD, 'failure'))
+        self.assertIn('gate_error', client.posted[-1][2])
+
+    def test_last_status_is_never_success_after_an_error(self):
+        client = FakeClient(clean_pr(), checks(), error_on='checks')
+        gate.run_one(client, 46)
+        self.assertNotEqual(client.posted[-1][1], 'success')
+
+
+class SecurityReviewCurrentHead(unittest.TestCase):
+    """Item 5: a present security review must be for the current head (PR #33 observation)."""
+    def test_security_review_for_previous_head_fails(self):
+        pr = clean_pr()
+        pr['comments']['nodes'][0]['body'] = summary_body(sec_head=OLD)
+        self.assertIn('security_stale_head', run(pr)[1])
+
+    def test_security_review_without_commit_sha_fails(self):
+        pr = clean_pr()
+        body = summary_body().replace('"security_review":{"commit_sha":"' + HEAD + '",', '"security_review":{')
+        pr['comments']['nodes'][0]['body'] = body
+        self.assertIn('security_stale_head', run(pr)[1])
+
+
+class ObservedLoginForms(unittest.TestCase):
+    """Item 6: GraphQL login forms observed on PR #39."""
+    def test_comment_author_must_be_the_bare_bot_login(self):
+        pr = clean_pr()
+        pr['comments']['nodes'][0]['author']['login'] = BOT + '[bot]'
+        self.assertIn('summary_missing_or_malformed', run(pr)[1])
+
+    def test_reaction_user_carries_the_bot_suffix(self):
+        self.assertEqual(run(clean_pr())[1], [])
 
 if __name__ == '__main__':
     unittest.main(verbosity=1)
