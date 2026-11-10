@@ -65,6 +65,10 @@ jobs:
         run: npm test
 
       # These checks do not depend on the test result, so they still report when tests fail.
+      - name: codex-gate decision unit tests
+        if: ${{ !cancelled() }}
+        run: python -X utf8 ci/test_codex_gate.py
+
       - name: Package component checks
         if: ${{ !cancelled() }}
         working-directory: plugins/moai-atp
