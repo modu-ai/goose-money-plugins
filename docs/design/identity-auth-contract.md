@@ -32,6 +32,21 @@ Refs #6.
 | 기존 부정 시험 | 5건: 미설정·admin 거부 / 정상 / iss·aud·client·header·scope 불일치 / 서명·키·만료·과수명·미래시각 / 철회·unknown | `server/test/member-token-verifier.test.ts:9-13` |
 | issuer·audience·scope·client 실제값 | **미정** | CAPABILITIES `member_resource_scope_client_callback`="not_configured" |
 
+## 1a. 현재 코드 동작 — 본문에 없는 세부 (lane-6 대조 #63, 930a088 직접 측정)
+
+§1 표에 없는 코드 동작을 사실대로 적습니다. 재사용·정리 방향은 결정이 아니라 현행 관찰입니다.
+
+| 항목 | 현재 코드 동작 | 근거 |
+|---|---|---|
+| 키·서명 제약 | `resolveKey`가 돌려주는 키는 EC `prime256v1` 공개키만 통과, 서명 인코딩은 `ieee-p1363` 고정, 토큰은 16,384바이트 상한, `nbf≥exp`도 거부 | `member-token-verifier.ts:26·34·36` |
+| 결속 salt 수명 | salt가 인스턴스마다 무작위(32바이트)라 **프로세스 재시작마다 `session_binding`이 바뀜** — §3의 캐시·자원 무효화 설계와 상호작용. salt 수명 정책은 **결정 필요** | `member-token-verifier.ts:19` |
+| provider 검사 캐시 | 검사 결과를 TTL 기본 300초(`maxCheckAgeMs`)로 캐시하고, 결속 변경 시 epoch 리셋으로 전체 무효화 | `member-onboarding.ts:19·30` |
+| 게이트 거부 코드 | 거부 코드는 `member_login_required`·`provider_checks_required`·`member_session_changed` — §6 응답 계약 초안의 `auth_required`와 이름이 다름(재사용 전 정리 대상, #10 코드 주석도 같은 지적) | `member-access.ts:15-20` |
+| requireReady 동시 요구 | kis·opendart **둘 다** `connected`여야 ready — §6의 공급자별 분리 요구와 모순. 실행 경로 미연결(src 쪽 `installMemberAccess` 호출처 0, test만 존재)이라 현재 실행 영향 0 | `member-access.ts:18` |
+| 자격증명 env 우선 경로 | 환경변수(`KIS_APP_KEY` 등)가 파일보다 우선하고, 부분 env는 fail-closed. 보존 지도 반영은 `privacy-retention.md` §3a와 공유 | `local-credentials.ts:93-101` |
+
+문서에만 있고 코드에 없는 것(전부 **미구현**): refresh 회전·재사용 감지(§3), JWKS kid 재조회·캐시(§3), entitlement 조회 API(§3), 철회 운영 구현(§3), §4 상태 전이 표 전체, principal 도구 인자 무시의 부정 시험(N12), 로그아웃 = 로컬 토큰 삭제(§4).
+
 ## 2. 먼저 정해야 할 구조 문제 — stdio 로컬 서버와 OAuth
 
 HEAD의 MCP 서버는 `mcp.json`에서 `type: "stdio"`로 뜹니다. MCP 공식 인가 규격은 HTTP 전송을 대상으로 하고, stdio 구현은 그 규격 대신 환경에서 자격증명을 받도록 권고하는 것으로 알고 있습니다(**이번 실행에서 공식 문서 재확인 안 함 — 미확인**). 그러면 "호스트가 OAuth를 대신 해 준다"는 경로가 로컬 stdio 서버에는 그대로 적용되지 않을 수 있습니다.
