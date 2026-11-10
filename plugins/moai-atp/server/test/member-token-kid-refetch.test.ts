@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {generateKeyPairSync,sign,type KeyObject} from 'node:crypto';
+import {createLocalMemberTokenVerifier} from '../src/member-token-verifier.js';
+// Design: docs/design/identity-auth-contract.md §3 JWKS row + §5 N10 — an unknown kid triggers exactly one re-fetch, then fails closed.
+const keys=generateKeyPairSync('ec',{namedCurve:'prime256v1'});
+// All resource/client/scope values below are synthetic and not deployment proposals.
+const issuer='https://id.example.invalid',audience='https://atp.example.invalid/mcp',clientId='synthetic-client',scope='fixture:read';
+const claims={iss:issuer,sub:'01ARZ3NDEKTSV4RRFFQ69G5FAV',aud:audience,exp:1600,iat:1000,jti:'synthetic-jti',scope,client_id:clientId};
+function token(patch:Record<string,unknown>={},h:Record<string,unknown>={}){const a=Buffer.from(JSON.stringify({alg:'ES256',typ:'at+jwt',kid:'synthetic-kid',...h})).toString('base64url'),b=Buffer.from(JSON.stringify({...claims,...patch})).toString('base64url');return a+'.'+b+'.'+sign('sha256',Buffer.from(a+'.'+b),{key:keys.privateKey,dsaEncoding:'ieee-p1363'}).toString('base64url');}
+function countedResolver(serve:(call:number,kid:string)=>KeyObject|undefined){const kids:string[]=[];let calls=0;const resolve=async(kid:string)=>{calls++;kids.push(kid);return serve(calls,kid);};return {resolve,calls:()=>calls,kids:()=>kids};}
+const base={issuer,audience,clientId,requiredScopes:[scope],revocationState:async()=> 'active' as const,now:()=>1100000};
+test('unknown kid is re-fetched once and verifies when the key arrives (rotation)',async()=>{const r=countedResolver(c=>c>=2?keys.publicKey:undefined),v=createLocalMemberTokenVerifier({...base,resolveKey:r.resolve}),result=await v.verify(token());assert(result.state==='verified');assert.equal(result.membership.expires_at,1600000);assert.equal(r.calls(),2);assert.deepEqual(r.kids(),['synthetic-kid','synthetic-kid']);});
+test('unknown kid still missing after the re-fetch is denied invalid_signature with exactly two lookups (N10)',async()=>{const r=countedResolver(()=>undefined),v=createLocalMemberTokenVerifier({...base,resolveKey:r.resolve});assert.deepEqual(await v.verify(token()),{state:'denied',reason:'invalid_signature'});assert.equal(r.calls(),2);assert.deepEqual(r.kids(),['synthetic-kid','synthetic-kid']);});
+test('a known kid resolves once with no re-fetch',async()=>{const r=countedResolver(()=>keys.publicKey),v=createLocalMemberTokenVerifier({...base,resolveKey:r.resolve});assert.equal((await v.verify(token())).state,'verified');assert.equal(r.calls(),1);assert.deepEqual(r.kids(),['synthetic-kid']);});
