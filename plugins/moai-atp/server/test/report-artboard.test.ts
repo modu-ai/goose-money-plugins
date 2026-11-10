@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { ACTIVE_REPORT_ROUTE_IDS, buildReportInput, getReportPlan, renderReportInputHtml } from '../src/report-pipeline.js';
 import { RenderReportHtmlInputSchema } from '../src/report-html-mcp.js';
+import { renderReportTemplate } from '../src/report-template-renderer.js';
 import { mcpRender, withDefaultSession } from './r02-fixtures.js';
 
 // Cast lets the same runtime regression run before the optional argument is implemented.
@@ -50,6 +51,22 @@ test('artboard includes narrow-screen containment and print rules from the candi
   assert.match(html,/@media\(max-width:800px\)/);
   assert.match(html,/@page\{size:A4/);
   assert.match(html,/\.rs thead\{display:table-header-group\}/);
+});
+
+test('merged manual consultation remains private in both templates',()=>{
+  for(const id of ['R04','R05']){
+    const doc=input(id);assert.ok(doc.consultation);
+    for(const template of ['existing','artboard-v2'])assert.match(render(doc,template),/개인 수동 입력 · 비공개/);
+  }
+});
+
+test('both templates retain the manual-consultation guard for R04 and R05',()=>{
+  for(const id of ['R04','R05']){
+    const doc=input(id);delete doc.consultation;
+    for(const template of ['existing','artboard-v2'] as const){
+      assert.throws(()=>renderReportTemplate(doc,getReportPlan(id),template),/manual_consultation_only/);
+    }
+  }
 });
 
 test('MCP template option produces readable HTML through the existing memory resource',async()=>{
