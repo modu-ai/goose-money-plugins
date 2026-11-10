@@ -9,7 +9,7 @@ type Form={readonly id:string;readonly pattern:RegExp};
 const R=routing as unknown as {GOOSE_SENTENCE_F?:string;GOOSE_SENTENCE_F_T?:string;GOOSE_SENTENCE_ACCOUNT?:string;GOOSE_SENTENCE_PERFORMANCE?:string;GOOSE_TRADE_FORMS?:readonly Form[];GOOSE_ATS_FORMS?:readonly Form[];matchGooseForms?:(forms:readonly Form[],text:string)=>string[]};
 
 // Full sentences pinned verbatim (design.md 3.2 / 3.5). The pieces below are the SPEC-required parts.
-const F='이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다. 대신 전략 수립(매매 전략 명세로 정리)이나 백테스트(과거 자료 검증 계획)는 다시 요청해 주시면 도와드릴 수 있습니다. 실거래는 사용자께서 직접 판단·실행하십시오.';
+const F='이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다. 대신 기업·시장 조사나 투자 관점과 반증 조건 정리는 다시 요청해 주시면 도와드릴 수 있습니다. 실거래는 사용자께서 직접 판단·실행하십시오.';
 const F_T='이 플러그인은 이체·입출금을 지원하지 않습니다. 자금 이동은 사용자께서 직접 하십시오.';
 const ACCOUNT='읽기 전용 보유·계좌 수익률 조회는 아직 제공하지 않습니다(별도 승인 뒤 제공 예정)';
 const PERFORMANCE='수익률·성과를 계산할 입력(매입가 또는 자산곡선, 기간, 통화, 입출금 흐름)이 없어 계산할 수 없습니다';
@@ -28,7 +28,7 @@ const ATS_F=[
 const ACCOUNT_REQUESTS=['/goose 내 계좌 보유 종목 보여줘','/goose 보유 종목 현황','/goose 잔고 조회','/goose 예수금 조회','/goose 내 계좌 수익률 알려줘'] as const;
 const PERFORMANCE_REQUESTS=['/goose 내 수익률 알려줘','/goose 내 포트폴리오 성과 분석','/goose 내 포트폴리오 성과 분석 보고서'] as const;
 const CONTROLS=[
- ['/goose 논문 근거로 매수·매도 규칙 설계','ready',['strategy']],['/goose 매도 신호 규칙을 백테스트','ready',['backtest']],['/goose 삼성전자 실적 분석 보고서','ready',['analyze','report']],
+ ['/goose 논문 근거로 매수·매도 규칙 설계','ready',['strategy']],['/goose 매도 신호 규칙을 백테스트','unsupported',[]],['/goose 삼성전자 실적 분석 보고서','ready',['analyze','report']],
  ['/goose strategy 손절 규칙 정리','ready',['strategy']],['/goose ATS가 무엇인가요','clarification_required',[]],
 ] as const;
 
@@ -48,8 +48,9 @@ test('fixed sentences F and F_T: required pieces are included and the full sente
  assert.equal(R.GOOSE_SENTENCE_F,F);assert.equal(R.GOOSE_SENTENCE_F_T,F_T);assert.equal(R.GOOSE_SENTENCE_ACCOUNT,ACCOUNT);assert.equal(R.GOOSE_SENTENCE_PERFORMANCE,PERFORMANCE);
  const f=R.GOOSE_SENTENCE_F??'';
  assert.ok(f.includes('이 플러그인은 지원하지 않으며 별도 시스템(ATS)의 영역입니다'),'F piece 1');
- assert.ok(f.includes('전략 수립(매매 전략 명세로 정리)'),'F piece 2');
- assert.ok(f.includes('백테스트(과거 자료 검증 계획)'),'F piece 3');
+ assert.ok(f.includes('기업·시장 조사'),'F piece 2');
+ assert.ok(f.includes('투자 관점과 반증 조건 정리'),'F piece 3');
+ assert.ok(!f.includes('백테스트'),'excluded product must not be offered as an alternative');
  assert.ok(f.includes('실거래는 사용자께서 직접 판단·실행하십시오'),'F piece 4');
  const t=R.GOOSE_SENTENCE_F_T??'';
  assert.ok(t.includes('이 플러그인은 이체·입출금을 지원하지 않습니다'),'F_T piece 1');assert.ok(t.includes('자금 이동은 사용자께서 직접 하십시오'),'F_T piece 2');
@@ -77,7 +78,7 @@ for(const [argv,sentence] of [[['/goose','삼성전자','매수해'],F],[['/goos
 
 for(const [request,status,steps] of CONTROLS)test(`AC-005 positive control keeps baseline status and steps: ${request}`,()=>{
  const p=planGooseRequest(request);assert.equal(p.status,status);assert.deepEqual(p.steps.map(s=>s.id),steps);
- assert.deepEqual(p.blocked_actions,[]);assert.deepEqual(p.unsupported_actions,[]);
+ assert.deepEqual(p.blocked_actions,[]);assert.deepEqual(p.unsupported_actions,status==='unsupported'?['backtest_out_of_product_scope']:[]);
 });
 
 for(const request of [
@@ -86,7 +87,9 @@ for(const request of [
  // Separator-collapsed view must not stretch the baseline `.{0,N}` windows over unrelated words (found while tuning; baseline status is not blocked).
  '/goose 주문 체결 구조 설명해줘','/goose 이체 수수료 구조를 설명해줘','/goose 매수 처리 현황 분석 보고서','/goose 퀀트 엔진 성능 설명 팀 에이전트 비교 개념 정리',
 ])test(`over-block guard (not a SPEC sentence): explanation, rule design and analysis stay unblocked: ${request}`,()=>{
- const p=planGooseRequest(request);assert.notEqual(p.status,'blocked',request);assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.blocked_actions,[]);assert.deepEqual(p.unsupported_actions,[]);
+ const p=planGooseRequest(request);assert.notEqual(p.status,'blocked',request);assert.deepEqual(p.blocked_actions,[]);
+ if(['/goose buy and hold 전략을 백테스트','/goose 매수 신호 규칙을 백테스트'].includes(request)){assert.equal(p.status,'unsupported');assert.deepEqual(p.unsupported_actions,['backtest_out_of_product_scope']);}
+ else {assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.unsupported_actions,[]);}
 });
 
 for(const request of ATS_F)test(`AC-026 ATS-class request is unsupported with ats_scope_unsupported, F, no steps: ${request}`,()=>{
@@ -140,15 +143,15 @@ for(const [request,mode] of [
  ['/goose strategy 논문으로 설계','strategy'],['/goose backtest 과거 검증','backtest'],['goose-strategy 논문으로 설계','strategy'],['/goose goose-backtest 과거 검증','backtest'],
  ['/goose-backtest 과거 검증','backtest'],['/goose-strategy 논문으로 설계','strategy'],['/goose-backtest','backtest'],
 ] as const)test(`AC-003 legacy form migrates to its non-trading internal mode: ${request}`,()=>{
- const p=planGooseRequest(request);assert.equal(p.status,'ready',request);assert.deepEqual(p.steps.map(s=>s.id),[mode],request);
+ const p=planGooseRequest(request);assert.equal(p.status,mode==='backtest'?'unsupported':'ready',request);assert.deepEqual(p.steps.map(s=>s.id),mode==='backtest'?[]:[mode],request);
  assert.equal(p.migrated_legacy_command,request.includes('goose-'),request);assert.deepEqual(p.blocked_actions,[]);
 });
 test('AC-003 slash legacy form migrates only the seven currently mapped modes',()=>{
  assert.equal(GOOSE_MODES.length,7);
- for(const mode of GOOSE_MODES){const p=planGooseRequest(`/goose-${mode}`);assert.equal(p.migrated_legacy_command,true,mode);assert.equal(p.explicit_mode,mode);assert.deepEqual(p.steps.map(s=>s.id),[mode]);}
+ for(const mode of GOOSE_MODES){const p=planGooseRequest(`/goose-${mode}`);assert.equal(p.migrated_legacy_command,true,mode);assert.equal(p.explicit_mode,mode);assert.deepEqual(p.steps.map(s=>s.id),mode==='backtest'?[]:[mode]);if(mode==='backtest')assert.equal(p.status,'unsupported');}
  for(const mode of ['order','trade','account','paper-trading','전략가']){const p=planGooseRequest(`/goose-${mode} 보고서`);assert.equal(p.migrated_legacy_command,false,mode);assert.equal(p.explicit_mode,null,mode);}
 });
-test('AC-003 slash legacy form is case-insensitive like the existing goose- form',()=>{const p=planGooseRequest('/GOOSE-Backtest 과거 검증');assert.equal(p.migrated_legacy_command,true);assert.deepEqual(p.steps.map(s=>s.id),['backtest']);});
+test('AC-003 excluded slash legacy form is still case-insensitive and has no runnable steps',()=>{const p=planGooseRequest('/GOOSE-Backtest 과거 검증');assert.equal(p.migrated_legacy_command,true);assert.deepEqual(p.steps,[]);assert.equal(p.status,'unsupported');});
 test('AC-003 trade/order/transfer words in a legacy form: H3 block precedes migration (/goose-strategy 삼성전자 매수해)',()=>{
  for(const request of ['/goose-strategy 삼성전자 매수해','/goose-strategy 삼성전자 사줘','/goose-backtest 주문해줘']){assertBlockedTrade(request,F);const p=planGooseRequest(request);assert.equal(p.migrated_legacy_command,false,request);assert.equal(p.explicit_mode,null,request);}
 });

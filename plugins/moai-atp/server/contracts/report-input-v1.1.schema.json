@@ -211,6 +211,46 @@
           }
         }
       }
+    },
+    "consultation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "privacy",
+        "kind",
+        "origin",
+        "missing_inputs"
+      ],
+      "properties": {
+        "contract": {
+          "const": "moai.manual-consultation.v1"
+        },
+        "privacy": {
+          "const": "private"
+        },
+        "kind": {
+          "enum": [
+            "holdings_snapshot",
+            "cost_impact"
+          ]
+        },
+        "origin": {
+          "enum": [
+            "manual",
+            "synthetic_fixture",
+            "missing"
+          ]
+        },
+        "missing_inputs": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "maxLength": 160
+          }
+        }
+      }
     }
   },
   "$defs": {
