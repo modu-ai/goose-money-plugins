@@ -171,7 +171,7 @@ function comparisonSectionHtml(doc:ReportInput):string {
   const basisRows:string[][]=[];
   const basisNumber=(metric:typeof doc.metrics[number]):number=>{
     const source=doc.sources.find((item)=>item.id===metric.source_id);
-    const dart=/^(\d{4}):FY:(?:CFS|OFS):(?:IS|BS|CF):.*:\d{14}$/.exec(metric.period);
+    const dart=/^(\d{4}):FY:(?:CFS|OFS):(?:IS|CIS|BS|CF):.*:\d{14}$/.exec(metric.period);
     const undated=source!==undefined&&(source.source_as_of===null||source.source_as_of===undefined)&&metric.period===(source.received_at??source.observed_at);
     const entry=[metric.unit,undated?'period_unconfirmed':dart?`사업연도 ${dart[1]} · 보고서 코드 11011`:metric.period,metric.period_kind,metric.scope,metric.currency??'—',metric.unit.includes('배율 미확인')?'scale_unconfirmed':metric.scale];
     const key=JSON.stringify(entry);
