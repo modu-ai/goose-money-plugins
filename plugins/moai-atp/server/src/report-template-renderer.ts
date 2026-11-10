@@ -78,20 +78,20 @@ function reportTable(headers: string[], rows: Array<Array<TableCell>>): string {
   return `<div class="table-wrap" tabindex="0" role="region" aria-label="가로 스크롤 표"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 }
 type RenderChart = {
-  id:string;section_id:string;kind:'bar'|'line'|'donut'|'scatter';title:string;source_id:string;unit?:string;
+  id:string;section_id:string;kind:'bar'|'line'|'donut'|'scatter';title:string;source_id:string;source_ids?:string[];unit?:string;
   labels:string[];values?:number[];metric_ids:string[];x_values?:number[];y_values?:number[];x_unit?:string;y_unit?:string;
 };
 function makeChartSpecs(doc: ReportInput, plan: ReportPlan) {
   const echart:RenderChart[]=[];
   for(const [index,visual] of (doc.visuals??[]).entries()){
-    if(!sourceMayDisplay(doc,visual.source_id))continue;
+    if(!sourceMayDisplay(doc,visual.source_id)||('source_ids' in visual&&visual.source_ids?.some(id=>!sourceMayDisplay(doc,id))))continue;
     if(visual.kind==='matrix'||visual.kind==='timeline'||visual.kind==='pele')continue;
     if(visual.kind==='scatter'){
       const x=numericSeries(visual.x_values),y=numericSeries(visual.y_values);if(!x||!y)continue;
       echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:'scatter',title:visual.title,source_id:visual.source_id,labels:visual.labels,x_values:x,y_values:y,x_unit:visual.x_unit,y_unit:visual.y_unit,metric_ids:visual.metric_ids});
     }else{
       const values=numericSeries(visual.values);if(!values)continue;
-      echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:visual.kind,title:visual.title,source_id:visual.source_id,labels:visual.labels,values,unit:visual.unit,metric_ids:visual.metric_ids});
+      echart.push({id:`chart-echarts-${index+1}`,section_id:visual.section_id,kind:visual.kind,title:visual.title,source_id:visual.source_id,...(visual.source_ids?{source_ids:visual.source_ids}:{}),labels:visual.labels,values,unit:visual.unit,metric_ids:visual.metric_ids});
     }
   }
   if(doc.chart&&sourceMayDisplay(doc,doc.chart.source_id)){
@@ -108,7 +108,6 @@ function makeChartSpecs(doc: ReportInput, plan: ReportPlan) {
   return {echart,lwc};
 }
 function chartFigure(spec:RenderChart,doc:ReportInput):string {
-  const source=doc.sources.find(item=>item.id===spec.source_id);
   const xUnit=spec.x_unit??spec.unit??'';const yUnit=spec.y_unit??spec.unit??'';
   const rows=spec.kind==='scatter'
     ?spec.labels.map((label,index)=>[label,groupIntegerDigits(String(spec.x_values?.[index]??'—')),xUnit,groupIntegerDigits(String(spec.y_values?.[index]??'—')),yUnit])
@@ -116,12 +115,12 @@ function chartFigure(spec:RenderChart,doc:ReportInput):string {
   const table=spec.kind==='scatter'
     ?reportTable(['대상','X 원수치',xUnit,'Y 원수치',yUnit],rows)
     :reportTable(['구분','원수치',spec.unit??'단위'],rows);
-  const caption=`${spec.kind==='scatter'?'Apache ECharts 6.1.0 · 산점도':'Apache ECharts 6.1.0 · '+spec.kind} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · 표의 원수치가 기준입니다.`;
-  return `<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="${E(spec.title)} 차트 가로 탐색"><div id="${E(spec.id)}" class="echart ${spec.kind==='scatter'?'wide-chart':''}" role="img" aria-label="${E(spec.title)} · ${E(doc.mode)}"></div></div><figcaption class="chart-caption">${caption}</figcaption></figure>${table}`;
+  const caption=`${spec.kind==='scatter'?'Apache ECharts 6.1.0 · 산점도':'Apache ECharts 6.1.0 · '+spec.kind} · ${(spec.source_ids??[spec.source_id]).map(id=>sourceCaption(doc,id)).join(' / ')} · ${spec.source_ids?'확인된 배율로 환산한 표시값입니다.':'표의 원수치가 기준입니다.'}`;
+  return `<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="${E(spec.title)} 차트 가로 탐색"><div id="${E(spec.id)}" class="echart ${spec.kind==='scatter'?'wide-chart':''}" role="img" aria-label="${E(spec.title)} · ${E(doc.mode)}"></div></div><p class="chart-runtime-status" role="status">차트 입력은 있으나 화면 생성은 아직 확인되지 않았습니다. 아래 원수치를 확인하세요.</p><figcaption class="chart-caption">${caption}</figcaption></figure>${table}`;
 }
 function sourceCaption(doc:ReportInput,sourceId:string):string {
   const source=doc.sources.find(item=>item.id===sourceId);
-  return `source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · ${E(source?.id??'출처 없음')}`;
+  return `${E(source?.provider?.toUpperCase()??source?.kind??'출처 없음')} · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')} · ${E(source?.id??'출처 없음')}`;
 }
 function matrixVisualHtml(visual:Extract<NonNullable<ReportInput['visuals']>[number],{kind:'matrix'}>,doc:ReportInput):string {
   const rows=visual.rows.map((label,row)=>[label,...visual.columns.map((_,column)=>visual.values[row*visual.columns.length+column]??'—')]);
@@ -215,7 +214,7 @@ function chartSections(specs:ReturnType<typeof makeChartSpecs>,doc:ReportInput):
   for(const spec of specs.lwc){
     const source=doc.sources.find(item=>item.id===spec.source_id);
     const rows=spec.dates.map((date,index)=>[date,...doc.time_series!.series.map(series=>series.values[index]??'—')]);
-    const html=`<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="Lightweight Charts 가격 시계열"><div id="${spec.id}" class="lwc-chart" role="img" aria-label="${E(spec.title)} · ${E(spec.unit)} · ${E(doc.mode)}"></div></div><figcaption class="chart-caption">Lightweight Charts 5.2.1 · ${E(spec.unit)} · ${E(spec.adjustment)} 가격 기준 · 거래일 기준축 · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')}.</figcaption><div class="legend" data-legend-for="${spec.id}"></div></figure>${reportTable(['거래일',...doc.time_series!.series.map(series=>series.label)],rows)}`;
+    const html=`<figure class="chart-box"><div class="chart-scroll" tabindex="0" role="region" aria-label="Lightweight Charts 가격 시계열"><div id="${spec.id}" class="lwc-chart" role="img" aria-label="${E(spec.title)} · ${E(spec.unit)} · ${E(doc.mode)}"></div></div><p class="chart-runtime-status" role="status">차트 입력은 있으나 화면 생성은 아직 확인되지 않았습니다. 아래 원수치를 확인하세요.</p><figcaption class="chart-caption">Lightweight Charts 5.2.1 · ${E(spec.unit)} · ${E(spec.adjustment)} 가격 기준 · 거래일 기준축 · source_as_of ${E(source?.source_as_of??'미제공')} · received_at ${E(source?.received_at??source?.observed_at??'미제공')}.</figcaption><div class="legend" data-legend-for="${spec.id}"></div></figure>${reportTable(['거래일',...doc.time_series!.series.map(series=>series.label)],rows)}`;
     add(spec.section_id,'line',html);
   }
   return {bySection,count:specs.echart.length+specs.lwc.length};
@@ -231,7 +230,7 @@ const METRIC_STATUS_LABELS: Record<string, string> = {
   provided: '제공값', provided_unverified: '제공값(미검증)', missing: '없음', not_run: '미실행', error: '오류',
   stale: '기준 시각 지남', rights_pending: '권리 확인 대기', synthetic: '합성 자료',
 };
-const METRIC_NOTE_LABELS: Record<string, string> = { provider_field_missing_or_invalid: '공급자 응답에 값이 없거나 형식이 맞지 않음' };
+const METRIC_NOTE_LABELS: Record<string, string> = { cross_source_origin_mismatch:'합성 자료와 실제 자료는 함께 계산하지 않음',cross_source_basis_mismatch:'기간·회계 범위·통화·단위의 기준이 맞지 않거나 정규화되지 않음',cross_source_ambiguous_inputs:'실적 또는 추정치가 여러 개라 비교 대상을 확정할 수 없음',cross_source_provenance_missing:'계산에 필요한 출처 기록이 없음',cross_source_provenance_unverified:'출처의 표시 권한·검증 상태가 확인되지 않음',display_rights_not_confirmed:'자료 표시 권리 확인 대기', provider_field_missing_or_invalid: '공급자 응답에 값이 없거나 형식이 맞지 않음' };
 export const metricStatusLabel = (code: string): string => METRIC_STATUS_LABELS[code] ?? code;
 export const metricNoteLabel = (code: string): string => METRIC_NOTE_LABELS[code] ?? code;
 /** An ISO instant as "YYYY-MM-DD HH:mm KST" in the document time zone; any other text is returned unchanged. */
@@ -248,6 +247,32 @@ export function displayInstant(value: string, timeZone: string): string {
 }
 /** A body-table cell that shows a readable form and keeps the raw value in title when the two differ. */
 const readableCell = (raw: string, shown: string): TableCell => (shown === raw ? raw : { text: shown, title: raw });
+/** Collapse exact mapping aliases for display only; the raw ledger still uses doc.metrics. */
+function metricBodyRows(doc: ReportInput, metrics = doc.metrics): TableCell[][] {
+  const seen = new Set<string>();
+  return metrics.filter(metric => {
+    if (!/^(?:reported|provider_finance)\.(?:revenue|operating_profit)$/.test(metric.field_id)) return true;
+    const key = JSON.stringify({ ...metric, field_id: metric.field_id.replace(/^provider_finance\./, 'reported.') });
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(metric => {
+    const source = doc.sources.find(item => item.id === metric.source_id);
+    const visible = (metric.source_ids??[metric.source_id]).every(id=>sourceMayDisplay(doc,id)) && !['rights_pending','error','not_run','missing'].includes(metric.status);
+    const status = visible ? metric.status : source?.rights === 'pending' ? 'rights_pending' : metric.status;
+    const note = metric.missing_reason ?? '';
+    const unit = metric.unit === 'KRW/share' ? '원/주' : metric.unit === 'shares' ? '주' : metric.unit === 'percent' ? '%' : metric.unit;
+    const annual = /^(\d{4}):FY:(CFS|OFS):(IS|BS|CF):(.+):(\d{14})$/.exec(metric.period);
+    const period = metric.period_kind === 'observation' && source?.source_as_of == null && metric.period === (source?.received_at ?? source?.observed_at)
+      ? '기준일 미확인 · 수집시각은 출처 참조'
+      : annual ? `${annual[1]}년 연간 · ${annual[2] === 'CFS' ? '연결' : '별도'} · ${annual[4]}` : displayInstant(metric.period,doc.display_timezone);
+    return [metric.label,visible && metric.value !== null ? groupIntegerDigits(metric.value) : '—',readableCell(metric.unit,unit),readableCell(metric.period,period),readableCell(status,metricStatusLabel(status)),readableCell(note,metricNoteLabel(note))];
+  });
+}
+/** Same rights checks and readable strings for the text fallback and body tables. */
+export function reportMetricDisplayRows(doc: ReportInput, metrics = doc.metrics): string[][] {
+  return metricBodyRows(doc,metrics).map(row => row.map(cell => typeof cell === 'string' ? cell : cell.text));
+}
 export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, template: 'existing' | 'artboard-v2' = 'existing'): string {
   if (!['existing', 'artboard-v2'].includes(template)) throw new Error('invalid_report_template');
   if((doc.report_id==='R04'||doc.report_id==='R05')&&!doc.consultation)throw new Error('manual_consultation_only');
@@ -258,8 +283,8 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, templat
   ]);
   const metricsRows = doc.metrics.map((metric)=>{
     const source = sourceMap.get(metric.source_id);
-    const authorized = sourceMayDisplay(doc,metric.source_id) && metric.status !== 'rights_pending' && metric.status !== 'error' && metric.status !== 'not_run' && metric.status !== 'missing';
-    return [metric.label,authorized && metric.value !== null ? groupIntegerDigits(metric.value) : '—',metric.unit,metric.period,authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status),metric.missing_reason ?? ''];
+    const authorized = (metric.source_ids??[metric.source_id]).every(id=>sourceMayDisplay(doc,id)) && metric.status !== 'rights_pending' && metric.status !== 'error' && metric.status !== 'not_run' && metric.status !== 'missing';
+    return [metric.label,authorized && metric.value !== null ? groupIntegerDigits(metric.value) : '—',metric.unit,metric.period,authorized ? metric.status : (source?.rights === 'pending' ? 'rights_pending' : metric.status),metric.missing_reason ?? '',metric.scale,(metric.source_ids??[metric.source_id]).join(', ')];
   });
   const visualOutput = chartSections(specs,doc);
   const specialOutput = specialVisualSections(doc);
@@ -270,7 +295,7 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, templat
     const linkedSources = section.source_ids?.map((id)=>sourceMap.get(id)).filter((source)=>source!==undefined) ?? [];
     const sourceLabel = linkedSources.length ? '근거 '+linkedSources.map((source)=>E(source.id)).join(', ') : '연결된 응답 없음';
     const linkedTable = linkedMetrics.length
-      ? reportTable(['지표','표시값','단위','기간','상태','비고'],linkedMetrics.map((metric)=>{const visible=sourceMayDisplay(doc,metric.source_id)&&!['rights_pending','error','not_run','missing'].includes(metric.status);const status=visible?metric.status:(sourceMap.get(metric.source_id)?.rights==='pending'?'rights_pending':metric.status);const note=metric.missing_reason??'';return [metric.label,visible&&metric.value!==null?groupIntegerDigits(metric.value):'—',metric.unit,readableCell(metric.period,displayInstant(metric.period,doc.display_timezone)),readableCell(status,metricStatusLabel(status)),readableCell(note,metricNoteLabel(note))];}))
+      ? reportTable(['지표','표시값','단위','기간','상태','비고'],metricBodyRows(doc,linkedMetrics))
       : '<p class="muted">이 섹션의 필수 원천 필드에 대응하는 구조화 지표가 아직 없습니다.</p>';
     let blockHtml = linkedTable;
     if(layoutSection){
@@ -313,7 +338,7 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, templat
   const sourceRowsHtml = reportTable(['출처 ID','공급자','작업','source_as_of','received_at','검증','권리'],sourceRows);
   const cutoffShown = displayInstant(doc.cutoff, doc.display_timezone);
   const cutoffHtml = cutoffShown === doc.cutoff ? E(doc.cutoff) : `<time datetime="${E(doc.cutoff)}" title="${E(doc.cutoff)}">${E(cutoffShown)}</time>`;
-  const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고'],metricsRows);
+  const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고','입력 배율','출처'],metricsRows);
   const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records"><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows)}</details>`).join('');
   const opinionClaims=doc.analysis_claims.filter(claim=>claim.id.includes('.GOOSE_OPINION.'));
   const opinionLabels:Record<string,string>={conclusion:'종합 결론',rationale:'판단 이유',risks:'반대 신호와 한계',next_checks:'다음 확인'};
@@ -329,7 +354,7 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan, templat
   const heroSummary=opinionConclusion??doc.sections[0]?.body??'자료의 출처와 확인 범위를 먼저 살펴보십시오.';
   const body=`<a class="skip" href="#report-content">본문으로 이동</a><main id="report"${template==='artboard-v2'?' class="rs-main"':''}><header class="masthead"><div class="brand-lockup"><span class="logo-window"><img src="${STOCK_SAMPLE_LOGO}" alt="모두의 주식 — Stock for Everyone"></span><div class="brand-description"><strong>모두의 주식 · MoAI ATP</strong>근거를 확인하는 투자 자료 분석</div></div><div class="edition"><strong>${E(plan.title)}</strong><span>${E(modeLabel)}</span></div></header><section class="report-hero"><div class="eyebrow">${E(doc.subject.venue)} · ${E(doc.comparison?`비교 대상 ${doc.comparison.subjects.length}개`:doc.subject.id)}</div><h1>${E(doc.subject.name)}</h1><h2>${E(plan.title)}</h2><p>보고서 기준시각 ${cutoffHtml} · 표시 시간대 ${E(doc.display_timezone)}</p><blockquote><p>${E(heroSummary)}</p></blockquote>${kpiCards.length?`<div class="kpis">${kpiCards.join('')}</div>`:''}<p class="caption">${E(notice)}</p></section><div class="reading-layout"><aside class="reading-rail"><div class="rail-inner"><details open><summary>보고서 목차</summary><nav aria-label="보고서 목차">${doc.comparison?'<a href="#comparison">종목 비교</a>':''}${nav}<a href="#charts">차트와 계산</a><a href="#sources">수신 자료와 출처</a>${opinion?'<a href="#goose-opinion">Goose 오피니언</a>':''}</nav></details><p class="rail-note">관측한 사실, 계산과 해석을 구분해 읽으십시오. 출처별 기준일·수집시각·자료 범위가 다를 수 있습니다.</p></div></aside><article id="report-content">${comparisonSectionHtml(doc)}<section class="lead-summary"><h3>먼저 확인할 자료 범위</h3><p><strong>자료 출처</strong> ${E(providers||'아직 연결된 자료가 없습니다.')}</p><p><strong>해석의 기준</strong> 기간·단위·회계 범위가 맞는 비교만 계산하고, 미확인 자료를 확정된 값으로 바꾸지 않습니다.</p><p>원문과 상세 검증 기록은 아래의 접힌 자료표에서 확인할 수 있습니다.</p></section>${sectionHtml}<section class="panel" id="charts"><h2>차트와 계산 근거</h2>${htmlCharts}${pipelineDiagram}</section><section class="panel" id="claims"><details class="source-records"><summary>계산 방법과 남은 불확실성</summary><ul>${claims||'<li>검증 가능한 근거가 입력되지 않았습니다.</li>'}</ul></details></section><section class="panel" id="sources"><h2>수신 자료와 출처</h2>${rawSourceTables}<details class="source-records"><summary>출처·시각·검증 장부</summary>${sourceRowsHtml}<h3>연결된 전체 지표</h3>${metricsHtml}</details></section>${opinion}${template==='artboard-v2'?'<p class="print-guidance">인쇄 / PDF 저장: 브라우저 인쇄 메뉴에서 PDF로 저장을 선택하세요. 인쇄 결과는 브라우저와 서체에 따라 달라질 수 있습니다.</p>':''}</article></div><footer class="stock-footer">모두의 주식 · MoAI ATP · 근거와 해석을 구분한 보고서입니다. 제공되지 않거나 검증이 끝나지 않은 항목은 임의로 채우지 않았습니다. 주문·이체를 실행하지 않습니다.</footer></main>`;
   const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'none'; font-src ${FONT_CDN_PATHS.join(' ')}; object-src 'none'; base-uri 'none'; form-action 'none'">`;
-  const chartRuntime = `(()=>{const groupLabel=(v)=>(${groupIntegerDigits.toString()})(String(v));const specs=JSON.parse(document.getElementById('chart-specs').textContent);const palette=['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5'].map((name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim());for(const b of specs.echart){const el=document.getElementById(b.id);if(!el||!window.echarts)continue;const chart=echarts.init(el,null,{renderer:'svg'});let option;if(b.kind==='scatter'){option={animation:false,color:[palette[0]],aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},grid:{left:70,right:24,top:36,bottom:54,containLabel:true},xAxis:{type:'value',name:b.x_unit||'',scale:true},yAxis:{type:'value',name:b.y_unit||'',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:'scatter',name:b.title,data:b.x_values.map((x,i)=>[x,b.y_values[i]]),symbolSize:10}]}}else if(b.kind==='donut'){option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},legend:{type:'scroll',bottom:0},series:[{type:'pie',name:b.title,radius:['42%','68%'],avoidLabelOverlap:true,label:{show:true,formatter:'{b}: {d}%'},data:b.labels.map((name,i)=>({name,value:b.values[i]}))}]}}else{option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'axis',renderMode:'richText',confine:true},grid:{left:el.clientWidth<480?8:60,right:el.clientWidth<480?8:24,top:24,bottom:54,containLabel:true},xAxis:{type:'category',data:b.labels,axisLabel:{interval:0,hideOverlap:true}},yAxis:{type:'value',scale:b.kind!=='bar',splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:b.kind,name:b.title,data:b.values,itemStyle:{borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:el.clientWidth<480?10:12,formatter:(p)=>groupLabel(p.value)},labelLayout:{hideOverlap:true}}]}}chart.setOption(option);new ResizeObserver(()=>chart.resize()).observe(el);window.__moaiEcharts??=[];window.__moaiEcharts.push(chart)}for(const b of specs.lwc){const el=document.getElementById(b.id);if(!el||!window.LightweightCharts)continue;const chart=LightweightCharts.createChart(el,{width:el.clientWidth,height:360,layout:{background:{type:'solid',color:'#FFFFFF'},textColor:'#393C41',fontFamily:'Pretendard,-apple-system,Apple SD Gothic Neo,Malgun Gothic,sans-serif',fontSize:12,attributionLogo:true},grid:{vertLines:{color:'#E8E8E8'},horzLines:{color:'#E8E8E8'}},timeScale:{borderColor:'#D4D6D8',timeVisible:false},rightPriceScale:{borderColor:'#D4D6D8'},handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},handleScale:{mouseWheel:false,pinch:true}});const colors=palette,lines=[];for(let i=0;i<b.series.length;i++){const s=b.series[i];const line=chart.addSeries(LightweightCharts.LineSeries,{title:s.name,color:colors[i%colors.length],lineWidth:2,lineStyle:/SMA/.test(s.name)?LightweightCharts.LineStyle.Dashed:LightweightCharts.LineStyle.Solid,priceLineVisible:false,lastValueVisible:true});line.setData(s.values.map((v,k)=>v===null?{time:b.dates[k]}:{time:b.dates[k],value:Number(v)}));lines.push({name:s.name,line})}const legend=el.closest('figure')?.querySelector('.legend');if(legend){for(const item of lines){const button=document.createElement('button');button.type='button';button.textContent=item.name;button.setAttribute('aria-pressed','true');button.addEventListener('click',()=>{const visible=button.getAttribute('aria-pressed')!=='true';item.line.applyOptions({visible});button.setAttribute('aria-pressed',String(visible))});legend.append(button)}}chart.timeScale().fitContent();new ResizeObserver(()=>chart.resize(el.clientWidth,360)).observe(el);el.dataset.rendered='lightweight-5.2.1';window.__moaiLwc??=[];window.__moaiLwc.push(chart)}})();`;
+  const chartRuntime = `(()=>{const groupLabel=(v)=>(${groupIntegerDigits.toString()})(String(v));const specs=JSON.parse(document.getElementById('chart-specs').textContent);const updateStatus=(el,state)=>{el.dataset.renderStatus=state;const note=el.closest('figure')?.querySelector('.chart-runtime-status');if(note)note.textContent=state==='ready'?'차트가 생성되었습니다. 아래 원수치와 함께 확인하세요.':state==='engine_missing'?'차트 엔진을 불러오지 못했습니다. 아래 원수치를 확인하세요.':'차트를 생성하지 못했습니다. 아래 원수치를 확인하세요.'};const palette=['--chart-1','--chart-2','--chart-3','--chart-4','--chart-5'].map((name)=>getComputedStyle(document.body).getPropertyValue(name).trim());for(const b of specs.echart){const el=document.getElementById(b.id);if(!el)continue;if(!window.echarts){updateStatus(el,'engine_missing');continue}try{const chart=echarts.init(el,null,{renderer:'svg'});let option;if(b.kind==='scatter'){option={animation:false,color:[palette[0]],aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},grid:{left:70,right:24,top:36,bottom:54,containLabel:true},xAxis:{type:'value',name:b.x_unit||'',scale:true},yAxis:{type:'value',name:b.y_unit||'',scale:true,splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:'scatter',name:b.title,data:b.x_values.map((x,i)=>[x,b.y_values[i]]),symbolSize:10}]}}else if(b.kind==='donut'){option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'item',renderMode:'richText',confine:true},legend:{type:'scroll',bottom:0},series:[{type:'pie',name:b.title,radius:['42%','68%'],avoidLabelOverlap:true,label:{show:true,formatter:'{b}: {d}%'},data:b.labels.map((name,i)=>({name,value:b.values[i]}))}]}}else{option={animation:false,color:palette,aria:{enabled:true},tooltip:{trigger:'axis',renderMode:'richText',confine:true},grid:{left:el.clientWidth<480?8:60,right:el.clientWidth<480?8:24,top:24,bottom:54,containLabel:true},xAxis:{type:'category',data:b.labels,axisLabel:{interval:0,hideOverlap:true}},yAxis:{type:'value',scale:b.kind!=='bar',splitLine:{lineStyle:{color:'#E8E8E8'}}},series:[{type:b.kind,name:b.title,data:b.values,itemStyle:{borderRadius:[3,3,0,0]},label:{show:true,position:'top',fontSize:el.clientWidth<480?10:12,formatter:(p)=>groupLabel(p.value)},labelLayout:{hideOverlap:true}}]}}chart.setOption(option);new ResizeObserver(()=>chart.resize()).observe(el);window.__moaiEcharts??=[];window.__moaiEcharts.push(chart);updateStatus(el,'ready')}catch{updateStatus(el,'failed')}}for(const b of specs.lwc){const el=document.getElementById(b.id);if(!el)continue;if(!window.LightweightCharts){updateStatus(el,'engine_missing');continue}try{const chart=LightweightCharts.createChart(el,{width:el.clientWidth,height:360,layout:{background:{type:'solid',color:'#FFFFFF'},textColor:'#393C41',fontFamily:'Pretendard,-apple-system,Apple SD Gothic Neo,Malgun Gothic,sans-serif',fontSize:12,attributionLogo:true},grid:{vertLines:{color:'#E8E8E8'},horzLines:{color:'#E8E8E8'}},timeScale:{borderColor:'#D4D6D8',timeVisible:false},rightPriceScale:{borderColor:'#D4D6D8'},handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:false},handleScale:{mouseWheel:false,pinch:true}});const colors=palette,lines=[];for(let i=0;i<b.series.length;i++){const s=b.series[i];const line=chart.addSeries(LightweightCharts.LineSeries,{title:s.name,color:colors[i%colors.length],lineWidth:2,lineStyle:/SMA/.test(s.name)?LightweightCharts.LineStyle.Dashed:LightweightCharts.LineStyle.Solid,priceLineVisible:false,lastValueVisible:true});line.setData(s.values.map((v,k)=>v===null?{time:b.dates[k]}:{time:b.dates[k],value:Number(v)}));lines.push({name:s.name,line})}const legend=el.closest('figure')?.querySelector('.legend');if(legend){for(const item of lines){const button=document.createElement('button');button.type='button';button.textContent=item.name;button.setAttribute('aria-pressed','true');button.addEventListener('click',()=>{const visible=button.getAttribute('aria-pressed')!=='true';item.line.applyOptions({visible});button.setAttribute('aria-pressed',String(visible))});legend.append(button)}}chart.timeScale().fitContent();new ResizeObserver(()=>chart.resize(el.clientWidth,360)).observe(el);el.dataset.rendered='lightweight-5.2.1';window.__moaiLwc??=[];window.__moaiLwc.push(chart);updateStatus(el,'ready')}catch{updateStatus(el,'failed')}}})();`;
   const chartAssets=`${specs.echart.length?`<script>${ECHARTS}</script>`:''}${specs.lwc.length?`<script>${LWC}</script>`:''}`;
   const chartScripts=specs.echart.length||specs.lwc.length?`<script id="chart-specs" type="application/json">${chartJson}</script><script>${chartRuntime}</script>`:'';
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><meta name="referrer" content="no-referrer">${csp}<title>${E(plan.title)} · ${E(doc.subject.name)} · MoAI ATP</title><style>${FONT_CSS}${BASE_CSS}${STOCK_SAMPLE_CSS}${STOCK_ADAPTER_CSS}${template==='artboard-v2'?ARTBOARD_CSS+ARTBOARD_ADAPTER_CSS+REPORT_TYPOGRAPHY_CSS:''}</style></head><body${template==='artboard-v2'?' class="rs atp-artboard"':''}>${body}${chartAssets}${chartScripts}</body></html>`;

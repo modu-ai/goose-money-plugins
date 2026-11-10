@@ -253,7 +253,7 @@ export function planGooseRequest(value:unknown){
  }
  // Revision 6: futures (R13) is held for the initial release. An explicit exclusion such as '선물은 빼고' is not a futures request.
  const futuresText=text.replace(/선물\s*(?:은|는|을|를)?\s*(?:빼고|말고|제외하고|없이)/g,'');
- const reportId=requestedReport?(reportWorkflow?.id??null):manualRoute??(modes.has('report')||modes.has('analyze')?(/ETF/i.test(text)?'R12':/선물/.test(futuresText)?'R13':'R01'):null);
+ const reportId=requestedReport?(reportWorkflow?.id??null):manualRoute??(modes.has('report')||modes.has('analyze')?(/ETF/i.test(text)?'R12':/선물/.test(futuresText)?'R13':!/["'“”‘’]/.test(text)&&/(?:(?<![가-힣A-Za-z0-9.])(?:두|세|네|[234]\s*개)\s*종목|[가-힣A-Za-z0-9]+(?:와|과)\s*[가-힣A-Za-z0-9]+\s*종목)\s*비교(?!\s*(?:(?:는|를|은|을)\s*)?(?:하지|말|안\s*(?:하|해|할|했)|않|없이|제외|빼고))/.test(text)?'R02':'R01'):null);
  const unsupported:string[]=[];
  if(requestedReport&&!reportWorkflow)unsupported.push('report_id_not_supported');
  if(reportWorkflow?.scope==='deferred')unsupported.push('report_scope_deferred');
