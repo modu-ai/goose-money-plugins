@@ -98,5 +98,26 @@ class ReceiptAndPackages(unittest.TestCase):
             self.assertNotIn('devEngines', package, name)
 
 
+class CatalogOverlay(unittest.TestCase):
+    build_with = ManifestValidation.build_with
+
+    def test_bundle_keeps_catalog_decisions_and_original_availability(self):
+        root, output = self.build_with()
+        entries = [{'id': f'R{number:02}', 'scope': 'partial_data', 'required_groups': []}
+                   for number in range(1, 15)]
+        entries[11]['scope'] = 'conditional'
+        entries[12]['scope'] = 'deferred'
+        entries += [{'id': f'U{number:02}', 'public': number != 3, 'required_groups': []}
+                    for number in range(1, 4)]
+        target = root / 'skills/goose/references/catalog.json'
+        target.parent.mkdir(parents=True)
+        target.write_text(json.dumps({'entries': entries}), encoding='utf-8')
+        bundle.build(root, output)
+        from zipfile import ZipFile
+        with ZipFile(output) as archive:
+            actual = json.loads(archive.read('skills/goose/references/catalog.json'))['entries']
+        self.assertEqual(actual, [entry for entry in entries if entry['id'] != 'R14'])
+
+
 if __name__ == '__main__':
     unittest.main()
