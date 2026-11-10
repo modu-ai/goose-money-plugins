@@ -23,6 +23,11 @@ STRONG = {
 ASSIGNMENT = re.compile(rb'''(?i)["']?(?:app[_-]?key|app[_-]?secret|api[_-]?key|access[_-]?token|refresh[_-]?token|password|client[_-]?secret|authorization)["']?\s*[:=]\s*["']([^"'\r\n]{8,})["']''')
 ACCOUNT = re.compile(rb'''(?i)["']?(?:cano|acnt_prdt_cd|account[_-]?(?:number|id)|resident[_-]?number)["']?\s*[:=]\s*["']([0-9-]{2,})["']''')
 SYNTHETIC = re.compile(rb'(?i)synthetic|fixture|example|placeholder|redacted|mock|test[_-]|not[_-]a[_-]real')
+# User confirmed ownership on 2026-11-10 (#11); exact reviewed bytes only.
+REVIEWED_BINARIES = {
+    'plugins/moai-atp/server/assets/report-runtime/artboard-wordmark.webp':
+        'ee87fa6caf33113f11f2a4fbfa2d10d44b8f9565dbc99e6f75dec5adf27413c5',
+}
 
 def findings_for(path, data):
     found = []
@@ -30,6 +35,8 @@ def findings_for(path, data):
     if any(x in parts for x in ['.goose', 'keystore', 'node_modules', 'dist', 'project-docs', 'review', 'tools', 'moai-atp-0.1.0-rc.23']) or Path(path).name.startswith('.env'):
         found.append({'path': path, 'line': 0, 'rule': 'excluded_path'})
     if b'\0' in data:
+        if REVIEWED_BINARIES.get(path) == hashlib.sha256(data).hexdigest():
+            return found
         found.append({'path': path, 'line': 0, 'rule': 'unexpected_binary'})
         return found
     for rule, pattern in STRONG.items():
