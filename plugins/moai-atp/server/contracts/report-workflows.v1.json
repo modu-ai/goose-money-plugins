@@ -45,13 +45,9 @@
       "workflow_ref": "references/reports/R02.md",
       "scope": "partial_data",
       "provider_tools": [
-        "get_instrument_profile",
         "get_market_snapshot",
-        "get_price_history",
         "get_fundamentals",
-        "get_domestic_etf_snapshot",
-        "get_us_product_profile",
-        "get_us_market_snapshot"
+        "get_public_filings"
       ],
       "local_tools": [
         "build_report_input",
@@ -65,9 +61,9 @@
         "R02.S05",
         "R02.S06"
       ],
-      "input_requirements": "2~4개 확정 대상, 비교 목적, 같은 기간·기준시각·통화·단위·연결기준, 제외 기준",
-      "calculation": "주식과 상품의 공통 비교축을 먼저 정합니다. 같은 재무 범위·기간의 지표만 비교하고 기준이 다른 값은 별도 열에 둡니다. 통화가 다르면 확인된 환율 없이 환산·순위화하지 않습니다. 상대 선호는 관측값과 별도의 조건부 해석입니다.",
-      "limitations": "해외 상품의 canonical 단위·식별이 미확정이면 비교를 보류합니다. 매매 추천·전체 종목 최적 선택으로 표현하지 않습니다."
+      "input_requirements": "확인된 국내 주식 2~4개 대상과 종목 코드·법인 코드 대응, 비교 목적, 같은 기간·기준시각·통화·단위·연결기준, 제외 기준",
+      "calculation": "국내 주식의 같은 재무 범위·기간 지표만 비교하고 기준이 다른 값은 별도 열에 둡니다. 종목 코드와 법인 코드의 대응을 확인하며, 시세·재무·공시의 출처를 각 대상에 연결합니다. 상대 선호는 관측값과 별도의 조건부 해석입니다.",
+      "limitations": "현재 다중 대상 비교 조립은 국내 주식의 시세·재무·공시 입력만 받습니다. ETF·해외 상품·가격 이력은 비교 조립 범위 밖입니다. 별도 식별 조회 결과나 그 receipt를 calls/source_receipts에 넣지 않습니다. 매매 추천·전체 종목 최적 선택으로 표현하지 않습니다."
     },
     {
       "id": "R03",

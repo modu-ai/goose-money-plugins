@@ -237,8 +237,9 @@ export function planGooseRequest(value:unknown){
  const reportWorkflow=requestedReport?getReportWorkflow(requestedReport):undefined;
  const blockedActions:string[]=[];
  if(tradeForms.length)blockedActions.push('orders_or_transfers');
- const manualRoute=(!explicit||explicit==='analyze'||explicit==='report')&&!tradeForms.length&&!atsForms.length&&!/계좌|잔고|예수금|조회|연결|api/i.test(text)?(reportWorkflow?.scope==='manual_only'?reportWorkflow.id:/상담|점검|영향|비교/.test(text)?(/^수동\s*입력\s+보유/.test(text)?'R04':/^수동\s*입력\s+비용/.test(text)?'R05':undefined):undefined):undefined;
- const accountRequest=!manualRoute&&matchesAccount(text);
+ const accountRequest=matchesAccount(text);
+ const manualText=text.normalize('NFC').replace(ACCOUNT_NEGATION,' ').trim();
+ const manualRoute=(!explicit||explicit==='analyze'||explicit==='report')&&!tradeForms.length&&!atsForms.length&&!accountRequest&&/상담|점검|영향|비교/.test(manualText)?(/^수동\s*입력\s+보유/.test(manualText)?'R04':/^수동\s*입력\s+비용/.test(manualText)?'R05':undefined):undefined;
  if(accountRequest)blockedActions.push('account_access');
  const modes=new Set<GooseMode>();if(explicit)modes.add(explicit);
  if(manualRoute||reportWorkflow){modes.add('analyze');modes.add('report');}
@@ -270,7 +271,7 @@ export function planGooseRequest(value:unknown){
  const chosen=order.filter(mode=>modes.has(mode));
  const status=blockedActions.length?'blocked':unsupported.length?'unsupported':chosen.length?'ready':'clarification_required';
  // Every blocked or unsupported plan has zero steps, whatever its reason code or mode word.
- const steps=status==='blocked'||status==='unsupported'?[]:chosen.map((mode,index)=>({id:mode,workflow_ref:reportWorkflow&&(mode==='analyze'||mode==='report')?reportWorkflow.workflow_ref:refs[mode],depends_on:index?[chosen[index-1]!]:[],execution_status:'not_run' as const,requirements:manualRoute?['explicit_manual_snapshot','private_output','no_provider_calls']:mode==='backtest'?['explicit_rules','validated_history','cost_model','supported_execution_engine']:mode==='report'?['validated_source_receipts','cutoff_and_units','report_input_validation']:[]}));
+ const steps=status==='blocked'||status==='unsupported'?[]:chosen.map((mode,index)=>({id:mode,workflow_ref:reportWorkflow&&(mode==='analyze'||mode==='report')?reportWorkflow.workflow_ref:refs[mode],depends_on:index?[chosen[index-1]!]:[],execution_status:'not_run' as const,requirements:reportWorkflow?.scope==='manual_only'||manualRoute?['explicit_manual_snapshot','private_output','no_provider_calls']:mode==='backtest'?['explicit_rules','validated_history','cost_model','supported_execution_engine']:mode==='report'?['validated_source_receipts','cutoff_and_units','report_input_validation']:[]}));
  const fundMovementOnly=tradeForms.length>0&&atsForms.length===0&&tradeForms.every(id=>FUND_MOVEMENT_FORM_IDS.has(id));
  const clarification=status==='clarification_required'?'어떤 대상에 대해 어떤 도움을 원하시나요?'
   :tradeForms.length||atsForms.length?(fundMovementOnly?GOOSE_SENTENCE_F_T:GOOSE_SENTENCE_F)
