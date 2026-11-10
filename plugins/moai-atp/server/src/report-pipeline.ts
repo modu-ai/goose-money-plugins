@@ -847,9 +847,9 @@ function routeChartSectionId(reportId:ReportRouteId,metricIds:string[]):string|u
   return route.sections.find(section=>presentation.sections.find(layout=>layout.id===section.id)?.blocks.includes('bar')&&metricIds.every(id=>section.field_ids.includes(id)||section.metric_ids.includes(id)))?.id;
 }
 
-export function renderReportInputHtml(value:unknown):string {
+export function renderReportInputHtml(value:unknown,template:'existing'|'artboard-v2'='existing'):string {
   const doc=ReportInputSchema.parse(value);
   // A comparison document (contract 1.2) takes no host narrative: free prose could name one subject's data as another's.
   if(doc.contract_version==='atp.template/1.2'&&doc.analysis_claims.some(claim=>claim.id.includes('.NARRATIVE.')||claim.id.includes('.GOOSE_OPINION.')))throw new Error('comparison_narrative_not_supported');
-  return renderReportTemplate(doc,getReportPlan(doc.report_id));
+  return renderReportTemplate(doc,getReportPlan(doc.report_id),template);
 }
