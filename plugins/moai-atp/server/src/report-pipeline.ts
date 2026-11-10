@@ -1,4 +1,5 @@
 import {ManualConsultationInputSchema,ManualConsultationMetadataSchema,buildManualConsultation} from './manual-consultation.js';
+import {buildThesisBaselineInputSchema,ThesisBaselineInputLimitsSchema,type ThesisBaselineInput,type ThesisBaselineInputLimits} from './thesis-baseline-input.js';
 import { createRequire } from 'node:module';
 import { z } from 'zod';
 import { displayInstant, groupIntegerDigits, renderReportTemplate } from './report-template-renderer.js';
@@ -719,6 +720,9 @@ export function getReportPlan(reportId:string):ReportPlan {
 export type BuildReportInputArgs = {
   report_id:string;subject?:{id:string;name:string;venue:string;currency:string}|undefined;subjects?:readonly ComparisonSubjectInput[]|undefined;cutoff:string;display_timezone:ReportInput['display_timezone'];
   calls?:readonly {tool_name:string;result:unknown}[];received_at?:string;trustedLocalReceipts?:ReadonlyMap<number,{receivedAt:string}>;user_supplied?:z.infer<typeof UserSuppliedFinanceSchema>;manual_consultation?:z.input<typeof ManualConsultationInputSchema>|undefined;
+  // R09 only (#127). Raw choice-C payload; every bound comes from thesis_baseline_limits because the
+  // limits themselves are undecided (#117) — no bound is defaulted here or in thesis-baseline-input.ts.
+  thesis_baseline?:unknown;thesis_baseline_limits?:ThesisBaselineInputLimits|undefined;
 };
 
 const ReportPipelineCallSchema = z.object({
@@ -739,10 +743,25 @@ export const ReportPipelineToolInputSchema = z.object({
   calls:z.array(ReportPipelineCallSchema).max(100).default([]),
   source_receipts:z.array(z.string().uuid()).max(12).optional(),
   manual_consultation:ManualConsultationInputSchema.optional(),
+  // R09 thesis baseline (#127): raw payload + injected bounds. The bounds are a separate argument because
+  // buildThesisBaselineInputSchema is constructed from them; no bound is pinned in this schema.
+  thesis_baseline:z.unknown().optional(),
+  thesis_baseline_limits:ThesisBaselineInputLimitsSchema.optional(),
 }).strict().superRefine((value,ctx)=>{
   const consultation=value.report_id==='R04'||value.report_id==='R05';
   if(consultation&&(!value.manual_consultation||value.calls.length||value.source_receipts?.length||value.subjects))ctx.addIssue({code:'custom',message:'manual_consultation_input_only'});
   if(!consultation&&value.manual_consultation)ctx.addIssue({code:'custom',message:'manual_consultation_route_mismatch'});
+  // R09 thesis baseline (#127): route guard, no mixing with provider evidence (same stance as
+  // user_supplied local input), injected bounds required — an absent limits object is a refusal,
+  // never a silent default — and the payload is judged here so a shape violation surfaces as an
+  // input-validation issue at the tool boundary, exactly like manual_consultation above.
+  if(value.report_id!=='R09'&&value.thesis_baseline!==undefined)ctx.addIssue({code:'custom',message:'thesis_baseline_route_mismatch'});
+  if(value.report_id==='R09'&&value.thesis_baseline!==undefined&&(value.calls.length||value.source_receipts?.length))ctx.addIssue({code:'custom',message:'thesis_baseline_cannot_be_mixed_with_mcp_results'});
+  if(value.thesis_baseline!==undefined&&value.thesis_baseline_limits===undefined)ctx.addIssue({code:'custom',message:'thesis_baseline_limits_required'});
+  if(value.thesis_baseline!==undefined&&value.thesis_baseline_limits!==undefined){
+    const thesis=buildThesisBaselineInputSchema(value.thesis_baseline_limits).safeParse(value.thesis_baseline);
+    if(!thesis.success)for(const issue of thesis.error.issues)ctx.addIssue({code:'custom',message:issue.message});
+  }
   const bytes=Buffer.byteLength(JSON.stringify(value.calls??[]),'utf8');
   if(bytes>220_000)ctx.addIssue({code:'custom',message:'report_input_too_large'});
 });
@@ -784,6 +803,36 @@ function buildLocalUserData(reportId:ReportRouteId,value:unknown,receivedAt:stri
     if(input.points.length<=50)visuals.push({section_id:'R14.S06',kind:'line',title:'사용자 제공 자산곡선 · 비용/체결 가정은 별도 확인',labels:input.points.map(point=>point.date),values:input.points.map(point=>point.equity),unit:input.currency,source_id:sourceId,metric_ids:input.points.map(()=> 'backtest.equity_value')});
   }
   return {source,metrics,visuals};
+}
+// R09 thesis baseline (#127, #117 choice C): a local-only user_supplied source carrying the user's own
+// sentences. It yields no metric — thesis text is never a number — and no visual; it releases sections
+// from not_run only where the four structured families actually carry content (#13: empty stays empty).
+// Undecided and intentionally NOT connected here: watchlist inclusion, thesis storage location and
+// retention period (joint with #43, keeps R09.S06 unrun), entitlement gating F14, and every numeric
+// bound (injected via thesis_baseline_limits, never defaulted).
+type ThesisBaselineData = {source:ReportInput['sources'][number];input:ThesisBaselineInput};
+function buildThesisBaselineData(reportId:ReportRouteId,raw:unknown,limits:ThesisBaselineInputLimits|undefined,receivedAt:string):ThesisBaselineData|undefined {
+  if(raw===undefined)return undefined;
+  if(reportId!=='R09')throw new Error('thesis_baseline_route_mismatch');
+  if(limits===undefined)throw new Error('thesis_baseline_limits_required');
+  const input=buildThesisBaselineInputSchema(limits).parse(raw);
+  const source:ReportInput['sources'][number]={id:'src-thesis-baseline',kind:'user_supplied',title:'사용자 제공 이전 논지 입력 · 비공개',url:null,observed_at:receivedAt,available_at:receivedAt,rights:'local_view',revision:'thesis-input-v1',operation_ref:'local.thesis-baseline.v1',source_as_of:input.as_of,received_at:receivedAt,validation_status:'unverified'};
+  return {source,input};
+}
+/** Which R09 sections this input releases: S01/S02 ride the required claim; S03/S05 need non-empty evidence families. S04 (market data) and S06 (판정·버전 이력) are never released by this input. */
+function thesisCoversSection(input:ThesisBaselineInput,sectionId:string):boolean {
+  if(sectionId==='R09.S01'||sectionId==='R09.S02')return true;
+  if(sectionId==='R09.S03')return input.supporting_evidence.length>0||input.counter_evidence.length>0;
+  if(sectionId==='R09.S05')return input.verification_conditions.length>0;
+  return false;
+}
+const THESIS_BOUNDARY='사용자가 제공한 이전 논지 입력입니다. 주장·근거·확인 조건을 사용자 문장 그대로 구분해 돌려보일 뿐 사실 관계를 확인하지 않았고, 종목을 매수·매도하라는 문장으로 바꾸지 않습니다.';
+function thesisSectionBody(input:ThesisBaselineInput,sectionId:string):string {
+  const list=(items:string[])=>items.map((item,index)=>`${index+1}) ${item}`).join(' ');
+  if(sectionId==='R09.S01')return `${THESIS_BOUNDARY} 기준일 ${input.as_of}의 이전 논지: 주장 «${input.claim}».${input.memo!==undefined?` 메모: ${input.memo}.`:''} 현재 변경점 판단은 이 입력에 없어 추정하지 않습니다.`;
+  if(sectionId==='R09.S02')return `${THESIS_BOUNDARY} 주장 «${input.claim}» 을 사실/의견/추정으로 자동 분류하지 않습니다. 분류 근거가 되는 원천 확인 전에는 표가 비어 있어도 문장을 채우지 않습니다.`;
+  if(sectionId==='R09.S03')return `${THESIS_BOUNDARY} 지지 근거 ${input.supporting_evidence.length}건${input.supporting_evidence.length?`: ${list(input.supporting_evidence)}`:''}. 반대 근거 ${input.counter_evidence.length}건${input.counter_evidence.length?`: ${list(input.counter_evidence)}`:''}. 근거의 독립성·출처 동일성은 입력에 없어 판정하지 않습니다.`;
+  return `${THESIS_BOUNDARY} 확인 조건 ${input.verification_conditions.length}건: ${list(input.verification_conditions)}. 다음 검토일은 이 입력에 없어 임의로 정하지 않습니다.`;
 }
 function sectionStatus(groupCalls:NormalizedCall[],hasTools:boolean):ReportInput['sections'][number]['status'] {
   if(!hasTools)return 'not_run';
@@ -842,6 +891,10 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
     return ActiveReportInputSchema.parse(buildManualConsultation({reportId,input:args.manual_consultation,cutoff,receivedAt,displayTimezone:args.display_timezone,plan,math:{add:addDecimal,subtract:subtractDecimal,multiply:multiplyDecimal,compare:compareDecimal,ratio:roundedRatio}}));
   }
   if(args.manual_consultation)throw Error('manual_consultation_route_mismatch');
+  // R09 thesis baseline (#127): a second local-input family, exclusive with provider evidence — the same
+  // stance as user_supplied below, so one document never mixes user sentences with provider results.
+  const thesis=buildThesisBaselineData(reportId,args.thesis_baseline,args.thesis_baseline_limits,receivedAt);
+  if(thesis&&(args.calls?.length||args.trustedLocalReceipts?.size))throw new Error('thesis_baseline_cannot_be_mixed_with_mcp_results');
   // Explicit subjects select the comparison path (report R02); without them this function is the single-subject path.
   const comparisonSubjects=args.subjects!==undefined?validateComparisonSubjects(args.report_id,args.subject,args.subjects):undefined;
   if(comparisonSubjects===undefined&&args.subject===undefined)throw new Error('comparison_subjects_invalid');
@@ -856,9 +909,9 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
     return normalizeMcpToolResult(call.tool_name,call.result,trusted?.receivedAt??receivedAt,i,Boolean(trusted));
   });
   if(localUserData&&normalized.length)throw new Error('user_supplied_local_input_cannot_be_mixed_with_mcp_results');
-  const sources=[...normalized.flatMap(c=>c.source?[c.source]:[]),...(localUserData?[localUserData.source]:[])];
+  const sources=[...normalized.flatMap(c=>c.source?[c.source]:[]),...(localUserData?[localUserData.source]:[]),...(thesis?[thesis.source]:[])];
   const origins=new Set(normalized.filter(c=>c.source).map(c=>c.origin));
-  const mode:DataMode=localUserData?'supplied':origins.size===1&&origins.has('synthetic')?'synthetic':origins.size===1&&origins.has('actual')?'actual':origins.has('synthetic')||origins.has('actual')?'mixed':normalized.length?'supplied':'synthetic';
+  const mode:DataMode=localUserData||thesis?'supplied':origins.size===1&&origins.has('synthetic')?'synthetic':origins.size===1&&origins.has('actual')?'actual':origins.has('synthetic')||origins.has('actual')?'mixed':normalized.length?'supplied':'synthetic';
   const routeFields=new Set([...plan.groups.flatMap(group=>group.required_fields),...plan.sections.flatMap(section=>section.metric_ids)]);
   // Project validated adapter metrics onto this route; client local input remains strict below.
   const normalizedMetrics=normalized.flatMap(c=>c.metrics.filter(item=>routeFields.has(item.field_id)));
@@ -878,7 +931,7 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
   const analysis=comparisonSubjects?analyzeComparison(comparisonSubjects,normalized.map((call,i):ComparisonCall=>({tool_name:call.tool_name,outcome:call.outcome,source:call.source,origin:call.origin,trusted:Boolean(args.trustedLocalReceipts?.get(i)),payload:comparisonPayload(args.calls![i]!.result)}))):undefined;
   const attributed=comparisonSubjects&&analysis?attributeComparison(comparisonSubjects,analysis,{sources,metrics:derivedMetrics,source_tables:normalized.flatMap(call=>call.source_tables??[]),visuals}):undefined;
   const metrics=attributed?attributed.metrics:derivedMetrics;
-  const executionStatus:ReportInput['execution_status']=localUserData?'provided_unverified':mode==='synthetic'?(normalized.length?'synthetic_fixture_rendered':'template_only'):(mode==='actual'||mode==='mixed'?'actual_data_partial':normalized.length?'provided_unverified':'not_run');
+  const executionStatus:ReportInput['execution_status']=localUserData||thesis?'provided_unverified':mode==='synthetic'?(normalized.length?'synthetic_fixture_rendered':'template_only'):(mode==='actual'||mode==='mixed'?'actual_data_partial':normalized.length?'provided_unverified':'not_run');
   const sections:ReportInput['sections']=[];
   const claims:ReportInput['analysis_claims']=[];
   for(const routeSection of plan.sections){
@@ -887,21 +940,30 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
     const relevantCalls=normalized.filter(call=>relevantToolNames.has(call.tool_name));
     const hasTools=relevantToolNames.size>0;
     const localSectionMetrics=localUserData?.metrics.filter(metric=>routeSection.field_ids.includes(metric.field_id)||routeSection.metric_ids.includes(metric.field_id))??[];
-    const status=localSectionMetrics.length?'partial':sectionStatus(relevantCalls,hasTools);
-    const groupSources=[...new Set([...relevantCalls.flatMap(call=>call.source?[call.source.id]:[]),...(localSectionMetrics.length&&localUserData?[localUserData.source.id]:[])])];
+    // Thesis coverage (#127): released sections carry the user's own sentences in body; unreleased
+    // R09 thesis sections keep not_run with a reason naming the missing family, never a guess.
+    const thesisCovered=thesis!==undefined&&thesisCoversSection(thesis.input,routeSection.id);
+    const status=localSectionMetrics.length?'partial':thesisCovered?'partial':sectionStatus(relevantCalls,hasTools);
+    const groupSources=[...new Set([...relevantCalls.flatMap(call=>call.source?[call.source.id]:[]),...(localSectionMetrics.length&&localUserData?[localUserData.source.id]:[]),...(thesisCovered&&thesis?[thesis.source.id]:[])])];
     const linkedMetrics=metrics.filter(item=>routeSection.field_ids.includes(item.field_id)||routeSection.metric_ids.includes(item.field_id));
     const groupMetrics=[...new Set(linkedMetrics.map(item=>item.field_id))];
-    const reason=localSectionMetrics.length?'사용자 제공 수치를 기준으로 계산했습니다. 입력의 완전성·외부 대사·가격시점은 독립 확인되지 않았습니다.':missingReason(status,relevantCalls,hasTools);
-    sections.push({id:routeSection.id,status,required_fields:routeSection.field_ids,missing_reason:reason,body:sectionNarrative(plan,routeSection,status,reason,linkedMetrics,groupSources,args.display_timezone),source_ids:groupSources,metric_ids:groupMetrics});
+    const reason=localSectionMetrics.length?'사용자 제공 수치를 기준으로 계산했습니다. 입력의 완전성·외부 대사·가격시점은 독립 확인되지 않았습니다.'
+      :thesisCovered?'사용자가 제공한 이전 논지 입력입니다. 문장의 사실 관계·독립 원천 대사·권한 판정은 검증하지 않았습니다.'
+      :reportId==='R09'&&routeSection.id==='R09.S06'&&thesis?'판정·근거·버전 이력은 논지 저장 위치·보존 기간이 아직 결정되지 않아(결정 필요) 이번 연결에서 제외했습니다. 판정을 추정해 만들지 않습니다.'
+      :reportId==='R09'&&thesis&&['R09.S03','R09.S05'].includes(routeSection.id)?`논지 입력의 ${routeSection.id==='R09.S03'?'지지·반대 근거':'확인 조건'} 항목이 비어 이 절은 실행하지 않았습니다. 항목을 추정해 채우지 않습니다.`
+      :reportId==='R09'&&['R09.S01','R09.S02','R09.S05','R09.S06'].includes(routeSection.id)&&!thesis&&!relevantCalls.length?'사용자 이전 논지 입력(thesis_baseline)을 받지 못해 이 절은 실행하지 않았습니다. 미입력 논지를 추정해 채우지 않습니다.'
+      :missingReason(status,relevantCalls,hasTools);
+    sections.push({id:routeSection.id,status,required_fields:routeSection.field_ids,missing_reason:reason,body:thesisCovered&&thesis?thesisSectionBody(thesis.input,routeSection.id):sectionNarrative(plan,routeSection,status,reason,linkedMetrics,groupSources,args.display_timezone),source_ids:groupSources,metric_ids:groupMetrics});
   }
   for(const group of plan.groups){
     const toolNames=new Set(group.tools.map(t=>t.name));
     const groupCalls=normalized.filter(c=>toolNames.has(c.tool_name));
     const localGroupMetrics=localUserData?.metrics.filter(metric=>group.required_fields.includes(metric.field_id))??[];
-    const status=localGroupMetrics.length?'partial':sectionStatus(groupCalls,group.tools.length>0);
-    const groupSources=[...new Set([...groupCalls.flatMap(c=>c.source?[c.source.id]:[]),...(localGroupMetrics.length&&localUserData?[localUserData.source.id]:[])])];
+    const thesisGroup=thesis!==undefined&&group.id==='analysis_narrative';
+    const status=localGroupMetrics.length?'partial':thesisGroup?'partial':sectionStatus(groupCalls,group.tools.length>0);
+    const groupSources=[...new Set([...groupCalls.flatMap(c=>c.source?[c.source.id]:[]),...(localGroupMetrics.length&&localUserData?[localUserData.source.id]:[]),...(thesisGroup&&thesis?[thesis.source.id]:[])])];
     const groupMetrics=[...new Set([...groupCalls.flatMap(c=>c.metrics.map(m=>m.field_id)).filter(id=>routeFields.has(id)),...localGroupMetrics.map(metric=>metric.field_id)])];
-    const reason=localGroupMetrics.length?'사용자가 제공한 로컬 입력으로 제한 계산했습니다. 원장·자산곡선의 정확성은 검증하지 않았습니다.':missingReason(status,groupCalls,group.tools.length>0);
+    const reason=localGroupMetrics.length?'사용자가 제공한 로컬 입력으로 제한 계산했습니다. 원장·자산곡선의 정확성은 검증하지 않았습니다.':thesisGroup?'사용자가 제공한 이전 논지 입력 기준입니다. 주장·근거의 사실 관계와 독립성은 검증하지 않았습니다.':missingReason(status,groupCalls,group.tools.length>0);
     claims.push({id:`${reportId}.${group.id}.uncertainty`,kind:'uncertainty',text:`${group.id}: ${reason}`,status:status==='partial'?'partial':status==='not_run'?'not_run':status,confidence:'unrated',source_ids:groupSources,metric_ids:groupMetrics});
   }
   claims.push({id:`${reportId}.M01`,kind:'method',text:plan.presentation?.narrative_boundary??'이 입력은 MCP 구조화 응답의 출처·수신시각·검증상태를 보존합니다. 본문 투자자문·주문 신호는 만들지 않았습니다.',status:sources.length?'partial':'not_run',confidence:'unrated',source_ids:sources.map(s=>s.id),metric_ids:metrics.map(m=>m.field_id)});

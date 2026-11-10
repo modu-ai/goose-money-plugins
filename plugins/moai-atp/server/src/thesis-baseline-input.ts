@@ -1,8 +1,8 @@
 // R09 thesis baseline input schema (issue #117; user decision 2026-11-11 in #22: choice C —
 // structured 4 fields + free memo, 1:1 with the four-way wording at report-pipeline.ts:812).
 // Style precedent: manual-consultation.ts — zod strict, unknown-field rejection, control-character refine.
-// #13: the schema never fabricates a value; empty optional sections stay empty (missing → not_run
-// belongs to the pipeline hookup, which stays out of scope here).
+// #13: the schema never fabricates a value; empty optional sections stay empty (missing → not_run is
+// decided by the pipeline hookup in report-pipeline.ts, #127; empty families keep their section not_run).
 // Limits are undecided (see issue): every bound is injected via ThesisBaselineInputLimits; no number
 // is pinned in code and no default limit is adopted.
 import {z} from 'zod';
