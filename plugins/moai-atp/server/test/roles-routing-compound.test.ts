@@ -40,7 +40,9 @@ const STILL_BLOCKED_AFTER_GUARD=[
 ] as const;
 for(const request of DESCRIPTIVE_NOT_BLOCKED)test(`defect 1b control: a descriptive clause is NOT an order: ${request}`,()=>{
  const p=planGooseRequest(request);
- assert.notEqual(p.status,'blocked',request);assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.blocked_actions,[],request);assert.deepEqual(p.unsupported_actions,[],request);
+ assert.notEqual(p.status,'blocked',request);assert.deepEqual(p.blocked_actions,[],request);
+ if(request==='/goose 배당주를 사고 파는 전략 백테스트'){assert.equal(p.status,'unsupported');assert.deepEqual(p.unsupported_actions,['backtest_out_of_product_scope']);}
+ else {assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.unsupported_actions,[],request);}
 });
 for(const request of STILL_BLOCKED_AFTER_GUARD)test(`defect 1b control: a real compound command stays blocked: ${request}`,()=>{
  const p=planGooseRequest(request);
@@ -64,10 +66,12 @@ for(const request of ACCOUNT_CHANGE)test(`defect 1: account-change command is bl
 });
 for(const request of NOT_BLOCKED)test(`defect 1 control: explanation / rule design / analysis stays NOT an order: ${request}`,()=>{
  const p=planGooseRequest(request);
- assert.notEqual(p.status,'blocked',request);assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.blocked_actions,[],request);assert.deepEqual(p.unsupported_actions,[],request);
+ assert.notEqual(p.status,'blocked',request);assert.deepEqual(p.blocked_actions,[],request);
+ if(request==='/goose 매도 신호 규칙을 백테스트'){assert.equal(p.status,'unsupported');assert.deepEqual(p.unsupported_actions,['backtest_out_of_product_scope']);}
+ else {assert.notEqual(p.status,'unsupported',request);assert.deepEqual(p.unsupported_actions,[],request);}
 });
 test('defect 1 controls keep their baseline status and steps (design 3.3 positive controls)',()=>{
- for(const [request,status,steps] of [['/goose 논문 근거로 매수·매도 규칙 설계','ready',['strategy']],['/goose 매도 신호 규칙을 백테스트','ready',['backtest']],['/goose 매수 시점 분석 보고서','ready',['report']],['/goose 삼성전자 실적 분석 보고서','ready',['analyze','report']]] as const){
+ for(const [request,status,steps] of [['/goose 논문 근거로 매수·매도 규칙 설계','ready',['strategy']],['/goose 매도 신호 규칙을 백테스트','unsupported',[]],['/goose 매수 시점 분석 보고서','ready',['report']],['/goose 삼성전자 실적 분석 보고서','ready',['analyze','report']]] as const){
   const p=planGooseRequest(request);assert.equal(p.status,status,request);assert.deepEqual(p.steps.map(s=>s.id),steps,request);
  }
 });
