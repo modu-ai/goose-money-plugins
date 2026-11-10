@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { mkdir, mkdtemp, open, rename, rm, stat } from "node:fs/promises";
+import { mkdir, mkdtemp, open, rename, rm, stat, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { loadLocalCredentials, saveLocalCredentials } from "../src/local-credentials.js";
@@ -97,6 +97,26 @@ keyStoreTest("only the stores that exist flip to true on a partial home", () => 
     "holdings_deleted=false\n",
   ]);
   assert.doesNotMatch(output.messages.join(""), /synthetic-key|synthetic-secret/);
+}));
+
+// Issue #118: a store error must not swallow the remaining result lines. The combined flow
+// keeps processing the other stores, reports the failing store with an explicit fixed-code
+// failure line, reports the failure at the end, and keeps the existing failure exit code.
+keyStoreTest("a failing store still reports every line and fails at the end", () => fixture(async (home, project) => {
+  await seedAll(home, project);
+  await rm(holdingsFilePath(home));
+  await symlink(join(home, "missing-target"), holdingsFilePath(home));
+  const output = sink();
+  assert.equal(await runSetupFlow(project, async () => "DELETE", output, home, "delete-local-data"), 2);
+  assert.deepEqual(output.messages, [
+    header,
+    "credentials_deleted=true\n",
+    "profile_deleted=true\n",
+    "holdings_deleted=error:holdings_unsafe_path\n",
+    "deletion_errors=holdings_unsafe_path\n",
+  ]);
+  assert.equal(await loadLocalCredentials(project, home), undefined);
+  assert.equal(await readInvestorContext(project, home), undefined);
 }));
 
 test("cli routes --delete-local-data and lists it in usage", async () => {
