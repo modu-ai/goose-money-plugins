@@ -42,13 +42,11 @@ for(const [report_id,sectionId] of [['R07','R07.S03'],['R11','R11.S04']] as cons
       assert.equal(surprise.value,null,`${report_id} ${label} mismatch must not produce a surprise value`);
     }
 
-    // Current behaviour (characterization, not a confirmed design): derived metrics are computed per source.
-    // On the route's real path the actual comes from get_fundamentals and the consensus from
-    // get_kis_house_estimates, and then no surprise and no actual-vs-consensus bar appear. Reported on #28.
+    // #58 user decision: compare matching normalized bases and retain both sources.
     const split=build(report_id,[observationCall('get_fundamentals',[{field_id:'provider_finance.operating_profit',value:'110'}]),observationCall('get_kis_house_estimates',[{field_id:'estimates.consensus',value:'100'}])]);
     landed(split,'provider_finance.operating_profit','110',`${report_id} split`);landed(split,'estimates.consensus','100',`${report_id} split`);
-    assert.equal(metric(split,'metric.surprise'),undefined,`${report_id} no cross-source surprise`);
-    assert.ok(!(split.visuals??[]).some(v=>v.section_id===sectionId),`${report_id} no cross-source bar`);
+    assert.equal(metric(split,'metric.surprise')?.value,'10',`${report_id} cross-source surprise`);
+    assert.ok((split.visuals??[]).some(v=>v.section_id===sectionId),`${report_id} cross-source bar`);
   });
 }
 
