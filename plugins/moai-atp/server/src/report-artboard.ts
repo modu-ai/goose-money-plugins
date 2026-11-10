@@ -10,11 +10,17 @@ export const ARTBOARD_REPORT_MAP = Object.freeze([
   { ui_id:'R8', title:'관심종목 재점검', report_ids:['R09'], status:'supported' },
 ] as const);
 
-/** Typography for the opt-in artboard; font loading follows the report renderer policy. */
+/** Typography for the opt-in artboard; font loading follows the report renderer policy.
+ * #119 (user decision 2026-11-11, recorded in #18): the title font (h2) is Pretendard and the
+ * description body prose is 조선일보명조 — the serif role re-points to the installed ChosunilboNM
+ * stack with the previous installed fallback tail (no new web font: the #24 distribution and the
+ * #52 D6 fallback method stay as declared), and the hero subtitle joins the sans headings so
+ * every h2 in the render computes Pretendard. */
 export const REPORT_TYPOGRAPHY_CSS = `
-:root,.rs{--sans:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;--serif:"Gowun Batang","MaruBuri",AppleMyungjo,Batang,serif}
+:root,.rs{--sans:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;--serif:ChosunilboNM,"조선일보명조",AppleMyungjo,Batang,serif}
 body,.panel p,.panel li,.rs .panel p,.rs .panel li,.report-hero blockquote p,.lead-summary p,.opinion p{font-family:var(--serif);font-synthesis:none}
 h1,h2,h3,.rs h1,.rs h2,.rs h3,.panel h2,.panel h3,.rs .panel h2,.rs .panel h3{font-family:var(--sans);font-weight:700;font-synthesis:none;-webkit-text-stroke:0}
+.rs h1+h2{font-family:var(--sans)}
 .report-hero h1,.rs .report-hero h1{font-size:clamp(28px,4vw,48px);line-height:1.3;overflow-wrap:anywhere}
 .report-hero p strong,.panel p strong{font-family:var(--sans);font-weight:700}
 article#report-content{min-width:0;max-width:100%}
