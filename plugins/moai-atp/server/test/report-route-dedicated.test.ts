@@ -5,7 +5,7 @@
 // schema-rejected fixture (zero metrics, error sections) cannot make a negative check pass vacuously.
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {buildReportInput,getReportPlan,renderReportInputHtml,ReportInputSchema} from '../src/report-pipeline.js';
+import {buildReportInput,getReportPlan,renderReportInputHtml,ReportInputSchema,ReportPipelineToolInputSchema} from '../src/report-pipeline.js';
 import {costsFixture} from './manual-consultation-fixtures.js';
 
 const received='2026-10-23T03:00:00.000Z';
@@ -90,10 +90,57 @@ test('R09 leaves user-claim sections unrun and never turns evidence into a buy o
   const doc=build('R09',[observationCall('get_market_flows',[point('flow.foreign.net_value','500'),point('flow.individual.net_value','-500')])]);
   landed(doc,'flow.foreign.net_value','500','R09');landed(doc,'flow.individual.net_value','-500','R09');
   assert.notEqual(doc.sections.find(s=>s.id==='R09.S04')?.status,'not_run','R09.S04 receives the flow evidence');
-  for(const id of ['R09.S01','R09.S02','R09.S05','R09.S06']){
+  for(const id of ['R09.S01','R09.S02','R09.S03','R09.S05','R09.S06']){
     assert.equal(doc.sections.find(s=>s.id===id)?.status,'not_run',id+' needs the user thesis, not market data');
   }
   const html=renderReportInputHtml(doc);
   assert.match(html,/종목을 매수·매도하라는 문장으로 바꾸지 않습니다/);
   assert.doesNotMatch(html,/매수하세요|매도하세요|매수 추천|매도 추천|사야 합니다|팔아야 합니다/);
+});
+
+// R09 thesis baseline hookup (#127, #117 choice C): injected bounds, exact section release, not_run contract.
+const thesisLimits={claim_max_length:40,evidence_text_max_length:40,memo_max_length:120,evidence_array_max_items:5};
+const thesisInput={as_of:'2026-10-22',claim:'실적 회복 주장',supporting_evidence:['매출 증가세 지속'],counter_evidence:['환율 역풍 가능'],verification_conditions:['분기 매출 발표 확인'],memo:'다음 발표 전까지 유지'};
+const thesisBuild=(thesis_baseline:unknown,thesis_baseline_limits=thesisLimits)=>ReportInputSchema.parse(buildReportInput({report_id:'R09',subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,thesis_baseline,thesis_baseline_limits}));
+
+test('R09 thesis baseline releases exactly its four sections; market-data and verdict sections stay not_run',()=>{
+  const doc=thesisBuild(structuredClone(thesisInput));
+  for(const id of ['R09.S01','R09.S02','R09.S03','R09.S05']){
+    assert.equal(doc.sections.find(s=>s.id===id)?.status,'partial',id+' released by the thesis baseline input');
+  }
+  for(const id of ['R09.S04','R09.S06']){
+    assert.equal(doc.sections.find(s=>s.id===id)?.status,'not_run',id+' needs inputs this hookup does not provide');
+  }
+  assert.match(doc.sections.find(s=>s.id==='R09.S06')?.missing_reason??'',/결정 필요/,'S06 names the undecided retention that keeps it unrun');
+  assert.equal(doc.mode,'supplied','thesis input is user-supplied local data');
+  assert.equal(doc.execution_status,'provided_unverified','user sentences are never marked verified');
+  const thesisSource=doc.sources.find(s=>s.id==='src-thesis-baseline');
+  assert.ok(thesisSource&&thesisSource.operation_ref==='local.thesis-baseline.v1'&&thesisSource.rights==='local_view'&&thesisSource.validation_status==='unverified'&&thesisSource.source_as_of==='2026-10-22','one local_view unverified thesis source');
+  assert.equal(doc.metrics.length,0,'thesis text never becomes a numeric metric');
+  const html=renderReportInputHtml(doc);
+  assert.match(html,/실적 회복 주장/);assert.match(html,/환율 역풍 가능/);assert.match(html,/분기 매출 발표 확인/);
+  assert.match(html,/종목을 매수·매도하라는 문장으로 바꾸지 않습니다/);
+  assert.doesNotMatch(html,/매수하세요|매도하세요|매수 추천|매도 추천|사야 합니다|팔아야 합니다/);
+});
+
+test('R09 empty evidence families keep their sections not_run — nothing is inferred to fill them',()=>{
+  const claimOnly=thesisBuild({as_of:'2026-10-22',claim:'실적 회복 주장'});
+  for(const id of ['R09.S01','R09.S02'])assert.equal(claimOnly.sections.find(s=>s.id===id)?.status,'partial',id+' rides the required non-blank claim');
+  for(const id of ['R09.S03','R09.S05']){
+    const section=claimOnly.sections.find(s=>s.id===id);
+    assert.equal(section?.status,'not_run',id+' stays unrun while its family is empty');
+    assert.match(section?.missing_reason??'',/비어 이 절은 실행하지 않았습니다/,id+' says the family is empty');
+  }
+});
+
+test('R09 thesis baseline is a coded contract: route guard, no provider mixing, injected bounds required',()=>{
+  assert.throws(()=>buildReportInput({report_id:'R01',subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,thesis_baseline:thesisInput,thesis_baseline_limits:thesisLimits}),/thesis_baseline_route_mismatch/,'thesis input on another route is refused');
+  assert.throws(()=>buildReportInput({report_id:'R09',subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,calls:[observationCall('get_market_flows',[point('flow.foreign.net_value','500')])],thesis_baseline:thesisInput,thesis_baseline_limits:thesisLimits}),/thesis_baseline_cannot_be_mixed_with_mcp_results/,'user sentences do not mix with provider results');
+  assert.throws(()=>buildReportInput({report_id:'R09',subject,cutoff:received,display_timezone:'Asia/Seoul',received_at:received,thesis_baseline:thesisInput}),/thesis_baseline_limits_required/,'no default bounds are ever adopted');
+  assert.throws(()=>thesisBuild({...structuredClone(thesisInput),claim:'가'.repeat(41)}),'the injected claim bound is enforced at the pipeline boundary too');
+  const toolIssues=(value:unknown)=>ReportPipelineToolInputSchema.safeParse(value).error?.issues.map(issue=>issue.message)??[];
+  assert.equal(ReportPipelineToolInputSchema.safeParse({report_id:'R09',cutoff:received,display_timezone:'Asia/Seoul',subject,thesis_baseline:thesisInput,thesis_baseline_limits:thesisLimits}).success,true,'positive anchor: the tool schema accepts the same input');
+  assert.ok(toolIssues({report_id:'R01',cutoff:received,display_timezone:'Asia/Seoul',subject,thesis_baseline:thesisInput,thesis_baseline_limits:thesisLimits}).includes('thesis_baseline_route_mismatch'),'tool schema guards the route');
+  assert.ok(toolIssues({report_id:'R09',cutoff:received,display_timezone:'Asia/Seoul',subject,thesis_baseline:thesisInput,thesis_baseline_limits:thesisLimits,calls:[{tool_name:'get_market_flows',result:{}}]}).includes('thesis_baseline_cannot_be_mixed_with_mcp_results'),'tool schema guards provider mixing');
+  assert.ok(toolIssues({report_id:'R09',cutoff:received,display_timezone:'Asia/Seoul',subject,thesis_baseline:thesisInput}).includes('thesis_baseline_limits_required'),'tool schema requires injected bounds');
 });
