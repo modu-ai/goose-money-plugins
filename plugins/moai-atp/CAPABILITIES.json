@@ -365,6 +365,7 @@
     "read_only": true,
     "default_denied": false,
     "external_requests": false,
+    "opened_report_font_requests": "Opening the rendered HTML fetches web fonts only, from three version-pinned cdn.jsdelivr.net paths (pretendard@1.3.9, @kfonts/maruburi@0.1.0, @fontsource/gowun-batang@5.3.0); fixed URLs with no report or user data, referrer policy no-referrer, CSP font-src limited to those paths with connect-src 'none'; installed fallback fonts when blocked or offline",
     "file_writes": false,
     "input_contract": "validated atp.template/1.1 ReportInput (single subject) or atp.template/1.2 ReportInput (R02 comparison, explicit subjects input)",
     "output_contract": "moai.stock.report-html.v1 + MCP resource_link",
