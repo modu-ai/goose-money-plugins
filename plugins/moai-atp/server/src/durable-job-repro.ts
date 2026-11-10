@@ -28,6 +28,10 @@ export function canonicalJson(value: unknown): string {
         throw new Error('error_code=invalid_input');
     }
     if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`;
+    // Only plain records serialize: a Date/Map/class instance would silently hash as `{}` and two
+    // different values would collide (codex P2) — unsupported instances are refused instead.
+    const proto = Object.getPrototypeOf(v);
+    if (proto !== Object.prototype && proto !== null) throw new Error('error_code=invalid_input');
     const o = v as Record<string, unknown>;
     const body = Object.keys(o)
       .filter((k) => o[k] !== undefined)
@@ -75,6 +79,8 @@ export type ReproVerifyVerdict = { ok: true } | { ok: false; mismatches: string[
 
 const s = (min: number, max: number) => z.string().min(min).max(max);
 const hash64 = z.string().regex(/^[0-9a-f]{64}$/);
+/** Build and verify share one bound: a package this module builds must stay verifiable (codex P2). */
+const REQUEST_CANONICAL_MAX = 65536;
 const NodeId = s(1, 128);
 const ReceiptSchema = z.object({ node_id: NodeId, receipt_id: s(1, 256), received_at: s(1, 64) }).strict();
 const BuildInputSchema = z.object({
@@ -87,7 +93,7 @@ const BuildInputSchema = z.object({
   final_report: z.unknown().optional(),
 }).strict();
 const PackageSchema = z.object({
-  request_canonical: s(1, 65536),
+  request_canonical: s(1, REQUEST_CANONICAL_MAX),
   job_key: s(1, 256).optional(),
   code_version: s(1, 128),
   input_data_snapshot_hash: hash64,
@@ -105,7 +111,11 @@ const VerifyInputSchema = z.object({
 const byNodeId = <T extends { node_id: string }>(a: T, b: T): number =>
   a.node_id < b.node_id ? -1 : a.node_id > b.node_id ? 1 : 0;
 const byNodeThenReceipt = (a: ProviderReceipt, b: ProviderReceipt): number =>
-  byNodeId(a, b) || (a.receipt_id < b.receipt_id ? -1 : a.receipt_id > b.receipt_id ? 1 : 0);
+  byNodeId(a, b)
+  || (a.receipt_id < b.receipt_id ? -1 : a.receipt_id > b.receipt_id ? 1 : 0)
+  // Final tiebreaker so caller order can never reach the package hash (codex P2); records equal on
+  // all three keys are identical values, interchangeable in either position.
+  || (a.received_at < b.received_at ? -1 : a.received_at > b.received_at ? 1 : 0);
 
 /** Assemble the §7 package from caller observations. Caller-side list order is normalized away
  * (nodes by node_id, receipts by node_id then receipt_id); duplicate node ids in one build are a
@@ -119,8 +129,10 @@ export function buildReproPackage(input: ReproBuildInput): ReproPackage {
     if (seen.has(n.node_id)) throw new Error('error_code=invalid_input');
     seen.add(n.node_id);
   }
+  const request_canonical = canonicalJson(i.request);
+  if (request_canonical.length > REQUEST_CANONICAL_MAX) throw new Error('error_code=invalid_input');
   const withoutHash = {
-    request_canonical: canonicalJson(i.request),
+    request_canonical,
     ...(i.job_key !== undefined ? { job_key: i.job_key } : {}),
     code_version: i.code_version,
     input_data_snapshot_hash: sha256Hex(canonicalJson(i.input_snapshot)),

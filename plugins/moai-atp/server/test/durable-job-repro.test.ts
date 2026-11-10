@@ -158,3 +158,31 @@ test('builder inputs are validated: duplicate node ids and missing observations 
     provider_receipts: [{ node_id: 'n', receipt_id: '', received_at: 'x' }], node_results: [],
   }), /error_code=invalid_input/);
 });
+
+test('codex P2: non-plain objects (Date etc.) are rejected, never silently hashed as {} (hash faithfulness)', () => {
+  assert.throws(() => canonicalJson({ price_at: new Date('2026-11-10T00:00:00Z') }), /error_code=invalid_input/);
+  assert.throws(() => buildReproPackage({
+    request, code_version: 'b1', input_snapshot: { at: new Date(0) }, provider_receipts: [], node_results: [],
+  }), /error_code=invalid_input/);
+});
+
+test('codex P2: an oversized canonical request is rejected at build time — what builds stays verifiable', () => {
+  assert.throws(() => buildReproPackage({
+    request: { text: 'a'.repeat(65536) }, code_version: 'b1', input_snapshot: {}, provider_receipts: [], node_results: [],
+  }), /error_code=invalid_input/);
+});
+
+test('codex P2: receipts sharing node_id and receipt_id order by received_at — caller order cannot change the package', () => {
+  const build = (first: string, second: string) => buildReproPackage({
+    request, code_version: 'b1', input_snapshot: snapshot,
+    provider_receipts: [
+      { node_id: 'n', receipt_id: 'r1', received_at: first },
+      { node_id: 'n', receipt_id: 'r1', received_at: second },
+    ],
+    node_results: [],
+  });
+  const a = build('2026-11-11T09:00:01Z', '2026-11-11T09:00:02Z');
+  const b = build('2026-11-11T09:00:02Z', '2026-11-11T09:00:01Z');
+  assert.equal(a.package_hash, b.package_hash);
+  assert.deepEqual(a.provider_receipts, b.provider_receipts);
+});
