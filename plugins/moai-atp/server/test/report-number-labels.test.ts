@@ -56,7 +56,9 @@ test('#52: the value table under a chart shows the same grouped numbers as the c
 test('#52: bar value labels use digit grouping on the client', () => {
   const html = htmlWithSourceTable();
   // Narrow charts (a 390 px phone width) use a smaller label so a grouped seven-digit price does not run into its neighbour.
-  assert.match(html, /label:\{show:true,position:'top',fontSize:el\.clientWidth<480\?10:12,formatter:\(p\)=>groupLabel\(p\.value\)\}/);
+  assert.match(html, /label:\{show:true,position:'top',fontSize:el\.clientWidth<480\?10:12,formatter:\(p\)=>groupLabel\(p\.value\)\},labelLayout:\{hideOverlap:true\}/);
+  // A narrow chart gives its bars the 52 px of side padding a desktop chart keeps (measured at 390 px: 40 px per bar before).
+  assert.match(html, /grid:\{left:el\.clientWidth<480\?8:60,right:el\.clientWidth<480\?8:24,top:24,bottom:54,containLabel:true\}/);
   // The client reuses the server's grouping function text, so table cells and chart labels cannot drift apart.
   assert.ok(html.includes(`const groupLabel=(v)=>(${groupIntegerDigits.toString()})(String(v));`), 'groupLabel wraps groupIntegerDigits');
   // Run the helper exactly as the page ships it.
