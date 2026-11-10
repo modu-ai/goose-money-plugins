@@ -21,6 +21,7 @@ function clean(text:string){return text.replace(/^.*(?:계좌|예수금|잔고|a
 export function createMemberDraftHarness(options:Options){
  const drafts=new WeakMap<object,Binding>(),grants=new WeakMap<object,{binding:Binding;usedKey?:string}>();
  const operations=new Map<string,{binding:Binding;state:'unknown'|'published'|'withdrawn'|'withdraw_unknown';operation_id:string|undefined;reconciled:boolean}>();
+ const withdrawals=new WeakMap<object,Promise<{state:string}>>();
  function context(scope:string){const c=options.context();if(!c||!c.scopes.includes(scope)||c.scopes.some(s=>/admin|\*/i.test(s)))return fail('member_authorization_required');for(const value of [c.service_id,c.user_id,c.session_id,c.authorization_version])if(!ref.safeParse(value).success)return fail('invalid_context');return c;}
  function validate(binding:Binding,scope:string){const c=context(scope),p=options.policy();if(!p||p.service_id!==c.service_id)return fail('service_not_configured');if(binding.service_id!==c.service_id||binding.user_id!==c.user_id||binding.session_id!==c.session_id||binding.authorization_version!==c.authorization_version||binding.policy_version!==p.policy_version)return fail('authorization_invalidated');const board=p.boards.find(b=>b.board_id===binding.board_id);if(!board||!board.kinds.includes(binding.kind)||!board.visibilities.includes(binding.visibility))return fail('target_not_allowed');return c;}
  const getDraft=(token:object)=>drafts.get(token)??fail('unknown_draft');
@@ -35,6 +36,24 @@ export function createMemberDraftHarness(options:Options){
    try{const response=await options.adapter.publish(Object.freeze({...d}),idempotencyKey);if(!ref.safeParse(response.operation_id).success)throw Error('invalid_response');op.state='published';op.operation_id=response.operation_id;}catch{/* Unknown outcome: reconcile, never automatically publish again. */}
    return {state:op.state,operation_id:op.operation_id??null,retried_write:false};
   },
-  async withdraw(token:object,idempotencyKey:string){const g=grants.get(token)??fail('unknown_grant'),d=g.binding,c=validate(d,'member:withdraw');const op=operations.get([c.service_id,c.user_id,idempotencyKey].join('|'));if(!op||op.binding.body_hash!==d.body_hash)return fail('unknown_operation');if(op.state==='withdrawn')return {state:'withdrawn'};if(op.state!=='published'||!op.operation_id)return fail('operation_not_confirmed');if(!options.confirmWithdraw||await options.confirmWithdraw(op.operation_id)!==true)return fail('explicit_withdraw_confirmation_required');validate(d,'member:withdraw');if(!options.adapter)return fail('service_not_connected');try{await options.adapter.withdraw(d,op.operation_id);op.state='withdrawn';}catch{op.state='withdraw_unknown';}return {state:op.state};},
+  async withdraw(token:object,idempotencyKey:string){
+   const g=grants.get(token)??fail('unknown_grant'),d=g.binding,c=validate(d,'member:withdraw');
+   const op=operations.get([c.service_id,c.user_id,idempotencyKey].join('|'));
+   if(!op||op.binding.body_hash!==d.body_hash)return fail('unknown_operation');
+   const pending=withdrawals.get(op);if(pending)return pending;
+   if(op.state==='withdrawn')return {state:'withdrawn'};
+   if(op.state!=='published'||!op.operation_id)return fail('operation_not_confirmed');
+   const operationId=op.operation_id;
+   // Reserve before calling the confirmation hook: equivalent grants share the
+   // same operation, confirmation and write, including its unknown outcome.
+   const withdrawal=Promise.resolve().then(async()=>{
+    if(!options.confirmWithdraw||await options.confirmWithdraw(operationId)!==true)return fail('explicit_withdraw_confirmation_required');
+    validate(d,'member:withdraw');if(!options.adapter)return fail('service_not_connected');
+    try{await options.adapter.withdraw(d,operationId);op.state='withdrawn';}catch{op.state='withdraw_unknown';}
+    return {state:op.state};
+   });
+   withdrawals.set(op,withdrawal);
+   try{return await withdrawal;}finally{withdrawals.delete(op);}
+  },
  };
 }
