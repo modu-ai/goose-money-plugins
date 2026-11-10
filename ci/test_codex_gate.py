@@ -336,8 +336,14 @@ class LatestCheckRunOnly(unittest.TestCase):
 
 
 class FakeClient:
-    def __init__(self, pr=None, chk=None, error_on=None):
-        self.pr, self.chk, self.error_on, self.posted = pr, chk, error_on, []
+    def __init__(self, pr=None, chk=None, error_on=None, rest_head=HEAD, posted=None):
+        self.pr, self.chk, self.error_on, self.rest_head = pr, chk, error_on, rest_head
+        self.posted = [] if posted is None else posted
+
+    def head_sha(self, number):
+        if self.error_on == 'head':
+            raise OSError('synthetic REST head lookup error')
+        return self.rest_head
 
     def pull_request(self, number):
         if self.error_on == 'pull_request':
@@ -371,6 +377,32 @@ class ErrorsNeverLeaveSuccess(unittest.TestCase):
         client = FakeClient(clean_pr(), checks(), error_on='checks')
         gate.run_one(client, 46)
         self.assertNotEqual(client.posted[-1][1], 'success')
+
+
+class InitialReadErrors(unittest.TestCase):
+    """Leader repro (2026-11-10): the first GraphQL read failed before any status was written,
+    so an earlier success stayed on the head. The head now comes from a minimal REST lookup and
+    is marked pending before the GraphQL judgement."""
+    def test_first_graphql_read_error_overwrites_an_existing_success(self):
+        client = FakeClient(clean_pr(), checks(), error_on='pull_request',
+                            posted=[(HEAD, 'success', 'existing success')])
+        gate.run_one(client, 46)
+        self.assertEqual(client.posted[1][:2], (HEAD, 'pending'))
+        self.assertEqual(client.posted[-1][:2], (HEAD, 'failure'))
+        self.assertIn('gate_error', client.posted[-1][2])
+
+    def test_graphql_head_differs_from_rest_head_is_not_success(self):
+        client = FakeClient(clean_pr(), checks(), rest_head=OLD)
+        gate.run_one(client, 46)
+        self.assertEqual({p[0] for p in client.posted}, {OLD})
+        self.assertNotEqual(client.posted[-1][1], 'success')
+
+    def test_head_lookup_error_writes_nothing_and_raises(self):
+        # Limit: without the head SHA no status can be written, so an older success cannot be cleared.
+        client = FakeClient(clean_pr(), checks(), error_on='head')
+        with self.assertRaises(OSError):
+            gate.run_one(client, 46)
+        self.assertEqual(client.posted, [])
 
 
 class SecurityReviewCurrentHead(unittest.TestCase):
