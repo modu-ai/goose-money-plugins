@@ -644,3 +644,65 @@ test('an expired-period replacement checkout also restarts on reconciliation', (
   assert.equal(confirmed.subscription.current_period_end, null);     // expired period cleared
   assert.equal(machine.effectiveState(confirmed.subscription, end + DAY), 'pending');
 });
+
+// Codex 미해결 지적(4530750266, P2 :235) 수리 — 설계 §5.4 N1/N3, 교체 checkout 정산 직행 경로 (Refs #104).
+
+test('a replacement checkout settled directly clears the expired period on same-state confirmation', () => {
+  // Codex 4530750266 — 저장 active(기간 만료)에서 판본 없는 교체 checkout 이후, 대사 뷰가 이미
+  // 정산된 active(판번 진전, 기간 미제시)로 도달하면 중간 pending 을 관찰하지 못했다. 구기간이
+  // 살아남으면 정산된 구독이 effective expired 로 갇힘(§5.4 N1: 주지 않으면 비어 시작).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('s2', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(state(routed.subscription), 'active');
+  const settled = machine.reconcile(routed.subscription, { state: 'active', revision: 4 }, end + 2 * DAY);
+  assert.equal(settled.outcome, 'applied');  // 기간 소거는 기록된 차이
+  assert.equal(settled.subscription.current_period_end, null);
+  assert.equal(settled.subscription.state_changed_at, end + 2 * DAY);  // 새 주기 시작 증거(N3)
+  assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'active');
+});
+
+test('a replacement settled through adoption also clears the expired period', () => {
+  // 4530750266 의 채택 경로 형제 — 유예 소진 past_due(effective expired)를 뷰 {active, 판번 진전,
+  // 기간 미제시}가 채택할 때도 구기간이 지워지지 않으면 정산 구독이 effective expired 로 남음(§5.4 N1).
+  const grace = createSubscriptionStateMachine({ pastDueGraceMs: 5 * DAY });
+  let sub = grace.apply(grace.emptySubscription('s'), ev('u0', 'checkout.completed', { provider_revision: 1 })).subscription;
+  sub = grace.apply(sub, ev('u1', 'payment.succeeded', { provider_revision: 2, current_period_end: T0 + 30 * DAY })).subscription;
+  sub = grace.apply(sub, ev('u2', 'renewal.failed', { provider_revision: 3, occurred_at: T0 + DAY })).subscription;
+  assert.equal(grace.effectiveState(sub, T0 + 10 * DAY), 'expired');  // grace exhausted
+  const routed = grace.apply(sub, ev('u3', 'checkout.completed', { occurred_at: T0 + 10 * DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  const settled = grace.reconcile(routed.subscription, { state: 'active', revision: 5 }, T0 + 10 * DAY);
+  assert.equal(settled.outcome, 'applied');
+  assert.equal(state(settled.subscription), 'active');
+  assert.equal(settled.subscription.current_period_end, null);
+  assert.equal(grace.effectiveState(settled.subscription, T0 + 10 * DAY), 'active');
+});
+
+test('a trial-settled replacement clears the expired period on adoption', () => {
+  // 같은 결함의 체험 정산 변형 — 뷰 {trialing, 판번 진전, 기간 미제시} 채택 시 구기간 잔존은
+  // trialing 을 즉시 effective expired 로 만듦(§5.4 N1).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('v2', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  const settled = machine.reconcile(routed.subscription, { state: 'trialing', revision: 4 }, end + 2 * DAY);
+  assert.equal(settled.outcome, 'applied');
+  assert.equal(state(settled.subscription), 'trialing');
+  assert.equal(settled.subscription.current_period_end, null);
+  assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'trialing');
+});
+
+test('a consumed replacement marker does not clear twice', () => {
+  // 소비된 교체 표지는 재대사에서 재소거·부활을 일으키지 않음(§5.2 보존, N3 증거 일회성).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('w2', 'checkout.completed', { occurred_at: end + DAY }));
+  const first = machine.reconcile(routed.subscription, { state: 'active', revision: 4 }, end + DAY);
+  assert.equal(first.subscription.current_period_end, null);
+  const again = machine.reconcile(first.subscription, { state: 'active', revision: 4 }, end + DAY);
+  assert.equal(again.outcome, 'no_difference');
+  assert.equal(again.subscription.current_period_end, null);
+  assert.equal(machine.effectiveState(again.subscription, end + DAY), 'active');
+});
