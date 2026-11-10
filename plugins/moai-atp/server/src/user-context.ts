@@ -149,6 +149,15 @@ export async function deleteInvestorContext(projectRoot: string, options: { conf
   await unlink(investorContextFilePath(await realpath(home)));
   return true;
 }
+export const onboardingFilePath = (homeDir = homedir()): string => join(homeDir, ".goose", "context", "onboarding.json");
+/** Deletion command for the presented marker only (#43); the profile file is never touched here. */
+export async function deleteOnboardingMarker(projectRoot: string, options: { confirmed: boolean; homeDir?: string }): Promise<boolean> {
+  if (!options.confirmed) throw new UserContextError("context_confirmation_required");
+  const home = options.homeDir ?? homedir();
+  if (!await setupWasPresented(projectRoot, home)) return false;
+  await unlink(onboardingFilePath(await realpath(home)));
+  return true;
+}
 // No profile is sent to MCP or a model automatically. Caller explicitly selects
 // relevant dimensions after user-authorized setup; this is self-reported context.
 export function selectInvestorContext(profile: InvestorContextDocument | undefined, dimensions: readonly InvestorContextDimension[]) {
