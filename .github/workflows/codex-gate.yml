@@ -1,7 +1,9 @@
 # Issue #46: judge Codex review evidence for every PR head and publish it as the commit
-# status `codex-gate` on that head SHA. Every trigger below runs the workflow and script
-# from the default branch; pull-request code is never checked out or executed here.
-# A new push leaves the new head without a `codex-gate` status, so stale evidence cannot pass.
+# status `codex-gate` on that head SHA. Every trigger below runs the workflow and judging
+# code from the default branch (main); pull-request code is never checked out or executed.
+# There is deliberately no workflow_dispatch: a manual run can pick another branch's
+# workflow and judging code. A new push leaves the new head without a `codex-gate`
+# status, so stale evidence cannot pass.
 name: codex-gate
 
 on:
@@ -15,11 +17,6 @@ on:
     types: [completed]
   schedule:
     - cron: '*/15 * * * *'
-  workflow_dispatch:
-    inputs:
-      pr:
-        description: 'PR number (empty = all open PRs to main)'
-        required: false
 
 permissions:
   contents: read
@@ -28,26 +25,29 @@ permissions:
   statuses: write
 
 concurrency:
-  group: codex-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event.inputs.pr || github.event_name }}
+  group: codex-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event_name }}
   cancel-in-progress: false
 
 jobs:
   gate:
-    # issue_comment: only the Codex bot's summary comment on a pull request re-triggers the gate.
+    # Runs only from the default branch ref. For issue_comment, only the Codex bot's summary
+    # comment on a pull request re-triggers the gate.
     if: >-
-      github.event_name != 'issue_comment' ||
-      (github.event.issue.pull_request &&
-       github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
-       contains(github.event.comment.body, 'codex-pull-request-review-summary'))
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'issue_comment' ||
+       (github.event.issue.pull_request &&
+        github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
+        contains(github.event.comment.body, 'codex-pull-request-review-summary')))
     runs-on: windows-latest
     timeout-minutes: 10
     defaults:
       run:
         shell: bash
     steps:
-      # Default-branch checkout only (no ref input): the judging code cannot be changed by the PR.
+      # The judging code always comes from main, whatever the event.
       - uses: actions/checkout@v4
         with:
+          ref: main
           persist-credentials: false
           sparse-checkout: ci
 
@@ -60,6 +60,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           CODEX_GATE_THUMBS_RETRIES: ${{ github.event_name == 'issue_comment' && '6' || '0' }}
           PR_NUMBERS: >-
-            ${{ github.event.pull_request.number || github.event.issue.number || github.event.inputs.pr ||
+            ${{ github.event.pull_request.number || github.event.issue.number ||
             join(github.event.workflow_run.pull_requests.*.number, ' ') }}
         run: python -X utf8 ci/codex_gate.py $PR_NUMBERS

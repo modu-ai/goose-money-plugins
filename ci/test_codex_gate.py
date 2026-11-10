@@ -215,7 +215,8 @@ class PullRequestState(unittest.TestCase):
 
 class RequiredChecks(unittest.TestCase):
     def test_failed_pending_or_other_head(self):
-        self.assertIn('check_not_success:test (windows-latest)', run(clean_pr(), checks(win='failure'))[1])
+        # A finished failure is a definite failure (check_failed); not-yet-finished stays check_not_success.
+        self.assertIn('check_failed:test (windows-latest)', run(clean_pr(), checks(win='failure'))[1])
         self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), checks(mac=None))[1])
         self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), checks(head=OLD))[1])
         self.assertIn('check_not_success:test (macos-latest)', run(clean_pr(), {'total_count': 0, 'check_runs': []})[1])
