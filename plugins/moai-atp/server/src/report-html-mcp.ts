@@ -4,6 +4,8 @@ import { McpServer, ResourceNotFoundError, ResourceTemplate } from "@modelcontex
 import { z } from "zod";
 import { safeResult, MCP_RESPONSE_MAX_BYTES } from "./mcp-result.js";
 import { ACTIVE_REPORT_ROUTE_IDS, ActiveReportInputSchema, ReportInputSchema, renderReportInputHtml } from "./report-pipeline.js";
+import type { ReportInput } from "./report-pipeline.js";
+import { displayInstant, reportMetricDisplayRows } from "./report-template-renderer.js";
 
 const REPORT_HTML_MAX_BYTES = 6 * 1024 * 1024;
 const REPORT_RESOURCE_TTL_MS = 5 * 60 * 1000;
@@ -36,6 +38,28 @@ type CachedReport = {
   expires_at_ms: number;
   size_bytes: number;
 };
+
+/** Readable fallback for clients that do not display the HTML resource. */
+export function reportReadablePreview(doc: ReportInput): string {
+  const cell = (value: string) => value.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('\\','\\\\').replaceAll('|','\\|').replaceAll('`','\\`').replaceAll('[','\\[').replaceAll(']','\\]')
+    .replaceAll('*','\\*').replaceAll('_','\\_').replace(/[\r\n]/g,' ');
+  const allRows = reportMetricDisplayRows(doc), rows = allRows.slice(0,12);
+  const scope = doc.mode === 'synthetic' ? '합성 표본 · 실제 자료 아님' : doc.execution_status === 'actual_data_partial' ? '실제 자료 부분보고서' : '입력 자료 · 독립 검증 전';
+  return [
+    `## ${cell(doc.subject.name)}`, `${scope} · 출처 ${doc.sources.length}개`,
+    ...(doc.consultation ? ['개인 수동 입력 · 비공개 · 공급자 확인/실계좌 연결 아님. 공개용 보고서로 재사용하지 마세요.'] : []),
+    ...(allRows.length > rows.length ? [`요약 표는 전체 ${allRows.length}개 지표 중 ${rows.length}개입니다. 나머지 지표는 HTML 보고서에 보존합니다.`] : []),
+    ...(allRows.length < doc.metrics.length ? ['같은 출처·기간·값의 매핑 별칭은 한 번만 표시하며 원자료와 장부는 보존합니다.'] : []),
+    `보고서 기준시각: ${cell(displayInstant(doc.cutoff,doc.display_timezone))} · 표시 시간대: ${cell(doc.display_timezone)}`,
+    '', '| 지표 | 값 | 단위 | 기간 | 상태 |', '|---|---:|---|---|---|',
+    ...rows.map(row => '| '+row.slice(0,5).map(cell).join(' | ')+' |'),
+    ...(rows.length ? [] : ['| 확인 가능한 지표 없음 | — | — | — | 미실행 |']),
+    '', '출처와 자료 시각:',
+    ...doc.sources.slice(0,12).map(source => `- ${cell(source.id)} · 자료 기준일 ${cell(displayInstant(source.source_as_of ?? '미확인',doc.display_timezone))} · 수집시각 ${cell(displayInstant(source.received_at ?? source.observed_at,doc.display_timezone))}`),
+    '', '이 요약은 HTML 스타일을 표시하지 못하는 화면에서도 자료를 읽기 위한 것입니다. 전체 구성과 나머지 항목은 HTML 보고서를 확인하세요.',
+  ].join('\n');
+}
 
 export function registerReportHtmlTool(server: McpServer, clock: () => string, trustedReport:(doc:unknown)=>boolean=()=>false): void {
   const reports = new Map<string, CachedReport>();
@@ -86,11 +110,13 @@ export function registerReportHtmlTool(server: McpServer, clock: () => string, t
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
     async ({ report_input, narrative_draft, template }) => {
+      let preview = '';
       const base = await safeResult(async () => {
         const doc = ReportInputSchema.parse(report_input);
         if(doc.sources.some(source=>source.kind!=='synthetic'&&source.kind!=='user_supplied'&&source.rights==='local_view')&&!trustedReport(doc))throw new Error('invalid_provenance');
         const narrativeDoc=narrative_draft?applyNarrativeDraft(doc,narrative_draft):doc;
         const html = renderReportInputHtml(narrativeDoc, template);
+        preview = reportReadablePreview(narrativeDoc);
         const sizeBytes = Buffer.byteLength(html, "utf8");
         if (sizeBytes < 1 || sizeBytes > REPORT_HTML_MAX_BYTES) throw new Error("error_code=response_too_large");
         const now = currentTimeMs();
@@ -126,7 +152,7 @@ export function registerReportHtmlTool(server: McpServer, clock: () => string, t
       const result = {
         ...base,
         content: [
-          ...base.content,
+          { type: 'text' as const, text: preview },
           {
             type: "resource_link" as const,
             uri: metadata.resource_uri,
