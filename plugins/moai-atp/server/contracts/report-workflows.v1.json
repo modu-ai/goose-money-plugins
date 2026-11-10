@@ -1,0 +1,380 @@
+{
+  "contract": "moai.report-workflows.v1",
+  "reports": [
+    {
+      "id": "R01",
+      "title": "종목 심층 분석",
+      "command": "/goose report R01",
+      "alias": "/goose r01",
+      "skill": "goose-report-r01",
+      "workflow_ref": "references/reports/R01.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_instrument_profile",
+        "get_market_snapshot",
+        "get_price_history",
+        "get_fundamentals",
+        "get_public_filings",
+        "get_market_headlines"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R01.S01",
+        "R01.S02",
+        "R01.S03",
+        "R01.S04",
+        "R01.S05",
+        "R01.S06",
+        "R01.X01",
+        "R01.X02",
+        "R01.X03"
+      ],
+      "input_requirements": "확인된 종목 식별자, 분석 목적, 재무 연도·보고서·연결/별도, 가격 기간, cutoff",
+      "calculation": "재무 항목의 계정·기간·연결기준을 맞춘 뒤 매출·영업이익·현금흐름을 대조합니다. 원문 금액의 통화·배율이 확인될 때만 수치와 비율을 계산합니다. IS/CIS의 같은 계정·기간·값은 표시 중복인지 확인하고 합산하지 않습니다.",
+      "limitations": "단일 시세는 추세 차트가 아닙니다. 비교기업·컨센서스·미래 목표가격 근거가 없으면 해당 부분을 결측으로 남깁니다."
+    },
+    {
+      "id": "R02",
+      "title": "기업·상품 비교",
+      "command": "/goose report R02",
+      "alias": "/goose r02",
+      "skill": "goose-report-r02",
+      "workflow_ref": "references/reports/R02.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_market_snapshot",
+        "get_fundamentals",
+        "get_public_filings"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R02.S01",
+        "R02.S02",
+        "R02.S03",
+        "R02.S04",
+        "R02.S05",
+        "R02.S06"
+      ],
+      "input_requirements": "확인된 국내 주식 2~4개 대상과 종목 코드·법인 코드 대응, 비교 목적, 같은 기간·기준시각·통화·단위·연결기준, 제외 기준",
+      "calculation": "국내 주식의 같은 재무 범위·기간 지표만 비교하고 기준이 다른 값은 별도 열에 둡니다. 종목 코드와 법인 코드의 대응을 확인하며, 시세·재무·공시의 출처를 각 대상에 연결합니다. 상대 선호는 관측값과 별도의 조건부 해석입니다.",
+      "limitations": "현재 다중 대상 비교 조립은 국내 주식의 시세·재무·공시 입력만 받습니다. ETF·해외 상품·가격 이력은 비교 조립 범위 밖입니다. 별도 식별 조회 결과나 그 receipt를 calls/source_receipts에 넣지 않습니다. 매매 추천·전체 종목 최적 선택으로 표현하지 않습니다."
+    },
+    {
+      "id": "R03",
+      "title": "시장 수급·자금 흐름",
+      "command": "/goose report R03",
+      "alias": "/goose r03",
+      "skill": "goose-report-r03",
+      "workflow_ref": "references/reports/R03.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_market_flows",
+        "get_price_history",
+        "get_credit_balances",
+        "get_short_sale_activity",
+        "get_stock_lending_activity"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R03.S01",
+        "R03.S02",
+        "R03.S03",
+        "R03.S04",
+        "R03.S05",
+        "R03.S06"
+      ],
+      "input_requirements": "대상 시장·종목, 수급 기간, 주체 정의, 원문 단위·배율, cutoff와 세션",
+      "calculation": "일별/기간 누적과 순매수/보유잔고를 구분합니다. 단위·반환 날짜가 확인된 행만 합산하며 겹친 날짜·중복 행을 제거한 근거를 남깁니다. 거래대금 대비 강도는 같은 기간·단위의 분모가 있을 때만 계산합니다.",
+      "limitations": "개별 종목 수급으로 시장 전체 자금 유입을 단정하지 않습니다. 업종·ETF 설정환매·선물 포지션은 현재 검증 자료가 없으면 결측입니다."
+    },
+    {
+      "id": "R04",
+      "title": "수동 입력 보유·리스크 상담",
+      "command": "/goose report R04",
+      "alias": "/goose r04",
+      "skill": "goose-report-r04",
+      "workflow_ref": "references/reports/R04.md",
+      "scope": "manual_only",
+      "provider_tools": [],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R04.S01",
+        "R04.S02",
+        "R04.S03",
+        "R04.S04",
+        "R04.S05",
+        "R04.S06"
+      ],
+      "input_requirements": "manual_consultation의 holdings_snapshot, 기준시각·통화·현재 평가액·현금, 명시 목표·기간·현금 필요·제약",
+      "calculation": "수동 입력 계약의 엄격한 schema를 적용합니다. 같은 통화의 현재 평가액과 현금으로 총액·비중을 계산하고 명시한 목표 비중과의 차이만 구합니다. 식별자별 집중도를 보여주되 업종·발행사 분류를 추측하지 않습니다.",
+      "limitations": "계좌·매입가·거래/입출금 원장·TWR·과거 수익률은 입력이나 계산 대상이 아닙니다. 실제 사용자 입력이 없으면 synthetic fixture라고 표시합니다."
+    },
+    {
+      "id": "R05",
+      "title": "수동 입력 비용 영향 상담",
+      "command": "/goose report R05",
+      "alias": "/goose r05",
+      "skill": "goose-report-r05",
+      "workflow_ref": "references/reports/R05.md",
+      "scope": "manual_only",
+      "provider_tools": [],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R05.S01",
+        "R05.S02",
+        "R05.S03",
+        "R05.S04",
+        "R05.S05",
+        "R05.S06"
+      ],
+      "input_requirements": "manual_consultation의 cost_assumptions, snapshot·기준시각·통화, 명시 적용금액·연간률·고정액",
+      "calculation": "연간 비용 = 명시 적용금액 × 명시 연간률 / 100 + 명시 연간 고정액입니다. 같은 통화·적용기준일 때만 가정별 차이를 비교합니다. 미입력 비용을 0으로 바꾸지 않습니다. 실제 부과 비용과 가정 계산을 분리합니다.",
+      "limitations": "세금·환전·거래수수료·수익률은 임의 추정하지 않습니다. 상담은 거래·세금 신고나 비용 최적화 보장을 수행하지 않습니다."
+    },
+    {
+      "id": "R06",
+      "title": "국내·글로벌 마켓 브리핑",
+      "command": "/goose report R06",
+      "alias": "/goose r06",
+      "skill": "goose-report-r06",
+      "workflow_ref": "references/reports/R06.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_market_snapshot",
+        "get_price_history",
+        "get_market_flows",
+        "get_public_filings",
+        "get_market_headlines"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R06.S01",
+        "R06.S02",
+        "R06.S03",
+        "R06.S04",
+        "R06.S05",
+        "R06.S06"
+      ],
+      "input_requirements": "시장·세션·현지 시간대, 확정 대상 목록, 관측 cutoff, 사건 기간",
+      "calculation": "시장별 거래일·세션과 한국시간 수집시각을 따로 표시합니다. 관측한 대상만 가격판에 넣고 사건은 원문 발행시각과 정정 여부를 대조합니다. 사건과 가격의 동시 발생을 인과관계로 확정하지 않습니다.",
+      "limitations": "한 종목으로 시장 폭·주도업종·전체 지수 등락을 만들지 않습니다. 지수/거시 자료 연결이 부족하면 부분 브리핑으로 제공합니다."
+    },
+    {
+      "id": "R07",
+      "title": "실적·공시 이벤트 리뷰",
+      "command": "/goose report R07",
+      "alias": "/goose r07",
+      "skill": "goose-report-r07",
+      "workflow_ref": "references/reports/R07.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_public_filings",
+        "get_fundamentals",
+        "get_market_headlines",
+        "get_market_snapshot"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R07.S01",
+        "R07.S02",
+        "R07.S03",
+        "R07.S04",
+        "R07.S05",
+        "R07.S06"
+      ],
+      "input_requirements": "확인된 법인, 사건·공시 접수번호/기간, 원문 판본·발행시각, 재무 연도·보고서·연결기준",
+      "calculation": "목록/제목과 본문을 구분합니다. 공시 목록을 읽은 것만으로 계약 내용·규모·일회성 원인을 요약하지 않습니다. 확인된 원문과 같은 기간 재무만 연결하고 정정판은 원판과 분리합니다. 예상 대비 차이는 실제 예상치의 출처가 있을 때만 계산합니다.",
+      "limitations": "공시 제목은 본문 사실을 입증하지 않습니다. 컨센서스·가이던스·사건 전후 가격이 없으면 서프라이즈나 시장 반응을 추정하지 않습니다."
+    },
+    {
+      "id": "R08",
+      "title": "거시·자산배분 브리핑",
+      "command": "/goose report R08",
+      "alias": "/goose r08",
+      "skill": "goose-report-r08",
+      "workflow_ref": "references/reports/R08.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_market_headlines",
+        "get_public_filings"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R08.S01",
+        "R08.S02",
+        "R08.S03",
+        "R08.S04",
+        "R08.S05",
+        "R08.S06"
+      ],
+      "input_requirements": "명시 국가·지표·발표시각·관측기간·빈티지, 실제/예상/이전/수정치의 독립 출처, 사용자 노출 가정",
+      "calculation": "현재 도구는 사건 메타데이터의 보조 자료입니다. 거시 통계 발표 원문이 확인되지 않으면 발표/예상/수정치 표를 채우지 않습니다. 확보된 실제 지표에만 전달 경로를 조건부 해석으로 붙이고 반대 시나리오를 적습니다.",
+      "limitations": "거시 통계·금리·환율·원자재의 완결된 정규화 피드가 없습니다. 자료 부족은 부분 보고서 또는 보류로 표시하며 임의 자산배분 비중을 제안하지 않습니다."
+    },
+    {
+      "id": "R09",
+      "title": "투자논지·관심종목 점검",
+      "command": "/goose report R09",
+      "alias": "/goose r09",
+      "skill": "goose-report-r09",
+      "workflow_ref": "references/reports/R09.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_market_snapshot",
+        "get_price_history",
+        "get_fundamentals",
+        "get_public_filings",
+        "get_market_headlines"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R09.S01",
+        "R09.S02",
+        "R09.S03",
+        "R09.S04",
+        "R09.S05",
+        "R09.S06"
+      ],
+      "input_requirements": "이전 논지 원문/판본·확인일, 사용자 관심대상 목록, 주장별 확인 지표·기각 조건·다음 점검일",
+      "calculation": "이전 논지를 변경 불가능한 비교 기준으로 따로 보존합니다. 주장마다 지지·반대 근거, 동일 원천 재인용 여부와 불확실성을 적습니다. 증거가 부족하면 판단불가로 두고 다음 점검 조건만 제시합니다.",
+      "limitations": "관심목록 저장·논지 버전 DB·예약 점검 MCP는 없습니다. 이전 논지가 없으면 변화·유지 판정을 만들지 않습니다."
+    },
+    {
+      "id": "R10",
+      "title": "마감 전 후보·거래조건 점검",
+      "command": "/goose report R10",
+      "alias": "/goose r10",
+      "skill": "goose-report-r10",
+      "workflow_ref": "references/reports/R10.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_market_snapshot",
+        "get_intraday_price_history",
+        "get_market_orderbook",
+        "get_public_filings",
+        "get_market_headlines"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R10.S01",
+        "R10.S02",
+        "R10.S03",
+        "R10.S04",
+        "R10.S05",
+        "R10.S06"
+      ],
+      "input_requirements": "사용자 후보 목록, 시장·거래일·세션·cutoff, 명시한 조건/문턱값, 가격·거래량·호가 관측시각",
+      "calculation": "확정 후보만 검사하고 각 조건을 충족/기각/자료부족으로 나눕니다. 지연·세션·거래정지 미확인이면 체결 가능하다고 하지 않습니다. 호가 스프레드는 동일 관측시각·확정 단위의 양쪽 가격이 있을 때만 계산합니다.",
+      "limitations": "전 종목 스캐너·HTS 조건 저장·주문 도구는 없습니다. 장 종료 후 자료를 마감 직전 실시간 검사로 표현하지 않습니다."
+    },
+    {
+      "id": "R11",
+      "title": "산업·섹터 전망",
+      "command": "/goose report R11",
+      "alias": "/goose r11",
+      "skill": "goose-report-r11",
+      "workflow_ref": "references/reports/R11.md",
+      "scope": "partial_data",
+      "provider_tools": [
+        "get_instrument_profile",
+        "get_fundamentals",
+        "get_public_filings",
+        "get_market_headlines",
+        "get_domestic_etf_snapshot"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R11.S01",
+        "R11.S02",
+        "R11.S03",
+        "R11.S04",
+        "R11.S05",
+        "R11.S06"
+      ],
+      "input_requirements": "확정한 업종 범위·비교기업/ETF, 수요·공급·재고 지표의 원출처·기간, cutoff",
+      "calculation": "업종 정의와 비교군 선정 이유를 먼저 적습니다. 기업 수치를 업종 전체로 외삽하지 않습니다. 공급·재고·가격 및 이익추정 변화는 서로 다른 지표로 출처를 붙이고 전망은 가정·반증 조건을 함께 제시합니다.",
+      "limitations": "업종 전체 통계·밸류체인·증권사 컨센서스 피드가 완성된 것은 아닙니다. 상품 NAV만으로 업종 노출이나 구성종목을 확정하지 않습니다."
+    },
+    {
+      "id": "R12",
+      "title": "ETF 가격·NAV·위험 점검",
+      "command": "/goose report R12",
+      "alias": "/goose r12",
+      "skill": "goose-report-r12",
+      "workflow_ref": "references/reports/R12.md",
+      "scope": "conditional",
+      "provider_tools": [
+        "get_domestic_etf_snapshot",
+        "get_us_product_profile",
+        "get_us_market_snapshot",
+        "get_price_history"
+      ],
+      "local_tools": [
+        "build_report_input",
+        "render_report_html"
+      ],
+      "sections": [
+        "R12.S01",
+        "R12.S02",
+        "R12.S03",
+        "R12.S04"
+      ],
+      "input_requirements": "검증된 ETF 식별·거래소·통화, 가격/NAV 동일 시점·단위, 기간·cutoff, 상품구조 원문",
+      "calculation": "ETF/ETN을 식별하고 ETF임이 확인된 상품만 처리합니다. NAV와 거래가격이 같은 시점·통화·단위일 때만 괴리를 계산합니다. 분배금·수수료·보유구성은 각 원문 근거 없이 만들지 않습니다.",
+      "limitations": "초기 기본 범위의 무조건 지원이 아닙니다. canonical 단위·상품 식별 미확정이면 원천 후보와 결측만 보존하고 성과·추적오차를 계산하지 않습니다."
+    },
+    {
+      "id": "R13",
+      "title": "선물 계약·시황·만기 위험",
+      "command": "/goose report R13",
+      "alias": "/goose r13",
+      "skill": "goose-report-r13",
+      "workflow_ref": "references/reports/R13.md",
+      "scope": "deferred",
+      "provider_tools": [],
+      "local_tools": [],
+      "sections": [
+        "R13.S01",
+        "R13.S02",
+        "R13.S03",
+        "R13.S04"
+      ],
+      "input_requirements": "향후 승인된 계약 식별·시장·만기·승수·단위·세션·cutoff가 필요하나 현재 명령은 실행하지 않음",
+      "calculation": "서브커맨드는 report_scope_deferred와 실행 단계 0개를 반환합니다. 기존 개발 템플릿·선물 MCP 등록은 보존하지만 현재 제품의 보고서 실행이나 공개 지원으로 승격하지 않습니다.",
+      "limitations": "초기 출시 보류. 선물 시세·이력 도구가 등록돼 있어도 이 워크플로에서 호출하지 않습니다. 증거금·손익·롤오버·포지션·주문·자동매매를 제공하지 않습니다."
+    }
+  ]
+}
