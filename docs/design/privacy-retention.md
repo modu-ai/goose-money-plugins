@@ -62,6 +62,20 @@ Refs #9.
 | 14 | 백업 | 서비스 백업 | 복구 | — | 해당 없음 | 결정 필요 | 백업 만료로 삭제됨을 고지 |
 | 15 | 상담 원문(멘탈 지원) | 저장하지 않음(제안) | — | — | 자동 복사 금지 원칙 (로컬 설계 문서의 확정 요구사항, Git 미추적) | 0 | — |
 
+## 3a. 현재 코드 동작 — 보존 지도에 없는 세부 (lane-6 대조 #63, 930a088 직접 측정)
+
+§3 표에 없는 코드 동작을 사실대로 적습니다. Windows 지원 여부 등 방향은 **결정 필요**로 남깁니다.
+
+| 항목 | 현재 코드 동작 | 근거 |
+|---|---|---|
+| profile.json 평문 저장 | setup-cli 안내 문구가 평문 저장을 직접 고지("응답은 ~/.goose/context/profile.json에 평문으로 저장"). 파일 상한 8,192바이트, 0600 생성 | `setup-cli.ts:43`, `user-context.ts:31` |
+| Windows 미지원 | user-context·local-credentials 모두 POSIX 전용 — win32에서 디렉터리 진입 즉시 거부(`context_unsafe_path`·`secure_file_storage_unsupported`). Windows 지원 여부·범위는 **결정 필요**(#43 삭제 명령도 같은 제약 상속) | `user-context.ts:41`, `local-credentials.ts:28` |
+| credentials.json 쓰기·읽기 세부 | 읽기 버퍼 zero-fill, tmp+link/rename 원자적 쓰기, 저장 시 기존 provider 병합, 16,384바이트 상한 | `local-credentials.ts:56·76-83·21` |
+| env 우선 경로 | 환경변수(`KIS_APP_KEY`·`KIS_APP_SECRET`·`OPENDART_API_KEY` — 값 자체는 미확인·미출력)가 파일보다 우선, 부분 env는 fail-closed. 행 1에 env 저장 경로 기술을 넣을지는 문서 보완 사항 | `local-credentials.ts:95` |
+| 토큰 비저장 명시 필드 | 검증 골격이 `network_connected:false`·`token_storage:'none'`을 직접 노출 — 행 3 "부재"의 코드 근거 | `member-token-verifier.ts:20` |
+
+문서에만 있고 코드에 없는 것(전부 **미구현**): 키 삭제 명령(행 1·#43), 보유 잔고 snapshot·수동 입력(행 6·6b·#42), 서버측 기록(행 11·12·14), 삭제 단계 S2~S6(게시·구독 자체가 부재), 동의 C1~C8 기록·철회 구조(§2).
+
 ## 4. 삭제 단계 (제안)
 
 | 단계 | 대상 | 동작 | 확인 방법 |
