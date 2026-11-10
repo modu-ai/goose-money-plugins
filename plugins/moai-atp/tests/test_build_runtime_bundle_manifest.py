@@ -3,7 +3,10 @@
 Synthetic trees only; no credentials, no network. Run: python3 -m unittest plugins/moai-atp/tests/test_build_runtime_bundle_manifest.py
 """
 import copy
+import hashlib
 import json
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -96,6 +99,69 @@ class ReceiptAndPackages(unittest.TestCase):
             package = json.loads(self.contents[name])
             self.assertEqual(package['engines'], {'node': '>=22.2.0'}, name)
             self.assertNotIn('devEngines', package, name)
+
+
+class CatalogOverlay(unittest.TestCase):
+    build_with = ManifestValidation.build_with
+
+    def test_bundle_keeps_catalog_decisions_and_original_availability(self):
+        root, output = self.build_with()
+        entries = [{'id': f'R{number:02}', 'scope': 'partial_data', 'required_groups': []}
+                   for number in range(1, 15)]
+        entries[11]['scope'] = 'conditional'
+        entries[12]['scope'] = 'deferred'
+        entries += [{'id': f'U{number:02}', 'public': number != 3, 'required_groups': []}
+                    for number in range(1, 4)]
+        target = root / 'skills/goose/references/catalog.json'
+        target.parent.mkdir(parents=True)
+        target.write_text(json.dumps({'entries': entries}), encoding='utf-8')
+        bundle.build(root, output)
+        from zipfile import ZipFile
+        with ZipFile(output) as archive:
+            actual = json.loads(archive.read('skills/goose/references/catalog.json'))['entries']
+        self.assertEqual(actual, [entry for entry in entries if entry['id'] != 'R14'])
+
+    def test_generated_synthetic_zip_passes_the_runtime_package_checker(self):
+        root, output = self.build_with()
+        manifest = json.loads((HERE.parent / 'plugin.json').read_text(encoding='utf-8'))
+        (root / 'plugin.json').write_text(json.dumps(manifest), encoding='utf-8')
+        for name in ['package.json', 'server/package.json', 'CAPABILITIES.json']:
+            path = root / name
+            record = json.loads(path.read_text(encoding='utf-8'))
+            record['version'] = manifest['version']
+            path.write_text(json.dumps(record), encoding='utf-8')
+        (root / 'mcp.json').write_bytes((HERE.parent / 'mcp.json').read_bytes())
+        icon = root / manifest['extensions']['com.openai']['interface']['logo']
+        icon.parent.mkdir(parents=True)
+        icon.write_text('synthetic icon', encoding='utf-8')
+        skill = root / 'skills/goose'
+        (skill / 'references').mkdir(parents=True)
+        (skill / 'SKILL.md').write_text('---\nname: goose\n---\nSynthetic skill.\n', encoding='utf-8')
+        ids = [f'R{i:02}' for i in range(1, 14)] + ['U01', 'U02', 'U03']
+        entries = [{'id': rid, 'public': rid != 'U03', 'actual_data_complete': False,
+                    'kind': 'internal_qa' if rid == 'U03' else 'report', 'required_groups': []}
+                   for rid in ids]
+        (skill / 'references/catalog.json').write_text(json.dumps({'entries': entries}), encoding='utf-8')
+        # Report-command packages also carry fixed workflow instructions; runtime stays synthetic.
+        workflow = 'contracts/report-workflows.v1.json'
+        runtime = root / 'server/runtime'
+        (runtime / 'contracts').mkdir()
+        contract = (HERE.parent / 'server' / workflow).read_bytes()
+        (runtime / workflow).write_bytes(contract)
+        receipt = runtime / 'runtime-manifest.json'
+        record = json.loads(receipt.read_text(encoding='utf-8'))
+        record['files'][workflow] = hashlib.sha256(contract).hexdigest()
+        receipt.write_text(json.dumps(record), encoding='utf-8')
+        shutil.copytree(HERE.parent / 'skills/goose/references/reports', skill / 'references/reports')
+        bundle.build(root, output)
+        from zipfile import ZipFile
+        extracted = output.parent / 'extracted'
+        with ZipFile(output) as archive:
+            archive.extractall(extracted)
+        checked = subprocess.run([sys.executable, str(HERE.parent / 'scripts/check_package.py'),
+                                  '--runtime', '--root', str(extracted)], capture_output=True, text=True)
+        self.assertEqual(checked.returncode, 0, checked.stderr)
+        self.assertIn('Local package component checks passed', checked.stdout)
 
 
 if __name__ == '__main__':
