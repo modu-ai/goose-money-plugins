@@ -48,7 +48,7 @@ Refs #8.
 | `trialing` | `trial.ended` + 결제 실패 | `past_due` 또는 `expired` (결정 필요) |
 | `active` | `renewal.succeeded` | `active` (기간 연장) |
 | `active` | `renewal.failed` | `past_due` |
-| `past_due` | `payment.succeeded` | `active` |
+| `past_due` | `payment.succeeded` 또는 `renewal.succeeded` (갱신 재시도 성공) | `active` (기간 연장) |
 | `past_due` | 재시도 소진 / 유예 종료 | `expired` |
 | `active`/`trialing` | `subscription.cancel_requested` | `canceled_pending_end` |
 | `canceled_pending_end` | `subscription.resumed` | `active` |
@@ -57,7 +57,7 @@ Refs #8.
 | `active` 등 | `dispute.opened` | `disputed` |
 | `disputed` | `dispute.won` / `dispute.lost` | 이전 상태 / `refunded` |
 
-사건 이름은 설명용이며 공급자 사건 이름에 맞춰 매핑합니다(공급자 결정 후).
+사건 이름은 설명용이며 공급자 사건 이름에 맞춰 매핑합니다(공급자 결정 후). 표에 없는 (상태, 사건) 조합은 상태를 바꾸지 않고 기록한 뒤 공급자 API 조회로 현재 상태를 맞춥니다(§5 유실 대사와 같은 경로).
 
 ## 5. 멱등·순서 역전·중복·지연
 
@@ -94,6 +94,7 @@ Refs #8.
 | S11 | 같은 구독 사건 동시 2건 | 직렬 처리, 최종 상태 일관 |
 | S12 | 대사에서 공급자와 다름 | 공급자 값으로 맞추고 기록 |
 | S13 | 저장 데이터에 카드번호 등 결제 수단 원문 | 0건 |
+| S14 | `renewal.failed` 뒤 갱신 재시도가 성공해 `renewal.succeeded` 도착 | `past_due` → `active`, 기간 연장, 전이표에 없는 (상태, 사건) 조합 0 |
 
 ## 8. 결정 필요
 
