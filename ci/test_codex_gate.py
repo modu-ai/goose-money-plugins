@@ -336,9 +336,17 @@ class LatestCheckRunOnly(unittest.TestCase):
 
 
 class FakeClient:
-    def __init__(self, pr=None, chk=None, error_on=None, rest_head=HEAD, posted=None):
+    """Synthetic GitHub client. `reads` is an optional list of PR snapshots returned in order by
+    pull_request (the last one repeats); `on_checks` runs inside checks() to model evidence that
+    changes while the gate is judging. post_status enforces GitHub's 1000 statuses per SHA+context."""
+    STATUS_LIMIT = 1000
+
+    def __init__(self, pr=None, chk=None, error_on=None, rest_head=HEAD, posted=None, reads=None, on_checks=None):
         self.pr, self.chk, self.error_on, self.rest_head = pr, chk, error_on, rest_head
         self.posted = [] if posted is None else posted
+        self.reads = list(reads or [])
+        self.on_checks = on_checks
+        self.graphql_reads = 0
 
     def head_sha(self, number):
         if self.error_on == 'head':
@@ -348,28 +356,40 @@ class FakeClient:
     def pull_request(self, number):
         if self.error_on == 'pull_request':
             raise OSError('synthetic api timeout')
+        self.graphql_reads += 1
+        if self.reads:
+            return copy.deepcopy(self.reads.pop(0) if len(self.reads) > 1 else self.reads[0])
         return copy.deepcopy(self.pr)
 
     def checks(self, head):
         if self.error_on == 'checks':
             raise OSError('synthetic api error')
+        if self.on_checks:
+            self.on_checks(self)
         return copy.deepcopy(self.chk)
 
+    def current_status(self, head):
+        if self.error_on == 'current_status':
+            raise OSError('synthetic status read error')
+        mine = [p for p in self.posted if p[0] == head]
+        return (mine[-1][1], mine[-1][2]) if mine else None
+
     def post_status(self, head, state, description):
+        if sum(1 for p in self.posted if p[0] == head) >= self.STATUS_LIMIT:
+            raise OSError('synthetic 422: status limit reached for this SHA and context')
         self.posted.append((head, state, description))
 
 
 class ErrorsNeverLeaveSuccess(unittest.TestCase):
     """Item 4: an API error or exception ends with a non-success status on the judged head."""
-    def test_pass_posts_pending_then_success(self):
+    def test_pass_posts_a_single_success(self):
         client = FakeClient(clean_pr(), checks())
         gate.run_one(client, 46)
-        self.assertEqual([p[1] for p in client.posted], ['pending', 'success'])
+        self.assertEqual([p[1] for p in client.posted], ['success'])
 
-    def test_check_api_error_overwrites_with_failure(self):
-        client = FakeClient(clean_pr(), checks(), error_on='checks')
+    def test_check_api_error_overwrites_success_with_failure(self):
+        client = FakeClient(clean_pr(), checks(), error_on='checks', posted=[(HEAD, 'success', 'old')])
         gate.run_one(client, 46)
-        self.assertEqual(client.posted[0][:2], (HEAD, 'pending'))
         self.assertEqual(client.posted[-1][:2], (HEAD, 'failure'))
         self.assertIn('gate_error', client.posted[-1][2])
 
@@ -380,14 +400,11 @@ class ErrorsNeverLeaveSuccess(unittest.TestCase):
 
 
 class InitialReadErrors(unittest.TestCase):
-    """Leader repro (2026-11-10): the first GraphQL read failed before any status was written,
-    so an earlier success stayed on the head. The head now comes from a minimal REST lookup and
-    is marked pending before the GraphQL judgement."""
+    """Leader repro (2026-11-10): a first GraphQL read error must not leave an earlier success."""
     def test_first_graphql_read_error_overwrites_an_existing_success(self):
         client = FakeClient(clean_pr(), checks(), error_on='pull_request',
                             posted=[(HEAD, 'success', 'existing success')])
         gate.run_one(client, 46)
-        self.assertEqual(client.posted[1][:2], (HEAD, 'pending'))
         self.assertEqual(client.posted[-1][:2], (HEAD, 'failure'))
         self.assertIn('gate_error', client.posted[-1][2])
 
@@ -403,6 +420,91 @@ class InitialReadErrors(unittest.TestCase):
         with self.assertRaises(OSError):
             gate.run_one(client, 46)
         self.assertEqual(client.posted, [])
+
+
+class EvidenceRace(unittest.TestCase):
+    """Codex P1 (PR #54, ci/codex_gate.py:203) and leader repro: evidence read last must decide."""
+    def running_pr(self):
+        pr = clean_pr()
+        pr['comments']['nodes'][0]['body'] = summary_body(code_status='running')
+        return pr
+
+    def test_second_read_with_running_review_is_not_success(self):
+        client = FakeClient(chk=checks(), reads=[clean_pr(), self.running_pr()])
+        result = gate.run_one(client, 54)
+        self.assertNotEqual(result['state'], 'success')
+        self.assertNotEqual(client.posted[-1][1], 'success')
+
+    def test_leader_repro_newer_failure_is_not_overwritten_by_success(self):
+        def flip(client):
+            client.pr['comments']['nodes'][0]['body'] = summary_body(code_status='running')
+            client.posted.append((HEAD, 'failure', 'newer evaluation sees running review'))
+        client = FakeClient(clean_pr(), checks(), on_checks=flip)
+        gate.run_one(client, 54)
+        self.assertNotEqual(client.posted[-1][1], 'success')
+
+    def test_evidence_changed_between_reads_is_reported(self):
+        client = FakeClient(chk=checks(), reads=[clean_pr(), self.running_pr()])
+        result = gate.run_one(client, 54)
+        self.assertTrue(any(code in result['fail'] for code in ('evidence_changed_during_check', 'summary_status_running')))
+
+
+class NoRedundantStatusWrites(unittest.TestCase):
+    """Codex P1 (PR #54, ci/codex_gate.py:190): GitHub keeps at most 1000 statuses per SHA+context."""
+    def test_unchanged_result_is_not_written_again(self):
+        client = FakeClient(clean_pr(), checks())
+        for _ in range(5):
+            gate.run_one(client, 46)
+        self.assertEqual(len(client.posted), 1)
+
+    def test_many_unchanged_judgements_then_a_change_is_still_written(self):
+        client = FakeClient(clean_pr(), checks())
+        for _ in range(600):
+            gate.run_one(client, 46)
+        client.pr['comments']['nodes'][0]['body'] = summary_body(code_status='running')
+        gate.run_one(client, 46)
+        self.assertEqual(client.posted[-1][1], 'pending')
+        self.assertLessEqual(len(client.posted), 2)
+
+    def test_unknown_current_status_still_writes(self):
+        client = FakeClient(clean_pr(), checks(), error_on='current_status')
+        gate.run_one(client, 46)
+        self.assertEqual([p[1] for p in client.posted], ['success'])
+
+
+class OpenPullRequestPages(unittest.TestCase):
+    """Codex P2 (PR #54, ci/codex_gate.py:271): scheduled runs must see every open PR."""
+    def test_all_pages_are_read(self):
+        pages = {1: [{'number': n} for n in range(1, 101)], 2: [{'number': 101}], 3: []}
+        seen = []
+
+        class Paged(gate.GitHubClient):
+            def _call(self, method, url, payload=None):
+                page = int(url.rsplit('page=', 1)[1])
+                seen.append(page)
+                return pages[page]
+
+        client = Paged('https://api.invalid', 'o/r', 'synthetic-not-a-token', 'https://x.invalid')
+        self.assertEqual(client.open_pull_requests(), list(range(1, 102)))
+        self.assertEqual(seen[:2], [1, 2])
+
+
+class OnePrOneQueue(unittest.TestCase):
+    """Judgements of the same PR from different triggers never run at the same time."""
+    path = DefaultBranchOnly.path
+
+    def text(self):
+        with open(self.path, encoding='utf-8') as handle:
+            return handle.read()
+
+    def test_no_workflow_level_group_keyed_by_event_name(self):
+        self.assertNotIn('github.event_name }}', self.text().split('jobs:')[0])
+
+    def test_judging_job_is_grouped_per_pr_number_for_every_trigger(self):
+        jobs = self.text().split('jobs:', 1)[1]
+        self.assertIn('group: codex-gate-pr-${{ matrix.pr }}', jobs)
+        self.assertIn('fromJSON(needs.targets.outputs.prs)', jobs)
+        self.assertIn('cancel-in-progress: false', jobs)
 
 
 class SecurityReviewCurrentHead(unittest.TestCase):
