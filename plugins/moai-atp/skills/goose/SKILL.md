@@ -9,6 +9,12 @@ description: "투자 분석 요청을 알맞은 분석 흐름으로 안내하고
 
 로컬 연구 워크플로우 지침입니다. 보고서 엔진·실데이터 완성·호스트 설치를 뜻하지 않습니다.
 
+## 명령 계획과 도구 호출
+
+분석·보고서 명령의 `execution_authority: plan_only`, `provider_dispatches: 0`은 라우터가 계획만 반환한다는 뜻입니다. 호스트의 slash 등록이나 MCP 자동 실행을 보장하지 않습니다. 로컬 설정을 수행하는 `setup`과 구분합니다.
+
+`tools/list`는 도구 목록을 읽을 뿐 조회를 실행하지 않습니다. 별도 `tools/call`에서 공급자 도구를 선택하면 읽기 스위치·자격 증명·권한 조건에 따라 외부 요청이 나갈 수 있습니다. 출하 `mcp.json`의 KIS·OpenDART·로컬 보고서 읽기 스위치는 모두 `1`입니다. 종목 디렉터리 도구는 키 없이도 첫 사용 시 KIS 마스터 파일을 요청할 수 있으므로 `plan_only`를 근거로 외부 요청이 전혀 없다고 설명하지 않습니다. 기준 SHA와 도구 이름은 [도구 목록 실측 기록](references/tools-list-verification.md)을 따릅니다.
+
 ## 호출과 라우팅
 
 - `/goose setup`: 로컬 CLI `moai-atp setup`을 사용합니다. 프로필 단계 다음에 같은 실행에서 키 설정 단계로 진행합니다. 키 설정만 다시 하려면 `setup --credentials`를 사용합니다. 호스트 slash 등록은 별도 검증 전까지 보장하지 않습니다. 첫 실행에서 인터뷰를 한 번 제시합니다. 거절·미정·중단을 허용하고 추정값은 저장하지 않습니다. 이후 프로젝트는 `~/.goose/context/profile.json`의 명시 확인된 공통 값만 재사용합니다. 변경·삭제는 `setup --edit-profile` / `setup --delete-profile`입니다. 별도 interview 명령은 없습니다.

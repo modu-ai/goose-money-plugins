@@ -5,6 +5,14 @@
 읽기 전용 분석 플러그인이며, **자동 실주문과 수익 보장을 제공하지 않습니다.**
 기술 이름 `moai-atp`, 서버 패키지 ID와 저장소 경로는 표시명과 별개입니다.
 
+## 명령 계획과 MCP 조회의 차이
+
+`/goose`의 분석·보고서 명령이 반환하는 `execution_authority: plan_only`와 `provider_dispatches: 0`은 명령 라우터가 실행 계획만 만든다는 뜻입니다. 이 값은 별도로 호출하는 MCP 도구의 외부 요청을 막는 설정이 아닙니다. `setup`은 로컬 설정을 수행하므로 이 설명의 대상에서 제외합니다.
+
+`tools/list`는 도구의 이름과 입력 규격을 받는 요청입니다. 목록을 받았다고 공급자 조회가 실행되거나 인증·설치·호스트 화면 표시가 검증된 것은 아닙니다. 별도 `tools/call`로 조회 도구를 호출하면 읽기 스위치와 해당 도구의 자격 증명·권한 조건에 따라 외부 요청이 나갈 수 있습니다. 출하 `mcp.json`은 `GOOSE_KIS_READ_ENABLED`, `GOOSE_OPENDART_READ_ENABLED`, `GOOSE_LOCAL_REPORT_VIEW_ENABLED`를 모두 `1`로 설정합니다. 특히 종목 디렉터리 도구는 키 없이도 첫 사용 시 KIS 마스터 파일을 요청할 수 있습니다.
+
+키와 실제 사용자 저장소를 사용하지 않은 main 빌드의 stdio 측정 결과는 [도구 목록 실측 기록](skills/goose/references/tools-list-verification.md)에 기준 SHA·도구 이름·fetch 기록과 함께 남겼습니다. `build_report_input`·`render_report_html`은 로컬 조립·렌더 도구이며 외부 요청·파일 저장을 하지 않습니다.
+
 ## 소스 패키지와 설정
 
 이 소스 ZIP은 계정 등록·설치가 완료된 플러그인이나 바로 실행 가능한
