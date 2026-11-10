@@ -146,7 +146,7 @@ export function analyzeComparison(subjects:readonly ComparisonSubject[],calls:re
 // A DART-derived value's period carries the filing receipt number and the term label of its issuer
 // (`<year>:FY:<fs_div>:<statement>:<term>:<rcept_no>`); neither says anything about the period itself.
 // The report code is 11011 for every DART metric the pipeline admits (dartReportedMetrics).
-const DART_PERIOD=/^(\d{4}):FY:(?:CFS|OFS):(?:IS|BS|CF):.*:\d{14}$/;
+const DART_PERIOD=/^(\d{4}):FY:(?:CFS|OFS):(?:IS|CIS|BS|CF):.*:\d{14}$/;
 const periodBasis=(metric:ComparableMetric)=>{const dart=DART_PERIOD.exec(metric.period);return (dart?`dart:${dart[1]}:11011`:`period:${metric.period}`)+`|${metric.period_kind}`;};
 
 // `period_undated` marks a metric whose period is not a date its source reported: the source has no `source_as_of`
