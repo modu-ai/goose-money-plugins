@@ -90,6 +90,13 @@ export function classifyRetry(input: RetryInput): RetryVerdict {
     // zero retries, the observed error stands; reaching the injected limit stops (T5: 제한 횟수에서 멈춤).
     const t = policy.transient;
     if (!t || counters.transient >= t.max_retries) {
+      // A write-effect step resolves its effect even out of retry budget: the last permitted
+      // attempt may have landed while its response was lost (§5 last row) — query first, and
+      // a present effect is resolved from the effect, never re-sent, never failed.
+      if (has_write_effect) {
+        if (!effect_check.checked) return { action: 'check_effect_first' };
+        if (effect_check.effect_present) return { action: 'no_retry_effect_present' };
+      }
       return t ? { action: 'failed', failure_code: 'transient_retry_limit_reached' } : { action: 'failed', failure_code: e.kind };
     }
     retry = { action: 'retry', class: 'transient', wait_ms: t.backoff_base_ms * 2 ** counters.transient, attempt: counters.transient + 1 };

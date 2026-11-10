@@ -98,6 +98,26 @@ test('non-retry verdicts pass the write-effect gate untouched — 401/schema re-
     { action: 'failed', failure_code: 'schema_mismatch' });
 });
 
+test('a write-effect step out of retries still resolves its effect before failing (§5 last row, codex P2)', () => {
+  const p = { transient: { max_retries: 1, backoff_base_ms: 100 } };
+  // The last permitted attempt timed out after the write landed remotely: never re-send, resolve
+  // from the effect — not a failure.
+  assert.deepEqual(classifyRetry({ error: { kind: 'timeout' }, policy: p, counters: { transient: 1, rate_limited: 0 }, has_write_effect: true, effect_check: { checked: true, effect_present: true } }),
+    { action: 'no_retry_effect_present' });
+  // Effect not queried yet: query first even with no retry budget left.
+  assert.deepEqual(classifyRetry({ error: { kind: 'timeout' }, policy: p, counters: { transient: 1, rate_limited: 0 }, has_write_effect: true }),
+    { action: 'check_effect_first' });
+});
+
+test('a write-effect step with the effect confirmed absent fails with the observed-limit code', () => {
+  const p = { transient: { max_retries: 1, backoff_base_ms: 100 } };
+  assert.deepEqual(classifyRetry({ error: { kind: 'timeout' }, policy: p, counters: { transient: 1, rate_limited: 0 }, has_write_effect: true, effect_check: { checked: true, effect_present: false } }),
+    { action: 'failed', failure_code: 'transient_retry_limit_reached' });
+  // No policy at all: same resolution order, then the observed error stands.
+  assert.deepEqual(classifyRetry({ error: { kind: 'network_transient' }, policy: {}, counters: zero, has_write_effect: true, effect_check: { checked: true, effect_present: false } }),
+    { action: 'failed', failure_code: 'network_transient' });
+});
+
 test('inputs are validated; junk kinds, negative counters and overflow policies are invalid_input', () => {
   assert.throws(() => classifyRetry({ error: { kind: 'nope' } as never, policy: T, counters: zero }), /error_code=invalid_input/);
   assert.throws(() => classifyRetry({ error: { kind: 'network_transient' }, policy: T, counters: { transient: -1, rate_limited: 0 } }), /error_code=invalid_input/);
