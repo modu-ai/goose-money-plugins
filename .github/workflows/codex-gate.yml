@@ -7,6 +7,11 @@
 #
 # Every trigger judges each PR in the same per-PR concurrency group (codex-gate-pr-<n>),
 # so two judgements of one PR never run at the same time and the later run writes last.
+#
+# Issue #62 (Actions budget): both jobs run on ubuntu-latest. Judging is pure Python
+# against the GitHub API; the product test matrix (test.yml) stays macOS and Windows only.
+# Only the scheduled run needs the `targets` job to list open PRs; event runs pass the
+# PR numbers they carry straight to `gate`, so one judgement costs one job, not two.
 name: codex-gate
 
 on:
@@ -19,7 +24,8 @@ on:
     workflows: [test]
     types: [completed]
   schedule:
-    - cron: '*/15 * * * *'
+    # Fallback for evidence changes that raise no event (receipt review, thread resolution).
+    - cron: '*/30 * * * *'
 
 permissions:
   contents: read
@@ -29,21 +35,12 @@ permissions:
 
 jobs:
   targets:
-    # Runs only from the default branch ref. For issue_comment, only the Codex bot's summary
-    # comment on a pull request re-triggers the gate.
-    if: >-
-      github.ref == 'refs/heads/main' &&
-      (github.event_name != 'issue_comment' ||
-       (github.event.issue.pull_request &&
-        github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
-        contains(github.event.comment.body, 'codex-pull-request-review-summary')))
-    runs-on: windows-latest
+    # Scheduled runs only: list every open PR to main (all pages).
+    if: github.ref == 'refs/heads/main' && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       prs: ${{ steps.list.outputs.prs }}
-    defaults:
-      run:
-        shell: bash
     steps:
       # The judging code always comes from main, whatever the event.
       - uses: actions/checkout@v4
@@ -56,30 +53,44 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: List PRs to judge (event PR numbers, else every open PR to main, all pages)
+      - name: List open PRs to judge
         id: list
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMBERS: >-
-            ${{ github.event.pull_request.number || github.event.issue.number ||
-            join(github.event.workflow_run.pull_requests.*.number, ' ') }}
-        run: echo "prs=$(python -X utf8 ci/codex_gate.py --list-targets $PR_NUMBERS)" >> "$GITHUB_OUTPUT"
+        run: echo "prs=$(python -X utf8 ci/codex_gate.py --list-targets)" >> "$GITHUB_OUTPUT"
 
   gate:
     needs: targets
-    if: needs.targets.outputs.prs != '' && needs.targets.outputs.prs != '[]'
+    # Runs only from the default branch ref. Event runs (targets skipped) judge the PR numbers
+    # the event carries; scheduled runs judge the targets list. For issue_comment, only the
+    # Codex bot's summary comment on a pull request re-triggers the gate. Runs with nothing
+    # to judge (a workflow_run without PRs, an empty schedule list) are skipped.
+    if: >-
+      !cancelled() &&
+      github.ref == 'refs/heads/main' &&
+      (needs.targets.result == 'success' ||
+       (needs.targets.result == 'skipped' && github.event_name != 'schedule')) &&
+      (github.event_name != 'issue_comment' ||
+       (github.event.issue.pull_request &&
+        github.event.comment.user.login == 'chatgpt-codex-connector[bot]' &&
+        contains(github.event.comment.body, 'codex-pull-request-review-summary'))) &&
+      (github.event_name != 'workflow_run' ||
+       toJSON(github.event.workflow_run.pull_requests) != '[]') &&
+      (github.event_name != 'schedule' ||
+       (needs.targets.outputs.prs != '' && needs.targets.outputs.prs != '[]'))
     strategy:
       fail-fast: false
       matrix:
-        pr: ${{ fromJSON(needs.targets.outputs.prs) }}
+        pr: >-
+          ${{ fromJSON(
+          github.event_name == 'schedule' && needs.targets.outputs.prs ||
+          github.event_name == 'workflow_run' && toJSON(github.event.workflow_run.pull_requests.*.number) ||
+          format('[{0}]', github.event.pull_request.number || github.event.issue.number)) }}
     concurrency:
       group: codex-gate-pr-${{ matrix.pr }}
       cancel-in-progress: false
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v4
         with:
