@@ -207,8 +207,6 @@ export function groupIntegerDigits(value: string): string {
   const match = /^([+-]?)([1-9][0-9]{3,})(\.[0-9]+)?$/.exec(value);
   return match ? `${match[1]}${match[2]!.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}${match[3] ?? ''}` : value;
 }
-/** Raw received tables: amount, quantity, balance and quote columns are grouped; dates, numbers and ratios keep the received text (#52). */
-const groupsRawColumn = (header: string): boolean => /금액|수량|잔고|잔량|호가/.test(header) && !/비중|일|번호/.test(header);
 export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string {
   const specs = makeChartSpecs(doc,plan);
   const sourceMap = new Map(doc.sources.map((source)=>[source.id,source]));
@@ -269,7 +267,7 @@ export function renderReportTemplate(doc: ReportInput, plan: ReportPlan): string
   const chartJson = jsonForScript(specs);
   const sourceRowsHtml = reportTable(['출처 ID','공급자','작업','source_as_of','received_at','검증','권리'],sourceRows);
   const metricsHtml = reportTable(['지표','표시값','단위','기간','상태','비고'],metricsRows);
-  const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records"><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows.map(row=>row.map((cell,index)=>groupsRawColumn(table.columns[index]??'')?groupIntegerDigits(cell):cell)))}</details>`).join('');
+  const rawSourceTables=(doc.source_tables??[]).filter(table=>sourceMayDisplay(doc,table.source_id)).map(table=>`<details class="source-records"><summary>${E(table.title)} · 수신 자료 확인</summary><p class="block-note">${E(table.coverage_note)}</p>${reportTable(table.columns,table.rows)}</details>`).join('');
   const opinionClaims=doc.analysis_claims.filter(claim=>claim.id.includes('.GOOSE_OPINION.'));
   const opinionLabels:Record<string,string>={conclusion:'종합 결론',rationale:'판단 이유',risks:'반대 신호와 한계',next_checks:'다음 확인'};
   const opinionConclusion=opinionClaims.find(claim=>claim.id.includes('.conclusion.'))?.text;

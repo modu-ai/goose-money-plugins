@@ -1,8 +1,8 @@
-// Issue #52, after PR #53: the digit grouping that #53 gave metric tables still missed two places the re-check found.
-// (a) Raw received tables ("수신 자료 확인"): amount, quantity, balance and quote columns showed 15-digit numbers
-//     ungrouped. Only those columns are grouped; dates, filing numbers and ratios keep the received text.
-// (b) Bar value labels: the chart runtime printed raw numbers; they now use the same grouping on the client.
-// A zero-padded raw value ("0012345") is a received code, not an amount, and is never grouped.
+// Issue #52, after PR #53: the digit grouping that #53 gave metric tables still missed the charts the re-check found.
+// (a) Bar value labels: the chart runtime printed raw numbers; they now use the same grouping on the client.
+// (b) The value table under each chart now shows the same grouped numbers as its labels.
+// Raw received tables ("수신 자료 확인") are NOT grouped: their note promises the original notation, so grouping
+// them is an open decision. A zero-padded value ("0012345") is a received code and is never grouped.
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildReportInput, renderReportInputHtml } from '../src/report-pipeline.js';
@@ -38,8 +38,9 @@ test('#52: a zero-padded raw value is a received code and is not grouped', () =>
   assert.equal(groupIntegerDigits('0.5'), '0.5');
 });
 
-test('#52: raw received tables group amount, quantity and balance columns only', () => {
-  assert.deepEqual(sourceRecordCells(htmlWithSourceTable()), ['20261106', '20261106000440', '566,942,110,000,000', '1,234,567', '0012345', '1234.5']);
+test('#52: raw received tables keep the received text exactly (the page promises to preserve original notation)', () => {
+  // Grouping these cells is an open decision: the table note says "원문 금액·통화·기간 표기를 보존합니다".
+  assert.deepEqual(sourceRecordCells(htmlWithSourceTable()), ROW);
 });
 
 test('#52: the value table under a chart shows the same grouped numbers as the chart labels', () => {
