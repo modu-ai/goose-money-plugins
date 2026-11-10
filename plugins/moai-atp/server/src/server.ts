@@ -1,3 +1,4 @@
+import { entitlementRegistrations, type EntitlementWiringOptions } from './entitlement-wiring.js';
 import {ReportEvidenceStore} from './report-evidence-store.js';
 import { registerNativePeriodTools, type NativePeriodServerOptions } from "./native-period-mcp.js";
 import { PACKAGE_VERSION } from "./package-metadata.js";
@@ -30,6 +31,8 @@ import {openDartFilingsInputSchema, openDartFilingsResultSchema, requestOpenDart
 export interface ServerOptions extends SourceInputServerOptions, NativePeriodServerOptions {
   /** Legacy release-scope option retained for callers; ETF/futures reads are included, accounts remain unsupported. */
   studentReleaseScope?: boolean;
+  /** Trusted host opt-in; default preserves the provider-only release behavior. */
+  entitlement?: EntitlementWiringOptions;
   marketOrderbookTransport?: MarketOrderbookTransport;
   historicalStockTransport?: KrHistoricalIntradayTransport;
   futuresHistoryTransport?: FuturesHistoryTransport;
@@ -57,7 +60,7 @@ export interface ServerOptions extends SourceInputServerOptions, NativePeriodSer
 }
 
 export function createStockMcpServer(options: ServerOptions = {}): McpServer {
-  const server = new McpServer({ name: "moai-atp-readonly", version: PACKAGE_VERSION });
+  const server = entitlementRegistrations(new McpServer({ name: "moai-atp-readonly", version: PACKAGE_VERSION }), options.entitlement);
   const clock = options.clock ?? (() => new Date().toISOString());
   const evidence=new ReportEvidenceStore();
   async function providerResult(name:string,work:()=>Promise<Record<string,unknown>>){

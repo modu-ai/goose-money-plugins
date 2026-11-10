@@ -1,7 +1,7 @@
 import {ManualConsultationInputSchema,ManualConsultationMetadataSchema,buildManualConsultation} from './manual-consultation.js';
 import { createRequire } from 'node:module';
 import { z } from 'zod';
-import { renderReportTemplate } from './report-template-renderer.js';
+import { displayInstant, groupIntegerDigits, renderReportTemplate } from './report-template-renderer.js';
 import { getReportPresentation, type ReportPresentation } from './report-presentation.js';
 import { COMPARISON_PILOT_TOOLS, ComparisonBlockSchema, analyzeComparison, attributeComparison, comparisonHeaderSubject, comparisonInvariantIssues, validateComparisonSubjects, type ComparisonCall } from './report-comparison.js';
 
@@ -763,11 +763,11 @@ const ROUTE_READOUT:Record<ReportRouteId,string>={
   R14:'전략 검증은 사전 규칙, 학습·검증 구간, 거래비용, 생존편향과 재현성을 따로 확인합니다. 사용자 입력 가격만으로 체결이나 실현수익을 보장하지 않습니다.',
   U01:'종목·상품 탐색은 식별 후보와 확인된 종목 정보를 구분합니다. 이름이 비슷하다는 이유만으로 상품을 자동 확정하지 않습니다.',
 };
-function sectionNarrative(plan:ReportPlan,section:RouteSection,status:ReportInput['sections'][number]['status'],reason:string,linkedMetrics:ReportInput['metrics'],sourceIds:string[]):string {
+function sectionNarrative(plan:ReportPlan,section:RouteSection,status:ReportInput['sections'][number]['status'],reason:string,linkedMetrics:ReportInput['metrics'],sourceIds:string[],timeZone:ReportInput['display_timezone']):string {
   const boundary=plan.presentation?.narrative_boundary??'입력 근거와 데이터 상태를 구분합니다. 투자 판단이나 주문 신호는 자동 생성하지 않습니다.';
   const usable=linkedMetrics.filter(item=>item.value!==null&&['synthetic','provided','provided_unverified'].includes(item.status));
   const missing=linkedMetrics.filter(item=>item.value===null||['missing','rights_pending','error','not_run'].includes(item.status));
-  const observed=usable.slice(0,3).map(item=>`${item.label} ${item.value} ${item.unit} (${item.period})`).join('; ');
+  const observed=usable.slice(0,3).map(item=>{const unit=item.unit==='KRW/share'?'원/주':item.unit==='shares'?'주':item.unit;return `${item.label} ${groupIntegerDigits(item.value!)} ${unit} (${displayInstant(item.period,timeZone)})`;}).join('; ');
   const detail=usable.length?`${usable.length}개 지표 입력이 연결됐고 ${missing.length}개 항목은 결측 또는 검증 대기입니다. 관측 입력: ${observed}${usable.length>3?' 외 추가 항목':''}.`:'이 섹션에 표시할 검증 가능한 지표값이 없습니다.';
   const origins=sourceIds.length?`연결된 출처 ID: ${sourceIds.join(', ')}.`:'연결된 출처 응답이 없습니다.';
   return `${ROUTE_READOUT[plan.report_id]} ${boundary} ${section.title}: ${detail} ${reason} ${origins}`;
@@ -838,7 +838,7 @@ export function buildReportInput(args:BuildReportInputArgs):ReportInput {
     const linkedMetrics=metrics.filter(item=>routeSection.field_ids.includes(item.field_id)||routeSection.metric_ids.includes(item.field_id));
     const groupMetrics=[...new Set(linkedMetrics.map(item=>item.field_id))];
     const reason=localSectionMetrics.length?'사용자 제공 수치를 기준으로 계산했습니다. 입력의 완전성·외부 대사·가격시점은 독립 확인되지 않았습니다.':missingReason(status,relevantCalls,hasTools);
-    sections.push({id:routeSection.id,status,required_fields:routeSection.field_ids,missing_reason:reason,body:sectionNarrative(plan,routeSection,status,reason,linkedMetrics,groupSources),source_ids:groupSources,metric_ids:groupMetrics});
+    sections.push({id:routeSection.id,status,required_fields:routeSection.field_ids,missing_reason:reason,body:sectionNarrative(plan,routeSection,status,reason,linkedMetrics,groupSources,args.display_timezone),source_ids:groupSources,metric_ids:groupMetrics});
   }
   for(const group of plan.groups){
     const toolNames=new Set(group.tools.map(t=>t.name));
