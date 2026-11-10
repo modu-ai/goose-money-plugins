@@ -27,7 +27,16 @@ export function canonicalJson(value: unknown): string {
       case 'function':
         throw new Error('error_code=invalid_input');
     }
-    if (Array.isArray(v)) return `[${v.map(canonical).join(',')}]`;
+    if (Array.isArray(v)) {
+      // Walk by index and refuse holes: `map` skips missing elements, so a sparse array would
+      // serialize (and hash) like a shorter dense one, or as invalid JSON (codex P2).
+      const parts: string[] = [];
+      for (let i = 0; i < v.length; i++) {
+        if (!Object.prototype.hasOwnProperty.call(v, i)) throw new Error('error_code=invalid_input');
+        parts.push(canonical(v[i]));
+      }
+      return `[${parts.join(',')}]`;
+    }
     // Only plain records serialize: a Date/Map/class instance would silently hash as `{}` and two
     // different values would collide (codex P2) — unsupported instances are refused instead.
     const proto = Object.getPrototypeOf(v);

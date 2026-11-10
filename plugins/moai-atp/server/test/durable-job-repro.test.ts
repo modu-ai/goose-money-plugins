@@ -166,6 +166,12 @@ test('codex P2: non-plain objects (Date etc.) are rejected, never silently hashe
   }), /error_code=invalid_input/);
 });
 
+test('codex P2: sparse arrays are rejected, never collapsed into a dense-looking hash', () => {
+  assert.equal(canonicalJson([]), '[]');
+  assert.throws(() => canonicalJson(new Array(1)), /error_code=invalid_input/);
+  assert.throws(() => canonicalJson({ prices: [1, , 3] }), /error_code=invalid_input/);
+});
+
 test('codex P2: an oversized canonical request is rejected at build time — what builds stays verifiable', () => {
   assert.throws(() => buildReproPackage({
     request: { text: 'a'.repeat(65536) }, code_version: 'b1', input_snapshot: {}, provider_receipts: [], node_results: [],
