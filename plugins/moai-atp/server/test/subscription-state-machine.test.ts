@@ -732,19 +732,21 @@ test('a replacement view that states a period uses it', () => {
 // 분쟁을 유지하는 뷰는 새 주기의 정산이 아니므로 교체 표지를 소비하지 않는다 (Refs #104).
 
 test('a dispute-maintaining view does not consume the replacement marker on confirmation', () => {
-  // 경로 A(지적 본체) — 저장 disputed(이전 active, 구기간 보유)에서 판본 없는 checkout 이 표지를
-  // 남긴 뒤, 같은 disputed 로 판번만 진전한 뷰가 도달해도 정산 증거가 아니므로 기간·기준점·표지를
-  // 유지(N2·N3). 지우면 dispute.won 복구 뒤 기간 없는 active 로 남아 구기간 경과 후에도 유료 잔존.
+  // 경로 A(4531973934 본체, 4532141427 로 보강) — 저장 disputed(이전 active, 구기간 보유)에서 온
+  // checkout 은 비자격이라 표지를 세우지 않고(N2), 같은 disputed 로 판번만 진전한 뷰는 정산 증거가
+  // 아니므로 기간·기준점을 유지(N2·N3). 지우면 dispute.won 복구 뒤 기간 없는 active 로 남아
+  // 구기간 경과 후에도 유료 잔존.
   const end = T0 + 30 * DAY;
   const disputed = machine.apply(activeWithEnd(end), ev('c0', 'dispute.opened', { provider_revision: 3 })).subscription;
   assert.equal(state(disputed), 'disputed');
   const routed = machine.apply(disputed, ev('c1', 'checkout.completed', { occurred_at: end + DAY }));
   assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(routed.subscription.replacement_checkout_pending, false);  // 비자격 — 증거 없음(4532141427)
   const confirmed = machine.reconcile(routed.subscription, { state: 'disputed', revision: 4 }, end + DAY);
   assert.equal(confirmed.outcome, 'no_difference');                   // 판번 진전만으로는 기록된 차이 없음
   assert.equal(confirmed.subscription.current_period_end, end);       // 구기간 보존(N1 전제 위반 않음)
   assert.equal(confirmed.subscription.state_changed_at, disputed.state_changed_at);  // 기준점 보존(N3)
-  assert.equal(confirmed.subscription.replacement_checkout_pending, true);  // 표지 유지 — 정산 뷰 대기
+  assert.equal(confirmed.subscription.replacement_checkout_pending, false); // 증거가 없으니 소비할 것도 없음
   const won = machine.apply(confirmed.subscription, ev('c2', 'dispute.won', { provider_revision: 5, occurred_at: end + 2 * DAY }));
   assert.equal(state(won.subscription), 'active');
   assert.equal(won.subscription.current_period_end, end);             // 복구 상태도 구기간과 함께
@@ -767,6 +769,42 @@ test('a dispute-adopting view does not clear the live period on adoption', () =>
   assert.equal(state(won.subscription), 'active');
   assert.equal(won.subscription.current_period_end, end);             // 복구도 구기간과 함께
   assert.equal(machine.effectiveState(won.subscription, end + DAY), 'expired');  // 기간이 끝나면 유료 종료
+});
+
+// Codex 3차 지적 수리 (head 5fb2bd9) — 4532141427(비자격 checkout 의 증거 설정)·4532141436(비정산
+// 채택의 표지 소비). 표지가 곧 자격: 라우트는 자격 있는 후보만 남기고, 비정산 뷰는 소비하지 않는다 (Refs #104).
+
+test('an ineligible checkout during a dispute establishes no replacement evidence', () => {
+  // Codex 4532141427 — N2 로 분쟁 중 checkout 은 수용되지 않으므로 교체 증거(표지)도 세우지 않음.
+  // 이어 오는 복구 뷰 {active, 판번 진전, 기간 미제시} 는 구주기 재개(§5.2 previous_state 보존)이지
+  // 새 주기 정산이 아님 — 증거가 있으면 복구가 기간을 소거해 기간 없는 active 로 유료 잔존.
+  const end = T0 + 30 * DAY;
+  const disputed = machine.apply(activeWithEnd(end), ev('f0', 'dispute.opened', { provider_revision: 3 })).subscription;
+  const routed = machine.apply(disputed, ev('f1', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(routed.subscription.replacement_checkout_pending, false);  // 비자격 — 증거 없음(N2)
+  const restored = machine.reconcile(routed.subscription, { state: 'active', revision: 4 }, end + 2 * DAY);
+  assert.equal(state(restored.subscription), 'active');                    // 복구 자체는 유효(§4)
+  assert.equal(restored.subscription.current_period_end, end);             // 구주기 재개 — 기간 보존
+  assert.equal(machine.effectiveState(restored.subscription, end + 3 * DAY), 'expired');  // 유료 종료
+});
+
+test('a non-settled adoption preserves the replacement marker for the settling view', () => {
+  // Codex 4532141436 — 분쟁 채택 뷰는 교체 질문에 답하지 않으므로 표지를 소비하지 않음(§5.2 보존
+  // 이유·N3). 만료 active 에서 자격 있는 후보가 라우트된 뒤 정산 뷰 {active, 판번 진전, 기간 미제시}가
+  // 증거를 소비해 구기간을 비워야 정산 구독이 effective expired 로 갇히지 않음(§5.4 N1).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('g1', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(routed.subscription.replacement_checkout_pending, true);    // 자격 있는 후보 — 증거 유지
+  const disputed = machine.reconcile(routed.subscription, { state: 'disputed', revision: 3 }, end + DAY);
+  assert.equal(state(disputed.subscription), 'disputed');                  // 분쟁 채택 자체는 유효(§4)
+  assert.equal(disputed.subscription.replacement_checkout_pending, true);  // 비정산 채택 — 표지 유지
+  const settled = machine.reconcile(disputed.subscription, { state: 'active', revision: 4 }, end + 2 * DAY);
+  assert.equal(state(settled.subscription), 'active');                     // 복구를 겸한 정산 뷰
+  assert.equal(settled.subscription.current_period_end, null);             // N1 — 증거 소비, 구기간 소거
+  assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'active');
 });
 
 test('an equal-revision event still applies the transition (current behavior, B-11 pending)', () => {

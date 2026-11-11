@@ -204,8 +204,13 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       const reason = event.provider_revision === undefined ? 'revision_less_reconcile' : 'out_of_table_reconcile';
       // A routed checkout.completed is a new-cycle candidate (design §5.4 N1): the provider completed
       // a checkout the table did not commit, so reconciliation may need to clear the previous period
-      // once the view shows the replacement settled — evidence-gated per N3.
-      const routedCheckout = event.type === 'checkout.completed' ? { ...current, replacement_checkout_pending: true } : current;
+      // once the view shows the replacement settled — evidence-gated per N3. A checkout during a
+      // stored dispute is INELIGIBLE (N2 keeps it out), so it establishes no evidence either: the
+      // eventual restoration view must resume the old cycle as-is, not settle a marker it never
+      // qualified for (Codex 4532141427).
+      const routedCheckout = event.type === 'checkout.completed' && current.state !== 'disputed'
+        ? { ...current, replacement_checkout_pending: true }
+        : current;
       return { outcome: 'reconcile_required', reason, subscription: withApplied(record(routedCheckout, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason }), event.event_id) };
     }
     if ('unhandled' in moved) {
@@ -330,8 +335,12 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       trial_ended: (restoringDisputeState || enteringDispute) ? current.trial_ended : false,
       state_changed_at: restoringDisputeState ? (current.previous_state_changed_at ?? now) : now,
       last_event_at: now,
-      // Adoption answers the routed-checkout question either way — the view is the answer.
-      replacement_checkout_pending: false,
+      // A view adopting a settled state (or stating a period) answers the routed-checkout question,
+      // so the candidate is consumed. A non-settled adoption — a dispute, a terminal state — answers
+      // nothing about the checkout: the marker waits for a settling view (Codex 4532141436, §5.2/N3).
+      replacement_checkout_pending: (replacementSettledAdopt || provider.current_period_end !== undefined || settledForReplacement(provider.state))
+        ? false
+        : current.replacement_checkout_pending,
     };
     return { outcome: 'applied', reason: 'reconcile_adopted_provider', subscription: record(adopted, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_adopted_provider' }) };
   }
