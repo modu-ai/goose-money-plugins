@@ -116,9 +116,9 @@ HEAD에 이미 있는 것은 ✓, 새로 필요한 것은 ＋.
 | N14 | 결속 변경 후 이전 공급자 검사 결과 재사용 | 거부(재검사) | 일부(`member-access.test.ts` `member_session_changed`) |
 | N15 | refresh 재사용 감지 | 세션 전체 철회 | ＋ |
 | N16 | 토큰이 stdout/stderr·보고서·오류 메시지에 노출 | 0건 | ＋ (test:13이 오류 노출 일부 확인) |
-| N17 | 실행 경로 연결 후 모든 도구·자원에 게이트 적용, discovery만 예외 | 일치 | ＋ (현재 경로 미연결) |
+| N17 | 실행 경로 연결 후 모든 도구·자원에 게이트 적용, discovery만 예외 | 일치 | ✓ (`entitlement-discovery-open.test.ts` — 미인증 세션에서 tools/call·resources/read는 `auth_required`, tools/list·resources/list은 카탈로그 응답, 로그인 뒤 동일 호출 통과. PR #126. 게이트 경로는 신뢰 호스트 옵트인으로 연결 — `entitlement-wiring.ts`·`server.ts` `entitlement` 옵션, 기본 서버 실행에서는 비활성) |
 | N18 | 인증·entitlement 요청 본문에 보유 종목·잔고·수량·원가 값 | 0건 | ＋ |
-| N19 | 로그인 없이 R01·R07(무료) 호출 | `auth_required` | ＋ (무료도 로그인 필수 결정) |
+| N19 | 로그인 없이 R01·R07(무료) 호출 | `auth_required` | ✓ (`entitlement-free-login.test.ts` — 미인증 R01·R07 `auth_required`, 공급자 전송 계층 도달 0회 확인 + 평가기 단위 확인. PR #126) |
 
 ## 6. HEAD 코드에 대한 함의 (구현은 이 이슈 범위 밖)
 
