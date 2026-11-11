@@ -279,9 +279,11 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
         revision: provider.revision ?? current.revision,
         last_event_at: now,
         state_changed_at: confirmedReplacementCheckout ? now : current.state_changed_at,
-        // The candidate is consumed by the evidence or by a view-stated period (the new cycle's
-        // period arrived); an inert no-difference confirm keeps it for a later view.
-        replacement_checkout_pending: (confirmedReplacementCheckout || provider.current_period_end !== undefined)
+        // The candidate is consumed by the evidence or by a view-stating a DIFFERENT period (the
+        // new cycle's period arrived); an inert no-difference confirm keeps it for a later view.
+        // A view merely repeating the stored period is not new-cycle knowledge — a dispute restating
+        // the old period must not spend the candidate (Codex 4532374876, §5.2/N3).
+        replacement_checkout_pending: (confirmedReplacementCheckout || (provider.current_period_end !== undefined && provider.current_period_end !== current.current_period_end))
           ? false
           : current.replacement_checkout_pending,
       };
@@ -343,10 +345,13 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       trial_ended: (restoringDisputeState || enteringDispute) ? current.trial_ended : false,
       state_changed_at: restoringDisputeState ? (current.previous_state_changed_at ?? now) : now,
       last_event_at: now,
-      // A view adopting a settled state (or stating a period) answers the routed-checkout question,
-      // so the candidate is consumed. A non-settled adoption — a dispute, a terminal state — answers
-      // nothing about the checkout: the marker waits for a settling view (Codex 4532141436, §5.2/N3).
-      replacement_checkout_pending: (replacementSettledAdopt || provider.current_period_end !== undefined || settledForReplacement(provider.state))
+      // A view adopting a settled state (or stating a DIFFERENT period) answers the routed-checkout
+      // question, so the candidate is consumed. A non-settled adoption — a dispute, a terminal
+      // state — answers nothing about the checkout: the marker waits for a settling view, and a
+      // restated old period is not an answer either (Codex 4532141436·4532374876, §5.2/N3).
+      replacement_checkout_pending: (replacementSettledAdopt
+        || (provider.current_period_end !== undefined && provider.current_period_end !== current.current_period_end)
+        || settledForReplacement(provider.state))
         ? false
         : current.replacement_checkout_pending,
     };

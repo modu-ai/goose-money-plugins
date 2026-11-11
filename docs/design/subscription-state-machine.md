@@ -105,7 +105,7 @@ Refs #8.
 | `state_changed_at` | 현재 상태가 시작된 시각 — 유예(B-04)·`pending` 시간 초과의 기준점 | now 로 재설정하면 만료된 유예·타임아웃이 결제 없이 대사마다 재시작(§5 지연) |
 | `previous_state` | 분쟁 복구 상태 — `dispute.won`이 돌아갈 목표 | 없으면 분쟁 종결이 표 밖 조합이 되어 `disputed`에 갇힘(§4). 대사가 기간만 갱신할 때 보존, 대사가 놓친 분쟁 개시를 채택할 때 신규 포착 |
 | `previous_state_changed_at` | 분쟁 복구 시 되돌릴 기준 시각 — `dispute.opened`가 `state_changed_at`을 따로 저장 | 분쟁 왕복(`past_due` → `disputed` → 복구)이 소진된 유예를 재시작하지 않게 함(`state_changed_at`과 같은 이유) |
-| `replacement_checkout_pending` | 교체 checkout 대기 표지 — 판본 없는 `checkout.completed`가 표에 적용되지 못하고 뷰 대기 중(새 주기 후보). 분쟁 중 checkout 은 N2 위배로 수용 자격이 없으므로 표지도 세우지 않음 | 확인 대사가 지우면 정산까지 끝난 교체가 구기간에 갇혀 effective `expired`로 남음(§5.4 N1). 소비는 뷰가 새 주기에 정산된 상태(`pending`/`trialing`/`active`)에 도달하고 증거(판본 진전)가 있을 때만 — 분쟁 등 비정산 상태를 채택하는 뷰와 분쟁 생애주기 사건(`dispute.opened`/`won`/`lost` — 구주기 내 진동)은 교체 질문에 답하지 않으므로 표지를 유지함(§5.4 N2·N3) |
+| `replacement_checkout_pending` | 교체 checkout 대기 표지 — 판본 없는 `checkout.completed`가 표에 적용되지 못하고 뷰 대기 중(새 주기 후보). 분쟁 중 checkout 은 N2 위배로 수용 자격이 없으므로 표지도 세우지 않음 | 확인 대사가 지우면 정산까지 끝난 교체가 구기간에 갇혀 effective `expired`로 남음(§5.4 N1). 소비는 뷰가 새 주기에 정산된 상태(`pending`/`trialing`/`active`)에 도달하고 증거(판본 진전)가 있을 때, 또는 뷰가 저장 기간과 다른 새 기간을 제시할 때만 — 분쟁 등 비정산 상태를 채택하는 뷰·저장 기간의 반복 제시·분쟁 생애주기 사건(`dispute.opened`/`won`/`lost` — 구주기 내 진동)은 교체 질문에 답하지 않으므로 표지를 유지함(§5.4 N2·N3) |
 
 예시 — `trialing` + `trial_ended` 저장 중 대사가 공급자 뷰 `trialing`(기간 갱신)을 확인 → 표지 유지 → 이후 검증된 `payment.succeeded`가 `active` 로 정산.
 
