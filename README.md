@@ -79,8 +79,10 @@ Windows execution are pending and must not be claimed as validated.
 
 ## Implemented boundary
 
-The source includes 34 default-denied provider read-only MCP tool names plus a local report-input assembly tool, offline source
-parsers/contracts, a common-profile setup CLI and research workflow instructions.
+The source includes 34 default-denied provider read-only MCP tool names plus two local report tools
+(`build_report_input` report-input assembly, `render_report_html` HTML rendering to an in-memory
+MCP resource link), offline source parsers/contracts, a common-profile setup CLI and research
+workflow instructions.
 Instructions cover R01–R14, U01/U02 and internal U03 QA. End-to-end actual-data
 completed reports: **0**. Synthetic tests do not establish provider rights,
 source authenticity, actual host installation or financial performance.
