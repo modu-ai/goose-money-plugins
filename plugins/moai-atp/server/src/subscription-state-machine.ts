@@ -1,0 +1,395 @@
+// Pure subscription/payment event state machine (issue #104; design docs/design/subscription-state-machine.md, #8).
+// Provider-free by contract: apply() accepts only verified provider events (verified_signature must be
+// literal true — S4/S5); the signature check itself and every provider stay outside this module. No
+// persistence, no prices, no billing cycles: period ends arrive on provider events and are stored, never
+// invented. Undecided values (#8 B-01..B-07) stay injectable and default to undecided behaviour:
+// trialEndFailureTarget (trial.ended + payment.failed -> past_due|expired), pendingTimeoutMs
+// (pending | timeout | none), pastDueGraceMs (#8 B-04). Entitlement mapping (#7/B-08) is NOT here:
+// consumers feed effectiveState() results into the #7 evaluator's subscription input. Single-writer
+// discipline is the caller's duty; createSubscriptionEventProcessor only serializes in-memory work
+// per subscription_id (design §5 동시 처리).
+
+import { z } from 'zod';
+
+export const SUBSCRIPTION_STATES = ['none', 'pending', 'trialing', 'active', 'past_due', 'canceled_pending_end', 'expired', 'refunded', 'disputed'] as const;
+export type SubscriptionState = (typeof SUBSCRIPTION_STATES)[number];
+
+export const EVENT_TYPES = ['checkout.completed', 'payment.succeeded', 'payment.failed', 'trial.ended', 'renewal.succeeded', 'renewal.failed', 'subscription.cancel_requested', 'subscription.resumed', 'refund.succeeded', 'dispute.opened', 'dispute.won', 'dispute.lost'] as const;
+export type ProviderEventType = (typeof EVENT_TYPES)[number];
+
+const eventSchema = z.object({
+  event_id: z.string().min(1).max(256),
+  type: z.enum(EVENT_TYPES),
+  occurred_at: z.number().int().nonnegative(),
+  verified_signature: z.literal(true),                           // S4: the boundary above must have verified the signature
+  provider_revision: z.number().int().nonnegative().optional(),  // provider order when it gives one (design §5 순서 역전)
+  current_period_end: z.number().int().positive().optional(),    // provider-stated period end (epoch ms), stored verbatim
+  trial: z.boolean().optional(),                                 // provider-declared trial payment (design §4 row 2)
+  refund_scope: z.literal('full').optional(),                    // design §4 transitions full refunds only; B-05 undecided otherwise
+}).strict();
+
+export type ProviderEventInput = z.input<typeof eventSchema>;
+
+export type StoredSubscription = {
+  subscription_id: string;
+  state: SubscriptionState;
+  current_period_end: number | null;          // stored provider period end; expiry is computed from this, not from late events (S3)
+  revision: number;                           // last applied provider order (0 while none seen); a revision-less event never advances it
+  previous_state: SubscriptionState | null;   // remembered for dispute.won restore
+  previous_state_changed_at: number | null;   // the restored state's own anchor (B-04 grace), kept across a dispute round-trip
+  trial_ended: boolean;                       // trial.ended seen, awaiting the settling payment
+  replacement_checkout_pending: boolean;      // local-only (design §5.2): a checkout.completed routed to the view — new-cycle candidate awaiting provider evidence (§5.4 N1/N3)
+  state_changed_at: number;
+  last_event_at: number;
+  applied_event_ids: string[];                // idempotency keys (S1) — uncapped: design §5 keeps every processed id until persistence decides otherwise
+  unhandled: { event_id: string; type: string; at: number; reason: string }[];  // recorded-only events (S2, unknown combinations, undecided values), bounded
+};
+
+export type ApplyOutcome = 'applied' | 'duplicate_ignored' | 'stale_recorded' | 'unhandled_recorded' | 'rejected' | 'no_difference' | 'provider_stale' | 'reconcile_required';
+export type ApplyResult = { outcome: ApplyOutcome; reason?: string; subscription: StoredSubscription };
+
+export type ProviderView = { state: SubscriptionState; current_period_end?: number | null; revision?: number };
+
+export type StateMachineOptions = {
+  trialEndFailureTarget?: 'past_due' | 'expired';  // design table offers both (#8 decision pending) — unset stays unhandled
+  pendingTimeoutMs?: number;                       // design §4 "pending | 시간 초과 | none" — timeout undecided, injectable
+  pastDueGraceMs?: number;                         // #8 B-04 grace length; unset keeps past_due until a settling event
+};
+
+const UNHANDLED_CAP = 200;
+
+// Design §4 dispute rows: the dispute lifecycle (open → won/lost) is intra-cycle churn — it never
+// answers the routed-checkout question, so the replacement marker rides the round-trip and a later
+// settling view consumes it (Codex 4532228592, §5.2/N3). Every other applied transition takes the
+// cycle over: the checkout/payment rows settle it, renewal/cancel/refund act on the current cycle.
+const DISPUTE_EVENTS: ReadonlySet<ProviderEventType> = new Set(['dispute.opened', 'dispute.won', 'dispute.lost']);
+
+// Design §5.4 N1/N2: a replacement checkout proves a new cycle only when the view shows the
+// subscription settled into it — pending (the checkout in progress), trialing, or active. A view
+// still in dispute is not a settlement (N2 keeps checkouts out of a live dispute), and the later
+// states (past_due on) are reachable from the old cycle without any replacement, so they prove
+// nothing about a new one.
+const settledForReplacement = (state: SubscriptionState): boolean =>
+  state === 'pending' || state === 'trialing' || state === 'active';
+
+export function createSubscriptionStateMachine(options: StateMachineOptions = {}) {
+  const emptySubscription = (subscription_id: string): StoredSubscription => ({
+    subscription_id,
+    state: 'none',
+    current_period_end: null,
+    revision: 0,
+    previous_state: null,
+    previous_state_changed_at: null,
+    trial_ended: false,
+    replacement_checkout_pending: false,
+    state_changed_at: 0,
+    last_event_at: 0,
+    applied_event_ids: [],
+    unhandled: [],
+  });
+
+  const record = (sub: StoredSubscription, entry: { event_id: string; type: string; at: number; reason: string }): StoredSubscription =>
+    ({ ...sub, unhandled: [...sub.unhandled, entry].slice(-UNHANDLED_CAP) });
+
+  const withApplied = (sub: StoredSubscription, event_id: string): StoredSubscription =>
+    ({ ...sub, applied_event_ids: [...sub.applied_event_ids, event_id] });
+
+  function effectiveState(sub: StoredSubscription, now: number): SubscriptionState {
+    // Design §5 지연: the stored period end closes paid access without waiting for an expiry event (S3).
+    if (sub.current_period_end !== null && sub.current_period_end <= now
+      && sub.state !== 'none' && sub.state !== 'expired' && sub.state !== 'refunded') return 'expired';
+    if (options.pendingTimeoutMs !== undefined && sub.state === 'pending' && sub.state_changed_at + options.pendingTimeoutMs <= now) return 'none';
+    if (options.pastDueGraceMs !== undefined && sub.state === 'past_due' && sub.state_changed_at + options.pastDueGraceMs <= now) return 'expired';
+    // #8 B-04: the grace anchor above is the settling event's occurred_at (kept in state_changed_at),
+    // so this module stays deterministic in event time; whether the wall clock should anchor the
+    // grace instead is part of the undecided value itself.
+    return sub.state;
+  }
+
+  type Transition = { sub: StoredSubscription } | { unhandled: string };
+
+  function transition(sub: StoredSubscription, event: z.infer<typeof eventSchema>, now: number): Transition | undefined {
+    // Period ends and revisions come from the event when the provider states them; nothing is invented.
+    const next = (state: SubscriptionState, extra: Partial<StoredSubscription> = {}): StoredSubscription => ({
+      ...sub,
+      ...extra,
+      state,
+      state_changed_at: now,
+      last_event_at: now,
+      // Design §5: the revision space belongs to the provider's order. A revision-less event advances
+      // nothing — comparing it against a provider order is undefined, and apply() routes order-less
+      // events to the reconciliation view instead (reconcile_required 반환).
+      revision: event.provider_revision ?? sub.revision,
+      current_period_end: event.current_period_end ?? sub.current_period_end,
+      // An applied transition means the table took this cycle over — a routed-checkout candidate
+      // is superseded (apply() marks candidates only on the reconcile_required paths) — EXCEPT the
+      // dispute lifecycle, which churns within the cycle and leaves the candidate for a settling
+      // view (DISPUTE_EVENTS above).
+      replacement_checkout_pending: DISPUTE_EVENTS.has(event.type) ? sub.replacement_checkout_pending : false,
+    });
+    switch (event.type) {
+      case 'checkout.completed': {
+        // Design §4 "none/expired -> checkout.completed -> pending" with §5 지연: elapsed states
+        // count as none/expired here — a paid state whose stored period already ended (S3) and a
+        // pending checkout past its injected timeout, so a new checkout can start from them.
+        // A stored dispute stays out: §4 exits a dispute only via dispute.won/lost, and a checkout
+        // would erase the restoration state — combinations outside the table keep the state and are
+        // recorded verbatim (§4, S14 guard).
+        const effective = effectiveState(sub, now);
+        if (sub.state !== 'disputed' && (effective === 'none' || effective === 'expired')) {
+          // The old subscription's period must not survive into the new checkout: a carried expired
+          // end made the fresh pending effectively expired (repeat checkouts, settlement reported
+          // expired — P2 :118). Keep only a period the event itself states (next() would otherwise
+          // re-carry the stored one after the extra spread).
+          return { sub: { ...next('pending', { trial_ended: false, previous_state: null, previous_state_changed_at: null }), current_period_end: event.current_period_end ?? null } };
+        }
+        return undefined;
+      }
+      case 'payment.succeeded':
+        if (sub.state === 'pending') return { sub: next(event.trial === true ? 'trialing' : 'active', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
+        if (sub.state === 'trialing' && sub.trial_ended) return { sub: next('active', { trial_ended: false }) };
+        if (sub.state === 'past_due') return { sub: next('active') };
+        return undefined;
+      case 'payment.failed':
+        if (sub.state === 'pending') return { sub: next('none') };
+        if (sub.state === 'trialing' && sub.trial_ended) {
+          if (options.trialEndFailureTarget === undefined) return { unhandled: 'trial_end_failure_target_unconfigured' };
+          return { sub: next(options.trialEndFailureTarget, { trial_ended: false }) };
+        }
+        return undefined;
+      case 'trial.ended':
+        if (sub.state === 'trialing') return { sub: next('trialing', { trial_ended: true }) };
+        return undefined;
+      case 'renewal.succeeded':
+        if (sub.state === 'active' || sub.state === 'past_due') return { sub: next('active') };
+        return undefined;
+      case 'renewal.failed':
+        if (sub.state === 'active') return { sub: next('past_due') };
+        return undefined;
+      case 'subscription.cancel_requested':
+        if (sub.state === 'active' || sub.state === 'trialing') return { sub: next('canceled_pending_end') };
+        return undefined;
+      case 'subscription.resumed':
+        if (sub.state === 'canceled_pending_end') return { sub: next('active') };
+        return undefined;
+      case 'refund.succeeded':
+        if (event.refund_scope !== 'full') return { unhandled: 'refund_scope_unsupported' };
+        if (sub.state === 'active' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('refunded', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
+        return undefined;
+      case 'dispute.opened':  // design table "active 등": paid-capable states enter dispute
+        if (sub.state === 'active' || sub.state === 'trialing' || sub.state === 'canceled_pending_end' || sub.state === 'past_due') return { sub: next('disputed', { previous_state: sub.state, previous_state_changed_at: sub.state_changed_at }) };
+        return undefined;
+      case 'dispute.won':
+        if (sub.state === 'disputed' && sub.previous_state !== null) {
+          // §4 disputed -> won -> previous state: restoring is not a new state change, so the
+          // restored state keeps its original anchor — an already-exhausted past_due grace
+          // (B-04) must not restart without a successful payment (P2 :154).
+          return { sub: { ...next(sub.previous_state, { previous_state: null, previous_state_changed_at: null }), state_changed_at: sub.previous_state_changed_at ?? now } };
+        }
+        return undefined;
+      case 'dispute.lost':
+        if (sub.state === 'disputed') return { sub: next('refunded', { trial_ended: false, previous_state: null, previous_state_changed_at: null }) };
+        return undefined;
+    }
+  }
+
+  function apply(current: StoredSubscription, input: unknown): ApplyResult {
+    const parsed = eventSchema.safeParse(input);
+    if (!parsed.success) return { outcome: 'rejected', reason: 'invalid_event', subscription: current };
+    const event = parsed.data;
+    // S1: a seen event id is ignored (the 200-OK replay answer is the caller's transport concern).
+    if (current.applied_event_ids.includes(event.event_id)) return { outcome: 'duplicate_ignored', subscription: current };
+    if (event.provider_revision !== undefined && current.revision > event.provider_revision) {
+      // S2: an older event never reverts state; it is recorded once and marked seen.
+      return { outcome: 'stale_recorded', subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'stale_event_revision' }), event.event_id) };
+    }
+    const moved = transition(current, event, event.occurred_at);
+    if (moved === undefined) {
+      // Design §4 row "표에 없는 (상태, 사건) 조합": the state is kept, the combination is
+      // recorded, and the caller aligns through the provider view (§5 유실 대사 경로). The event
+      // is marked seen, so the outcome must request that view — otherwise a settled payment
+      // arriving out of order is finalised as a dead end (P2 :189, :182).
+      const reason = event.provider_revision === undefined ? 'revision_less_reconcile' : 'out_of_table_reconcile';
+      // A routed checkout.completed is a new-cycle candidate (design §5.4 N1): the provider completed
+      // a checkout the table did not commit, so reconciliation may need to clear the previous period
+      // once the view shows the replacement settled — evidence-gated per N3. A checkout during a
+      // stored dispute is INELIGIBLE (N2 keeps it out), so it establishes no evidence either: the
+      // eventual restoration view must resume the old cycle as-is, not settle a marker it never
+      // qualified for (Codex 4532141427).
+      const routedCheckout = event.type === 'checkout.completed' && current.state !== 'disputed'
+        ? { ...current, replacement_checkout_pending: true }
+        : current;
+      return { outcome: 'reconcile_required', reason, subscription: withApplied(record(routedCheckout, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason }), event.event_id) };
+    }
+    if ('unhandled' in moved) {
+      return { outcome: 'unhandled_recorded', reason: moved.unhandled, subscription: withApplied(record(current, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: moved.unhandled }), event.event_id) };
+    }
+    if (event.provider_revision === undefined) {
+      // Design §5 순서 역전: without a provider order the arrival sequence proves nothing — a
+      // delayed renewal.failed after a newer renewal.succeeded would revert paid access (P2 :172).
+      // Mark the event seen and require the reconciliation view (the provider-verified current
+      // state) instead of treating arrival order as authoritative; the table above runs only where
+      // the stale guard can actually judge order.
+      const routedCheckout = event.type === 'checkout.completed' ? { ...current, replacement_checkout_pending: true } : current;
+      return { outcome: 'reconcile_required', reason: 'revision_less_reconcile', subscription: withApplied(record(routedCheckout, { event_id: event.event_id, type: event.type, at: event.occurred_at, reason: 'revision_less_reconcile' }), event.event_id) };
+    }
+    return { outcome: 'applied', subscription: withApplied(moved.sub, event.event_id) };
+  }
+
+  function reconcile(current: StoredSubscription, provider: ProviderView, now: number): ApplyResult {
+    // Design §5 유실: the reconciliation schedule is undecided (B-07) — this is the pure step only.
+    if (provider.revision !== undefined && provider.revision < current.revision) {
+      return { outcome: 'provider_stale', subscription: record(current, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_provider_stale' }) };
+    }
+    if (provider.state === current.state) {
+      // Provider-confirms-stored: the view speaks only to the fields it carries (period end,
+      // revision). The local-only anchors — the trial settlement marker, the grace/state-change
+      // anchor, the dispute restoration pointer — are knowledge the view does not carry, and
+      // overwriting them restarts the grace on every pass (P2 :211), drops the pending trial
+      // settlement (P2 :210), or breaks dispute.won restore. Keep them; update only the carried
+      // fields.
+      // Exception (:118 family, P2 :225/:226): an ELAPSED pending (period-based or timed out —
+      // effectiveState judges both) confirmed as pending by a view whose revision ADVANCED is a
+      // replacement checkout — its anchor restarts, like apply()'s checkout path stamps
+      // state_changed_at. An unchanged snapshot carries no replacement evidence, so periodic
+      // reconciliation must not revive the abandoned checkout (P2 :225 2차).
+      const pendingElapsed = current.state === 'pending' && effectiveState(current, now) !== 'pending';
+      // N1/N3: a replacement checkout the view shows ALREADY SETTLED — stored paid state, revision
+      // advanced, no period stated (the intermediate pending view was skipped, and the stored period
+      // may even still be nominally live: it belongs to the dead cycle either way, N1).
+      // The marker (§5.2) is the routed-checkout evidence; without it the same confirmation keeps
+      // the stored period, so a plain confirm never revives anything (Codex 4530750266). The view
+      // must also show the subscription settled into the new cycle — a dispute kept alive in the
+      // view is not a settlement, so the marker, the period, and the anchor all wait (Codex 4531973934,
+      // §5.4 N2).
+      const replacementSettled = current.replacement_checkout_pending
+        && settledForReplacement(provider.state)
+        && provider.revision !== undefined
+        && provider.revision > current.revision;
+      const confirmedReplacementCheckout = (pendingElapsed || replacementSettled)
+        && provider.revision !== undefined
+        && provider.revision > current.revision;
+      const updated: StoredSubscription = {
+        ...current,
+        // A confirmed replacement checkout clears a stored expired period, like apply()'s checkout
+        // path does (P2 :231) — otherwise the new pending stays effectively expired.
+        current_period_end: provider.current_period_end === undefined
+          ? (confirmedReplacementCheckout ? null : current.current_period_end)
+          : provider.current_period_end,
+        revision: provider.revision ?? current.revision,
+        last_event_at: now,
+        state_changed_at: confirmedReplacementCheckout ? now : current.state_changed_at,
+        // The candidate is consumed by the evidence or by a view-stating a DIFFERENT period (the
+        // new cycle's period arrived); an inert no-difference confirm keeps it for a later view.
+        // A view merely repeating the stored period is not new-cycle knowledge — a dispute restating
+        // the old period must not spend the candidate (Codex 4532374876, §5.2/N3).
+        replacement_checkout_pending: (confirmedReplacementCheckout || (provider.current_period_end !== undefined && provider.current_period_end !== current.current_period_end))
+          ? false
+          : current.replacement_checkout_pending,
+      };
+      if (updated.current_period_end !== current.current_period_end) {
+        return { outcome: 'applied', reason: 'reconcile_confirmed_state', subscription: record(updated, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_confirmed_state' }) };
+      }
+      return { outcome: 'no_difference', subscription: updated };
+    }
+    const local = effectiveState(current, now);
+    const periodSame = provider.current_period_end === undefined || provider.current_period_end === current.current_period_end;
+    // A provider-confirmed terminal state must not be masked by the effective comparison when the
+    // stored state is a live dispute: both table exits (dispute.won/lost) are unreachable then,
+    // and every later reconcile would return no_difference forever (P2 :250). Adopting the
+    // provider's terminal state clears the dispute the way dispute.lost does.
+    if (local === provider.state && periodSame && !(current.state === 'disputed' && provider.state !== 'disputed')) {
+      // §5 순서 역전: a newer provider revision is verified knowledge even when nothing visible
+      // differs; keep it so later stale events stay rejected (a revision-5 event must not revert
+      // a provider-verified revision-10 snapshot).
+      if (provider.revision !== undefined && provider.revision > current.revision) {
+        return { outcome: 'no_difference', subscription: { ...current, revision: provider.revision, last_event_at: now } };
+      }
+      return { outcome: 'no_difference', subscription: current };
+    }
+    // §4 dispute rows: dispute.won restores the pre-dispute state, so reconciliation keeps that
+    // restoration state while disputed and captures the prior state when it adopts a dispute.
+    const previous_state: SubscriptionState | null = provider.state === 'disputed'
+      ? (current.state === 'disputed' ? current.previous_state : current.state)
+      : null;
+    const previous_state_changed_at: number | null = provider.state === 'disputed'
+      ? (current.state === 'disputed' ? current.previous_state_changed_at : current.state_changed_at)
+      : null;
+    // Restoring the pre-dispute state through the reconciliation view is not a new state change:
+    // carry the saved anchor back like dispute.won does (P2 :248) so an exhausted past_due grace
+    // does not restart without a successful payment. Entering a dispute through reconciliation
+    // mirrors dispute.opened, which keeps the trial settlement marker (P2 :251).
+    const restoringDisputeState = current.state === 'disputed' && provider.state === current.previous_state && current.previous_state_changed_at !== null;
+    const enteringDispute = provider.state === 'disputed' && current.state !== 'disputed';
+    // N1's adoption twin (Codex 4530750266 sibling): a replacement settled straight to a paid state —
+    // marker evidence + advanced revision + no period stated — starts the new cycle empty; the
+    // pending-only clear above left the old cycle's period poisoning the settled state. The settled-
+    // state requirement is the adopt-path twin of the confirm gate above: a view adopting a dispute
+    // keeps the old cycle's period so dispute.won restores with it (Codex 4531973934, §5.4 N2).
+    const replacementSettledAdopt = current.replacement_checkout_pending
+      && settledForReplacement(provider.state)
+      && provider.current_period_end === undefined
+      && provider.revision !== undefined
+      && provider.revision > current.revision;
+    const adopted: StoredSubscription = {
+      ...current,
+      state: provider.state,
+      // A provider 'pending' view is a checkout in progress: without a stated period the previous
+      // subscription's expired end must not carry over (:118's reconciliation twin, P2 :259).
+      current_period_end: provider.current_period_end === undefined
+        ? (provider.state === 'pending' || replacementSettledAdopt ? null : current.current_period_end)
+        : provider.current_period_end,
+      revision: provider.revision ?? current.revision,
+      previous_state,
+      previous_state_changed_at,
+      trial_ended: (restoringDisputeState || enteringDispute) ? current.trial_ended : false,
+      state_changed_at: restoringDisputeState ? (current.previous_state_changed_at ?? now) : now,
+      last_event_at: now,
+      // A view adopting a settled state (or stating a DIFFERENT period) answers the routed-checkout
+      // question, so the candidate is consumed. A non-settled adoption — a dispute, a terminal
+      // state — answers nothing about the checkout: the marker waits for a settling view, and a
+      // restated old period is not an answer either (Codex 4532141436·4532374876, §5.2/N3).
+      replacement_checkout_pending: (replacementSettledAdopt
+        || (provider.current_period_end !== undefined && provider.current_period_end !== current.current_period_end)
+        || settledForReplacement(provider.state))
+        ? false
+        : current.replacement_checkout_pending,
+    };
+    return { outcome: 'applied', reason: 'reconcile_adopted_provider', subscription: record(adopted, { event_id: 'reconcile', type: 'provider.reconcile', at: now, reason: 'reconcile_adopted_provider' }) };
+  }
+
+  return { emptySubscription, apply, effectiveState, reconcile };
+}
+
+export function createSubscriptionEventProcessor(options: StateMachineOptions & {
+  load?: (id: string) => Promise<StoredSubscription | undefined>;
+  save?: (sub: StoredSubscription) => Promise<void>;
+} = {}) {
+  const machine = createSubscriptionStateMachine(options);
+  const store = new Map<string, StoredSubscription>();
+  const queues = new Map<string, Promise<unknown>>();
+  // Design §5 동시 처리: same-subscription work serializes per subscription_id (S11) — apply and
+  // reconcile share one queue so a reconciled record can never interleave a late event.
+  const enqueue = (id: string, step: (current: StoredSubscription) => Promise<ApplyResult>): Promise<ApplyResult> => {
+    const run = (queues.get(id) ?? Promise.resolve()).then(async () => {
+      const loaded = await options.load?.(id);
+      const current = loaded ?? store.get(id) ?? machine.emptySubscription(id);
+      const result = await step(current);
+      store.set(id, result.subscription);
+      await options.save?.(result.subscription);
+      return result;
+    });
+    queues.set(id, run.then(() => undefined, () => undefined));
+    return run;
+  };
+  return {
+    machine,
+    get: (id: string): StoredSubscription | undefined => store.get(id),
+    submit: (id: string, event: unknown): Promise<ApplyResult> =>
+      enqueue(id, (current) => Promise.resolve(machine.apply(current, event))),
+    // reconcile_required results (out-of-table, revision-less events) have no other recovery path
+    // on the default in-memory store: the processor installs the reconciled record itself (P2 :283).
+    reconcile: (id: string, provider: ProviderView, now: number): Promise<ApplyResult> =>
+      enqueue(id, (current) => Promise.resolve(machine.reconcile(current, provider, now))),
+  };
+}
