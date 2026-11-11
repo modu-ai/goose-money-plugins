@@ -24,7 +24,7 @@ Refs #30 · Refs #5 · 갱신 기준 `a3062fc2538c2e34895c38c77407d9a29d3108f4` 
 - 기능별 코드·시험 기본값은 `docs/design/feature-table-rev6.md`(HEAD `8711890` 직접 측정 + main `fc3b16f` 범위 변경 추적)을 인용해 채웠습니다. 그 뒤 병합된 PR(#44·#47·#53·#54·#55·#56·#57·#59)의 변경은 PR 제목과 병합 기록으로 반영했고, **변경된 트리에서 시험 수치를 다시 실행해 측정하지는 않았습니다.**
 - 실화면 관찰·호스트 설치는 이번 갱신에서도 실행하지 않았습니다. 실제 공급자 호출은 2026-11-11 사용자 명시 승인 하에 별도 실행돼 로컬 보존 기록으로 남았고(아래 항), live-connected 칸은 이제 그 실행 기록(#17 및 2026-11-11 기록)의 인용입니다.
 - GitHub 저장소 설정은 최초 작성 시 2026-11-10 API로 직접 조회했습니다(§4). 이번 갱신에서는 설정을 재조회하지 않았습니다.
-- 2026-11-10 14:38 KST 갱신: 로컬 보존 기록 `2026-11-10-r01-actual-two-companies/RESULT.md`를 읽고 #17 실행 결과를 반영했습니다. 그 기록은 실행 HEAD `fc3b16f0029b7a36dd6de6f52e7e30d6ed130b9d`의 관찰이며, 이번 문서 기준 HEAD에서 API를 재호출한 결과가 아닙니다. PR #64·#66·#60·#69의 병합 SHA는 GitHub API로 확인했습니다. #62의 새 gate 실행은 [Actions run 42762980409](https://github.com/modu-ai/moai-stock-plugins/actions/runs/42762980409) 성공과 로그의 `Image: ubuntu-26.04`를 확인했습니다. 실제 청구액은 측정하지 않았습니다.
+- 2026-11-10 14:38 KST 갱신: 로컬 보존 기록 `2026-11-10-r01-actual-two-companies/RESULT.md`를 읽고 #17 실행 결과를 반영했습니다. 그 기록은 실행 HEAD `fc3b16f0029b7a36dd6de6f52e7e30d6ed130b9d`의 관찰이며, 이번 문서 기준 HEAD에서 API를 재호출한 결과가 아닙니다. PR #64·#66·#60·#69의 병합 SHA는 GitHub API로 확인했습니다. #62의 새 gate 실행은 [Actions run 42762980409](https://github.com/modu-ai/goose-money-plugins/actions/runs/42762980409) 성공과 로그의 `Image: ubuntu-26.04`를 확인했습니다. 실제 청구액은 측정하지 않았습니다.
 - 2026-11-11 갱신: 사용자 명시 승인("모든 보고서 실제 API로 받아서 완성, 2종목") 하에 실제 공급자(KIS·OpenDART) 읽기 전용 호출이 빌드 `a3062fc`에서 실행돼 보고서 8본 — 삼성·SK하이닉스 R01/R07/R11, R02(양사 비교), R06 — 이 모두 `actual_data_partial`로 생성됐습니다(두 차례 실행, 공유 cutoff 02:16:41Z 5본·03:08:34Z 3본). 누적 72요청(상한 80 이내; 이 중 19요청은 수집 가드 스크립트 오류로 전량 낭비된 실행 run4로, 그 실행의 장부가 삭제돼 원본 기록이 남지 않음 — 독립 검증도 "확인 불가"로 기록), 직렬 실행, 계좌·주문·이체 endpoint 0회. 근거로 읽은 로컬 보존 기록(Git 미추적): `.moai/reports/2026-11-11-run/result/`의 `live-run-reports.md`·`live-run-r11-r06.md`·`live-verify.md`·`live-verify-r11-r06.md`·`live-report-matrix.md`·`release-qa.md`와 산출물 보존 폴더 `.moai/reports/2026-11-11-live-run/`. **이 문서 갱신 작업 자체는 공급자 API를 호출하지 않았습니다.** 전체 시험(핀 Node 24.22.1에서 5503/5503 통과)·빌드(tsc+런타임 번들)·패키지·비밀 검사는 `release-qa.md`의 a3062fc 실행 기록 인용이며 이 갱신에서 재실행하지 않았습니다.
 - 시간 예측은 쓰지 않습니다. 남은 것은 이슈 번호로만 적습니다.
 
@@ -130,7 +130,7 @@ not_run 절은 호출하지 않은 도구 그룹(거시·수급·추정치·뉴�
 
 ### 5.1 출시 전 필수 결정 — 가격·청구 주기·무료 사용량
 
-[사용자 결정 #5](https://github.com/modu-ai/moai-stock-plugins/issues/5#issuecomment-6759712861): 다음 세 값은 지금 임의로 정하지 않고 출시 전에 확정합니다. 이슈가 닫힌 것은 값이 채워졌다는 뜻이 아닙니다.
+[사용자 결정 #5](https://github.com/modu-ai/goose-money-plugins/issues/5#issuecomment-6759712861): 다음 세 값은 지금 임의로 정하지 않고 출시 전에 확정합니다. 이슈가 닫힌 것은 값이 채워졌다는 뜻이 아닙니다.
 
 | 항목 | 값 | 출시 조건 |
 |---|---|---|

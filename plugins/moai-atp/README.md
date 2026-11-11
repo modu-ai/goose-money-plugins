@@ -54,7 +54,7 @@ Node 실행 파일은 별도로 필요합니다. 소스 ZIP에는 빌드 결과�
 요청 조건도 같습니다. 검증용 합성 호출이 이를 비활성화하는 설정은 아닙니다.
 
 호스트별 실제 실행 결과와 인증·표시의 남은 조건은
-[호스트·OS 검증표](https://github.com/modu-ai/moai-atp/blob/main/docs/design/host-os-verification.md)를 확인합니다.
+[호스트·OS 검증표](https://github.com/modu-ai/goose-money-plugins/blob/main/docs/design/host-os-verification.md)를 확인합니다.
 패키지 설치 성공만으로 도구 호출·보고서 표시·서비스 이용 권한을
 검증했다고 보지 않습니다. Desktop·ChatGPT·Windows 지원도 별도입니다.
 
