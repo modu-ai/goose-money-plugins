@@ -270,6 +270,39 @@ test('while an effect query is pending, another node failure is refused — answ
   assert.throws(() => run(s, { kind: 'node_failed', node: 'publish', error: { kind: 'timeout' } }), /error_code=invalid_observation/);
 });
 
+test('a late success while an effect query pends resolves the node and clears the query — the next node is not blocked (codex P2)', () => {
+  let s = createRunnerState([{ id: 'publish', has_write_effect: true }, { id: 'after' }]);
+  s = step(s, P, { kind: 'start', permission_recheck: 'passed' }).state;
+  s = step(s, P, { kind: 'node_failed', node: 'publish', error: { kind: 'timeout' } }).state; // query pends
+  const r = step(s, P, { kind: 'node_succeeded', node: 'publish', result_hash: 'hlate' });
+  assert.equal(nodeOf(r.state, 'publish').status, 'succeeded');
+  assert.deepEqual(r.commands, [{ cmd: 'start_node', node: 'after' }]);
+  // The stale query answer is a protocol break, not a fold.
+  assert.throws(() => step(r.state, P, { kind: 'effect_observed', node: 'publish', check: { checked: true, effect_present: false } }), /error_code=invalid_observation/);
+  // And the next node's failure applies its own retry policy instead of effect_query_pending.
+  const f = step(r.state, P, { kind: 'node_failed', node: 'after', error: { kind: 'timeout' } });
+  assert.deepEqual(f.commands, [{ cmd: 'retry_node_after', node: 'after', wait_ms: 100 }]);
+});
+
+test('a prescribed retry whose wait lands past the elapsed budget is gated now — no out-of-budget authorization (codex P2)', () => {
+  const cfg: RunnerConfig = { retry_policy: { transient: { max_retries: 2, backoff_base_ms: 1000 } }, budget: { max_elapsed_ms: 1000 } };
+  let s = createRunnerState(plan('a'));
+  s = step(s, cfg, { kind: 'start', permission_recheck: 'passed' }, { elapsed_ms: 0, provider_calls: 0 }).state;
+  const r = step(s, cfg, { kind: 'node_failed', node: 'a', error: { kind: 'timeout' } }, { elapsed_ms: 900, provider_calls: 1 });
+  assert.equal(r.state.job.state, 'failed'); // earliest dispatch 900+1000=1900 ≥ 1000 — gated before the wait
+  assert.equal(r.state.job.budget_exhausted, true);
+  assert.deepEqual(r.commands, []);
+});
+
+test('a retry whose wait still lands inside the elapsed budget is authorized (codex P2 boundary)', () => {
+  const cfg: RunnerConfig = { retry_policy: { transient: { max_retries: 2, backoff_base_ms: 1000 } }, budget: { max_elapsed_ms: 2000 } };
+  let s = createRunnerState(plan('a'));
+  s = step(s, cfg, { kind: 'start', permission_recheck: 'passed' }, { elapsed_ms: 0, provider_calls: 0 }).state;
+  const r = step(s, cfg, { kind: 'node_failed', node: 'a', error: { kind: 'timeout' } }, { elapsed_ms: 900, provider_calls: 1 });
+  assert.deepEqual(r.commands, [{ cmd: 'retry_node_after', node: 'a', wait_ms: 1000 }]); // 1900 < 2000
+  assert.equal(r.state.job.state, 'running');
+});
+
 test('plans and observations are validated: duplicate ids, empty plans, junk kinds are invalid_input', () => {
   assert.throws(() => createRunnerState(plan('a', 'a')), /error_code=invalid_input/);
   assert.throws(() => createRunnerState([]), /error_code=invalid_input/);

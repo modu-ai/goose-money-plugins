@@ -118,13 +118,18 @@ const cancelling = (st: RunnerState): boolean =>
 /** Gate one provider call (first send or retry) against the injected budget (§6, T9). On exhaustion
  * the budget_exhausted event is folded with the outcome derived from progress — partial once any
  * node finished (§2.1: partial = 일부 단계 완료, 나머지 불가), failed before that. A configured budget
- * without spent counters cannot be verified and is refused, never guessed. */
-function budgetGate(st: RunnerState, config: RunnerConfig, spent: BudgetSpent | undefined):
+ * without spent counters cannot be verified and is refused, never guessed. A retry's earliest
+ * dispatch is elapsed+wait: when that lands at or past the elapsed limit the command would
+ * authorize an out-of-budget send, so it is gated now — the command is the authorization and
+ * nothing re-checks between the wait and the dispatch. */
+function budgetGate(st: RunnerState, config: RunnerConfig, spent: BudgetSpent | undefined, wait_ms = 0):
   { ok: true; state: RunnerState } | { ok: false; state: RunnerState } {
   if (!config.budget) return { ok: true, state: st };
   if (!spent) throw new Error('error_code=invalid_input');
   const v = checkBudget(config.budget, spent); // validates config and spent, invalid_input on junk
-  if (v.ok) return { ok: true, state: st };
+  const beyondByWait = config.budget.max_elapsed_ms !== undefined
+    && spent.elapsed_ms + wait_ms >= config.budget.max_elapsed_ms;
+  if (v.ok && !beyondByWait) return { ok: true, state: st };
   const outcome = st.nodes.some((n) => n.status === 'succeeded') ? 'partial' : 'failed';
   let s = withJob(st, apply(st.job, { event: 'budget_exhausted', outcome }));
   if (s.in_flight !== undefined) {
@@ -170,8 +175,12 @@ export function step(state: RunnerState, config: RunnerConfig, ob: unknown, spen
       // the discard count grows — nothing restarts while cancelling or cancelled.
       const wasCancelling = cancelling(state);
       const s = withJob(state, apply(state.job, { event: 'node_completed', node_result_hash: e.result_hash }));
-      if (wasCancelling) return { state: s, commands: [] };
-      return scheduleNext(withNode({ ...s, in_flight: undefined }, e.node, { status: 'succeeded' }), config, spent);
+      // A success observed while an effect query pended resolves the node outright: the query is
+      // moot, so its pending entry is cleared — a later stale answer is a protocol break, and the
+      // next node's failures must apply their own policy, not effect_query_pending.
+      const cleared = state.awaiting_effect?.node === e.node ? { awaiting_effect: undefined } : {};
+      if (wasCancelling) return { state: { ...s, ...cleared }, commands: [] };
+      return scheduleNext(withNode({ ...s, in_flight: undefined, ...cleared }, e.node, { status: 'succeeded' }), config, spent);
     }
     case 'node_failed': {
       const n = nodeOf(state, e.node);
@@ -196,7 +205,7 @@ export function step(state: RunnerState, config: RunnerConfig, ob: unknown, spen
         return { state: { ...withNode(s, e.node, { status: 'failed' }), in_flight: undefined }, commands: [] };
       }
       if (v.action === 'retry') {
-        const g = budgetGate(state, config, spent); // a retry is a provider call too (§6)
+        const g = budgetGate(state, config, spent, v.wait_ms); // a retry is a provider call too (§6)
         if (!g.ok) return { state: g.state, commands: [] };
         const retry = { ...n.retry, [v.class]: n.retry[v.class] + 1 };
         return { state: withNode(g.state, e.node, { retry }), commands: [{ cmd: 'retry_node_after', node: e.node, wait_ms: v.wait_ms }] };
@@ -240,7 +249,7 @@ export function step(state: RunnerState, config: RunnerConfig, ob: unknown, spen
         has_write_effect: true, effect_check: { checked: true, effect_present: false },
       });
       if (v.action === 'retry') {
-        const g = budgetGate(state, config, spent);
+        const g = budgetGate(state, config, spent, v.wait_ms);
         if (!g.ok) return { state: g.state, commands: [] };
         const retry = { ...n.retry, [v.class]: n.retry[v.class] + 1 };
         return {
