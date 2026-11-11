@@ -832,39 +832,73 @@ test('a dispute event round-trip preserves the replacement marker for the settli
   assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'active');
 });
 
-test('marker invariant table: every stored×view×marker cell pins clearing and consumption', () => {
-  // 되풀이 끊기 — 같은 영역(표지·분쟁 뷰)의 지적이 4회 반복돼, 대사 조합 전수를 불변식으로 고정한다.
-  // 전제: 기간 라이브(now < end)·뷰 판번 진전(revision 3 > 2)·기간 미제시. 불변식:
-  //   A(§5.4 N1) 기간이 소거(null)되려면 뷰가 pending(진행 중 checkout 채택)이거나 정산 증거
-  //      (표지 있음 + 뷰 정산 상태)여야 한다. 그 외엔 구기간이 그대로다.
-  //   B(§5.2·N3) 표지를 소비하는 것은 정산 상태 뷰뿐 — 비정산 뷰는 표지를 유지한다.
+// Codex 5차 지적 수리 (head de1d33f) — 4532374876(이전 기간 반복 제시 뷰의 표지 소비). 기간 제시는
+// "저장 기간과 다른 새 기간"일 때만 교체 질문의 답이다 (Refs #104).
+
+test('a non-settled view repeating the old period keeps the replacement marker', () => {
+  // Codex 4532374876 — 만료 active 의 교체 후보가 라우트된 뒤, 중간 disputed 뷰가 변하지 않은
+  // 이전 기간을 함께 제시해도 정산 증거가 아님(§5.2·N3 — 새 주기의 기간이 온 것이 아니다).
+  // 소비해 버리면 이후 정산 뷰 {active, 판번 진전, 기간 미제시} 가 구기간을 못 비워 정산 구독이
+  // effective expired 로 갇힘(§5.4 N1).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('i1', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(routed.subscription.replacement_checkout_pending, true);
+  const disputed = machine.reconcile(routed.subscription, { state: 'disputed', revision: 3, current_period_end: end }, end + DAY);
+  assert.equal(state(disputed.subscription), 'disputed');
+  assert.equal(disputed.subscription.current_period_end, end);            // 같은 기간 — P1 반영(값 불변)
+  assert.equal(disputed.subscription.replacement_checkout_pending, true); // 반복 제시는 소비 아님
+  const settled = machine.reconcile(disputed.subscription, { state: 'active', revision: 4 }, end + 2 * DAY);
+  assert.equal(state(settled.subscription), 'active');
+  assert.equal(settled.subscription.current_period_end, null);            // N1 — 증거 소비, 구기간 소거
+  assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'active');
+});
+
+test('marker invariant table: every stored×view×marker×period×elapsed cell pins clearing and consumption', () => {
+  // 되풀이 끊기(4차 162셀 → 축 확장) — 대사 조합 전수를 불변식으로 고정한다.
+  // 축: 저장 상태 9 × 뷰 상태 9 × 표지 유무 2 × 뷰 기간 제시(미제시/이전과 동일/새 기간) 3 × 기간 경과(라이브/경과) 2 = 972셀.
+  // 전제: 뷰 판번 진전(revision 3 > 2)·저장 판번 2. 불변식:
+  //   A(§5.4 N1·P1) 기간이 소거(null)되려면 뷰가 기간을 미제시하고 (뷰 pending = 진행 중 checkout) 또는
+  //      (표지 + 정산 뷰)의 증거가 있어야 한다. 뷰가 다른 기간을 제시하면 그 값이 반영되고,
+  //      그 외엔 구기간이 그대로다.
+  //   B(§5.2·N3) 표지를 소비하는 것은 정산 상태 뷰 또는 저장 기간과 다른 새 기간 제시뿐 —
+  //      비정산 뷰의 기간 반복 제시는 유지한다.
   //   C(§5.2 previous_state) 분쟁 복구 채택(disputed→active)은 기준점을 구주기 값으로 되돌린다.
   const settledView = (s: string) => s === 'pending' || s === 'trialing' || s === 'active';
   const end = T0 + 30 * DAY;
+  const NEW = end + 30 * DAY;
   for (const marker of [false, true]) {
     for (const stored of SUBSCRIPTION_STATES) {
       for (const view of SUBSCRIPTION_STATES) {
-        const cell = `stored=${stored} view=${view} marker=${marker}`;
-        const sub: StoredSubscription = {
-          ...empty('table'),
-          state: stored,
-          current_period_end: end,
-          revision: 2,
-          previous_state: 'active',
-          previous_state_changed_at: T0,
-          replacement_checkout_pending: marker,
-          state_changed_at: T0,
-          last_event_at: T0,
-        };
-        const out = machine.reconcile(sub, { state: view, revision: 3 }, T0);
-        if (out.subscription.current_period_end === null) {
-          assert.ok(view === 'pending' || (marker && settledView(view)), `기간 소거에 증거 없음: ${cell}`);
-        } else {
-          assert.equal(out.subscription.current_period_end, end, `구기간이 함부로 바뀜: ${cell}`);
-        }
-        assert.equal(out.subscription.replacement_checkout_pending, marker && !settledView(view), `표지 소비 위반: ${cell}`);
-        if (stored === 'disputed' && view === 'active') {
-          assert.equal(out.subscription.state_changed_at, T0, `분쟁 복구 기준점 위반: ${cell}`);
+        for (const stated of [undefined, end, NEW] as const) {
+          for (const now of [T0, end + DAY]) {
+            const cell = `stored=${stored} view=${view} marker=${marker} stated=${stated === undefined ? 'none' : stated === end ? 'same' : 'new'} now=${now === T0 ? 'live' : 'elapsed'}`;
+            const sub: StoredSubscription = {
+              ...empty('table'),
+              state: stored,
+              current_period_end: end,
+              revision: 2,
+              previous_state: 'active',
+              previous_state_changed_at: T0,
+              replacement_checkout_pending: marker,
+              state_changed_at: T0,
+              last_event_at: T0,
+            };
+            const out = machine.reconcile(sub, stated === undefined ? { state: view, revision: 3 } : { state: view, revision: 3, current_period_end: stated }, now);
+            const periodAfter = out.subscription.current_period_end;
+            if (periodAfter === null) {
+              assert.ok(stated === undefined && (view === 'pending' || (marker && settledView(view))), `기간 소거에 증거 없음: ${cell}`);
+            } else if (stated !== undefined && stated !== end) {
+              assert.equal(periodAfter, stated, `제시된 새 기간이 반영되지 않음(P1): ${cell}`);
+            } else {
+              assert.equal(periodAfter, end, `구기간이 함부로 바뀜: ${cell}`);
+            }
+            assert.equal(out.subscription.replacement_checkout_pending, marker && !settledView(view) && !(stated !== undefined && stated !== end), `표지 소비 위반: ${cell}`);
+            if (stored === 'disputed' && view === 'active') {
+              assert.equal(out.subscription.state_changed_at, T0, `분쟁 복구 기준점 위반: ${cell}`);
+            }
+          }
         }
       }
     }
