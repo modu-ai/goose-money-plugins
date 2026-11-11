@@ -21,7 +21,7 @@ Refs #26 · 기준 `838217231d33c137767c45982d00e58343b1eb1e`
 
 ## 저장소 밖 manifest 정정 제안
 
-[이슈 #26의 기존 정정 기록](https://github.com/modu-ai/moai-stock-plugins/issues/26#issuecomment-6754547113)을 구체화한 제안입니다. 해당 manifest는 Git 추적 대상이 아니므로 이 PR에서 수정하지 않습니다.
+[이슈 #26의 기존 정정 기록](https://github.com/modu-ai/goose-money-plugins/issues/26#issuecomment-6754547113)을 구체화한 제안입니다. 해당 manifest는 Git 추적 대상이 아니므로 이 PR에서 수정하지 않습니다.
 
 | 대상 | 제안 |
 |---|---|
