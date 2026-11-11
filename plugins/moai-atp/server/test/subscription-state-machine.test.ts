@@ -2,7 +2,7 @@
 // Provider-free: verified events only, no provider call, no persistence, no real signature check (S8/S9 live in entitlement.test.ts, Refs #7).
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createSubscriptionStateMachine, createSubscriptionEventProcessor, type StoredSubscription, type ProviderEventType } from '../src/subscription-state-machine.js';
+import { createSubscriptionStateMachine, createSubscriptionEventProcessor, SUBSCRIPTION_STATES, type StoredSubscription, type ProviderEventType } from '../src/subscription-state-machine.js';
 
 const T0 = 1_700_000_000_000;
 const DAY = 86_400_000;
@@ -805,6 +805,83 @@ test('a non-settled adoption preserves the replacement marker for the settling v
   assert.equal(state(settled.subscription), 'active');                     // 복구를 겸한 정산 뷰
   assert.equal(settled.subscription.current_period_end, null);             // N1 — 증거 소비, 구기간 소거
   assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'active');
+});
+
+// Codex 4차 지적 수리 (head ee24ece) — 4532228592(비정산 사건 전이의 표지 소거). 분쟁 생애주기 사건은
+// 교체 질문에 답하지 않으므로 표지를 유지한다 (Refs #104).
+
+test('a dispute event round-trip preserves the replacement marker for the settling view', () => {
+  // Codex 4532228592 — 만료 active 의 자격 있는 checkout 후보가 라우트된 뒤, 적용되는 dispute.opened
+  // 가 next() 에서 표지를 지워서는 안 됨(§5.2·N3 — 전이 적용 ≠ 교체 정산). 분쟁 왕복 뒤 정산 뷰
+  // {active, 판번 진전, 기간 미제시} 가 증거를 소비해 구기간을 비워야 정산 구독이 갇히지 않음(§5.4 N1).
+  const end = T0 + 30 * DAY;
+  const sub = activeWithEnd(end);
+  const routed = machine.apply(sub, ev('h1', 'checkout.completed', { occurred_at: end + DAY }));
+  assert.equal(routed.outcome, 'reconcile_required');
+  assert.equal(routed.subscription.replacement_checkout_pending, true);
+  const opened = machine.apply(routed.subscription, ev('h2', 'dispute.opened', { provider_revision: 3, occurred_at: end + DAY }));
+  assert.equal(state(opened.subscription), 'disputed');
+  assert.equal(opened.subscription.replacement_checkout_pending, true);   // 비정산 전이 — 표지 유지
+  const won = machine.apply(opened.subscription, ev('h3', 'dispute.won', { provider_revision: 4, occurred_at: end + 2 * DAY }));
+  assert.equal(state(won.subscription), 'active');
+  assert.equal(won.subscription.replacement_checkout_pending, true);      // 복구도 질문에 답하지 않음
+  assert.equal(won.subscription.current_period_end, end);                 // 구주기 재개
+  const settled = machine.reconcile(won.subscription, { state: 'active', revision: 5 }, end + 2 * DAY);
+  assert.equal(settled.subscription.current_period_end, null);            // N1 — 증거 소비, 구기간 소거
+  assert.equal(settled.subscription.replacement_checkout_pending, false);
+  assert.equal(machine.effectiveState(settled.subscription, end + 2 * DAY), 'active');
+});
+
+test('marker invariant table: every stored×view×marker cell pins clearing and consumption', () => {
+  // 되풀이 끊기 — 같은 영역(표지·분쟁 뷰)의 지적이 4회 반복돼, 대사 조합 전수를 불변식으로 고정한다.
+  // 전제: 기간 라이브(now < end)·뷰 판번 진전(revision 3 > 2)·기간 미제시. 불변식:
+  //   A(§5.4 N1) 기간이 소거(null)되려면 뷰가 pending(진행 중 checkout 채택)이거나 정산 증거
+  //      (표지 있음 + 뷰 정산 상태)여야 한다. 그 외엔 구기간이 그대로다.
+  //   B(§5.2·N3) 표지를 소비하는 것은 정산 상태 뷰뿐 — 비정산 뷰는 표지를 유지한다.
+  //   C(§5.2 previous_state) 분쟁 복구 채택(disputed→active)은 기준점을 구주기 값으로 되돌린다.
+  const settledView = (s: string) => s === 'pending' || s === 'trialing' || s === 'active';
+  const end = T0 + 30 * DAY;
+  for (const marker of [false, true]) {
+    for (const stored of SUBSCRIPTION_STATES) {
+      for (const view of SUBSCRIPTION_STATES) {
+        const cell = `stored=${stored} view=${view} marker=${marker}`;
+        const sub: StoredSubscription = {
+          ...empty('table'),
+          state: stored,
+          current_period_end: end,
+          revision: 2,
+          previous_state: 'active',
+          previous_state_changed_at: T0,
+          replacement_checkout_pending: marker,
+          state_changed_at: T0,
+          last_event_at: T0,
+        };
+        const out = machine.reconcile(sub, { state: view, revision: 3 }, T0);
+        if (out.subscription.current_period_end === null) {
+          assert.ok(view === 'pending' || (marker && settledView(view)), `기간 소거에 증거 없음: ${cell}`);
+        } else {
+          assert.equal(out.subscription.current_period_end, end, `구기간이 함부로 바뀜: ${cell}`);
+        }
+        assert.equal(out.subscription.replacement_checkout_pending, marker && !settledView(view), `표지 소비 위반: ${cell}`);
+        if (stored === 'disputed' && view === 'active') {
+          assert.equal(out.subscription.state_changed_at, T0, `분쟁 복구 기준점 위반: ${cell}`);
+        }
+      }
+    }
+  }
+  // 사건 전이 측면(4532228592): 분쟁 생애주기 사건은 표지를 소비하지 않는다.
+  for (const from of ['active', 'trialing', 'canceled_pending_end', 'past_due'] as const) {
+    const sub: StoredSubscription = { ...empty('table'), state: from, current_period_end: end, replacement_checkout_pending: true, state_changed_at: T0, last_event_at: T0 };
+    const opened = machine.apply(sub, ev('t-open', 'dispute.opened', { provider_revision: 3 }));
+    assert.equal(opened.subscription.replacement_checkout_pending, true, `dispute.opened 이 표지 소거: ${from}`);
+  }
+  const disputed: StoredSubscription = { ...empty('table'), state: 'disputed', current_period_end: end, previous_state: 'active', previous_state_changed_at: T0, replacement_checkout_pending: true, state_changed_at: T0, last_event_at: T0 };
+  for (const won of [
+    machine.apply(disputed, ev('t-won', 'dispute.won', { provider_revision: 3 })),
+    machine.apply(disputed, ev('t-lost', 'dispute.lost', { provider_revision: 3 })),
+  ]) {
+    assert.equal(won.subscription.replacement_checkout_pending, true, '분쟁 종결 전이가 표지 소거');
+  }
 });
 
 test('an equal-revision event still applies the transition (current behavior, B-11 pending)', () => {

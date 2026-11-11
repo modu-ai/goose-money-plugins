@@ -58,6 +58,12 @@ export type StateMachineOptions = {
 
 const UNHANDLED_CAP = 200;
 
+// Design §4 dispute rows: the dispute lifecycle (open → won/lost) is intra-cycle churn — it never
+// answers the routed-checkout question, so the replacement marker rides the round-trip and a later
+// settling view consumes it (Codex 4532228592, §5.2/N3). Every other applied transition takes the
+// cycle over: the checkout/payment rows settle it, renewal/cancel/refund act on the current cycle.
+const DISPUTE_EVENTS: ReadonlySet<ProviderEventType> = new Set(['dispute.opened', 'dispute.won', 'dispute.lost']);
+
 // Design §5.4 N1/N2: a replacement checkout proves a new cycle only when the view shows the
 // subscription settled into it — pending (the checkout in progress), trialing, or active. A view
 // still in dispute is not a settlement (N2 keeps checkouts out of a live dispute), and the later
@@ -116,8 +122,10 @@ export function createSubscriptionStateMachine(options: StateMachineOptions = {}
       revision: event.provider_revision ?? sub.revision,
       current_period_end: event.current_period_end ?? sub.current_period_end,
       // An applied transition means the table took this cycle over — a routed-checkout candidate
-      // is superseded (apply() marks candidates only on the reconcile_required paths).
-      replacement_checkout_pending: false,
+      // is superseded (apply() marks candidates only on the reconcile_required paths) — EXCEPT the
+      // dispute lifecycle, which churns within the cycle and leaves the candidate for a settling
+      // view (DISPUTE_EVENTS above).
+      replacement_checkout_pending: DISPUTE_EVENTS.has(event.type) ? sub.replacement_checkout_pending : false,
     });
     switch (event.type) {
       case 'checkout.completed': {
