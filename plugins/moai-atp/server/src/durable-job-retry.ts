@@ -40,7 +40,9 @@ export type RetryInput = {
   effect_check?: WriteEffectCheck;
 };
 
-const ErrorSchema = z.discriminatedUnion('kind', [
+// Exported for the runner loop (durable-job-runner.ts), which validates the same caller
+// observations before folding them — one schema, no duplicated shape.
+export const ErrorSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('network_transient') }).strict(),
   z.object({ kind: z.literal('timeout') }).strict(),
   z.object({ kind: z.literal('rate_limited'), retry_after_ms: z.number().int().positive().optional() }).strict(),
@@ -54,7 +56,7 @@ const PolicySchema = z.object({
     .optional(),
 }).strict();
 const CountersSchema = z.object({ transient: z.number().int().nonnegative(), rate_limited: z.number().int().nonnegative() }).strict();
-const EffectCheckSchema = z.union([
+export const EffectCheckSchema = z.union([
   z.object({ checked: z.literal(true), effect_present: z.boolean() }).strict(),
   z.object({ checked: z.literal(false) }).strict(),
 ]);
