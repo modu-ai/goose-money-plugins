@@ -63,6 +63,7 @@ export const ARTBOARD_ADAPTER_CSS = `
  .rs .kpi strong{font-size:32px}.rs .panel h2{font-size:25px;margin-top:48px}
  .rs figure{padding:22px 16px}.rs .stock-footer{margin:0 24px 24px}
 }
+@media(max-width:520px){.rs figure.diagram{padding-left:6px;padding-right:6px}}
 @media print{
  @page{size:A4;margin:14mm}.rs{background:#fff;color:#242424}
  .rs .rs-main{max-width:none;margin:0;border:0}.rs .masthead{margin:0;padding:0 0 12px}

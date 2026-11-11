@@ -59,6 +59,13 @@ test('artboard keeps numeric cells on one line while other cells still wrap',()=
   assert.match(html,/\.rs \.table-wrap td\.numeric\{[^}]*white-space:nowrap/);
 });
 
+test('artboard restores the #65 narrow diagram padding so 390px does not clip the flow figure',()=>{
+  const html=render(input(),'artboard-v2');
+  assert.match(html,/\.diagram svg\{[^}]*min-width:320px\}/);
+  assert.match(html,/\.rs figure\{padding:22px 16px\}/);
+  assert.match(html,/@media\(max-width:520px\)\{\.rs figure\.diagram\{padding-left:6px;padding-right:6px\}\}/);
+});
+
 test('merged manual consultation remains private in both templates',()=>{
   for(const id of ['R04','R05']){
     const doc=input(id);assert.ok(doc.consultation);
