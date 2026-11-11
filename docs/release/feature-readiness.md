@@ -34,7 +34,7 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 | F | 기능 | 보고서·도구 | 상태 | 근거 | 남은 결정·HOLD |
 |---|---|---|---|---|---|
 | F01 | Goose 요청 해석 | `/goose` plan | synthetic-tested | `goose-routing.ts` 결정적 plan, provider_dispatches 0; `goose-routing.test.ts`·`roles-*.test.ts` (F-table 부분 일치) | 실제 호스트 미검증(#25). 백테스트 모드 범위 밖 분류는 PR #60 병합(`8382172`); 실제 호스트 실행은 미검증 |
-| F02 | 초기화 + KIS/DART 키 설정 | `setup-cli` | synthetic-tested (부분) | `setup-cli.ts`·`local-credentials.ts`(0600 키스토어)·`credential-runtime.ts`; `auth002-m4-key-setup.test.ts` (F-table: 키 설정은 계약보다 앞섬) | 프로젝트 초기화(`project_init_*`) 부재. 키·프로필 삭제 명령 #43은 PR #64(`2214808`)로 병합. 신규 보유 snapshot·논지 등 모든 개인 자료의 삭제까지 검증됐다는 뜻은 아님. 사용자 PC 저장·삭제 방침은 #9 사용자 결정 기록 |
+| F02 | 초기화 + KIS/DART 키 설정 | `setup-cli` | synthetic-tested (부분) | `setup-cli.ts`·`local-credentials.ts`(0600 키스토어)·`credential-runtime.ts`; `auth002-m4-key-setup.test.ts` (F-table: 키 설정은 계약보다 앞섬) | 프로젝트 초기화(`project_init_*`) 부재. 키·프로필 삭제 명령 #43은 PR #64(`2214808`)로 병합, 통합 로컬 삭제(키·프로필·보유 snapshot)는 PR #113(`local-data-deletion.test.ts`) 시험 검증. 논지 저장은 미구현(저장 여부 결정 필요). 사용자 PC 저장·삭제 방침은 #9 사용자 결정 기록 |
 | F03 | 모두의 AI 로그인 | — | source-defined | `docs/design/identity-auth-contract.md`(PR #34); `member-token-verifier.ts` ES256 골격 + `member-token-verifier.test.ts`, `network_connected:false`, 실행 경로 미연결 (F-table 불일치) | issuer/JWKS/철회 등 실계약 확정 #6. 인증 방향 충돌 정리 #1, 코드 반영 보완 #63. **필수 기능 미연결 — 출시 판정 실패 칸** |
 | F04 | 서비스 가입·권한 | — | source-defined (평가기 골격만 synthetic-tested) | `docs/design/product-tiers.md`(PR #37); `entitlement.ts` 순수 평가기 + 시험(PR #57) — **서버 등록·도구 호출 경로 미연결**, 가격·한도 미주입 | #5의 가격·청구 주기·무료 사용량 한도는 출시 전 필수 결정(§5.1); ID 연동 #6·호출 경로 연결 #7은 별도 |
 | F05 | 기업·증권 식별 | `search_instruments`·`resolve_instrument` | synthetic-tested | 원천 계약 + 시험 존재 (F-table 일치 — 원천 수준) | 실호출 승인 범위 미결정(#17 계열) |
@@ -51,7 +51,7 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 | F16 | 투자 관점·분석 조건 | strategy·conditions 모드 | synthetic-tested (계획 수준) | `goose-routing` strategy·conditions 모드, `references/workflows/` 지침 | 실행 엔진 없음(고정 안내). 정의서 계약 정의 단계 |
 | F18 | 보고서 생성·내보내기 | `build_report_input`→`render_report_html` | synthetic-tested | 조립→렌더→`resources/read` 사슬 + 시험, TTL 5분 메모리만. 화면 결함 11건 중 일부 수리(PR #53), 나머지 #52 진행 중. [별도 요약 PDF 시제품·archive 계보](../design/report-artifact-lineage.md)는 HTML 인쇄 검수와 구분 | 비공개 export 파일·공유판 분리 부재 — PDF·폰트 #24 |
 | F19 | 게시·정정·철회 | — | source-defined (부재) | `docs/design/publication-review.md`(PR #48). 코드는 미연결 안내뿐 | 루틴 구현 미착수, 공개 범위 규칙 명문화 #23 |
-| F20 | 작업 상태·복구 | — | source-defined (일부 코드) | `docs/design/durable-job-and-stock-link.md`(PR #49). 역할 timeout·실패 기록만 존재 | durable job 계약 구현 미착수 |
+| F20 | 작업 상태·복구 | — | source-defined (일부 코드) | `docs/design/durable-job-and-stock-link.md`(PR #49). 순수 로직 첫 조각 병합 — `durable-job.ts`·`durable-job.test.ts`(PR #107), 재시도 분류 `durable-job-retry.test.ts`(PR #125). 2026-11-11 갱신 #131 | 실행기·DB·영속 복구·Stock 연결 구현 미착수 |
 | F21 | 호스트 설치·진단 | `runtime-guard` | synthetic-tested (부분) | Node 범위 검사 + 일부 시험 | 실설치·호스트별 표시 검증 미실시 #25 |
 | F22 | Apps Stock·DB 연결 | — | source-defined (부재) | `docs/design/durable-job-and-stock-link.md`(PR #49) 설계만 | 구현 미착수 |
 | F23 | 시장 수급 | R03 | synthetic-tested | 합성 계약 + 시험. KIS-115 강제 차단 유지 (F-table 일치) | 실자료 요청안(기간·단위·권리) #20 미결정 |
@@ -80,7 +80,7 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 |---|---|---|
 | R1 | 필수 기능(모두의 AI 로그인 F03)이 실행 경로에 연결돼 있고 실계약(issuer·JWKS·철회)이 검증됐다 | 미완 — 골격만 존재(#6·#63) |
 | R2 | 서비스 권한 평가기가 서버에 등록돼 가격·한도 설정을 주입받아 판정한다 | 미완 — 순수 평가기 병합(PR #57), 이 기준에서 서버 연결 미반영(#7). 가격·청구 주기·무료 사용량 값은 출시 전 결정(§5.1) |
-| R3 | 개인 금융정보가 사용자 PC에만 저장되고 삭제 명령이 시험과 함께 제공된다 | 부분 — 키·프로필 삭제는 PR #64(`2214808`) 병합. 신규 개인 보유·논지 등 모든 개인 자료의 저장·삭제 검증은 별도 |
+| R3 | 개인 금융정보가 사용자 PC에만 저장되고 삭제 명령이 시험과 함께 제공된다 | 부분 — 키·프로필 삭제는 PR #64(`2214808`), 통합 로컬 삭제(키·프로필·보유 snapshot)는 PR #113 시험 검증. 논지 저장은 미구현·미결정. 2026-11-11 갱신 #131 |
 | R4 | 보고서 실데이터의 공급자 사용 범위가 승인됐고 요청→근거→HTML 사슬 기록이 남는다 | 부분 — #17 승인 7요청 실행과 두 회사 R01 actual_data_partial 생성 기록 확인. 독립 지표 검증·다른 보고서 E2E는 미완 |
 | R5 | 보고서 HTML이 실화면(데스크톱·실제 모바일)에서 검수돼 결함이 해소됐다 | 미완 — #52·PR #53 일부 수리, PR #69(`932839b`) 한국어·KST 표시 병합. PR #72 CDN 글꼴의 실제 로드·Referer·오프라인 대체·desktop/390px QA 미완(리더 #52 댓글 기준) |
 | R6 | R04·R05 범위(차단 해제·성과 포함 여부)와 데이터 계약(R03·R06·R08·R11)이 결정돼 카탈로그에 반영됐다 | 미완 — #13·#22·#20·#21 결정 대기 |

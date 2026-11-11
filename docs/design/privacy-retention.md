@@ -75,13 +75,15 @@ Refs #9.
 | env 우선 경로 | 환경변수(`KIS_APP_KEY`·`KIS_APP_SECRET`·`OPENDART_API_KEY` — 값 자체는 미확인·미출력)가 파일보다 우선, 부분 env는 fail-closed. 행 1에 env 저장 경로 기술을 넣을지는 문서 보완 사항 | `local-credentials.ts:95` |
 | 토큰 비저장 명시 필드 | 검증 골격이 `network_connected:false`·`token_storage:'none'`을 직접 노출 — 행 3 "부재"의 코드 근거 | `member-token-verifier.ts:20` |
 
-문서에만 있고 코드에 없는 것(전부 **미구현**): 키 삭제 명령(행 1·#43), 보유 잔고 snapshot·수동 입력(행 6·6b·#42), 서버측 기록(행 11·12·14), 삭제 단계 S2~S6(게시·구독 자체가 부재), 동의 C1~C8 기록·철회 구조(§2).
+문서에만 있고 코드에 없는 것(전부 **미구현**): KIS 읽기 전용 보유 조회의 실행 경로(행 6의 조회 경로, F14 — MCP 도구 등록·`fromKis` 생산 호출처만 부재, 조회 전송 계층은 존재해 아래 갱신 참조), R04/R05 수동 상담 입력의 저장(행 6b — 입력 수용·보고서 생성은 구현, 목표·제약·비용의 저장 없음, 아래 갱신), 서버측 기록(행 11·12·14), 삭제 단계 S2~S6(게시·구독 자체가 부재), 동의 C1~C8 기록·철회 구조(§2).
+
+2026-11-11 갱신(#131, 원격 main `90565a4` 대조): 위 목록에서 구현됨 — 키 삭제 명령(행 1): 개별 삭제 `credential-delete.test.ts`(PR #64) + 통합 삭제 `delete-local-data`(`setup-cli.ts:36`, 시험 `local-data-deletion.test.ts`, PR #113). 보유 snapshot 보관·수동 입력(행 6의 저장 경로): `user-holdings.ts`·`user-holdings.test.ts`(PR #76 — `~/.goose/context/holdings-snapshot.json` 저장). R04/R05 수동 상담은 입력 수용·보고서 생성만 구현(`manual-consultation.ts`·`manual-consultation.test.ts`, PR #74) — 상담 입력(목표·제약·비용)의 저장은 없음(메모리 조립 후 즉시 반환, `manual-consultation.ts` 고지 "파일/서비스 영구 저장…실행하지 않았습니다", 통합 삭제 저장소도 credentials·profile·holdings 3종)이라 행 6b의 저장 경로는 미구현 유지. 행 6의 KIS 읽기 전용 조회(F14)는 기능 단위로 미구현 유지 — 다만 조회 전송 계층은 코드에 존재(`account-balance.ts` `FetchAccountBalanceTransport` KIS `inquire-balance` fetch, `user-holdings.ts` `fromKis()` 유료 게이트, 시험 `account-balance.test.ts`·`user-holdings.test.ts`, 모두 PR #76 `1183b0f`). 부재는 실행 경로 연결뿐(MCP 도구 등록·`fromKis` 생산 호출처 — `get_account_snapshot`은 `goose-orchestrator.ts` heldTools에만 등장). 원격 main `9cc466a` 재확인(2026-11-11, PR #132 검토 차단 결함 수정).
 
 ## 4. 삭제 단계 (제안)
 
 | 단계 | 대상 | 동작 | 확인 방법 |
 |---|---|---|---|
-| S1 로컬 삭제 | 3·4·5·6·1 | 명시 확인 후 파일 삭제, 결과를 `*_deleted=true/false`로 출력(현행 `profile_deleted` 형식) | 파일 부재 확인 |
+| S1 로컬 삭제 | 3·4·5·6·1 | 명시 확인 후 파일 삭제, 결과를 `credentials_deleted`·`profile_deleted`·`holdings_deleted` 세 줄로 출력(저장소별 예외 시에도 세 줄 모두 출력 — PR #113·#120, 시험 `local-data-deletion.test.ts`. 2026-11-11 갱신 #131) | 파일 부재 확인 |
 | S2 세션 정리 | 2·7·8 | 로그아웃·철회 시 메모리 캐시 즉시 비움 | 다음 `resources/read` 차단 |
 | S3 게시 철회 | 10 | 게시 상태 `withdrawn`, 검색·캐시·첨부 전파 | 공개 URL 접근 결과 |
 | S4 탈퇴 | 11·10·12 | 가입 해지 → 게시물 처리 방식(철회/익명화: **결정 필요**) → 기록 삭제 | 삭제 receipt |
