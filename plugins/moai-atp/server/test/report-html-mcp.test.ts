@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { InMemoryTransport } from "@modelcontextprotocol/server";
-import { buildReportInput } from "../src/report-pipeline.js";
+import { buildReportInput, renderReportInputHtml } from "../src/report-pipeline.js";
 import { createStockMcpServer } from './synthetic-member-access.js';
 
 const subject = { id: "KRX:000660", name: "합성 종목", venue: "KRX", currency: "KRW" };
@@ -154,6 +154,41 @@ test("HTML resources are memory-only, expire, and do not expose rights-pending a
     const expired = await session.rpc("resources/read", { uri });
     assert.equal(expired.result, undefined);
     assert.ok(expired.error);
+  } finally {
+    await session.close();
+  }
+});
+
+test("template default is artboard-v2 and explicit existing keeps the previous output (#144 option B prep)", async () => {
+  const server = createStockMcpServer({ clock: () => cutoff });
+  const session = clientSession(server);
+  try {
+    await session.start();
+    const reportInput = buildReportInput({
+      report_id: "R01",
+      subject,
+      cutoff,
+      display_timezone: "Asia/Seoul",
+      received_at: cutoff,
+      calls: [{ tool_name: "get_market_snapshot", result: { structuredContent: syntheticQuote, content: [{ type: "text", text: JSON.stringify(syntheticQuote) }] } }],
+    });
+    const readHtml = async (template?: string) => {
+      const rendered = await session.rpc("tools/call", {
+        name: "render_report_html",
+        arguments: template === undefined ? { report_input: reportInput } : { report_input: reportInput, template },
+      });
+      assert.equal(rendered.result.isError, undefined, JSON.stringify(rendered.result?.structuredContent ?? rendered));
+      const link = rendered.result.content.find((item: any) => item.type === "resource_link");
+      const read = await session.rpc("resources/read", { uri: link.uri });
+      return read.result.contents[0].text as string;
+    };
+    const byDefault = await readHtml();
+    assert.match(byDefault, /<body class="rs atp-artboard">/);
+    assert.ok(byDefault.includes("ChosunilboNM"), "default render must carry the artboard-v2 typography");
+    const existing = await readHtml("existing");
+    assert.ok(!existing.includes("atp-artboard"), "explicit existing must not carry the artboard marker");
+    assert.equal(existing, renderReportInputHtml(reportInput, "existing"));
+    assert.ok(!renderReportInputHtml(reportInput).includes("atp-artboard"), "renderReportInputHtml default stays existing (pdf-export path unchanged)");
   } finally {
     await session.close();
   }

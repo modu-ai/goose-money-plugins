@@ -16,7 +16,10 @@ const REPORT_RESOURCE_URI_PATTERN = /^moai-atp:\/\/reports\/[0-9a-f-]{36}$/i;
 export const RenderReportHtmlInputSchema = z.object({
   report_input: ActiveReportInputSchema,
   narrative_draft: NarrativeDraftSchema.optional(),
-  template: z.enum(["existing", "artboard-v2"]).optional(),
+  // #144 option B prep (user decision pending): the render_report_html default is artboard-v2;
+  // "existing" stays available explicitly. renderReportInputHtml's own default is unchanged
+  // (report-pdf-export and internal callers keep the previous output).
+  template: z.enum(["existing", "artboard-v2"]).default("artboard-v2"),
 }).strict();
 
 export const RenderReportHtmlOutputSchema = z.object({
