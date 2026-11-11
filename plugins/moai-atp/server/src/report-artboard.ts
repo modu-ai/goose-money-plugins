@@ -16,8 +16,12 @@ export const ARTBOARD_REPORT_MAP = Object.freeze([
  * stack with the previous installed fallback tail (no new web font: the #24 distribution and the
  * #52 D6 fallback method stay as declared), and the hero subtitle joins the sans headings so
  * every h2 in the render computes Pretendard. */
+/** The #119 serif stack (installed fonts + the previous installed fallback tail, no web font):
+ * reused by the default-template font decision layer so both paths declare byte-identical stacks. */
+export const CHOSUN_SERIF_STACK = 'ChosunilboNM,"조선일보명조",AppleMyungjo,Batang,serif';
+
 export const REPORT_TYPOGRAPHY_CSS = `
-:root,.rs{--sans:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;--serif:ChosunilboNM,"조선일보명조",AppleMyungjo,Batang,serif}
+:root,.rs{--sans:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;--serif:${CHOSUN_SERIF_STACK}}
 body,.panel p,.panel li,.rs .panel p,.rs .panel li,.report-hero blockquote p,.lead-summary p,.opinion p{font-family:var(--serif);font-synthesis:none}
 h1,h2,h3,.rs h1,.rs h2,.rs h3,.panel h2,.panel h3,.rs .panel h2,.rs .panel h3{font-family:var(--sans);font-weight:700;font-synthesis:none;-webkit-text-stroke:0}
 .rs h1+h2{font-family:var(--sans)}
