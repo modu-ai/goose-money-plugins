@@ -26,6 +26,8 @@ Refs #29.
 
 2026-11-11 갱신(2차 대조, 원격 main `beb5aa3`): 이 설계의 순수 로직 조각 3종이 병합됐다 — 상태·전이·취소·예산 판정 §2·§4·§6(`durable-job.ts`, 시험 `durable-job.test.ts`, PR #107), 재시도 분류 §5(`durable-job-retry.ts`, 시험 `durable-job-retry.test.ts`, PR #125), 재현 패키지 조립·해시·검증 §7(`durable-job-repro.ts`, 시험 `durable-job-repro.test.ts`, PR #133). 셋 모두 순수 로직(지속성·네트워크·파일·DB 접근 없음)이라 §1의 런타임 표는 그대로다. 실행기·DB·영속 복구·Stock 연결, 작업 키(§3)·예산 실행(§6)은 미착수.
 
+2026-11-12 갱신(3차 대조, 원격 main `a1cf150`): 순수 로직 조각 2종이 더 병합됐다 — 작업 키 순수 계산 §3, 여섯 재료의 결정적 해시(`durable-job-key.ts`, 시험 `durable-job-key.test.ts`, PR #138, 병합 커밋 `b84d9a8`), 실행기 루프 판단 조각 §2.2·§4·§5·§6, 관찰 접기·명령 반환(`durable-job-runner.ts`와 `durable-job-retry.ts` 갱신, 시험 `durable-job-runner.test.ts`, PR #137, 병합 커밋 `9804417`). 둘 다 순수 로직(지속성·네트워크·파일·DB 접근 없음)이라 §1의 런타임 표는 그대로다(`beb5aa3`..`a1cf150` 사이 `goose-orchestrator.ts` 변경 0건으로 확인). 작업 키는 순수 계산만 병합됐고 §3의 배타적 생성·저장은 미착수. 그 밖에 미착수인 것은 실행기 런타임 접합(대기·AbortSignal·쓰기 효과 조회·프로세스 재개), DB·영속 복구·Stock 연결, 예산 실행(§6)이다. §10의 결정 필요 항목은 그대로다.
+
 ## 2. durable job 상태 계약
 
 ### 2.1 상태 (정의서 36행의 7개 상태)
