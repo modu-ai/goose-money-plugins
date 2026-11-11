@@ -53,6 +53,12 @@ test('artboard includes narrow-screen containment and print rules from the candi
   assert.match(html,/\.rs thead\{display:table-header-group\}/);
 });
 
+test('artboard keeps numeric cells on one line while other cells still wrap',()=>{
+  const html=render(input(),'artboard-v2');
+  assert.match(html,/\.rs \.table-wrap th,\.rs \.table-wrap td\{white-space:normal/);
+  assert.match(html,/\.rs \.table-wrap td\.numeric\{[^}]*white-space:nowrap/);
+});
+
 test('merged manual consultation remains private in both templates',()=>{
   for(const id of ['R04','R05']){
     const doc=input(id);assert.ok(doc.consultation);

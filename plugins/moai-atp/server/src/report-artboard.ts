@@ -45,7 +45,7 @@ export const ARTBOARD_ADAPTER_CSS = `
 .rs .kpi>small{display:block;margin:8px 0 0;font-size:13px}
 .rs .table-wrap{max-width:100%;overflow-x:auto}.rs .table-wrap table{min-width:590px;table-layout:auto}
 .rs .table-wrap th,.rs .table-wrap td{white-space:normal;overflow-wrap:anywhere}
-.rs .table-wrap td.numeric{text-align:right;font-variant-numeric:tabular-nums}
+.rs .table-wrap td.numeric{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .rs .table-wrap td:not(.numeric){text-align:left}
 .rs .status{font:600 13px/1.6 var(--sans);border:1px solid var(--line);background:var(--surface);color:var(--ink)}
 .rs .block-missing,.rs .notice{background:var(--surface);border-left:3px solid var(--brand);color:var(--muted)}
