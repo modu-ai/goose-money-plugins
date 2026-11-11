@@ -9,7 +9,10 @@ import { buildReportInput, renderReportInputHtml } from '../src/report-pipeline.
 
 const render = renderReportInputHtml as (value: unknown, template?: string) => string;
 const received = '2026-11-11T04:00:00.000Z';
-const page = (): string => render(buildReportInput({ report_id: 'R01', subject: { id: '000660', name: '검토용 종목', venue: 'KRX', currency: 'KRW' }, cutoff: received, display_timezone: 'Asia/Seoul', received_at: received }), 'artboard-v2');
+const doc = (): unknown => buildReportInput({ report_id: 'R01', subject: { id: '000660', name: '검토용 종목', venue: 'KRX', currency: 'KRW' }, cutoff: received, display_timezone: 'Asia/Seoul', received_at: received });
+const page = (): string => render(doc(), 'artboard-v2');
+// #144: the live reports are produced through the default template — the decision must hold there too.
+const defaultPage = (): string => render(doc());
 
 const cssOf = (page: string): string => /<style>([\s\S]*?)<\/style>/.exec(page)?.[1] ?? '';
 const stripNoise = (css: string): string => css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@font-face\{[^}]*\}/g, '');
@@ -113,4 +116,34 @@ test('#119: the serif role stays installed-fonts-plus-generic — no web font en
   const stack = lastSerifVar(cssOf(page()));
   for (const webfont of ['Gowun Batang', 'MaruBuri', 'Pretendard']) assert.ok(!stack.includes(webfont), `${webfont} stays out of the serif stack`);
   assert.match(stack, /serif$/, 'the stack ends in a generic serif fallback');
+});
+
+// #144: the 2026-11-11 live reports render through the default ('existing') template, where the
+// #122 fix (artboard-v2 REPORT_TYPOGRAPHY_CSS) never enters the style assembly — the same decision
+// must hold on the output the pipeline actually produces. The default path's --sans resolves to the
+// variable family first ("Pretendard Variable", Pretendard, …): same Pretendard family, so the title
+// expectation below is the Pretendard family reached through this path's variable definition.
+test('#144: default-template output follows #119 — every h1/h2 computes the Pretendard family', () => {
+  const css = cssOf(defaultPage());
+  assert.ok(!css.includes('atp-artboard'), 'the default template is the existing path');
+  assert.equal(computedFamily(css, 'h1'), 'Pretendard Variable', 'report h1');
+  assert.equal(computedFamily(css, 'h2'), 'Pretendard Variable', 'bare h2');
+  assert.equal(computedFamily(css, 'h1+h2'), 'Pretendard Variable', 'hero subtitle h1+h2');
+  assert.equal(computedFamily(css, '.panel h2'), 'Pretendard Variable', 'section title .panel h2');
+});
+
+test('#144: default-template output follows #119 — description prose computes 조선일보명조 (ChosunilboNM)', () => {
+  const css = cssOf(defaultPage());
+  for (const atom of ['body', '.panel p', '.panel li', '.report-hero blockquote p', '.lead-summary p', '.opinion p']) {
+    assert.equal(computedFamily(css, atom), 'ChosunilboNM', `${atom} prose`);
+  }
+  assert.ok(cssOf(defaultPage()).includes('ChosunilboNM'), 'the rendered HTML carries the ChosunilboNM stack');
+});
+
+test('#144: roles #119 did not decide keep their current families on the default template', () => {
+  const css = cssOf(defaultPage());
+  // .panel h3 is untouched by the decision (h2-only) — it stays on the existing serif (Gowun Batang).
+  assert.equal(computedFamily(css, '.panel h3'), 'Gowun Batang', 'subsection h3 keeps its current serif');
+  // Emphasis inside prose keeps the sans family for key phrases/numbers, as the merged #122 layer does.
+  assert.equal(computedFamily(css, '.panel p strong'), 'Pretendard Variable', 'prose strong stays sans');
 });
