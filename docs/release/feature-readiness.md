@@ -51,7 +51,7 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 | F16 | 투자 관점·분석 조건 | strategy·conditions 모드 | synthetic-tested (계획 수준) | `goose-routing` strategy·conditions 모드, `references/workflows/` 지침 | 실행 엔진 없음(고정 안내). 정의서 계약 정의 단계 |
 | F18 | 보고서 생성·내보내기 | `build_report_input`→`render_report_html` | synthetic-tested | 조립→렌더→`resources/read` 사슬 + 시험, TTL 5분 메모리만. 화면 결함 11건 중 일부 수리(PR #53), 나머지 #52 진행 중. [별도 요약 PDF 시제품·archive 계보](../design/report-artifact-lineage.md)는 HTML 인쇄 검수와 구분 | 비공개 export 파일·공유판 분리 부재 — PDF·폰트 #24 |
 | F19 | 게시·정정·철회 | — | source-defined (부재) | `docs/design/publication-review.md`(PR #48). 코드는 미연결 안내뿐 | 루틴 구현 미착수, 공개 범위 규칙 명문화 #23 |
-| F20 | 작업 상태·복구 | — | source-defined (일부 코드) | `docs/design/durable-job-and-stock-link.md`(PR #49). 순수 로직 첫 조각 병합 — `durable-job.ts`·`durable-job.test.ts`(PR #107), 재시도 분류 `durable-job-retry.test.ts`(PR #125). 2026-11-11 갱신 #131 | 실행기·DB·영속 복구·Stock 연결 구현 미착수 |
+| F20 | 작업 상태·복구 | — | source-defined (일부 코드) | `docs/design/durable-job-and-stock-link.md`(PR #49). 순수 로직 조각 3종 병합 — `durable-job.ts`·`durable-job.test.ts`(PR #107), 재시도 분류 `durable-job-retry.ts`·`durable-job-retry.test.ts`(PR #125), 재현 패키지 `durable-job-repro.ts`·`durable-job-repro.test.ts`(PR #133). 2026-11-11 갱신 #131(2차 대조에서 재현 조각 추가) | 실행기·DB·영속 복구·Stock 연결 구현 미착수 |
 | F21 | 호스트 설치·진단 | `runtime-guard` | synthetic-tested (부분) | Node 범위 검사 + 일부 시험 | 실설치·호스트별 표시 검증 미실시 #25 |
 | F22 | Apps Stock·DB 연결 | — | source-defined (부재) | `docs/design/durable-job-and-stock-link.md`(PR #49) 설계만 | 구현 미착수 |
 | F23 | 시장 수급 | R03 | synthetic-tested | 합성 계약 + 시험. KIS-115 강제 차단 유지 (F-table 일치) | 실자료 요청안(기간·단위·권리) #20 미결정 |
@@ -107,7 +107,7 @@ Refs #30 · Refs #5 · 갱신 기준 `2a6129a62def65c738ab3b330b257ce02b6f7417` 
 
 ## 6. 지원 문서 현황
 
-`docs/design/` 아래 설계 문서 8개(기능 대조표·인증 계약·개인정보·상품 계약·구독 상태기계·게시 검수·durable job·시장 데이터 계약)와 `docs/release/public-release-checklist.md`가 병합돼 있습니다. 문서 안의 "결정 필요"는 채택된 결정이 아니라 열린 결정입니다(#5·#6·#9 등의 이슈가 결정 기록 장소). 코드-문서 정합은 `roles-docs.test.ts`가 문장 F·범위 문장·순차 실행 규칙을 검사합니다.
+`docs/design/` 아래 설계 문서 8개(기능 대조표·인증 계약·개인정보·상품 계약·구독 상태기계·게시 검수·durable job·시장 데이터 계약)와 `docs/release/public-release-checklist.md`·`docs/release/release-audit.md`(릴리즈 전 전체 변경분 검수 절차, PR #134)가 병합돼 있습니다. 문서 안의 "결정 필요"는 채택된 결정이 아니라 열린 결정입니다(#5·#6·#9 등의 이슈가 결정 기록 장소). 코드-문서 정합은 `roles-docs.test.ts`가 문장 F·범위 문장·순차 실행 규칙을 검사합니다.
 
 ## 7. 이 문서가 확인하지 않은 것
 
