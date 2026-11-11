@@ -49,9 +49,11 @@ export type RunnerConfig = {
 };
 
 /** One caller observation per step. Recheck results, node errors and effect checks are arguments —
- * the same pattern as the piece-1 permission recheck; nothing is observed here. */
+ * the same pattern as the piece-1 permission recheck; nothing is observed here. `unblock` is the
+ * §2.2 사유 해소 route back into scheduling for a blocked job (401/403, initial recheck). */
 export type Observation =
   | { kind: 'start'; permission_recheck: 'passed' | 'failed' }
+  | { kind: 'unblock'; permission_recheck: 'passed' | 'failed' }
   | { kind: 'node_succeeded'; node: string; result_hash: string }
   | { kind: 'node_failed'; node: string; error: NodeError; effect_check?: WriteEffectCheck }
   | { kind: 'effect_observed'; node: string; check: WriteEffectCheck; result_hash?: string }
@@ -76,6 +78,7 @@ const ResultHash = z.string().min(1).max(256);
 const SpecSchema = z.object({ id: NodeId, has_write_effect: z.boolean().optional() }).strict();
 const ObservationSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('start'), permission_recheck: z.enum(['passed', 'failed']) }).strict(),
+  z.object({ kind: z.literal('unblock'), permission_recheck: z.enum(['passed', 'failed']) }).strict(),
   z.object({ kind: z.literal('node_succeeded'), node: NodeId, result_hash: ResultHash }).strict(),
   z.object({ kind: z.literal('node_failed'), node: NodeId, error: ErrorSchema, effect_check: EffectCheckSchema.optional() }).strict(),
   z.object({ kind: z.literal('effect_observed'), node: NodeId, check: EffectCheckSchema, result_hash: ResultHash.optional() }).strict(),
@@ -168,6 +171,13 @@ export function step(state: RunnerState, config: RunnerConfig, ob: unknown, spen
       const job = apply(state.job, { event: 'start', permission_recheck: e.permission_recheck });
       return scheduleNext({ ...state, job }, config, spent);
     }
+    case 'unblock': {
+      // §2.2: blocked → running on 사유 해소 with the permission recheck; a failed recheck keeps
+      // the original reason (piece-1 semantics). The only route back into scheduling for a
+      // blocked job — completed-node progress survives the round trip (keep()).
+      const job = apply(state.job, { event: 'unblock', permission_recheck: e.permission_recheck });
+      return scheduleNext({ ...state, job }, config, spent);
+    }
     case 'node_succeeded': {
       nodeOf(state, e.node);
       if (state.in_flight !== e.node) bad('node_not_in_flight');
@@ -185,12 +195,15 @@ export function step(state: RunnerState, config: RunnerConfig, ob: unknown, spen
     case 'node_failed': {
       const n = nodeOf(state, e.node);
       if (state.in_flight !== e.node) bad('node_not_in_flight');
-      if (state.awaiting_effect) bad('effect_query_pending');
+      // Checked before the pending-query guard: an aborted worker may report its failure while a
+      // write-effect query pends — a late error during a cancel is not a result and must reach
+      // this no-op, not a protocol error (§4).
       if (cancelling(state)) {
         // A late error during a cancel is not a result: nothing folds, nothing re-sends — the
         // cancel flow owns the outcome (§4).
         return { state, commands: [] };
       }
+      if (state.awaiting_effect) bad('effect_query_pending');
       const v = classifyRetry({
         error: e.error, policy: config.retry_policy, counters: n.retry,
         has_write_effect: n.has_write_effect, effect_check: e.effect_check ?? { checked: false },

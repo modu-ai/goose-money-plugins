@@ -303,6 +303,43 @@ test('a retry whose wait still lands inside the elapsed budget is authorized (co
   assert.equal(r.state.job.state, 'running');
 });
 
+test('an unblock observation resumes scheduling after a 401 block — completed progress preserved (§2.2, codex P2)', () => {
+  let s = started('a', 'b');
+  s = run(s, { kind: 'node_succeeded', node: 'a', result_hash: 'h1' }).state;
+  s = run(s, { kind: 'node_failed', node: 'b', error: { kind: 'auth_permission', status: 401 } }).state;
+  assert.equal(s.job.state, 'blocked');
+  const r = run(s, { kind: 'unblock', permission_recheck: 'passed' });
+  assert.equal(r.state.job.state, 'running');
+  assert.deepEqual(r.commands, [{ cmd: 'start_node', node: 'b' }]);
+  assert.deepEqual(r.state.job.node_result_hashes, ['h1']); // progress preserved
+});
+
+test('a failed unblock recheck keeps the block and its original reason (§2.2, piece-1 semantics)', () => {
+  let s = started('a');
+  s = run(s, { kind: 'node_failed', node: 'a', error: { kind: 'auth_permission', status: 403 } }).state;
+  const r = run(s, { kind: 'unblock', permission_recheck: 'failed' });
+  assert.equal(r.state.job.state, 'blocked');
+  assert.equal(r.state.job.blocked_reason, 'provider_auth_or_permission');
+  assert.deepEqual(r.commands, []);
+});
+
+test('a job blocked by the initial permission recheck also resumes through unblock (codex P2)', () => {
+  let s = createRunnerState(plan('a'));
+  s = step(s, P, { kind: 'start', permission_recheck: 'failed' }).state;
+  const r = run(s, { kind: 'unblock', permission_recheck: 'passed' });
+  assert.equal(r.state.job.state, 'running');
+  assert.deepEqual(r.commands, [{ cmd: 'start_node', node: 'a' }]);
+});
+
+test('an aborted worker reporting failure during a pending-effect cancel is ignored, not a protocol error (codex P2)', () => {
+  let s = startedWf();
+  s = run(s, { kind: 'node_failed', node: 'publish', error: { kind: 'timeout' } }).state; // query pends
+  s = run(s, { kind: 'cancel_requested' }).state; // abort commanded, query still pends
+  const r = run(s, { kind: 'node_failed', node: 'publish', error: { kind: 'timeout' } }); // aborted worker fails
+  assert.equal(r.state.job.state, 'cancelling'); // late error: no fold, no throw
+  assert.deepEqual(r.commands, []);
+});
+
 test('plans and observations are validated: duplicate ids, empty plans, junk kinds are invalid_input', () => {
   assert.throws(() => createRunnerState(plan('a', 'a')), /error_code=invalid_input/);
   assert.throws(() => createRunnerState([]), /error_code=invalid_input/);
