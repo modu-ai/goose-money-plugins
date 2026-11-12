@@ -26,7 +26,9 @@ export async function exportSyntheticReportPdf(value:unknown,options:Options){
  if(!info!.isDirectory()||info!.isSymbolicLink()||(info!.mode&0o077)!==0||info!.uid!==process.getuid?.())fail('pdf_unsafe_directory');
  const timeout=options.timeoutMs??15000;
  if(!Number.isInteger(timeout)||timeout<1||timeout>60000)fail('pdf_invalid_timeout');
- const html=renderReportInputHtml(doc);
+ // #144 선택지 B 후속(결정 대기): render_report_html 도구 기본값(#154)과 같은 artboard-v2 로
+ // PDF 원형을 렌더한다 — 같은 보고서의 HTML·PDF 서식이 일치한다. existing 되돌림은 명시 인자로.
+ const html=renderReportInputHtml(doc,'artboard-v2');
  if(Buffer.byteLength(html)>MAX_HTML)fail('pdf_input_too_large');
  const controller=new AbortController();
  const expired=new Promise<never>((_,reject)=>controller.signal.addEventListener('abort',()=>reject(new Error('pdf_timeout')),{once:true}));
