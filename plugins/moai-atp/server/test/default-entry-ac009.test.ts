@@ -13,7 +13,7 @@ import test, { after, before } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import {
   allowedEnvKeys, assertRecorderCount, hermeticChildEnv, makeProfileDir, profileKeys, recorderCounts,
-  recorderImportArgs, removeProfileDir,
+  recorderImportArgs, removeProfileDir, runtimeInjectedEnvKeys,
 } from './default-entry-env.js';
 
 const entry = fileURLToPath(new URL('../src/main.js', import.meta.url));
@@ -121,14 +121,10 @@ test('AC-009 control: a child holds only the allowed variables and its profile i
   const run = await runChild(inline(report));
   assert.equal(run.exitCode, 0);
   const seen = JSON.parse(run.stdout) as { keys: string[]; values: Record<string, string>; osHome: string };
-  // macOS libSystem adds __CF_USER_TEXT_ENCODING to every process; it is not forwarded by the helper.
-  // On Windows, Node's libuv copies its required process variables into every child env that lacks them
-  // (libuv src/win/process.c required_vars); they are not forwarded by the helper either. The profile and
-  // credential checks below still hold on every platform.
-  const OS_INJECTED = process.platform === 'win32'
-    ? ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'SYSTEMDRIVE', 'TEMP', 'USERDOMAIN', 'USERNAME', 'WINDIR']
-    : ['__CF_USER_TEXT_ENCODING'];
-  const keys = seen.keys.filter((key) => !OS_INJECTED.includes(key));
+  // Keys the runtime itself may add beyond the helper's explicit set (OS-required variables, and
+  // NODE_V8_COVERAGE only while this process runs under --experimental-test-coverage — Node injects
+  // it into every child even with an explicit env; #160). Everything else must fail below.
+  const keys = seen.keys.filter((key) => !runtimeInjectedEnvKeys().includes(key));
   assert.deepEqual(keys, [...allowedEnvKeys()].sort());
   assert.deepEqual(keys.filter((key) => /^(GOOSE_|KIS_|OPENDART_)/.test(key)), []);
   for (const key of profileKeys()) {
@@ -137,6 +133,16 @@ test('AC-009 control: a child holds only the allowed variables and its profile i
   }
   assert.equal(seen.osHome, run.profileDir, 'os.homedir() in the child resolves to the temporary profile');
   assert.notEqual(seen.osHome, homedir(), 'the child does not resolve the real profile');
+});
+
+test('AC-009 control: the injected-key filter admits NODE_V8_COVERAGE only under coverage and no other variable', () => {
+  assert.deepEqual(runtimeInjectedEnvKeys('darwin', {}), ['__CF_USER_TEXT_ENCODING']);
+  assert.deepEqual(runtimeInjectedEnvKeys('win32', {}), ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'SYSTEMDRIVE', 'TEMP', 'USERDOMAIN', 'USERNAME', 'WINDIR']);
+  assert.deepEqual(runtimeInjectedEnvKeys('darwin', { NODE_V8_COVERAGE: '/tmp/v8' }), ['__CF_USER_TEXT_ENCODING', 'NODE_V8_COVERAGE']);
+  for (const other of ['NODE_OPTIONS', 'NODE_ENV', 'GOOSE_KIS_READ_ENABLED', 'KIS_APP_KEY', 'AC009_FAKE_LEAK']) {
+    const injected = runtimeInjectedEnvKeys('darwin', { NODE_V8_COVERAGE: '/tmp/v8', [other]: 'x' } as NodeJS.ProcessEnv);
+    assert.ok(!injected.includes(other), `${other} must never be admitted as runtime-injected`);
+  }
 });
 
 // ---- the AC-009 behavior ----
