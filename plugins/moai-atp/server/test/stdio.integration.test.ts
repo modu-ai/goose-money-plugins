@@ -29,7 +29,23 @@ function assertSwitchBlocked(name: string, call: StdioCall["call"]): void {
   assert.equal(call.result?.structuredContent, undefined);
 }
 
-function readJsonLine(reader: readline.Interface, timeoutMs = 5_000): Promise<unknown> {
+// Wall-clock budget for stdio child responses and the stuck-child fallback below. The old fixed
+// 5,000ms flaked on loaded machines (#156): every call spawns a full server child, so CPU
+// contention can push boot/response past the limit. Default 20,000ms; MOAI_TEST_STDIO_TIMEOUT_MS
+// (positive integer only — anything else falls back) overrides it for loaded hosts, or shrinks
+// it to prove the timeout path still fires.
+const DEFAULT_STDIO_TIMEOUT_MS = 20_000;
+
+function resolveStdioTimeoutMs(raw: string | undefined): number {
+  if (raw === undefined || raw.trim() === "") return DEFAULT_STDIO_TIMEOUT_MS;
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value <= 0) return DEFAULT_STDIO_TIMEOUT_MS;
+  return value;
+}
+
+const stdioTimeoutMs = resolveStdioTimeoutMs(process.env.MOAI_TEST_STDIO_TIMEOUT_MS);
+
+function readJsonLine(reader: readline.Interface, timeoutMs = stdioTimeoutMs): Promise<unknown> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => { cleanup(); reject(new Error("stdio_response_timeout")); }, timeoutMs);
     const onLine = (line: string) => {
@@ -85,7 +101,7 @@ async function runStdioCall(targetEntry: string, tool = "get_market_snapshot", a
     // A clean stdin close ends the server on its own; SIGKILL is only the stuck-child fallback and
     // leaves no recorder line, which the check below then reports as a failure.
     await Promise.race([closed, new Promise<void>((resolve) => {
-      setTimeout(() => { child.kill("SIGKILL"); resolve(); }, 5_000).unref();
+      setTimeout(() => { child.kill("SIGKILL"); resolve(); }, stdioTimeoutMs).unref();
     })]);
     await removeProfileDir(profileDir);
   }
@@ -314,4 +330,17 @@ for (const name of ['get_domestic_etf_snapshot','get_overseas_futures_snapshot',
 test('authenticated synthetic stdio accepts explicit ETF report subject as partial input',async()=>{
  const {call}=await runStdioCall(syntheticEntry,'build_report_input',{report_id:'R01',subject:{id:'ETF:TEST',name:'ETF',venue:'KRX',currency:'KRW'},cutoff:'2026-10-23T03:00:00.000Z',display_timezone:'Asia/Seoul'});
  assert.ok(!call.result?.isError);assert.equal(call.result?.structuredContent?.execution_status,'template_only');
+});
+test('stdio timeout env parsing falls back to the 20s default for unset/empty/zero/negative/non-integer values', () => {
+  assert.equal(resolveStdioTimeoutMs(undefined), 20_000);
+  assert.equal(resolveStdioTimeoutMs(""), 20_000);
+  assert.equal(resolveStdioTimeoutMs("   "), 20_000);
+  assert.equal(resolveStdioTimeoutMs("0"), 20_000);
+  assert.equal(resolveStdioTimeoutMs("-5000"), 20_000);
+  assert.equal(resolveStdioTimeoutMs("abc"), 20_000);
+  assert.equal(resolveStdioTimeoutMs("1.5"), 20_000);
+});
+test('stdio timeout env parsing accepts positive integers verbatim', () => {
+  assert.equal(resolveStdioTimeoutMs("1"), 1);
+  assert.equal(resolveStdioTimeoutMs("8000"), 8_000);
 });
