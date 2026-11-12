@@ -61,9 +61,11 @@ and has no OAuth token adapter. Storing keys does not enable provider access.
 
 From `plugins/moai-atp/` after building, the following creates a separate private runtime ZIP with compiled code and three
 locked production dependencies. Node 24.22.1 remains an external build prerequisite.
+`npm --prefix server run build:mjs` fails immediately with `build_runtime_version_mismatch` unless the active Node is exactly 24.22.1, and the runtime ZIP build requires its output.
 This artifact is distinct from the source ZIP and from actual host installation.
 
 ```sh
+npm --prefix server run build:mjs
 python3 scripts/build_runtime_bundle.py --output ../../project-docs/packages/moai-atp-runtime-private.zip
 ```
 
