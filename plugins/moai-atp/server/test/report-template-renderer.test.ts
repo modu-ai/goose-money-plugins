@@ -70,6 +70,12 @@ test('synthetic MCP-shaped quote and KIS-039 history reach ECharts, LWC, SMA and
   assert.match(html,/button\.setAttribute\('aria-pressed','true'\)/);
   assert.match(html,/SMA 60/);
   assert.match(html,/pele-flowchart/);
+  // 접근성: 흐름도 SVG 는 role 은 원래 값(graphics-document document)을 유지하고
+  // 접근 가능한 이름(aria-label)만 추가된다 — 이름은 figcaption 문구와 같다 (Refs #31, a11y 관찰 P1)
+  assert.match(html,/<svg[^>]*\bclass="pele pele-flowchart"[^>]*\brole="graphics-document document"/);
+  assert.doesNotMatch(html,/<svg[^>]*\brole="img"/);
+  assert.match(html,/<figcaption>자료 처리 단계 설명 · 수치·기업 관계·분석 근거가 아닌 일반 흐름도 · Pele 1\.7\.0 선렌더 SVG<\/figcaption>/);
+  assert.match(html,/\baria-label="자료 처리 단계 설명 · 수치·기업 관계·분석 근거가 아닌 일반 흐름도 · Pele 1\.7\.0 선렌더 SVG"/);
   assert.match(html,/자료 처리 단계 설명 · 수치·기업 관계·분석 근거가 아닌 일반 흐름도/);
   assert.match(html,/received_at 2026-10-23T04:00:00\.000Z/);
   assert.match(html,/--color-chart-1:#D71920/);
