@@ -15,7 +15,7 @@ const code=(value:string)=>(e:unknown)=>e instanceof Error&&e.message===value;
 
 test('explicit synthetic export passes CDN-font print contract and saves privately without HTML files',async t=>{
  const dir=await directory(t);let calls=0;
- const renderer:PdfRenderer=async request=>{calls++;assert.match(request.html,/합성 PDF 시험/);assert.equal(request.network,'fonts_cdn_only');assert.equal(request.page,'A4');assert.equal(request.font_policy,'cdn_load_then_pdf');assert.equal(request.signal.aborted,false);return pdf;};
+ const renderer:PdfRenderer=async request=>{calls++;assert.match(request.html,/합성 PDF 시험/);assert.match(request.html,/<body class="rs atp-artboard"/);assert.equal(request.network,'fonts_cdn_only');assert.equal(request.page,'A4');assert.equal(request.font_policy,'cdn_load_then_pdf');assert.equal(request.signal.aborted,false);return pdf;};
  if(process.platform==='win32'){
   await assert.rejects(exportSyntheticReportPdf(doc(),{confirmed:true,directory:dir,renderer}),code('pdf_private_storage_unverified'));assert.equal(calls,0);return;
  }
