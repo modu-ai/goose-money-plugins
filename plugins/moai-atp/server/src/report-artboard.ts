@@ -68,7 +68,7 @@ export const ARTBOARD_ADAPTER_CSS = `
  @page{size:A4;margin:14mm}.rs{background:#fff;color:#242424}
  .rs .rs-main{max-width:none;margin:0;border:0}.rs .masthead{margin:0;padding:0 0 12px}
  .rs .report-hero{padding:20px 0}.rs h1{font-size:28pt}.rs .report-hero h2{font-size:18pt}
- .rs .reading-layout{display:block;padding:0}.rs .reading-rail,.rs .actions,.rs .skip{display:none}
+ .rs .reading-layout{display:block;padding:0}.rs .reading-rail,.rs .actions,.rs .skip,.rs .print-guidance{display:none}
  .rs .panel h2{font-size:18pt;break-after:avoid}.rs .panel p,.rs .panel li{font-size:11pt}
  .rs figure{break-inside:avoid;padding:12px}.rs .table-wrap{overflow:visible}.rs .table-wrap table{min-width:0;table-layout:fixed;font-size:9pt}
  .rs thead{display:table-header-group}.rs tr{break-inside:avoid}.rs .stock-footer{margin:12px 0}
