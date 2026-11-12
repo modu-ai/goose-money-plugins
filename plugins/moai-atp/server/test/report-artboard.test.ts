@@ -53,6 +53,13 @@ test('artboard includes narrow-screen containment and print rules from the candi
   assert.match(html,/\.rs thead\{display:table-header-group\}/);
 });
 
+test('artboard print hides the screen-only guidance paragraph without a screen-side rule',()=>{
+  const html=render(input(),'artboard-v2');
+  assert.match(html,/<p class="print-guidance">/);
+  assert.match(html,/\.rs \.skip,\.rs \.print-guidance\{display:none\}/);
+  assert.equal(html.split('.rs .print-guidance').length-1,1);
+});
+
 test('artboard keeps numeric cells on one line while other cells still wrap',()=>{
   const html=render(input(),'artboard-v2');
   assert.match(html,/\.rs \.table-wrap th,\.rs \.table-wrap td\{white-space:normal/);
