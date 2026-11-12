@@ -24,6 +24,22 @@ export function profileKeys(platform: NodeJS.Platform = process.platform): strin
   return platform === 'win32' ? ['USERPROFILE', 'HOME'] : ['HOME'];
 }
 
+/**
+ * Keys the runtime may add to a spawned child BEYOND hermeticChildEnv's explicit set, so the AC-009
+ * child-env assertion can ignore exactly these: OS-required variables (macOS libSystem adds
+ * __CF_USER_TEXT_ENCODING to every process; Windows libuv copies its required process variables,
+ * src/win/process.c required_vars), and NODE_V8_COVERAGE — Node propagates that one into every child
+ * when this process itself runs under V8 coverage (--experimental-test-coverage), even with an
+ * explicit env (#160). NODE_V8_COVERAGE is admitted ONLY when the parent actually holds it; any
+ * other key in a child env stays a leak and must fail the assertion.
+ */
+export function runtimeInjectedEnvKeys(platform: NodeJS.Platform = process.platform, parentEnv: NodeJS.ProcessEnv = process.env): string[] {
+  const osKeys = platform === 'win32'
+    ? ['HOMEDRIVE', 'HOMEPATH', 'LOGONSERVER', 'SYSTEMDRIVE', 'TEMP', 'USERDOMAIN', 'USERNAME', 'WINDIR']
+    : ['__CF_USER_TEXT_ENCODING'];
+  return parentEnv.NODE_V8_COVERAGE === undefined ? osKeys : [...osKeys, 'NODE_V8_COVERAGE'];
+}
+
 const trimSeparator = (value: string): string => value.replace(/[\\/]+$/, '');
 
 /**
